@@ -10,6 +10,7 @@ from fastapi import APIRouter
 
 from ...core.database import execute
 from ...ingestion.adapters import clinicaltrials, pubmed
+from ...reasoning.claim_extractor import process_all_unprocessed
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -124,3 +125,13 @@ async def trigger_trials_ingestion():
         "errors": len(errors),
         "duration_secs": round(duration, 2),
     }
+
+
+@router.post("/extract/claims")
+async def trigger_claim_extraction():
+    """Extract structured claims from all unprocessed paper abstracts using LLM."""
+    start = datetime.now(timezone.utc)
+    result = await process_all_unprocessed()
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration_secs"] = round(duration, 2)
+    return result

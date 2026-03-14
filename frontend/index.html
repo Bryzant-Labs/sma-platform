@@ -116,7 +116,9 @@
     <a href="#targets" class="nav-link active" data-section="targets">Targets</a>
     <a href="#trials" class="nav-link" data-section="trials">Clinical Trials</a>
     <a href="#drugs" class="nav-link" data-section="drugs">Drugs</a>
+    <a href="#sources" class="nav-link" data-section="sources">Literature</a>
     <a href="#datasets" class="nav-link" data-section="datasets">Datasets</a>
+    <a href="#claims" class="nav-link" data-section="claims">Claims</a>
     <a href="#evidence" class="nav-link" data-section="evidence">Evidence</a>
 </div></div></nav>
 
@@ -148,6 +150,13 @@
     <tbody id="drugs-body"><tr><td colspan="5" class="loading">Loading drugs...</td></tr></tbody></table></div>
 </section>
 
+<section class="section" id="sources">
+    <div class="section-header"><h2 class="section-title">Literature</h2><span class="section-count" id="sources-count"></span></div>
+    <p class="section-desc">Papers ingested from PubMed via automated daily search. Each paper is scanned for structured claims relevant to SMA biology and treatment.</p>
+    <div class="table-wrap"><table><thead><tr><th>PMID</th><th>Title</th><th>Journal</th><th>Date</th></tr></thead>
+    <tbody id="sources-body"><tr><td colspan="4" class="loading">Loading sources...</td></tr></tbody></table></div>
+</section>
+
 <section class="section" id="datasets">
     <div class="section-header"><h2 class="section-title">Omics Datasets</h2><span class="section-count" id="datasets-count"></span></div>
     <p class="section-desc">Curated omics datasets for SMA research. Tier 1 datasets are directly usable for motor neuron vulnerability analysis; Tier 2-3 require additional QC or serve as validation.</p>
@@ -155,11 +164,18 @@
     <tbody id="datasets-body"><tr><td colspan="6" class="loading">Loading datasets...</td></tr></tbody></table></div>
 </section>
 
+<section class="section" id="claims">
+    <div class="section-header"><h2 class="section-title">Extracted Claims</h2><span class="section-count" id="claims-count"></span></div>
+    <p class="section-desc">Structured assertions extracted from paper abstracts using LLM analysis. Each claim is typed, scored for confidence, and linked to source papers and known targets.</p>
+    <div class="table-wrap"><table><thead><tr><th>Claim</th><th>Type</th><th>Confidence</th><th>Related Targets</th></tr></thead>
+    <tbody id="claims-body"><tr><td colspan="4" class="loading">Loading claims...</td></tr></tbody></table></div>
+</section>
+
 <section class="section" id="evidence">
     <div class="section-header"><h2 class="section-title">Evidence Graph</h2><span class="section-count" id="evidence-count"></span></div>
     <div id="evidence-content"><div class="empty-state">
-        <h3>Evidence extraction in progress</h3>
-        <p>The evidence graph connects claims to their supporting sources. Each factual assertion is backed by traceable references (PMIDs, clinical trial results, dataset analyses). Automated extraction from ingested papers is the next phase of development.</p>
+        <h3>Evidence layer active</h3>
+        <p>The evidence graph connects claims to their supporting sources and known targets. Each factual assertion is backed by traceable references (PMIDs, clinical trial results, dataset analyses). Claims are automatically extracted from ingested papers and scored.</p>
     </div></div>
 </section>
 </main>
@@ -313,6 +329,48 @@
             for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
             e.target.classList.add('active');
             renderTrials(e.target.dataset.filter);
+        }
+    });
+
+    // Sources (Literature)
+    fetch(API + '/sources?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+        document.getElementById('sources-count').textContent = data.length + ' papers';
+        var body = clearEl('sources-body');
+        for (var i = 0; i < data.length; i++) {
+            var s = data[i];
+            var pmidUrl = 'https://pubmed.ncbi.nlm.nih.gov/' + s.external_id;
+            body.appendChild(el('tr', null, [
+                tdLink(s.external_id, pmidUrl),
+                td(truncate(s.title, 120)),
+                td(s.journal || '', '', 'font-size:12px;color:var(--text-secondary)'),
+                td(s.pub_date || '', 'mono', 'font-size:11px;white-space:nowrap')
+            ]));
+        }
+        if (data.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 4, className: 'loading', text: 'No papers ingested yet. Run POST /api/v2/ingest/pubmed to start.'})]));
+        }
+    });
+
+    // Claims
+    fetch(API + '/claims?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+        document.getElementById('claims-count').textContent = data.length + ' claims';
+        var body = clearEl('claims-body');
+        for (var i = 0; i < data.length; i++) {
+            var c = data[i];
+            var meta = parseJ(c.metadata) || {};
+            var targets = (meta.related_targets || []).join(', ');
+            var subjectLabel = meta.subject_label || c.subject_type || '';
+            var conf = c.confidence ? (c.confidence * 100).toFixed(0) + '%' : '';
+            var confCls = c.confidence >= 0.8 ? 'badge-green' : c.confidence >= 0.5 ? 'badge-amber' : 'badge-gray';
+            body.appendChild(el('tr', null, [
+                td(truncate(c.predicate || c.claim_text || '', 200), 'desc', 'max-width:600px'),
+                tdBadge(c.claim_type || 'unknown', 'badge-blue'),
+                tdBadge(conf, confCls),
+                td(targets || subjectLabel, 'mono', 'font-size:11px')
+            ]));
+        }
+        if (data.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 4, className: 'loading', text: 'No claims extracted yet. Run POST /api/v2/extract/claims to start extraction.'})]));
         }
     });
 
