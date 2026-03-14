@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMA Research Platform — Open Evidence Graph</title>
+    <meta name="description" content="Open-source evidence graph for Spinal Muscular Atrophy. Structured data on targets, trials, drugs, and datasets for accelerating SMA therapeutic development.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fafafa;
+            --panel: #ffffff;
+            --text: #1a1a1a;
+            --text-secondary: #555;
+            --muted: #888;
+            --line: #e0e0e0;
+            --line-light: #f0f0f0;
+            --accent: #1a56db;
+            --green: #15803d; --green-bg: #f0fdf4;
+            --blue: #1e40af; --blue-bg: #eff6ff;
+            --amber: #92400e; --amber-bg: #fffbeb;
+            --gray: #6b7280; --gray-bg: #f3f4f6;
+            --red: #991b1b; --red-bg: #fef2f2;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .site-header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 32px 0 24px; }
+        .site-header h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .site-header .subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+        .header-meta { font-size: 12px; color: var(--muted); text-align: right; }
+        .header-meta a { color: var(--accent); text-decoration: none; }
+        .header-meta a:hover { text-decoration: underline; }
+        .stats-bar { background: var(--panel); border-bottom: 1px solid var(--line); padding: 12px 0; }
+        .stats-row { display: flex; gap: 32px; flex-wrap: wrap; }
+        .stat-item { display: flex; align-items: baseline; gap: 6px; }
+        .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 600; }
+        .stat-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+        .nav-bar { background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; }
+        .nav-row { display: flex; gap: 0; overflow-x: auto; }
+        .nav-link {
+            display: block; padding: 12px 20px; font-size: 12px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);
+            text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap;
+        }
+        .nav-link:hover { color: var(--text); }
+        .nav-link.active { color: var(--text); border-bottom-color: var(--text); }
+        .section { padding: 32px 0; }
+        .section + .section { border-top: 1px solid var(--line-light); }
+        .section-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+        .section-title { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-count { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+        .section-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; max-width: 800px; }
+        .table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        thead th {
+            text-align: left; padding: 10px 12px; font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);
+            background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: 0; white-space: nowrap;
+        }
+        tbody td { padding: 10px 12px; border-bottom: 1px solid var(--line-light); vertical-align: top; }
+        tbody tr:hover { background: #f8f9fa; }
+        tbody tr:last-child td { border-bottom: none; }
+        td.symbol { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 13px; white-space: nowrap; }
+        td.desc { color: var(--text-secondary); font-size: 12px; max-width: 500px; }
+        td.nct a, td.accession a { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); text-decoration: none; }
+        td.nct a:hover, td.accession a:hover { text-decoration: underline; }
+        td.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+        .badge { display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; }
+        .badge-green { background: var(--green-bg); color: var(--green); }
+        .badge-blue { background: var(--blue-bg); color: var(--blue); }
+        .badge-amber { background: var(--amber-bg); color: var(--amber); }
+        .badge-gray { background: var(--gray-bg); color: var(--gray); }
+        .badge-red { background: var(--red-bg); color: var(--red); }
+        .filter-tabs { display: flex; gap: 0; margin-bottom: 12px; border: 1px solid var(--line); background: var(--panel); width: fit-content; }
+        .filter-tab {
+            padding: 6px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.3px; color: var(--muted); cursor: pointer;
+            border: none; border-right: 1px solid var(--line); background: none;
+        }
+        .filter-tab:last-child { border-right: none; }
+        .filter-tab:hover { background: var(--bg); color: var(--text); }
+        .filter-tab.active { background: var(--text); color: #fff; }
+        .empty-state { background: var(--panel); border: 1px solid var(--line); padding: 40px 24px; text-align: center; }
+        .empty-state h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+        .empty-state p { font-size: 13px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+        .site-footer { border-top: 1px solid var(--line); padding: 24px 0; margin-top: 32px; }
+        .footer-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .footer-text { font-size: 12px; color: var(--muted); }
+        .footer-text a { color: var(--accent); text-decoration: none; }
+        .footer-text a:hover { text-decoration: underline; }
+        .loading { color: var(--muted); font-size: 12px; padding: 16px; }
+        @media (max-width: 768px) {
+            .container { padding: 0 16px; }
+            .site-header { padding: 20px 0 16px; }
+            .stats-row { gap: 16px; }
+            .stat-value { font-size: 15px; }
+            .header-meta { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+<header class="site-header"><div class="container"><div class="header-row">
+    <div><h1>SMA Research Platform</h1><p class="subtitle">Open-source evidence graph for Spinal Muscular Atrophy</p></div>
+    <div class="header-meta">Biology-first target discovery<br><a href="/docs">API Docs</a></div>
+</div></div></header>
+
+<div class="stats-bar"><div class="container"><div class="stats-row" id="stats-row"><div class="loading">Loading stats...</div></div></div></div>
+
+<nav class="nav-bar"><div class="container"><div class="nav-row">
+    <a href="#targets" class="nav-link active" data-section="targets">Targets</a>
+    <a href="#trials" class="nav-link" data-section="trials">Clinical Trials</a>
+    <a href="#drugs" class="nav-link" data-section="drugs">Drugs</a>
+    <a href="#datasets" class="nav-link" data-section="datasets">Datasets</a>
+    <a href="#evidence" class="nav-link" data-section="evidence">Evidence</a>
+</div></div></nav>
+
+<main class="container">
+<section class="section" id="targets">
+    <div class="section-header"><h2 class="section-title">Targets</h2><span class="section-count" id="targets-count"></span></div>
+    <p class="section-desc">Genes, proteins, and pathways implicated in SMA pathogenesis. Core targets include SMN1/SMN2 (primary), STMN2 (neuroprotective), and natural protective modifiers PLS3 and NCALD.</p>
+    <div class="table-wrap"><table><thead><tr><th>Symbol</th><th>Name</th><th>Type</th><th>Identifiers</th><th>Description</th></tr></thead>
+    <tbody id="targets-body"><tr><td colspan="5" class="loading">Loading targets...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="trials">
+    <div class="section-header"><h2 class="section-title">Clinical Trials</h2><span class="section-count" id="trials-count"></span></div>
+    <p class="section-desc">SMA clinical trials from ClinicalTrials.gov. Data refreshed via automated ingestion from the ClinicalTrials.gov v2 API.</p>
+    <div class="filter-tabs" id="trial-filters">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="recruiting">Recruiting</button>
+        <button class="filter-tab" data-filter="phase3">Phase 3</button>
+        <button class="filter-tab" data-filter="completed">Completed</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>NCT ID</th><th>Title</th><th>Phase</th><th>Status</th><th>Sponsor</th><th>N</th></tr></thead>
+    <tbody id="trials-body"><tr><td colspan="6" class="loading">Loading trials...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="drugs">
+    <div class="section-header"><h2 class="section-title">Drugs &amp; Therapies</h2><span class="section-count" id="drugs-count"></span></div>
+    <p class="section-desc">Approved SMA therapies and pipeline candidates. Three approved treatments target the SMN pathway; pipeline drugs explore muscle-enhancing and neuroprotective approaches.</p>
+    <div class="table-wrap"><table><thead><tr><th>Name</th><th>Brand</th><th>Type</th><th>Status</th><th>Mechanism</th></tr></thead>
+    <tbody id="drugs-body"><tr><td colspan="5" class="loading">Loading drugs...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="datasets">
+    <div class="section-header"><h2 class="section-title">Omics Datasets</h2><span class="section-count" id="datasets-count"></span></div>
+    <p class="section-desc">Curated omics datasets for SMA research. Tier 1 datasets are directly usable for motor neuron vulnerability analysis; Tier 2-3 require additional QC or serve as validation.</p>
+    <div class="table-wrap"><table><thead><tr><th>Accession</th><th>Title</th><th>Modality</th><th>Organism</th><th>Tissue</th><th>Tier</th></tr></thead>
+    <tbody id="datasets-body"><tr><td colspan="6" class="loading">Loading datasets...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="evidence">
+    <div class="section-header"><h2 class="section-title">Evidence Graph</h2><span class="section-count" id="evidence-count"></span></div>
+    <div id="evidence-content"><div class="empty-state">
+        <h3>Evidence extraction in progress</h3>
+        <p>The evidence graph connects claims to their supporting sources. Each factual assertion is backed by traceable references (PMIDs, clinical trial results, dataset analyses). Automated extraction from ingested papers is the next phase of development.</p>
+    </div></div>
+</section>
+</main>
+
+<footer class="site-footer"><div class="container"><div class="footer-row">
+    <div class="footer-text">SMA Research Platform &mdash; Open source, MIT License. Evidence-first, no marketing.</div>
+    <div class="footer-text"><a href="/api/v2/stats">API</a> &middot; <a href="/docs">Docs</a> &middot; Data updated via automated ingestion</div>
+</div></div></footer>
+
+<script>
+(function() {
+    var API = '/api/v2';
+
+    // Safe DOM helpers
+    function el(tag, attrs, children) {
+        var e = document.createElement(tag);
+        if (attrs) for (var k in attrs) {
+            if (k === 'className') e.className = attrs[k];
+            else if (k === 'href' || k === 'target' || k === 'rel') e.setAttribute(k, attrs[k]);
+            else if (k === 'text') e.textContent = attrs[k];
+            else if (k === 'style') e.setAttribute('style', attrs[k]);
+            else e[k] = attrs[k];
+        }
+        if (children) for (var i = 0; i < children.length; i++) {
+            if (typeof children[i] === 'string') e.appendChild(document.createTextNode(children[i]));
+            else if (children[i]) e.appendChild(children[i]);
+        }
+        return e;
+    }
+    function td(text, cls, style) { var t = el('td', {className: cls || '', style: style || ''}); t.textContent = text || ''; return t; }
+    function badgeEl(text, cls) { var s = el('span', {className: 'badge ' + cls}); s.textContent = text; return s; }
+    function tdBadge(text, cls) { var t = el('td'); t.appendChild(badgeEl(text, cls)); return t; }
+    function tdLink(text, href) {
+        var t = el('td', {className: 'nct'});
+        var a = el('a', {href: href, target: '_blank', rel: 'noopener'});
+        a.textContent = text;
+        t.appendChild(a);
+        return t;
+    }
+    function accLink(text, href) {
+        var t = el('td', {className: 'accession'});
+        var a = el('a', {href: href, target: '_blank', rel: 'noopener'});
+        a.textContent = text;
+        t.appendChild(a);
+        return t;
+    }
+
+    function clearEl(id) { var e = document.getElementById(id); while(e.firstChild) e.removeChild(e.firstChild); return e; }
+    function truncate(s, n) { return (!s) ? '' : s.length > n ? s.substring(0, n) + '...' : s; }
+    function parseJ(s) { try { return typeof s === 'string' ? JSON.parse(s) : s; } catch(e) { return null; } }
+
+    function typeCls(t) { return {gene:'badge-blue',protein:'badge-amber',pathway:'badge-green',cell_state:'badge-gray',phenotype:'badge-gray'}[t] || 'badge-gray'; }
+    function statusCls(s) {
+        if (!s) return 'badge-gray';
+        var l = s.toLowerCase();
+        if (l === 'approved') return 'badge-green';
+        if (l.indexOf('phase3') > -1) return 'badge-blue';
+        if (l.indexOf('phase2') > -1 || l.indexOf('phase1') > -1) return 'badge-amber';
+        if (l === 'discontinued') return 'badge-red';
+        return 'badge-gray';
+    }
+    function trialCls(s) {
+        if (!s) return 'badge-gray';
+        var u = s.toUpperCase();
+        if (u.indexOf('RECRUITING') > -1 && u.indexOf('NOT') === -1) return 'badge-green';
+        if (u === 'COMPLETED') return 'badge-blue';
+        if (u.indexOf('ACTIVE') > -1) return 'badge-amber';
+        if (u.indexOf('TERMINATED') > -1 || u.indexOf('WITHDRAWN') > -1) return 'badge-red';
+        return 'badge-gray';
+    }
+    function tierCls(t) { return t === 'tier1' ? 'badge-green' : t === 'tier2' ? 'badge-amber' : 'badge-gray'; }
+    function tierLabel(t) { return t === 'tier1' ? 'Tier 1' : t === 'tier2' ? 'Tier 2' : 'Tier 3'; }
+
+    function formatIds(json) {
+        var obj = parseJ(json);
+        if (!obj || typeof obj !== 'object') return '';
+        var parts = [];
+        for (var k in obj) if (obj.hasOwnProperty(k) && obj[k]) parts.push(k + ': ' + obj[k]);
+        return parts.join(', ');
+    }
+
+    // Stats
+    fetch(API + '/stats').then(function(r) { return r.json(); }).then(function(d) {
+        var row = clearEl('stats-row');
+        var items = [{k:'targets',l:'Targets'},{k:'trials',l:'Trials'},{k:'drugs',l:'Drugs'},{k:'datasets',l:'Datasets'},{k:'sources',l:'Sources'},{k:'claims',l:'Claims'},{k:'evidence',l:'Evidence'},{k:'hypotheses',l:'Hypotheses'}];
+        for (var i = 0; i < items.length; i++) {
+            var si = el('div', {className: 'stat-item'}, [
+                el('span', {className: 'stat-value', text: (d[items[i].k] || 0).toLocaleString()}),
+                el('span', {className: 'stat-label', text: items[i].l})
+            ]);
+            row.appendChild(si);
+        }
+        document.getElementById('evidence-count').textContent = (d.claims||0) + ' claims, ' + (d.evidence||0) + ' evidence links';
+    });
+
+    // Targets
+    fetch(API + '/targets?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+        var order = {gene:0,protein:1,pathway:2,cell_state:3,phenotype:4,other:5};
+        data.sort(function(a,b) { return (order[a.target_type]||9) - (order[b.target_type]||9); });
+        document.getElementById('targets-count').textContent = data.length + ' targets';
+        var body = clearEl('targets-body');
+        for (var i = 0; i < data.length; i++) {
+            var t = data[i];
+            var tr = el('tr', null, [
+                td(t.symbol, 'symbol'),
+                td(t.name),
+                tdBadge(t.target_type, typeCls(t.target_type)),
+                td(formatIds(t.identifiers), 'mono', 'font-size:11px;color:var(--muted);max-width:250px'),
+                td(t.description, 'desc')
+            ]);
+            body.appendChild(tr);
+        }
+    });
+
+    // Trials
+    var allTrials = [];
+    function renderTrials(filter) {
+        var filtered = allTrials;
+        if (filter === 'recruiting') filtered = allTrials.filter(function(t) { return t.status && t.status.toUpperCase().indexOf('RECRUITING') > -1 && t.status.toUpperCase().indexOf('NOT') === -1; });
+        else if (filter === 'phase3') filtered = allTrials.filter(function(t) { return t.phase && t.phase.toUpperCase().indexOf('PHASE3') > -1; });
+        else if (filter === 'completed') filtered = allTrials.filter(function(t) { return t.status && t.status.toUpperCase() === 'COMPLETED'; });
+
+        document.getElementById('trials-count').textContent = filtered.length + ' of ' + allTrials.length + ' trials';
+        var body = clearEl('trials-body');
+        var lim = Math.min(filtered.length, 100);
+        for (var i = 0; i < lim; i++) {
+            var t = filtered[i];
+            var url = t.url || ('https://clinicaltrials.gov/study/' + t.nct_id);
+            var tr = el('tr', null, [
+                tdLink(t.nct_id, url),
+                td(truncate(t.title, 120)),
+                t.phase ? tdBadge(t.phase, 'badge-blue') : td(''),
+                tdBadge(t.status, trialCls(t.status)),
+                td(truncate(t.sponsor, 40), '', 'font-size:12px'),
+                td(t.enrollment ? String(t.enrollment) : '', 'mono')
+            ]);
+            body.appendChild(tr);
+        }
+        if (lim < filtered.length) {
+            var info = el('tr', null, [el('td', {colSpan: 6, style: 'text-align:center;color:var(--muted);font-size:12px;padding:12px', text: 'Showing ' + lim + ' of ' + filtered.length + '. Use the API for full access.'})]);
+            body.appendChild(info);
+        }
+        if (filtered.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: 'No trials match this filter.'})]));
+        }
+    }
+    fetch(API + '/trials?limit=500').then(function(r) { return r.json(); }).then(function(data) { allTrials = data; renderTrials('all'); });
+    document.getElementById('trial-filters').addEventListener('click', function(e) {
+        if (e.target.classList.contains('filter-tab')) {
+            var tabs = this.querySelectorAll('.filter-tab');
+            for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+            e.target.classList.add('active');
+            renderTrials(e.target.dataset.filter);
+        }
+    });
+
+    // Drugs (seed data, since no /drugs endpoint yet)
+    var drugs = [
+        {n:'Nusinersen',b:'Spinraza',t:'ASO',s:'approved',m:'Antisense oligonucleotide targeting SMN2 pre-mRNA ISS-N1 to promote exon 7 inclusion.'},
+        {n:'Risdiplam',b:'Evrysdi',t:'Splice modifier',s:'approved',m:'Small molecule SMN2 splicing modifier. Oral administration, crosses BBB.'},
+        {n:'Onasemnogene abeparvovec',b:'Zolgensma',t:'Gene therapy',s:'approved',m:'AAV9-mediated gene replacement delivering functional SMN1. Single IV infusion.'},
+        {n:'Apitegromab',b:'SRK-015',t:'Antibody',s:'phase3',m:'Anti-myostatin antibody. Inhibits latent myostatin activation for muscle function.'},
+        {n:'Taldefgrobep alfa',b:'GYM329',t:'Antibody',s:'phase3',m:'Anti-latent myostatin antibody. Muscle-enhancing adjunct to SMN-restoring therapies.'},
+        {n:'Reldesemtiv',b:'\u2014',t:'Small molecule',s:'phase2',m:'Fast skeletal muscle troponin activator. Enhances muscle force production.'},
+        {n:'Pyridostigmine',b:'Mestinon',t:'Small molecule',s:'phase2',m:'Acetylcholinesterase inhibitor. Improves neuromuscular transmission at the NMJ.'}
+    ];
+    document.getElementById('drugs-count').textContent = drugs.length + ' therapies';
+    (function() {
+        var body = clearEl('drugs-body');
+        for (var i = 0; i < drugs.length; i++) {
+            var d = drugs[i];
+            body.appendChild(el('tr', null, [
+                td(d.n, '', 'font-weight:600'),
+                td(d.b, 'mono'),
+                tdBadge(d.t, 'badge-gray'),
+                tdBadge(d.s, statusCls(d.s)),
+                td(d.m, 'desc')
+            ]));
+        }
+    })();
+
+    // Datasets (seed data)
+    var datasets = [
+        {a:'GSE69175',ti:'RNA-seq of patient-derived iPSC motor neurons',mo:'RNA-seq',or:'H. sapiens',ts:'Motor neurons',tr:'tier1',u:'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE69175'},
+        {a:'GSE108094',ti:'Deep RNA-seq expression and altered splicing in SMA MNs',mo:'RNA-seq',or:'H. sapiens',ts:'Motor neurons',tr:'tier1',u:'https://www.omicsdi.org/dataset/geo/GSE108094'},
+        {a:'GSE208629',ti:'Single-cell RNA-seq of severe SMA mouse spinal cord',mo:'scRNA-seq',or:'M. musculus',ts:'Spinal cord',tr:'tier1',u:'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE208629'},
+        {a:'GSE87281',ti:'Bulk RNA-seq of inducible SMA mouse spinal cord',mo:'RNA-seq',or:'M. musculus',ts:'Spinal cord',tr:'tier2',u:'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE87281'},
+        {a:'PXD033055',ti:'SMA-relevant proteomics (splicing diseases context)',mo:'Proteomics',or:'H. sapiens',ts:'\u2014',tr:'tier2',u:'https://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD033055'},
+        {a:'PXD060060',ti:'SMA multiomics profiling',mo:'Multiomics',or:'H. sapiens',ts:'\u2014',tr:'tier3',u:'https://www.ebi.ac.uk/pride/archive/projects/PXD060060'},
+        {a:'GSE65470',ti:'NMJ-focused transcriptomics in SMA context',mo:'Transcriptomics',or:'M. musculus',ts:'NMJ',tr:'tier3',u:'https://www.omicsdi.org/dataset/geo/GSE65470'}
+    ];
+    document.getElementById('datasets-count').textContent = datasets.length + ' datasets';
+    (function() {
+        var body = clearEl('datasets-body');
+        for (var i = 0; i < datasets.length; i++) {
+            var d = datasets[i];
+            body.appendChild(el('tr', null, [
+                accLink(d.a, d.u),
+                td(d.ti),
+                tdBadge(d.mo, 'badge-gray'),
+                td(d.or, '', 'font-size:12px;font-style:italic'),
+                td(d.ts, '', 'font-size:12px'),
+                tdBadge(tierLabel(d.tr), tierCls(d.tr))
+            ]));
+        }
+    })();
+
+    // Nav scroll tracking
+    var navLinks = document.querySelectorAll('.nav-link');
+    function updateNav() {
+        var sections = document.querySelectorAll('.section');
+        var pos = window.scrollY + 120;
+        var activeId = 'targets';
+        for (var i = 0; i < sections.length; i++) if (sections[i].offsetTop <= pos) activeId = sections[i].id;
+        for (var j = 0; j < navLinks.length; j++) navLinks[j].classList.toggle('active', navLinks[j].dataset.section === activeId);
+    }
+    window.addEventListener('scroll', updateNav);
+    for (var i = 0; i < navLinks.length; i++) {
+        navLinks[i].addEventListener('click', function(e) {
+            e.preventDefault();
+            var t = document.getElementById(this.dataset.section);
+            if (t) window.scrollTo({top: t.offsetTop - 50, behavior: 'smooth'});
+        });
+    }
+})();
+</script>
+</body>
+</html>

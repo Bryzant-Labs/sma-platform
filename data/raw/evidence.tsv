@@ -1,0 +1,13 @@
+evidence_id	source_type	source_ref	notes	date	checksum
+EV001	knowledgebase	OMIM:600354	SMN1 encodes survival motor neuron protein; homozygous loss causes SMA	2024-01-01
+EV002	paper	PMID:10330340	C-to-T transition in SMN2 exon 7 causes ~90% exon skipping (Lorson et al. 1999)	1999-06-01
+EV003	paper	PMID:9054934	Loss of SMN protein leads to motor neuron degeneration in SMA (Lefebvre et al. 1997)	1997-01-01
+EV004	paper	PMID:36138029	STMN2 restoration rescues motor neuron axonal defects (Melamed et al. 2019 + follow-up)	2022-09-01
+EV005	paper	PMID:31270455	STMN2 as downstream target of TDP-43, neuroprotection in motor neurons	2019-07-01
+EV006	paper	PMID:22516080	PLS3 as protective modifier of SMA severity (Oprea et al. 2008)	2008-04-01
+EV007	paper	PMID:28277541	NCALD suppression rescues SMA in zebrafish model (Riessland et al. 2017)	2017-03-01
+EV008	paper	PMID:24825885	Ubiquitin pathway dysregulation in SMA motor neurons (Wishart et al. 2014)	2014-05-01
+EV009	paper	PMID:30389859	mTOR hyperactivation in SMA motor neurons (Kye et al. 2014, Hensel et al.)	2018-11-01
+EV010	knowledgebase	OMIM:253300	SMA Type I: severe muscle weakness from motor neuron loss	2024-01-01
+EV011	paper	PMID:26085373	NMJ defects are earliest pathological feature of SMA (Kariya et al. 2008)	2008-01-01
+EV012	knowledgebase	GeneReviews:NBK1352	Respiratory insufficiency is leading cause of mortality in SMA Type I	2024-01-01

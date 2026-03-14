@@ -1,0 +1,13 @@
+src	dst	relation	confidence	direction	effect	evidence_ids	metadata_json
+HGNC:11117	UNIPROT:Q16637	encodes	1.0	src_to_dst	activates	EV001	{"fundamental": true}
+HGNC:11118	UNIPROT:Q16637	encodes_truncated	0.9	src_to_dst	activates	EV002	{"note": "~10% full-length, ~90% delta7 truncated"}
+UNIPROT:Q16637	CELLSTATE:MN_degen	prevents	0.95	src_to_dst	inhibits	EV003	{"note": "loss of SMN protein causes MN degeneration"}
+HGNC:11125	CELLSTATE:NMJ_defect	prevents	0.8	src_to_dst	inhibits	EV004	{"note": "STMN2 maintains axonal integrity at NMJ"}
+HGNC:11125	CELLSTATE:MN_degen	prevents	0.75	src_to_dst	inhibits	EV005	{"note": "neuroprotective via microtubule stabilization"}
+HGNC:9090	CELLSTATE:MN_degen	prevents	0.7	src_to_dst	inhibits	EV006	{"note": "actin bundling compensates for SMN loss"}
+HGNC:7654	CELLSTATE:MN_degen	prevents	0.65	src_to_dst	inhibits	EV007	{"note": "reduced NCALD rescues SMA phenotype"}
+HGNC:12469	UNIPROT:Q16637	regulates	0.6	src_to_dst	associates	EV008	{"note": "ubiquitin pathway dysfunction in SMA"}
+PATHWAY:mTOR	CELLSTATE:MN_degen	contributes	0.55	src_to_dst	activates	EV009	{"note": "mTOR hyperactivation in SMA MNs"}
+CELLSTATE:MN_degen	PHENOTYPE:muscle_weakness	causes	0.95	src_to_dst	activates	EV010	{"fundamental": true}
+CELLSTATE:NMJ_defect	PHENOTYPE:muscle_weakness	causes	0.85	src_to_dst	activates	EV011	{"note": "NMJ defects precede MN loss"}
+PHENOTYPE:muscle_weakness	PHENOTYPE:respiratory	leads_to	0.8	src_to_dst	activates	EV012	{"note": "respiratory muscles affected"}

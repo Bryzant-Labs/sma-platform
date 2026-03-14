@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sma-platform"
+version = "0.1.0"
+description = "Open SMA Research Platform — biology-first target discovery and evidence graph for Spinal Muscular Atrophy"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    { name = "Christian Fischer", email = "christian@bryzant.com" },
+]
+
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "asyncpg>=0.30",
+    "pydantic>=2.10",
+    "pydantic-settings>=2.7",
+    "httpx>=0.28",
+    "pandas>=2.2",
+    "pyarrow>=18",
+    "pyyaml>=6.0",
+    "biopython>=1.84",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.25",
+    "pytest-httpx>=0.35",
+    "ruff>=0.9",
+    "mypy>=1.14",
+]
+ml = [
+    "scikit-learn>=1.6",
+    "networkx>=3.4",
+    "scipy>=1.15",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sma_platform"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true

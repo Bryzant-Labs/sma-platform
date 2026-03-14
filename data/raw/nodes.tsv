@@ -1,0 +1,13 @@
+node_id	node_type	label	synonyms	namespace	metadata_json
+HGNC:11117	gene	SMN1	Survival Motor Neuron 1|SMA1|SMA	hgnc	{"chromosome": "5q13.2", "role": "primary_sma_gene"}
+HGNC:11118	gene	SMN2	Survival Motor Neuron 2|SMA2	hgnc	{"chromosome": "5q13.2", "role": "sma_modifier", "copy_number_relevant": true}
+HGNC:11125	gene	STMN2	Stathmin-2|SCG10|Superior Cervical Ganglion 10	hgnc	{"chromosome": "8q21.13", "role": "neuroprotective_target"}
+HGNC:9090	gene	PLS3	Plastin 3|T-plastin	hgnc	{"chromosome": "Xq23", "role": "sma_protective_modifier"}
+HGNC:7654	gene	NCALD	Neurocalcin Delta	hgnc	{"chromosome": "8q22.2", "role": "sma_protective_modifier"}
+HGNC:12469	gene	UBA1	Ubiquitin-Like Modifier Activating Enzyme 1|UBE1	hgnc	{"chromosome": "Xp11.3", "role": "ubiquitin_pathway"}
+UNIPROT:Q16637	protein	SMN Protein	Survival Motor Neuron Protein|Gemin1	uniprot	{"function": "snRNP_assembly", "complex": "SMN_complex"}
+PATHWAY:mTOR	pathway	mTOR Signaling	mTORC1|mTORC2|mechanistic target of rapamycin	reactome	{"id": "R-HSA-165159"}
+CELLSTATE:MN_degen	cell_state	Motor Neuron Degeneration	MN loss|alpha-MN degeneration	custom	{"cell_type": "alpha_motor_neuron", "process": "degeneration"}
+CELLSTATE:NMJ_defect	cell_state	NMJ Dysfunction	neuromuscular junction defect|endplate immaturity	custom	{"structure": "neuromuscular_junction", "process": "maturation_failure"}
+PHENOTYPE:muscle_weakness	phenotype	Progressive Muscle Weakness	hypotonia|muscle atrophy	hpo	{"hpo_id": "HP:0001324"}
+PHENOTYPE:respiratory	phenotype	Respiratory Insufficiency	breathing difficulty|ventilator dependence	hpo	{"hpo_id": "HP:0002093"}
