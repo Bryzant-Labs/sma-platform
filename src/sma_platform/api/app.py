@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import evidence, ingestion, stats, targets, trials
+from .routes import datasets, drugs, evidence, ingestion, stats, targets, trials
 
 
 @asynccontextmanager
@@ -41,6 +41,8 @@ def create_app() -> FastAPI:
     app.include_router(targets.router, prefix="/api/v2", tags=["targets"])
     app.include_router(trials.router, prefix="/api/v2", tags=["trials"])
     app.include_router(evidence.router, prefix="/api/v2", tags=["evidence"])
+    app.include_router(drugs.router, prefix="/api/v2", tags=["drugs"])
+    app.include_router(datasets.router, prefix="/api/v2", tags=["datasets"])
     app.include_router(ingestion.router, prefix="/api/v2", tags=["ingestion"])
 
     @app.get("/health")

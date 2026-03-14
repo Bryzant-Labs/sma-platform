@@ -316,56 +316,42 @@
         }
     });
 
-    // Drugs (seed data, since no /drugs endpoint yet)
-    var drugs = [
-        {n:'Nusinersen',b:'Spinraza',t:'ASO',s:'approved',m:'Antisense oligonucleotide targeting SMN2 pre-mRNA ISS-N1 to promote exon 7 inclusion.'},
-        {n:'Risdiplam',b:'Evrysdi',t:'Splice modifier',s:'approved',m:'Small molecule SMN2 splicing modifier. Oral administration, crosses BBB.'},
-        {n:'Onasemnogene abeparvovec',b:'Zolgensma',t:'Gene therapy',s:'approved',m:'AAV9-mediated gene replacement delivering functional SMN1. Single IV infusion.'},
-        {n:'Apitegromab',b:'SRK-015',t:'Antibody',s:'phase3',m:'Anti-myostatin antibody. Inhibits latent myostatin activation for muscle function.'},
-        {n:'Taldefgrobep alfa',b:'GYM329',t:'Antibody',s:'phase3',m:'Anti-latent myostatin antibody. Muscle-enhancing adjunct to SMN-restoring therapies.'},
-        {n:'Reldesemtiv',b:'\u2014',t:'Small molecule',s:'phase2',m:'Fast skeletal muscle troponin activator. Enhances muscle force production.'},
-        {n:'Pyridostigmine',b:'Mestinon',t:'Small molecule',s:'phase2',m:'Acetylcholinesterase inhibitor. Improves neuromuscular transmission at the NMJ.'}
-    ];
-    document.getElementById('drugs-count').textContent = drugs.length + ' therapies';
-    (function() {
+    // Drugs (from API)
+    fetch(API + '/drugs?limit=100').then(function(r) { return r.json(); }).then(function(data) {
+        document.getElementById('drugs-count').textContent = data.length + ' therapies';
         var body = clearEl('drugs-body');
-        for (var i = 0; i < drugs.length; i++) {
-            var d = drugs[i];
+        for (var i = 0; i < data.length; i++) {
+            var d = data[i];
+            var brands = parseJ(d.brand_names);
+            var brandStr = (brands && brands.length) ? brands.join(', ') : '\u2014';
+            var typeLabel = (d.drug_type || '').replace(/_/g, ' ');
             body.appendChild(el('tr', null, [
-                td(d.n, '', 'font-weight:600'),
-                td(d.b, 'mono'),
-                tdBadge(d.t, 'badge-gray'),
-                tdBadge(d.s, statusCls(d.s)),
-                td(d.m, 'desc')
+                td(d.name, '', 'font-weight:600;text-transform:capitalize'),
+                td(brandStr, 'mono'),
+                tdBadge(typeLabel, 'badge-gray'),
+                tdBadge(d.approval_status, statusCls(d.approval_status)),
+                td(d.mechanism, 'desc')
             ]));
         }
-    })();
+    });
 
-    // Datasets (seed data)
-    var datasets = [
-        {a:'GSE69175',ti:'RNA-seq of patient-derived iPSC motor neurons',mo:'RNA-seq',or:'H. sapiens',ts:'Motor neurons',tr:'tier1',u:'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE69175'},
-        {a:'GSE108094',ti:'Deep RNA-seq expression and altered splicing in SMA MNs',mo:'RNA-seq',or:'H. sapiens',ts:'Motor neurons',tr:'tier1',u:'https://www.omicsdi.org/dataset/geo/GSE108094'},
-        {a:'GSE208629',ti:'Single-cell RNA-seq of severe SMA mouse spinal cord',mo:'scRNA-seq',or:'M. musculus',ts:'Spinal cord',tr:'tier1',u:'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE208629'},
-        {a:'GSE87281',ti:'Bulk RNA-seq of inducible SMA mouse spinal cord',mo:'RNA-seq',or:'M. musculus',ts:'Spinal cord',tr:'tier2',u:'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE87281'},
-        {a:'PXD033055',ti:'SMA-relevant proteomics (splicing diseases context)',mo:'Proteomics',or:'H. sapiens',ts:'\u2014',tr:'tier2',u:'https://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD033055'},
-        {a:'PXD060060',ti:'SMA multiomics profiling',mo:'Multiomics',or:'H. sapiens',ts:'\u2014',tr:'tier3',u:'https://www.ebi.ac.uk/pride/archive/projects/PXD060060'},
-        {a:'GSE65470',ti:'NMJ-focused transcriptomics in SMA context',mo:'Transcriptomics',or:'M. musculus',ts:'NMJ',tr:'tier3',u:'https://www.omicsdi.org/dataset/geo/GSE65470'}
-    ];
-    document.getElementById('datasets-count').textContent = datasets.length + ' datasets';
-    (function() {
+    // Datasets (from API)
+    fetch(API + '/datasets?limit=100').then(function(r) { return r.json(); }).then(function(data) {
+        document.getElementById('datasets-count').textContent = data.length + ' datasets';
         var body = clearEl('datasets-body');
-        for (var i = 0; i < datasets.length; i++) {
-            var d = datasets[i];
+        for (var i = 0; i < data.length; i++) {
+            var d = data[i];
+            var url = d.url || '#';
             body.appendChild(el('tr', null, [
-                accLink(d.a, d.u),
-                td(d.ti),
-                tdBadge(d.mo, 'badge-gray'),
-                td(d.or, '', 'font-size:12px;font-style:italic'),
-                td(d.ts, '', 'font-size:12px'),
-                tdBadge(tierLabel(d.tr), tierCls(d.tr))
+                accLink(d.accession, url),
+                td(d.title),
+                tdBadge(d.modality, 'badge-gray'),
+                td(d.organism, '', 'font-size:12px;font-style:italic'),
+                td(d.tissue, '', 'font-size:12px'),
+                tdBadge(tierLabel(d.evidence_tier), tierCls(d.evidence_tier))
             ]));
         }
-    })();
+    });
 
     // Nav scroll tracking
     var navLinks = document.querySelectorAll('.nav-link');
