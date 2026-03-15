@@ -68,7 +68,8 @@ async def _search_gene_in_species(
                     "ortholog_gene_id": str(gene.get("gene_id", "")),
                     "gene_name": gene.get("description", ""),
                 }
-        except (httpx.HTTPStatusError, httpx.TimeoutException):
+        except (httpx.HTTPStatusError, httpx.TimeoutException, httpx.RequestError, ValueError) as exc:
+            logger.debug("Ortholog lookup %s/%s variant=%s: %s", gene_symbol, taxon_id, variant, exc)
             continue
 
     return None

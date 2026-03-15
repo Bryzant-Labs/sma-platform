@@ -17,10 +17,14 @@ async def fetch_pathway_genes(pathway_id: str = SMA_PATHWAY) -> list[dict]:
 
     Returns list of dicts with gene_id and symbol.
     """
-    async with httpx.AsyncClient(timeout=30) as client:
-        # Step 1: Get gene IDs in pathway
-        resp = await client.get(f"{KEGG_API}/link/hsa/{pathway_id}")
-        resp.raise_for_status()
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            # Step 1: Get gene IDs in pathway
+            resp = await client.get(f"{KEGG_API}/link/hsa/{pathway_id}")
+            resp.raise_for_status()
+    except (httpx.HTTPStatusError, httpx.TimeoutException) as e:
+        logger.warning("KEGG API error fetching pathway %s: %s", pathway_id, e)
+        return []
 
     gene_ids = []
     for line in resp.text.strip().split("\n"):
@@ -40,10 +44,13 @@ async def fetch_pathway_genes(pathway_id: str = SMA_PATHWAY) -> list[dict]:
     for i in range(0, len(gene_ids), 10):
         batch = gene_ids[i:i + 10]
         batch_str = "+".join(batch)
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.get(f"{KEGG_API}/list/{batch_str}")
-            if resp.status_code != 200:
-                continue
+        try:
+            async with httpx.AsyncClient(timeout=30) as client:
+                resp = await client.get(f"{KEGG_API}/list/{batch_str}")
+                resp.raise_for_status()
+        except (httpx.HTTPStatusError, httpx.TimeoutException) as e:
+            logger.warning("KEGG API error fetching gene batch %s: %s", batch_str, e)
+            continue
 
         for line in resp.text.strip().split("\n"):
             if not line.strip():

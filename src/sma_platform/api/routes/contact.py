@@ -8,11 +8,12 @@ import time
 from collections import defaultdict
 
 import httpx
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, field_validator
 
 from ...core.config import settings
 from ...core.database import execute, execute_script, fetch
+from ..auth import require_admin_key
 
 logger = logging.getLogger(__name__)
 
@@ -116,7 +117,7 @@ async def _notify_slack(msg: ContactMessage, ip: str) -> None:
 async def submit_contact(msg: ContactMessage, request: Request):
     """Store a contact form submission and notify via Slack."""
     # Rate limit by IP
-    client_ip = request.headers.get("x-forwarded-for", request.client.host if request.client else "unknown")
+    client_ip = request.client.host if request.client else "unknown"
     if not _check_rate_limit(client_ip):
         raise HTTPException(status_code=429, detail="Too many messages. Please try again later.")
 
@@ -140,11 +141,9 @@ async def submit_contact(msg: ContactMessage, request: Request):
     return {"status": "ok", "message": "Thank you for your message. We will get back to you."}
 
 
-@router.get("/admin/messages")
-async def list_messages(key: str = Query(..., description="Admin API key")):
+@router.get("/admin/messages", dependencies=[Depends(require_admin_key)])
+async def list_messages():
     """List all contact form messages (admin only)."""
-    if key != settings.sma_admin_key:
-        raise HTTPException(status_code=403, detail="Invalid admin key")
 
     await execute_script(_TABLE_SQL)
     try:

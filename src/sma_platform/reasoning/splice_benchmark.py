@@ -1,7 +1,7 @@
 """SMN2 Exon 7 Splice Variant Benchmark (Phase 9.2).
 
 Systematic single-nucleotide variant (SNV) scan of the SMN2 exon 7 region:
-100 bp intron 6 flank + 54 bp exon 7 + 100 bp intron 7 flank = 254 positions.
+100 bp intron 6 flank + 55 bp exon 7 + 100 bp intron 7 flank = 255 positions.
 
 Each of the ~762 possible SNVs is scored across four dimensions:
   1. splice_site_proximity  -- distance to nearest splice acceptor/donor
@@ -30,9 +30,10 @@ logger = logging.getLogger(__name__)
 # Reference sequences
 # ---------------------------------------------------------------------------
 
-# SMN2 exon 7: 54 nucleotides (positions 1-54 in exon coordinates)
+# SMN2 exon 7: 55 nucleotides (positions 1-55 in exon coordinates)
 # Position 6 is T in SMN2 (C in SMN1) -- the disease-defining C-to-T transition
 EXON7_SEQ = "GATATTTTATATTAGACAAAATCAAAAAGAAGGAAATGCTGGCATAGAGCAGCAC"
+EXON7_LEN = len(EXON7_SEQ)  # 55
 
 # Intron 6, 3' end (100 bp upstream of exon 7)
 # Approximate sequence from NG_008728.1 region.  The critical 3' splice site
@@ -53,48 +54,49 @@ INTRON7_FLANK = (
 _INTRON6_100 = INTRON6_FLANK[-100:]
 
 # Sanity checks
-assert len(EXON7_SEQ) == 54, f"Exon 7 must be 54 nt, got {len(EXON7_SEQ)}"
+assert len(EXON7_SEQ) == 55, f"Exon 7 must be 55 nt, got {len(EXON7_SEQ)}"
 assert len(INTRON7_FLANK) == 100, f"Intron 7 flank must be 100 nt, got {len(INTRON7_FLANK)}"
 assert len(_INTRON6_100) == 100, f"Intron 6 flank must be 100 nt, got {len(_INTRON6_100)}"
 
-FULL_REGION = _INTRON6_100 + EXON7_SEQ + INTRON7_FLANK  # 254 nt
-assert len(FULL_REGION) == 254
+FULL_REGION = _INTRON6_100 + EXON7_SEQ + INTRON7_FLANK  # 255 nt
+FULL_REGION_LEN = len(FULL_REGION)
+assert FULL_REGION_LEN == 255
 
 # ---------------------------------------------------------------------------
 # Coordinate system
 # ---------------------------------------------------------------------------
 # We use exon-relative coordinates where exon 7 position 1 = index 0 of EXON7_SEQ.
 # Intron 6 positions are negative (-100 to -1).
-# Intron 7 positions are +1 to +100 (relative to end of exon 7, i.e. after pos 54).
+# Intron 7 positions are +1 to +100 (relative to end of exon 7, i.e. after pos 55).
 #
 # full_region index 0   = intron 6 pos -100
 # full_region index 99  = intron 6 pos -1
 # full_region index 100 = exon 7 pos 1
-# full_region index 153 = exon 7 pos 54
-# full_region index 154 = intron 7 pos +1
-# full_region index 253 = intron 7 pos +100
+# full_region index 154 = exon 7 pos 55
+# full_region index 155 = intron 7 pos +1
+# full_region index 254 = intron 7 pos +100
+
+_INTRON6_LEN = 100
+_EXON7_END_IDX = _INTRON6_LEN + EXON7_LEN  # 155 (exclusive)
 
 _BASES = "ACGT"
 
 
-def _exon_relative_pos(full_idx: int) -> int:
-    """Convert full_region index to exon-relative position."""
-    if full_idx < 100:
-        return full_idx - 100  # -100 to -1
-    elif full_idx < 154:
-        return full_idx - 100 + 1  # 1 to 54
-    else:
-        return full_idx - 154 + 1  # +1 to +100 (intron 7)
+def _parse_position(full_idx: int) -> tuple[int, str]:
+    """Convert full_region index to (exon-relative position, region label).
 
-
-def _region_label(exon_pos: int) -> str:
-    """Human-readable region label."""
-    if exon_pos < 0:
-        return "intron6"
-    elif exon_pos >= 1 and exon_pos <= 54:
-        return "exon7"
+    Returns:
+        (position, region) where:
+        - intron6: position is -100 to -1
+        - exon7: position is 1 to EXON7_LEN (55)
+        - intron7: position is 1 to 100 (relative to intron 7 start)
+    """
+    if full_idx < _INTRON6_LEN:
+        return (full_idx - _INTRON6_LEN, "intron6")  # -100 to -1
+    elif full_idx < _EXON7_END_IDX:
+        return (full_idx - _INTRON6_LEN + 1, "exon7")  # 1 to 55
     else:
-        return "intron7"
+        return (full_idx - _EXON7_END_IDX + 1, "intron7")  # +1 to +100
 
 
 def _variant_id(region: str, exon_pos: int, ref: str, alt: str) -> str:
@@ -113,7 +115,7 @@ def _variant_id(region: str, exon_pos: int, ref: str, alt: str) -> str:
 
 # Splice sites
 SPLICE_ACCEPTOR = (-3, -1)   # 3' splice site AG dinucleotide (intron 6 end)
-SPLICE_DONOR = (55, 57)      # 5' splice site GU/GT (intron 7 start, just past exon 7)
+SPLICE_DONOR = (EXON7_LEN + 1, EXON7_LEN + 3)  # 5' splice site GU/GT (intron 7 start, just past exon 7)
 
 # Branch point (approximate, intron 6)
 BRANCH_POINT = (-25, -20)
@@ -154,7 +156,7 @@ def _is_splice_site(exon_pos: int, region: str) -> bool:
         return exon_pos <= 3
     if region == "exon7":
         # Last 2 bases of exon contribute to splice site definition
-        return exon_pos >= 53
+        return exon_pos >= EXON7_LEN - 1
     return False
 
 
@@ -164,8 +166,8 @@ def _splice_site_distance(exon_pos: int, region: str) -> int:
         # Distance to the 3' splice site at position -1
         return abs(exon_pos - (-1))
     elif region == "exon7":
-        # Distance to acceptor (pos 1) or donor (pos 54)
-        return min(abs(exon_pos - 1), abs(exon_pos - 54))
+        # Distance to acceptor (pos 1) or donor (pos EXON7_LEN)
+        return min(abs(exon_pos - 1), abs(exon_pos - EXON7_LEN))
     else:
         # intron7: distance to donor site at +1
         return abs(exon_pos - 1)
@@ -456,16 +458,15 @@ def get_reference_sequence() -> dict[str, Any]:
 
 
 def generate_all_snvs() -> list[dict[str, Any]]:
-    """Generate ALL possible single-nucleotide variants for the 254-bp region.
+    """Generate ALL possible single-nucleotide variants for the 255-bp region.
 
-    Returns ~762 variants (254 positions x 3 alternate bases each).
+    Returns ~765 variants (255 positions x 3 alternate bases each).
     """
     variants: list[dict[str, Any]] = []
 
     for full_idx in range(len(FULL_REGION)):
         ref_base = FULL_REGION[full_idx]
-        exon_pos = _exon_relative_pos(full_idx)
-        region = _region_label(exon_pos)
+        exon_pos, region = _parse_position(full_idx)
 
         for alt_base in _BASES:
             if alt_base == ref_base:
@@ -525,7 +526,7 @@ def score_variant(variant: dict[str, Any]) -> dict[str, Any]:
 
 
 def score_all_variants() -> list[dict[str, Any]]:
-    """Generate and score all ~762 SNVs, sorted by composite_score descending."""
+    """Generate and score all ~765 SNVs, sorted by composite_score descending."""
     variants = generate_all_snvs()
     scored = [score_variant(v) for v in variants]
     scored.sort(key=lambda x: x["composite_score"], reverse=True)
@@ -605,8 +606,8 @@ def export_benchmark(fmt: str = "csv") -> str:
     if fmt == "json":
         # Remove full_region_index from export for cleanliness
         export_data = []
-        for v in scored:
-            row = {k: v for k, v in v.items() if k != "full_region_index"}
+        for variant in scored:
+            row = {k: val for k, val in variant.items() if k != "full_region_index"}
             export_data.append(row)
         return json.dumps(export_data, indent=2)
 

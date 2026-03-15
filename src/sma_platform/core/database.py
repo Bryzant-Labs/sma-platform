@@ -72,6 +72,7 @@ async def init_pool(dsn: str, **kwargs: Any) -> Any:
         conn = sqlite3.connect(path)
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA foreign_keys=ON")
+        conn.execute("PRAGMA busy_timeout=5000")
         conn.close()
         return path
 
@@ -94,6 +95,8 @@ def _get_sqlite_conn() -> sqlite3.Connection:
 # ---------- Query helpers ----------
 
 async def fetch(query: str, *args: Any) -> list[DictRow]:
+    if _db_type == "postgres" and _pool is None:
+        raise RuntimeError("Database pool not initialized — call init_pool() first")
     if _db_type == "postgres":
         async with _pool.acquire() as conn:
             rows = await conn.fetch(query, *args)
@@ -109,6 +112,8 @@ async def fetch(query: str, *args: Any) -> list[DictRow]:
 
 
 async def fetchrow(query: str, *args: Any) -> DictRow | None:
+    if _db_type == "postgres" and _pool is None:
+        raise RuntimeError("Database pool not initialized — call init_pool() first")
     if _db_type == "postgres":
         async with _pool.acquire() as conn:
             row = await conn.fetchrow(query, *args)
@@ -124,6 +129,8 @@ async def fetchrow(query: str, *args: Any) -> DictRow | None:
 
 
 async def fetchval(query: str, *args: Any) -> Any:
+    if _db_type == "postgres" and _pool is None:
+        raise RuntimeError("Database pool not initialized — call init_pool() first")
     if _db_type == "postgres":
         async with _pool.acquire() as conn:
             return await conn.fetchval(query, *args)
@@ -138,6 +145,8 @@ async def fetchval(query: str, *args: Any) -> Any:
 
 
 async def execute(query: str, *args: Any) -> str:
+    if _db_type == "postgres" and _pool is None:
+        raise RuntimeError("Database pool not initialized — call init_pool() first")
     if _db_type == "postgres":
         async with _pool.acquire() as conn:
             return await conn.execute(query, *args)

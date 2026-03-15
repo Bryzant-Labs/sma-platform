@@ -280,10 +280,10 @@ async def process_source(source_id: str) -> int:
             if obj:
                 object_id = await _resolve_target_id(obj)
 
-            # Insert claim
-            await execute(
+            # Insert claim and retrieve its ID atomically via RETURNING
+            claim_row = await fetchrow(
                 """INSERT INTO claims (claim_type, subject_id, subject_type, predicate, object_id, object_type, confidence, metadata)
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)""",
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id""",
                 claim_type,
                 subject_id,
                 subject_type,
@@ -299,12 +299,6 @@ async def process_source(source_id: str) -> int:
                     "extracted_at": datetime.now(timezone.utc).isoformat(),
                     "source_paper_id": str(source["id"]),
                 }),
-            )
-
-            # Get the claim we just inserted (last one matching this predicate)
-            claim_row = await fetchrow(
-                "SELECT id FROM claims WHERE predicate = $1 ORDER BY created_at DESC LIMIT 1",
-                predicate,
             )
             if claim_row:
                 claim_id = dict(claim_row)["id"]

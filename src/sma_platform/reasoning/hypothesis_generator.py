@@ -22,27 +22,29 @@ from ..core.database import execute, fetch, fetchrow
 
 logger = logging.getLogger(__name__)
 
-HYPOTHESIS_PROMPT = """You are a senior SMA (Spinal Muscular Atrophy) research scientist synthesizing evidence.
-
-Given the following claims about a biological target, generate a hypothesis card.
+HYPOTHESIS_PROMPT = """You are a principal investigator at a major SMA (Spinal Muscular Atrophy) research institute writing a hypothesis card for a grant review panel.
 
 Target: {target_symbol} ({target_name})
 Target type: {target_type}
 Target description: {target_desc}
 
-Claims from the evidence base:
+Evidence claims from the literature:
 {claims_text}
 
-Generate a hypothesis card with:
-1. title: A concise hypothesis statement (one sentence)
-2. description: A 2-3 paragraph scientific rationale explaining:
-   - What the evidence shows about this target in SMA
-   - Why this target could be a therapeutic intervention point
-   - What gaps remain in the evidence
-3. confidence: Your confidence this is a real, testable hypothesis (0.0-1.0)
-4. status: One of [proposed, under_review, validated]
-5. modality_suggestion: Which therapeutic approach fits best (small_molecule, aso, gene_therapy, crispr, antibody, combination, unclear)
-6. key_questions: 2-3 specific questions that need answering to validate this hypothesis
+Write a rigorous, mechanistic hypothesis card. This must go beyond "X is implicated in SMA" — explain the specific molecular mechanism by which this target contributes to disease or could enable therapy.
+
+Required JSON fields:
+1. "title": A precise mechanistic hypothesis (e.g. "PLS3 rescues SMA motor neuron degeneration by compensating for impaired actin dynamics at the growth cone" — NOT "PLS3 may be involved in SMA")
+2. "description": 3-4 paragraphs covering:
+   - MECHANISM: The specific molecular pathway linking this target to SMA pathology (cite PMIDs)
+   - EVIDENCE CONVERGENCE: How multiple independent lines of evidence support this hypothesis
+   - CONTRADICTIONS: Any conflicting evidence or limitations in the current data
+   - THERAPEUTIC ANGLE: How this mechanism could be exploited therapeutically, with specific modality rationale
+3. "confidence": Float 0-1 based on evidence strength (0.8+ requires RCT or strong convergence from 5+ independent sources; 0.5-0.7 for preclinical convergence; below 0.5 for preliminary evidence)
+4. "status": "proposed" (default), "under_review" (if strong multi-source convergence), or "validated" (only if clinical data exists)
+5. "modality_suggestion": Best therapeutic modality with brief justification. One of: small_molecule, aso, gene_therapy, crispr, antibody, combination, unclear
+6. "key_questions": 3-5 specific, experimentally testable questions (e.g. "Does PLS3 overexpression rescue neurite outgrowth in SMN-depleted iPSC-derived motor neurons?" — NOT vague questions like "What is the role of X?")
+7. "experimental_approaches": 2-3 concrete experimental suggestions to test this hypothesis (model system, readout, expected result)
 
 Return ONLY valid JSON. No markdown fences, no explanation."""
 
@@ -137,8 +139,8 @@ async def generate_hypothesis_for_target(target_id: str) -> dict | None:
                     "content-type": "application/json",
                 },
                 json={
-                    "model": "claude-haiku-4-5-20251001",
-                    "max_tokens": 2000,
+                    "model": "claude-sonnet-4-6",
+                    "max_tokens": 4000,
                     "messages": [{"role": "user", "content": prompt}],
                 },
             )
@@ -180,7 +182,7 @@ async def generate_hypothesis_for_target(target_id: str) -> dict | None:
         "supporting_evidence": claim_ids,
         "confidence": hypothesis.get("confidence", 0.5),
         "status": mapped_status,
-        "generated_by": "claude-haiku-4-5-20251001",
+        "generated_by": "claude-sonnet-4-6",
         "metadata": json.dumps({
             "target_id": str(target_id),
             "target_symbol": target["symbol"],
@@ -251,9 +253,13 @@ async def generate_all_hypotheses() -> dict:
         results = await generate_modality_hypotheses_safe(target_id)
         if results:
             # Only delete old hypotheses for this target after success
+            # Match both `"target_id": "uuid"` (spaced) and `"target_id":"uuid"` (compact)
             await execute(
-                "DELETE FROM hypotheses WHERE CAST(metadata AS TEXT) LIKE $1",
+                """DELETE FROM hypotheses
+                   WHERE generated_by = 'auto_pipeline'
+                     AND (CAST(metadata AS TEXT) LIKE $1 OR CAST(metadata AS TEXT) LIKE $2)""",
                 f'%"target_id": "{target_id}"%',
+                f'%"target_id":"{target_id}"%',
             )
             # Re-insert the new ones
             for hyp in results:
@@ -351,8 +357,8 @@ async def generate_modality_hypotheses_safe(target_id: str) -> list[dict] | None
                             "content-type": "application/json",
                         },
                         json={
-                            "model": "claude-haiku-4-5-20251001",
-                            "max_tokens": 2000,
+                            "model": "claude-sonnet-4-6",
+                            "max_tokens": 4000,
                             "messages": [{"role": "user", "content": prompt}],
                         },
                     )
@@ -389,7 +395,7 @@ async def generate_modality_hypotheses_safe(target_id: str) -> list[dict] | None
             "supporting_evidence": claim_ids,
             "confidence": hyp.get("confidence", 0.5),
             "status": mapped_status,
-            "generated_by": "claude-haiku-4-5-20251001",
+            "generated_by": "claude-sonnet-4-6",
             "metadata": json.dumps({
                 "target_id": str(target_id),
                 "target_symbol": target["symbol"],

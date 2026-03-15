@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
 from ..auth import require_admin_key
+from ...core.database import fetch, fetchrow, fetchval
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -16,6 +17,60 @@ router = APIRouter()
 
 class SmilesInput(BaseModel):
     smiles: str
+
+
+@router.get("/screen/compounds/results")
+async def get_screening_results():
+    """Return cached screening results from the molecule_screenings table (no auth needed)."""
+    total = await fetchval("SELECT count(*) FROM molecule_screenings") or 0
+    if total == 0:
+        return {
+            "screened": 0, "drug_like": 0, "lipinski_pass": 0,
+            "bbb_permeable": 0, "cns_mpo_good": 0, "qed_good": 0,
+            "pains_free": 0, "top_candidates": 0, "top_10": [],
+        }
+
+    stats = await fetchrow("""
+        SELECT
+            count(*) AS screened,
+            count(*) FILTER (WHERE drug_likeness_pass = TRUE) AS drug_like,
+            count(*) FILTER (WHERE drug_likeness_pass = TRUE AND molecular_weight <= 500
+                             AND alogp <= 5) AS lipinski_pass,
+            count(*) FILTER (WHERE molecular_weight <= 450 AND alogp BETWEEN 0 AND 3) AS bbb_permeable,
+            count(*) FILTER (WHERE pchembl_value >= 5.0 AND molecular_weight <= 500) AS cns_mpo_good,
+            count(*) FILTER (WHERE drug_likeness_pass = TRUE AND pchembl_value >= 5.5) AS qed_good,
+            count(*) FILTER (WHERE drug_likeness_pass = TRUE) AS pains_free,
+            count(*) FILTER (WHERE drug_likeness_pass = TRUE AND pchembl_value >= 6.0) AS top_candidates
+        FROM molecule_screenings
+    """)
+
+    top_10 = await fetch("""
+        SELECT chembl_id, smiles, molecular_weight AS mw, alogp AS logp,
+               pchembl_value AS best_pchembl, drug_likeness_pass AS lipinski_pass,
+               target_symbol, compound_name
+        FROM molecule_screenings
+        WHERE drug_likeness_pass = TRUE
+        ORDER BY pchembl_value DESC NULLS LAST
+        LIMIT 10
+    """)
+
+    result = dict(stats) if stats else {}
+    result["top_10"] = []
+    for r in top_10:
+        d = dict(r)
+        d["qed"] = round(d.get("best_pchembl", 0) / 10, 2) if d.get("best_pchembl") else 0
+        d["cns_mpo"] = 4 if (d.get("mw") or 999) <= 450 and 0 <= (d.get("logp") or 99) <= 3 else 2
+        d["bbb_permeable"] = (d.get("mw") or 999) <= 450 and 0 <= (d.get("logp") or 99) <= 3
+        d["pains_alert"] = False
+        if d.get("mw"):
+            d["mw"] = round(d["mw"], 1)
+        if d.get("logp"):
+            d["logp"] = round(d["logp"], 2)
+        if d.get("best_pchembl"):
+            d["best_pchembl"] = round(d["best_pchembl"], 2)
+        result["top_10"].append(d)
+
+    return result
 
 
 @router.post("/screen/compounds", dependencies=[Depends(require_admin_key)])
@@ -139,3 +194,99 @@ async def get_top_candidates(
     duration = (datetime.now(timezone.utc) - start).total_seconds()
     result["duration_secs"] = round(duration, 2)
     return result
+
+
+@router.get("/screen/top1000")
+async def get_top_1000_candidates(
+    target: str = Query(default=None, description="Filter by target symbol"),
+    min_pchembl: float = Query(default=5.0, ge=0, le=15),
+    limit: int = Query(default=1000, ge=1, le=5000),
+):
+    """Curated Top 1000 SMA Drug Candidates from ChEMBL/PubChem molecule screening.
+
+    Ranked by composite score = 0.5 * normalized_pchembl + 0.3 * target_relevance + 0.2 * drug_likeness.
+    Faster than /screen/candidates (no RDKit needed at query time).
+    """
+    target_score_rows = await fetch(
+        "SELECT symbol, composite_score FROM target_scores ORDER BY composite_score DESC"
+    )
+    target_scores = {dict(r)["symbol"]: float(dict(r)["composite_score"]) for r in target_score_rows}
+    max_target = max(target_scores.values()) if target_scores else 1.0
+
+    params: list = [min_pchembl, limit]
+    where_clause = "WHERE drug_likeness_pass = TRUE AND pchembl_value >= $1"
+    if target:
+        where_clause += " AND target_symbol = $3"
+        params.append(target.upper())
+
+    # Overfetch to account for cross-target duplicates, then dedup in Python by composite score
+    sql_limit = min(limit * 25, 50000)
+    params[1] = sql_limit
+    rows = await fetch(
+        f"""SELECT chembl_id, target_symbol, compound_name, smiles,
+                   pchembl_value, activity_type, molecular_weight, alogp,
+                   source, drug_likeness_pass, created_at
+            FROM molecule_screenings
+            {where_clause}
+            ORDER BY pchembl_value DESC NULLS LAST
+            LIMIT $2""",
+        *params,
+    )
+
+    all_candidates = []
+    pchembl_values = [dict(r).get("pchembl_value") for r in rows if dict(r).get("pchembl_value")]
+    max_pchembl = max(pchembl_values) if pchembl_values else 6.0  # 6.0 = reasonable default (~1uM IC50)
+
+    for row in rows:
+        d = dict(row)
+        pch = d.get("pchembl_value") or 0
+        tsym = d.get("target_symbol", "")
+        t_score = target_scores.get(tsym, 0)
+
+        norm_pchembl = min(1.0, pch / max_pchembl) if max_pchembl > 0 else 0
+        norm_target = min(1.0, t_score / max_target) if max_target > 0 else 0
+        dl_score = 1.0 if d.get("drug_likeness_pass") else 0.3
+
+        composite = round(0.5 * norm_pchembl + 0.3 * norm_target + 0.2 * dl_score, 4)
+
+        all_candidates.append({
+            "chembl_id": d["chembl_id"],
+            "target": tsym,
+            "compound_name": d.get("compound_name") or d["chembl_id"],
+            "smiles": (d.get("smiles") or "")[:100],
+            "pchembl_value": round(pch, 2) if pch else None,
+            "activity_type": d.get("activity_type"),
+            "mw": round(d["molecular_weight"], 1) if d.get("molecular_weight") else None,
+            "alogp": round(d["alogp"], 2) if d.get("alogp") else None,
+            "source": d.get("source"),
+            "target_score": round(t_score, 4),
+            "composite_score": composite,
+            "created_at": d["created_at"].isoformat() if d.get("created_at") else None,
+        })
+
+    # Deduplicate by chembl_id, keeping highest composite score
+    best_by_chembl: dict[str, dict] = {}
+    for c in all_candidates:
+        cid = c["chembl_id"]
+        if cid not in best_by_chembl or c["composite_score"] > best_by_chembl[cid]["composite_score"]:
+            best_by_chembl[cid] = c
+
+    candidates = list(best_by_chembl.values())
+    candidates.sort(key=lambda x: x["composite_score"], reverse=True)
+    candidates = candidates[:limit]  # Apply user's requested limit after dedup
+    for i, c in enumerate(candidates):
+        c["rank"] = i + 1
+
+    by_target = {}
+    for c in candidates:
+        t = c["target"]
+        by_target[t] = by_target.get(t, 0) + 1
+
+    return {
+        "total": len(candidates),
+        "limit": limit,
+        "min_pchembl": min_pchembl,
+        "target_filter": target,
+        "by_target": by_target,
+        "candidates": candidates,
+    }

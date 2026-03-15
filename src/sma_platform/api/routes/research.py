@@ -225,6 +225,7 @@ async def get_research_direction(direction_id: str):
     result["claim_count"] = len(claims)
 
     # Find hypotheses linked to connected targets
+    # Full UUIDs are 36 chars — LIKE matching is safe (no partial collisions)
     hypotheses = []
     for tid in target_ids:
         rows = await fetch(

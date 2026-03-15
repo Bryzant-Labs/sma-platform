@@ -13,7 +13,7 @@ from fastapi.responses import PlainTextResponse, Response as RawResponse
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import blackboard, comparative, contact, datasets, drugs, evidence, export, graph, ingestion, preprints, research, scoring, screening, search, splice, stats, targets, trials
+from .routes import aav, advanced_analytics, assistant, blackboard, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, evidence, evidence_writer, export, federated, gene_versioning, graph, hypothesis_gen, ingestion, lab_os, md_simulation, molecule_screen, preprints, prime_edit, research, rna_binding, scoring, screening, search, spatial_omics, splice, splice_predictor, splicing_map, stats, targets, translation, trials
 
 
 @asynccontextmanager
@@ -100,6 +100,27 @@ def create_app() -> FastAPI:
     app.include_router(search.router, prefix="/api/v2", tags=["search"])
     app.include_router(blackboard.router, prefix="/api/v2", tags=["blackboard"])
     app.include_router(splice.router, prefix="/api/v2", tags=["splice"])
+    app.include_router(splice_predictor.router, prefix="/api/v2", tags=["splice_predictor"])
+    app.include_router(assistant.router, prefix="/api/v2", tags=["assistant"])
+    app.include_router(hypothesis_gen.router, prefix="/api/v2", tags=["hypothesis_gen"])
+    app.include_router(evidence_writer.router, prefix="/api/v2", tags=["writing"])
+    app.include_router(molecule_screen.router, prefix="/api/v2", tags=["screening"])
+    app.include_router(crispr.router, prefix="/api/v2", tags=["crispr"])
+    app.include_router(aav.router, prefix="/api/v2", tags=["aav"])
+    app.include_router(gene_versioning.router, prefix="/api/v2", tags=["gene_versioning"])
+    app.include_router(docking.router, prefix="/api/v2", tags=["docking"])
+    app.include_router(prime_edit.router, prefix="/api/v2", tags=["prime_editing"])
+    app.include_router(md_simulation.router, prefix="/api/v2", tags=["md_simulation"])
+    app.include_router(spatial_omics.router, prefix="/api/v2", tags=["spatial_omics"])
+    app.include_router(advanced_analytics.router, prefix="/api/v2", tags=["advanced_analytics"])
+    app.include_router(splicing_map.router, prefix="/api/v2", tags=["splicing_map"])
+    app.include_router(rna_binding.router, prefix="/api/v2", tags=["rna_binding"])
+    app.include_router(dual_target.router, prefix="/api/v2", tags=["dual_target"])
+    app.include_router(digital_twin.router, prefix="/api/v2", tags=["digital_twin"])
+    app.include_router(lab_os.router, prefix="/api/v2", tags=["lab_os"])
+    app.include_router(federated.router, prefix="/api/v2", tags=["federated"])
+    app.include_router(translation.router, prefix="/api/v2", tags=["translation"])
+    app.include_router(discovery.router, prefix="/api/v2", tags=["discovery"])
 
     @app.get("/health")
     @app.get("/api/v2/health")

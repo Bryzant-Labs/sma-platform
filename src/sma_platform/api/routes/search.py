@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from enum import Enum
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 
 from ...core.database import fetch, fetchrow
 from ...reasoning.embeddings import (
@@ -20,6 +21,9 @@ from ..auth import require_admin_key
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+# Track background reindex status
+_reindex_status: dict = {"running": False, "last_result": None, "last_error": None}
 
 
 class SearchMode(str, Enum):
@@ -128,27 +132,47 @@ async def search_endpoint(
     }
 
 
+async def _run_reindex_background():
+    """Background coroutine that builds the FAISS index."""
+    global _reindex_status
+    _reindex_status["running"] = True
+    _reindex_status["last_error"] = None
+    try:
+        meta = await build_index()
+        _reindex_status["last_result"] = meta
+        logger.info("Background reindex complete: %s", meta)
+    except Exception as e:
+        _reindex_status["last_error"] = str(e)
+        logger.error("Background reindex failed: %s", e, exc_info=True)
+    finally:
+        _reindex_status["running"] = False
+
+
 @router.post("/search/reindex", dependencies=[Depends(require_admin_key)])
 async def reindex():
     """Rebuild the full FAISS search index from all claims and sources.
 
-    Requires X-Admin-Key header. This is a long-running operation (may take
-    several minutes depending on data volume).
+    Requires X-Admin-Key header. Runs as a background task — returns
+    immediately. Check GET /search/stats for completion status.
     """
-    try:
-        meta = await build_index()
+    if _reindex_status["running"]:
         return {
-            "status": "ok",
-            "message": "Index rebuilt successfully",
-            **meta,
+            "status": "already_running",
+            "message": "Reindex is already in progress. Check GET /search/stats for status.",
         }
-    except Exception as e:
-        logger.error("Reindex failed: %s", e, exc_info=True)
-        raise HTTPException(500, detail=f"Reindex failed: {e}")
+    # Launch as a fire-and-forget background task
+    asyncio.create_task(_run_reindex_background())
+    return {
+        "status": "started",
+        "message": "Reindex started in background. Check GET /search/stats for completion.",
+    }
 
 
 @router.get("/search/stats")
 async def search_stats():
     """Return search index statistics — no authentication required."""
     stats = await get_index_stats()
+    stats["reindex_running"] = _reindex_status["running"]
+    if _reindex_status["last_error"]:
+        stats["last_reindex_error"] = _reindex_status["last_error"]
     return stats

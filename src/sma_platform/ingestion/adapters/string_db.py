@@ -31,18 +31,22 @@ async def fetch_interactions(
     genes = genes or SMA_GENES
     identifiers = "%0d".join(genes)
 
-    async with httpx.AsyncClient(timeout=30) as client:
-        resp = await client.get(
-            f"{STRING_API}/json/network",
-            params={
-                "identifiers": identifiers,
-                "species": SPECIES,
-                "required_score": required_score,
-                "caller_identity": "sma-research-platform",
-            },
-        )
-        resp.raise_for_status()
-        data = resp.json()
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.get(
+                f"{STRING_API}/json/network",
+                params={
+                    "identifiers": identifiers,
+                    "species": SPECIES,
+                    "required_score": required_score,
+                    "caller_identity": "sma-research-platform",
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+    except (httpx.HTTPStatusError, httpx.TimeoutException) as e:
+        logger.warning("STRING-DB network API error for genes %s: %s", genes, e)
+        return []
 
     interactions = []
     for item in data:
@@ -68,17 +72,21 @@ async def fetch_enrichment(genes: list[str] | None = None) -> list[dict]:
     genes = genes or SMA_GENES
     identifiers = "%0d".join(genes)
 
-    async with httpx.AsyncClient(timeout=30) as client:
-        resp = await client.get(
-            f"{STRING_API}/json/enrichment",
-            params={
-                "identifiers": identifiers,
-                "species": SPECIES,
-                "caller_identity": "sma-research-platform",
-            },
-        )
-        resp.raise_for_status()
-        data = resp.json()
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.get(
+                f"{STRING_API}/json/enrichment",
+                params={
+                    "identifiers": identifiers,
+                    "species": SPECIES,
+                    "caller_identity": "sma-research-platform",
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+    except (httpx.HTTPStatusError, httpx.TimeoutException) as e:
+        logger.warning("STRING-DB enrichment API error for genes %s: %s", genes, e)
+        return []
 
     enrichments = []
     for item in data:

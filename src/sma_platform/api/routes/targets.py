@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 from uuid import UUID
 
@@ -64,6 +65,8 @@ async def get_target_by_symbol(symbol: str):
 @router.get("/targets/{target_id}/deep-dive")
 async def get_target_deep_dive(target_id: str):
     """Get comprehensive view of a target: claims, hypotheses, drugs, trials, network edges."""
+    if not re.match(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', target_id, re.I):
+        raise HTTPException(status_code=400, detail="Invalid UUID format")
     target = await fetchrow("SELECT * FROM targets WHERE id = $1", target_id)
     if not target:
         raise HTTPException(404, "Target not found")
@@ -111,10 +114,12 @@ async def get_target_deep_dive(target_id: str):
         edge_partner_ids.add(str(partner))
     partner_symbols = {}
     if edge_partner_ids:
-        for pid in edge_partner_ids:
-            row = await fetchrow("SELECT symbol FROM targets WHERE id = $1", pid)
-            if row:
-                partner_symbols[pid] = row["symbol"]
+        id_list = list(edge_partner_ids)
+        partner_rows = await fetch(
+            "SELECT id, symbol FROM targets WHERE CAST(id AS TEXT) IN (" + ",".join(f"${i+1}" for i in range(len(id_list))) + ")",
+            *id_list,
+        )
+        partner_symbols = {str(r["id"]): r["symbol"] for r in partner_rows}
 
     edges_out = []
     for e in edges:
@@ -183,7 +188,6 @@ async def get_full_graph():
 
 @router.post("/targets", status_code=201, dependencies=[Depends(require_admin_key)])
 async def create_target(body: TargetCreate):
-    import json
     await execute(
         """INSERT INTO targets (symbol, name, target_type, organism, identifiers, description)
            VALUES ($1, $2, $3, $4, $5, $6)
@@ -197,4 +201,6 @@ async def create_target(body: TargetCreate):
         "SELECT * FROM targets WHERE symbol = $1 AND target_type = $2 AND organism = $3",
         body.symbol.upper(), body.target_type, body.organism,
     )
+    if not row:
+        raise HTTPException(500, "Failed to create target")
     return dict(row)

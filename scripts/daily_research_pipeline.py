@@ -3,13 +3,20 @@
 Run: python scripts/daily_research_pipeline.py
 Cron: 0 6 * * * cd /home/bryzant/sma-platform && venv/bin/python scripts/daily_research_pipeline.py >> /var/log/sma-pipeline.log 2>&1
 
-Pipeline stages:
+Pipeline stages (13):
   1. PubMed ingestion (7 days back)
   2. ClinicalTrials.gov update
   3. Claim extraction from new abstracts
   4. Hypothesis regeneration
-  5. Evidence score refresh
-  6. Slack summary notification
+  5. Full-text paper fetching (PMC OA)
+  6. Drug outcome extraction
+  7. Claim relinking to targets
+  8. Knowledge graph expansion
+  9. Evidence score refresh
+  10. FAISS search index rebuild
+  11. Blackboard cleanup (expired messages)
+  12. Hypothesis auto-generation from evidence convergence
+  13. Molecule screening (ChEMBL/PubChem for new targets)
 """
 
 import asyncio
@@ -30,6 +37,8 @@ from sma_platform.reasoning.failure_extractor import process_all_drug_outcomes
 from sma_platform.reasoning.graph_expander import expand_graph
 from sma_platform.reasoning.hypothesis_generator import generate_all_hypotheses
 from sma_platform.reasoning.scorer import score_all_claims
+from sma_platform.reasoning.embeddings import build_index as build_search_index
+from sma_platform.reasoning.blackboard import cleanup_expired as blackboard_cleanup
 
 logging.basicConfig(
     level=logging.INFO,
@@ -200,6 +209,62 @@ async def stage_scoring() -> dict:
     return result
 
 
+async def stage_search_reindex() -> dict:
+    """Stage 10: Rebuild FAISS semantic search index."""
+    logger.info("Stage 10: FAISS search index rebuild")
+    start = datetime.now(timezone.utc)
+    result = await build_search_index()
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration"] = round(duration, 1)
+    logger.info("Search index: %s", result)
+    return result
+
+
+async def stage_blackboard_cleanup() -> dict:
+    """Stage 11: Clean up expired blackboard messages."""
+    logger.info("Stage 11: Blackboard cleanup")
+    start = datetime.now(timezone.utc)
+    deleted = await blackboard_cleanup()
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result = {"deleted": deleted, "duration": round(duration, 1)}
+    logger.info("Blackboard cleanup: %s", result)
+    return result
+
+
+async def stage_hypothesis_convergence() -> dict:
+    """Stage 12: Auto-generate hypotheses from new evidence convergence."""
+    logger.info("Stage 12: Hypothesis auto-generation from convergence")
+    start = datetime.now(timezone.utc)
+    try:
+        from sma_platform.reasoning.convergence_hypothesis import run_hypothesis_generation
+        result = await run_hypothesis_generation(days_back=7, min_claims=3)
+    except ImportError:
+        result = {"skipped": True, "reason": "hypothesis_auto_generator module not yet available"}
+    except Exception as e:
+        result = {"error": str(e)}
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration"] = round(duration, 1)
+    logger.info("Hypothesis convergence: %s", result)
+    return result
+
+
+async def stage_molecule_screening() -> dict:
+    """Stage 13: Screen new targets against ChEMBL/PubChem for bioactive compounds."""
+    logger.info("Stage 13: Molecule screening (ChEMBL/PubChem)")
+    start = datetime.now(timezone.utc)
+    try:
+        from sma_platform.reasoning.molecule_screener import screen_all_targets
+        result = await screen_all_targets(skip_existing=True, batch_size=21)
+    except ImportError:
+        result = {"skipped": True, "reason": "molecule_screener module not yet available"}
+    except Exception as e:
+        result = {"error": str(e)}
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration"] = round(duration, 1)
+    logger.info("Molecule screening: %s", result)
+    return result
+
+
 STATS_TABLES = frozenset({"sources", "targets", "drugs", "trials", "datasets", "claims", "evidence", "hypotheses"})
 
 
@@ -230,9 +295,13 @@ async def notify_slack(results: dict, stats: dict, total_duration: float) -> Non
         relink = results.get("relink", {})
         graph_exp = results.get("graph_expansion", {})
         scoring = results.get("scoring", {})
+        search_idx = results.get("search_reindex", {})
+        bb_cleanup = results.get("blackboard_cleanup", {})
+        hyp_conv = results.get("hypothesis_convergence", {})
+        mol_screen = results.get("molecule_screening", {})
 
         text = (
-            f"*SMA Research Pipeline — Daily Report*\n"
+            f"*SMA Research Pipeline — Daily Report (13-stage)*\n"
             f"_{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}_\n\n"
             f"*Stage 1 — PubMed*: {pubmed.get('new', 0)} new papers, {pubmed.get('updated', 0)} updated\n"
             f"*Stage 2 — Trials*: {trials.get('new', 0)} new, {trials.get('updated', 0)} updated (total: {trials.get('trials_found', 0)})\n"
@@ -242,7 +311,11 @@ async def notify_slack(results: dict, stats: dict, total_duration: float) -> Non
             f"*Stage 6 — Drug Outcomes*: {drug_outcomes.get('outcomes_extracted', 0)} outcomes from {drug_outcomes.get('sources_processed', 0)} papers\n"
             f"*Stage 7 — Relinking*: {relink.get('claims_updated', 0)}/{relink.get('claims_checked', 0)} claims linked to targets\n"
             f"*Stage 8 — Graph*: {graph_exp.get('total_new_edges', 0)} new edges (total: {graph_exp.get('total_edges', 0)})\n"
-            f"*Stage 9 — Scoring*: {scoring.get('claims_rescored', 0)} claims rescored\n\n"
+            f"*Stage 9 — Scoring*: {scoring.get('claims_rescored', 0)} claims rescored\n"
+            f"*Stage 10 — Search*: {search_idx.get('claims_count', 0)} claims + {search_idx.get('sources_count', 0)} sources indexed ({search_idx.get('build_time_secs', '?')}s)\n"
+            f"*Stage 11 — Blackboard*: {bb_cleanup.get('deleted', 0)} expired messages cleaned\n"
+            f"*Stage 12 — Convergence*: {hyp_conv.get('hypotheses_generated', hyp_conv.get('skipped', 0))} new hypotheses from evidence convergence\n"
+            f"*Stage 13 — Molecules*: {mol_screen.get('targets_screened', 0)} targets screened, {mol_screen.get('targets_skipped', 0)} skipped\n\n"
             f"*Platform Totals*: {stats.get('sources', 0)} papers | {stats.get('claims', 0)} claims | "
             f"{stats.get('hypotheses', 0)} hypotheses | {stats.get('trials', 0)} trials\n"
             f"Total pipeline time: {total_duration:.0f}s"
@@ -290,6 +363,10 @@ async def main():
         ("relink", stage_relink),
         ("graph_expansion", stage_graph_expansion),
         ("scoring", stage_scoring),
+        ("search_reindex", stage_search_reindex),
+        ("blackboard_cleanup", stage_blackboard_cleanup),
+        ("hypothesis_convergence", stage_hypothesis_convergence),
+        ("molecule_screening", stage_molecule_screening),
     ]
 
     for name, stage_fn in stages:

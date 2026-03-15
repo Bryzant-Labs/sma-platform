@@ -225,6 +225,24 @@ async def rank_all_candidates(top_n: int = 50) -> dict[str, Any]:
            WHERE ge.relation LIKE 'compound_bioactivity:%'"""
     )
 
+    # Also load top compounds from molecule_screenings (capped at 500)
+    mol_screen_rows = []
+    try:
+        mol_screen_rows = await fetch(
+            """SELECT DISTINCT ON (chembl_id)
+                      chembl_id, smiles, pchembl_value, target_symbol,
+                      molecular_weight, alogp
+               FROM molecule_screenings
+               WHERE drug_likeness_pass = TRUE
+                 AND smiles IS NOT NULL AND smiles != ''
+                 AND chembl_id IS NOT NULL
+               ORDER BY chembl_id, pchembl_value DESC NULLS LAST
+               LIMIT 500"""
+        )
+        logger.info("Loaded %d compounds from molecule_screenings", len(mol_screen_rows))
+    except Exception as exc:
+        logger.warning("Could not load molecule_screenings: %s", exc)
+
     candidates = []
     seen = set()
 
@@ -319,6 +337,88 @@ async def rank_all_candidates(top_n: int = 50) -> dict[str, Any]:
             "repurposing_score": repurp["repurposing_score"] if repurp else None,
             "repurposing_rationale": repurp["rationale"][:150] if repurp else None,
         })
+
+    # --- Add compounds from molecule_screenings (not already seen) ---
+    for mrow in mol_screen_rows:
+        md = dict(mrow)
+        cid = md.get("chembl_id", "")
+        smiles = md.get("smiles", "")
+        target_sym = md.get("target_symbol", "")
+        pchembl_val = md.get("pchembl_value")
+
+        if not cid or not smiles or cid in seen:
+            continue
+        seen.add(cid)
+
+        profile = compute_molecular_profile(smiles, cid)
+        if profile is None:
+            continue
+
+        screening_data = {
+            "chembl_id": cid,
+            "smiles": smiles,
+            "mw": round(profile.mw, 1),
+            "logp": round(profile.logp, 2),
+            "qed": round(profile.qed, 3),
+            "cns_mpo": round(profile.cns_mpo, 1),
+            "bbb_permeable": profile.bbb_permeable,
+            "lipinski_pass": profile.lipinski_pass,
+            "pains_alert": profile.pains_alert,
+            "pchembl": float(pchembl_val) if pchembl_val else None,
+            "target": target_sym,
+        }
+
+        admet_profile = predict_admet(smiles, cid)
+        admet_data = None
+        if admet_profile:
+            admet_data = {
+                "admet_score": admet_profile.admet_score,
+                "bbb_score": admet_profile.bbb_score,
+                "hia_score": admet_profile.hia_score,
+                "herg_risk": admet_profile.herg_risk,
+                "ames_risk": admet_profile.ames_risk,
+                "hepatotox_risk": admet_profile.hepatotox_risk,
+                "flags": admet_profile.flags,
+            }
+
+        repurp = repurposing_data.get(cid.lower())
+        t_score = target_scores.get(target_sym, 0)
+        integrated = _compute_integrated_score(
+            screening_data, admet_data, repurp, t_score
+        )
+
+        if integrated >= 0.6:
+            tier = "A"
+        elif integrated >= 0.4:
+            tier = "B"
+        else:
+            tier = "C"
+
+        candidates.append({
+            "rank": 0,
+            "chembl_id": cid,
+            "smiles": smiles[:80],
+            "target": target_sym,
+            "integrated_score": integrated,
+            "tier": tier,
+            "qed": screening_data["qed"],
+            "cns_mpo": screening_data["cns_mpo"],
+            "bbb_permeable": screening_data["bbb_permeable"],
+            "lipinski_pass": screening_data["lipinski_pass"],
+            "pains_alert": screening_data["pains_alert"],
+            "mw": screening_data["mw"],
+            "logp": screening_data["logp"],
+            "pchembl": screening_data["pchembl"],
+            "admet_score": admet_data["admet_score"] if admet_data else None,
+            "herg_risk": admet_data["herg_risk"] if admet_data else None,
+            "ames_risk": admet_data["ames_risk"] if admet_data else None,
+            "flags": admet_data["flags"] if admet_data else [],
+            "target_score": round(t_score, 4),
+            "repurposing_score": repurp["repurposing_score"] if repurp else None,
+            "repurposing_rationale": repurp["rationale"][:150] if repurp else None,
+        })
+
+    logger.info("Total candidates: %d (graph_edges + molecule_screenings)", len(candidates))
 
     # Sort by integrated score
     candidates.sort(key=lambda x: x["integrated_score"], reverse=True)

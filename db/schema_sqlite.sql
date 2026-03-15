@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS sources (
     id          TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-    source_type TEXT NOT NULL CHECK (source_type IN ('pubmed', 'clinicaltrials', 'geo', 'pride', 'knowledgebase', 'preprint', 'manual')),
+    source_type TEXT NOT NULL CHECK (source_type IN ('pubmed', 'clinicaltrials', 'geo', 'pride', 'knowledgebase', 'preprint', 'manual', 'patent')),
     external_id TEXT NOT NULL,
     title       TEXT,
     authors     TEXT,  -- JSON array as string

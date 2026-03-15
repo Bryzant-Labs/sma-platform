@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 
 from ...reasoning.blackboard import (
     cleanup_expired,
+    ensure_table,
     get_agent_activity,
     get_messages,
     get_unread_count,
@@ -84,6 +85,7 @@ async def list_messages(
 async def blackboard_stats():
     """Aggregate statistics: counts by type, by agent, total, and recent activity."""
     try:
+        await ensure_table()
         by_type = await fetch(
             "SELECT message_type, COUNT(*) AS cnt FROM agent_messages GROUP BY message_type ORDER BY cnt DESC"
         )

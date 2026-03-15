@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from sma_platform.core.config import settings
 from sma_platform.core.database import close_pool, execute, init_pool
-from sma_platform.ingestion.adapters import clinicaltrials, pubmed
+from sma_platform.ingestion.adapters import biorxiv, clinicaltrials, pubmed
 
 logging.basicConfig(
     level=logging.INFO,
@@ -115,12 +115,58 @@ async def ingest_trials():
     logger.info("Trials: found=%d new=%d updated=%d errors=%d (%.1fs)", len(trials), new_count, updated_count, len(errors), duration)
 
 
+async def ingest_biorxiv(days_back: int = 7):
+    """Scan bioRxiv + medRxiv for SMA preprints."""
+    logger.info("Starting bioRxiv/medRxiv scan (days_back=%d)", days_back)
+    start = datetime.now(timezone.utc)
+
+    try:
+        preprints = await biorxiv.scan_preprints(days_back=days_back)
+    except Exception as e:
+        logger.error("bioRxiv scan failed: %s", e)
+        return
+
+    new_count = 0
+    updated_count = 0
+    errors: list[str] = []
+
+    for p in preprints:
+        try:
+            result = await execute(
+                """INSERT INTO sources (source_type, external_id, title, authors, journal, pub_date, doi, url, abstract)
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                   ON CONFLICT (source_type, external_id) DO UPDATE
+                   SET title = excluded.title, abstract = excluded.abstract, updated_at = CURRENT_TIMESTAMP""",
+                "biorxiv", p["doi"], p["title"],
+                json.dumps(p["authors"]), p.get("server", "biorxiv"),
+                p.get("posted_date"), p["doi"], p["url"], p["abstract"],
+            )
+            if "INSERT" in str(result):
+                new_count += 1
+            else:
+                updated_count += 1
+        except Exception as e:
+            errors.append(f"DOI {p.get('doi')}: {e}")
+
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+
+    await execute(
+        """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+        "biorxiv", "daily_preprint_scan", len(preprints), new_count, updated_count,
+        json.dumps(errors[:10]) if errors else None, duration,
+    )
+    logger.info("bioRxiv: found=%d new=%d updated=%d errors=%d (%.1fs)",
+                len(preprints), new_count, updated_count, len(errors), duration)
+
+
 async def main():
     logger.info("=== Daily SMA ingestion started ===")
     await init_pool(settings.database_url)
 
     await ingest_trials()
     await ingest_pubmed(days_back=7)
+    await ingest_biorxiv(days_back=7)
 
     await close_pool()
     logger.info("=== Daily ingestion complete ===")

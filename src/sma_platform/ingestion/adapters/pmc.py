@@ -15,6 +15,7 @@ from xml.etree import ElementTree
 
 import httpx
 
+from ...core.config import settings
 from ...core.database import execute, fetch, fetchrow
 
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 EUROPEPMC_BASE = "https://www.ebi.ac.uk/europepmc/webservices/rest"
 NCBI_EFETCH = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 UNPAYWALL_BASE = "https://api.unpaywall.org/v2"
-UNPAYWALL_EMAIL = "christian@bryzant.com"
+UNPAYWALL_EMAIL = getattr(settings, 'ncbi_email', 'christian@bryzant.com')
 
 
 def _strip_xml_tags(xml_text: str) -> str:

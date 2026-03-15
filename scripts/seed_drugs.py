@@ -85,8 +85,13 @@ async def seed():
 
     for d in DRUGS:
         await execute(
-            """INSERT OR REPLACE INTO drugs (name, brand_names, drug_type, mechanism, approval_status, approved_for, manufacturer)
-               VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+            """INSERT INTO drugs (name, brand_names, drug_type, mechanism, approval_status, approved_for, manufacturer)
+               VALUES ($1, $2, $3, $4, $5, $6, $7)
+               ON CONFLICT (name) DO UPDATE
+               SET brand_names = excluded.brand_names, drug_type = excluded.drug_type,
+                   mechanism = excluded.mechanism, approval_status = excluded.approval_status,
+                   approved_for = excluded.approved_for, manufacturer = excluded.manufacturer,
+                   updated_at = CURRENT_TIMESTAMP""",
             d["name"], json.dumps(d["brand_names"]), d["drug_type"], d["mechanism"],
             d["approval_status"], json.dumps(d["approved_for"]), d["manufacturer"],
         )

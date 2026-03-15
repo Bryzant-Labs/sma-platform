@@ -11,6 +11,7 @@ Scoring is based on:
 from __future__ import annotations
 
 import logging
+import math
 from typing import Any
 from uuid import UUID
 
@@ -68,9 +69,9 @@ async def score_claim(claim_id: UUID) -> float:
         if p_val is not None and p_val < 0.05:
             p_bonus = 0.1 if p_val < 0.01 else 0.05
 
-        # Sample size factor
+        # Sample size factor (logarithmic: n=10→0.33, n=100→0.67, n=1000→1.0)
         n = ev.get("sample_size") or 0
-        n_factor = min(1.0, n / 100) if n > 0 else 0.5
+        n_factor = min(1.0, math.log10(n + 1) / 3.0) if n > 0 else 0.3
 
         score = (method_w + p_bonus) * n_factor
         weight = 1.0  # could weight by source tier later
@@ -96,11 +97,26 @@ async def update_claim_confidence(claim_id: UUID) -> float:
 
 
 async def score_all_claims() -> dict[str, int]:
-    """Batch-recompute confidence for all claims. Returns stats."""
+    """Batch-recompute confidence for all claims. Returns stats.
+
+    NOTE: This function has an inherent N+1 pattern — each call to
+    update_claim_confidence() issues its own SELECT + UPDATE against the DB.
+    The scoring formula itself requires per-claim evidence rows, so a single
+    bulk query cannot replace it without restructuring the scoring logic.
+    As a lightweight mitigation, claims are processed in chunks of 100 so
+    that each chunk's work is localised and avoids holding a single long-lived
+    implicit transaction across thousands of rows.
+    """
     rows = await fetch("SELECT id FROM claims")
     updated = 0
-    for row in rows:
-        await update_claim_confidence(row["id"])
-        updated += 1
+    chunk_size = 100
+
+    for i in range(0, len(rows), chunk_size):
+        chunk = rows[i : i + chunk_size]
+        for row in chunk:
+            await update_claim_confidence(row["id"])
+            updated += 1
+        logger.debug("Rescored claims %d–%d", i + 1, i + len(chunk))
+
     logger.info(f"Rescored {updated} claims")
     return {"claims_rescored": updated}

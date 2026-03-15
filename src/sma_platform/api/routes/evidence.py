@@ -10,7 +10,14 @@ from ...core.database import fetch, fetchrow
 
 router = APIRouter()
 
-MAX_LIMIT = 50000
+MAX_LIMIT = 5000
+
+VALID_CLAIM_TYPES = {
+    "gene_expression", "protein_interaction", "pathway_membership",
+    "drug_target", "drug_efficacy", "biomarker", "splicing_event",
+    "neuroprotection", "motor_function", "survival", "safety", "other",
+    "functional_interaction",
+}
 
 
 @router.get("/evidence")
@@ -33,16 +40,97 @@ async def list_evidence(
     return [dict(r) for r in rows]
 
 
+@router.get("/claims/count")
+async def claims_count(
+    claim_type: str | None = None,
+    confidence_min: float | None = Query(default=None, ge=0, le=1),
+    confidence_max: float | None = Query(default=None, ge=0, le=1),
+    target: str | None = None,
+    q: str | None = Query(default=None, max_length=200),
+):
+    """Get claim counts with optional filters — used for pagination."""
+    wheres: list[str] = []
+    params: list = []
+    idx = 1
+
+    if claim_type and claim_type in VALID_CLAIM_TYPES:
+        wheres.append(f"c.claim_type = ${idx}")
+        params.append(claim_type)
+        idx += 1
+    if confidence_min is not None:
+        wheres.append(f"c.confidence >= ${idx}")
+        params.append(confidence_min)
+        idx += 1
+    if confidence_max is not None:
+        wheres.append(f"c.confidence <= ${idx}")
+        params.append(confidence_max)
+        idx += 1
+    if target:
+        wheres.append(f"CAST(c.metadata AS TEXT) LIKE ${idx}")
+        params.append(f'%"{target.upper()}"%')
+        idx += 1
+    if q:
+        wheres.append(f"LOWER(c.predicate) LIKE ${idx}")
+        params.append(f"%{q.lower()}%")
+        idx += 1
+
+    where_clause = " WHERE " + " AND ".join(wheres) if wheres else ""
+
+    total_row = await fetchrow(
+        f"SELECT count(*) AS total FROM claims c{where_clause}", *params
+    )
+    total = total_row["total"] if total_row else 0
+
+    # Type breakdown
+    type_rows = await fetch(
+        f"SELECT c.claim_type, count(*) AS cnt FROM claims c{where_clause} GROUP BY c.claim_type ORDER BY cnt DESC",
+        *params,
+    )
+    by_type = {r["claim_type"]: r["cnt"] for r in type_rows}
+
+    return {"total": total, "by_type": by_type}
+
+
 @router.get("/claims")
 async def list_claims(
     claim_type: str | None = None,
+    confidence_min: float | None = Query(default=None, ge=0, le=1),
+    confidence_max: float | None = Query(default=None, ge=0, le=1),
+    target: str | None = None,
+    q: str | None = Query(default=None, max_length=200),
     enriched: bool = Query(default=False),
-    limit: int = Query(default=100, ge=1, le=MAX_LIMIT),
+    limit: int = Query(default=50, ge=1, le=MAX_LIMIT),
     offset: int = Query(default=0, ge=0),
 ):
-    """List claims, optionally enriched with source paper details."""
+    """List claims with filters, optionally enriched with source paper details."""
+    wheres: list[str] = []
+    params: list = []
+    idx = 1
+
+    if claim_type and claim_type in VALID_CLAIM_TYPES:
+        wheres.append(f"c.claim_type = ${idx}")
+        params.append(claim_type)
+        idx += 1
+    if confidence_min is not None:
+        wheres.append(f"c.confidence >= ${idx}")
+        params.append(confidence_min)
+        idx += 1
+    if confidence_max is not None:
+        wheres.append(f"c.confidence <= ${idx}")
+        params.append(confidence_max)
+        idx += 1
+    if target:
+        wheres.append(f"CAST(c.metadata AS TEXT) LIKE ${idx}")
+        params.append(f'%"{target.upper()}"%')
+        idx += 1
+    if q:
+        wheres.append(f"LOWER(c.predicate) LIKE ${idx}")
+        params.append(f"%{q.lower()}%")
+        idx += 1
+
+    where_clause = " WHERE " + " AND ".join(wheres) if wheres else ""
+
     if enriched:
-        # JOIN through evidence → sources to get paper context
         base = """SELECT c.id, c.claim_type, c.subject_id, c.subject_type,
                          c.predicate, c.object_id, c.object_type, c.value,
                          c.confidence, c.metadata, c.created_at,
@@ -54,27 +142,19 @@ async def list_claims(
                   FROM claims c
                   LEFT JOIN evidence e ON e.claim_id = c.id
                   LEFT JOIN sources s ON e.source_id = s.id"""
-        if claim_type:
-            rows = await fetch(
-                base + " WHERE c.claim_type = $1 ORDER BY c.confidence DESC LIMIT $2 OFFSET $3",
-                claim_type, limit, offset,
-            )
-        else:
-            rows = await fetch(
-                base + " ORDER BY c.confidence DESC LIMIT $1 OFFSET $2",
-                limit, offset,
-            )
     else:
-        if claim_type:
-            rows = await fetch(
-                "SELECT * FROM claims WHERE claim_type = $1 ORDER BY confidence DESC LIMIT $2 OFFSET $3",
-                claim_type, limit, offset,
-            )
-        else:
-            rows = await fetch(
-                "SELECT * FROM claims ORDER BY confidence DESC LIMIT $1 OFFSET $2",
-                limit, offset,
-            )
+        base = "SELECT * FROM claims c"
+
+    params.append(limit)
+    limit_idx = idx
+    idx += 1
+    params.append(offset)
+    offset_idx = idx
+
+    rows = await fetch(
+        base + where_clause + f" ORDER BY c.confidence DESC LIMIT ${limit_idx} OFFSET ${offset_idx}",
+        *params,
+    )
     return [dict(r) for r in rows]
 
 

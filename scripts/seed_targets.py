@@ -96,7 +96,7 @@ async def seed():
                VALUES ($1, $2, $3, $4, $5, $6)
                ON CONFLICT (symbol, target_type, organism) DO UPDATE
                SET name = excluded.name, identifiers = excluded.identifiers,
-                   description = excluded.description, updated_at = datetime('now')""",
+                   description = excluded.description, updated_at = CURRENT_TIMESTAMP""",
             t["symbol"], t["name"], t["target_type"], "Homo sapiens",
             json.dumps(t["identifiers"]), t["description"],
         )

@@ -9,7 +9,22 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, Query
 
 from ...core.database import execute, fetch, fetchrow
-from ...ingestion.adapters import chembl, clinicaltrials, kegg, pmc, pubmed, string_db, uniprot
+from ...ingestion.adapters import biorxiv, chembl, clinicaltrials, kegg, pmc, pubmed, string_db, uniprot
+
+from datetime import date as _date_type
+
+
+def _parse_date_str(s: str | None) -> _date_type | None:
+    """Parse a YYYY-MM-DD string into a date object for asyncpg."""
+    if not s:
+        return None
+    try:
+        parts = s.split("-")
+        if len(parts) == 3:
+            return _date_type(int(parts[0]), int(parts[1]), int(parts[2]))
+    except (ValueError, IndexError):
+        pass
+    return None
 from ...reasoning.claim_extractor import process_all_unprocessed, relink_all_claims
 from ...reasoning.failure_extractor import process_all_drug_outcomes
 from ...reasoning.graph_expander import expand_graph
@@ -73,6 +88,59 @@ async def trigger_pubmed_ingestion(days_back: int = Query(default=7, ge=1, le=36
     }
 
 
+@router.post("/ingest/biorxiv", dependencies=[Depends(require_admin_key)])
+async def trigger_biorxiv_ingestion(days_back: int = Query(default=7, ge=1, le=90)):
+    """Scan bioRxiv + medRxiv for SMA-relevant preprints and store as sources."""
+    start = datetime.now(timezone.utc)
+    preprints = await biorxiv.scan_preprints(days_back=days_back)
+
+    new_count = 0
+    updated_count = 0
+    errors: list[str] = []
+
+    for p in preprints:
+        try:
+            result = await execute(
+                """INSERT INTO sources (source_type, external_id, title, authors, journal, pub_date, doi, url, abstract)
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                   ON CONFLICT (source_type, external_id) DO UPDATE
+                   SET title = excluded.title, abstract = excluded.abstract, updated_at = CURRENT_TIMESTAMP""",
+                "biorxiv",
+                p["doi"],
+                p["title"],
+                json.dumps(p["authors"]),
+                p.get("server", "biorxiv"),
+                p.get("posted_date"),
+                p["doi"],
+                p["url"],
+                p["abstract"],
+            )
+            if "INSERT" in str(result):
+                new_count += 1
+            else:
+                updated_count += 1
+        except Exception as e:
+            errors.append(f"DOI {p.get('doi')}: {e}")
+
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+
+    await execute(
+        """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+        "biorxiv", "sma_preprint_scan", len(preprints), new_count, updated_count,
+        json.dumps(errors[:10]) if errors else None, duration,
+    )
+
+    return {
+        "source": "biorxiv+medrxiv",
+        "papers_found": len(preprints),
+        "new": new_count,
+        "updated": updated_count,
+        "errors": len(errors),
+        "duration_secs": round(duration, 2),
+    }
+
+
 @router.post("/ingest/trials", dependencies=[Depends(require_admin_key)])
 async def trigger_trials_ingestion():
     """Pull all SMA clinical trials from ClinicalTrials.gov."""
@@ -126,6 +194,257 @@ async def trigger_trials_ingestion():
         "trials_found": len(trials),
         "new": new_count,
         "updated": updated_count,
+        "errors": len(errors),
+        "duration_secs": round(duration, 2),
+    }
+
+
+@router.post("/ingest/trial-results", dependencies=[Depends(require_admin_key)])
+async def trigger_trial_results_ingestion():
+    """Fetch results for completed SMA trials and store as sources for claim extraction.
+
+    Calls ClinicalTrials.gov v2 API for all completed SMA trials that have posted
+    results (outcome measures, adverse events, participant flow).  Each trial's
+    ``results_summary`` text is stored in ``sources.abstract`` so the normal
+    ``/extract/claims`` pipeline can pick it up.
+    """
+    start = datetime.now(timezone.utc)
+    trial_results = await clinicaltrials.fetch_all_sma_trial_results()
+
+    new_count = 0
+    updated_count = 0
+    claims_extracted = 0
+    errors: list[str] = []
+
+    for tr in trial_results:
+        nct_id = tr["nct_id"]
+        try:
+            # Store as a source record so claim_extractor can process the results_summary
+            result = await execute(
+                """INSERT INTO sources (source_type, external_id, title, authors, journal, pub_date, doi, url, abstract, metadata)
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                   ON CONFLICT (source_type, external_id) DO UPDATE
+                   SET title = excluded.title, abstract = excluded.abstract,
+                       metadata = excluded.metadata, updated_at = CURRENT_TIMESTAMP""",
+                "clinicaltrials",
+                f"{nct_id}_results",
+                tr["title"],
+                [],  # no individual authors for trial results (text[] column)
+                "ClinicalTrials.gov Results",
+                _parse_date_str(tr.get("results_first_posted")),
+                None,  # no DOI for trial results
+                tr["url"],
+                tr.get("results_summary", ""),
+                json.dumps({
+                    "phase": tr.get("phase"),
+                    "status": tr.get("status"),
+                    "outcome_count": len(tr.get("outcome_measures", [])),
+                    "adverse_event_groups": len(tr.get("adverse_events", [])),
+                    "has_participant_flow": bool(tr.get("participant_flow")),
+                    "last_update_posted": tr.get("last_update_posted"),
+                }),
+            )
+            if "INSERT" in str(result):
+                new_count += 1
+            else:
+                updated_count += 1
+
+            # Also update the trials table results_summary if the trial exists there
+            await execute(
+                """UPDATE trials SET results_summary = $1, updated_at = CURRENT_TIMESTAMP
+                   WHERE nct_id = $2""",
+                tr.get("results_summary", ""),
+                nct_id,
+            )
+        except Exception as e:
+            errors.append(f"NCT {nct_id}: {e}")
+            logger.error("Failed to store trial results for %s: %s", nct_id, e)
+
+    # Trigger claim extraction on the newly stored trial result sources
+    try:
+        claim_result = await process_all_unprocessed()
+        claims_extracted = claim_result.get("claims_extracted", 0)
+    except Exception as e:
+        errors.append(f"Claim extraction: {e}")
+        logger.error("Claim extraction after trial results failed: %s", e)
+
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+
+    await execute(
+        """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+        "clinicaltrials_results", "sma_trial_results", len(trial_results), new_count, updated_count,
+        json.dumps(errors[:10]) if errors else None, duration,
+    )
+
+    return {
+        "source": "clinicaltrials_results",
+        "trials_checked": len(trial_results) + updated_count,
+        "results_found": new_count + updated_count,
+        "claims_extracted": claims_extracted,
+        "new": new_count,
+        "updated": updated_count,
+        "errors": len(errors),
+        "duration_secs": round(duration, 2),
+    }
+
+
+@router.post("/ingest/patents", dependencies=[Depends(require_admin_key)])
+async def trigger_patent_ingestion(
+    json_path: str = Query(default="", description="Path to pre-fetched JSON file (Google Patents blocks server IPs)"),
+):
+    """Import SMA-related patents into the sources table.
+
+    Google Patents blocks server IPs (returns 503), so patents should be
+    fetched locally and uploaded as JSON.  Two modes:
+
+    1. **json_path** (recommended): Import from a pre-fetched JSON file on disk.
+       Fetch locally: ``python -c "import asyncio; from sma_platform.ingestion.adapters.patents import fetch_all_sma_patents; print(asyncio.run(fetch_all_sma_patents()))"``
+       Then SCP the JSON to the server and pass the path.
+
+    2. **No json_path**: Attempt live fetch via Google Patents XHR (will fail from most servers).
+    """
+    try:
+        from ...ingestion.adapters import patents
+    except (ImportError, ModuleNotFoundError):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=501, detail="Patents adapter not deployed yet.")
+
+    import pathlib
+
+    start = datetime.now(timezone.utc)
+
+    if json_path:
+        # Import from pre-fetched JSON file
+        p = pathlib.Path(json_path)
+        if not p.exists():
+            return {"error": f"File not found: {json_path}"}, 404
+        all_patents = json.loads(p.read_text())
+        logger.info("Importing %d patents from %s", len(all_patents), json_path)
+    else:
+        # Try live fetch (may fail from server IPs)
+        all_patents = await patents.fetch_all_sma_patents()
+
+    new_count = 0
+    updated_count = 0
+    errors: list[str] = []
+
+    for pat in all_patents:
+        try:
+            summary = patents.build_patent_summary(pat)
+            result = await execute(
+                """INSERT INTO sources (source_type, external_id, title, authors, journal, pub_date, doi, url, abstract)
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                   ON CONFLICT (source_type, external_id) DO UPDATE
+                   SET title = excluded.title, abstract = excluded.abstract, updated_at = CURRENT_TIMESTAMP""",
+                "patent",
+                pat["patent_id"],
+                pat.get("title", ""),
+                pat.get("assignees", []),  # text[] column
+                "US Patent",
+                pat.get("grant_date"),
+                None,
+                pat.get("url", ""),
+                summary,
+            )
+            if "INSERT" in str(result):
+                new_count += 1
+            else:
+                updated_count += 1
+        except Exception as e:
+            errors.append(f"Patent {pat.get('patent_id')}: {e}")
+
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+
+    await execute(
+        """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+        "patents", "sma_patents", len(all_patents), new_count, updated_count,
+        json.dumps(errors[:10]) if errors else None, duration,
+    )
+
+    return {
+        "source": "patents",
+        "patents_found": len(all_patents),
+        "new": new_count,
+        "updated": updated_count,
+        "errors": len(errors),
+        "duration_secs": round(duration, 2),
+    }
+
+
+@router.post("/ingest/structures", dependencies=[Depends(require_admin_key)])
+async def trigger_structure_ingestion():
+    """Fetch AlphaFold protein structure predictions for core SMA proteins.
+
+    Uses the pre-defined SMA_PROTEINS mapping (SMN1, SMN2, PLS3, STMN2,
+    NCALD, UBA1, CORO1C) to fetch structure predictions and pLDDT scores.
+    Stores structure metadata on the corresponding target records.
+    """
+    try:
+        from ...ingestion.adapters import alphafold
+    except (ImportError, ModuleNotFoundError):
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=501,
+            detail="AlphaFold adapter not deployed yet.",
+        )
+
+    start = datetime.now(timezone.utc)
+    errors: list[str] = []
+
+    # Fetch all SMA protein structures
+    structures = await alphafold.fetch_sma_protein_structures()
+
+    # Map symbols to target IDs
+    targets = await fetch("SELECT id, symbol FROM targets WHERE target_type = 'gene'")
+    symbol_to_id = {t["symbol"]: str(t["id"]) for t in targets}
+
+    updated_count = 0
+    for structure in structures:
+        symbol = structure.get("symbol", "")
+        target_id = symbol_to_id.get(symbol)
+        if not target_id:
+            continue
+
+        try:
+            summary = alphafold.build_structure_summary(structure)
+            await execute(
+                """UPDATE targets SET metadata = jsonb_set(
+                       COALESCE(metadata, '{}')::jsonb,
+                       '{alphafold}',
+                       $1::jsonb
+                   ), updated_at = CURRENT_TIMESTAMP
+                   WHERE id = $2""",
+                json.dumps({
+                    "uniprot_id": structure.get("uniprot_id"),
+                    "mean_plddt": structure.get("mean_plddt"),
+                    "model_url": structure.get("model_url"),
+                    "cif_url": structure.get("cif_url"),
+                    "sequence_length": structure.get("sequence_length"),
+                    "summary": summary,
+                }),
+                target_id,
+            )
+            updated_count += 1
+        except Exception as e:
+            errors.append(f"{symbol}: {e}")
+            logger.error("AlphaFold store failed for %s: %s", symbol, e)
+
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+
+    await execute(
+        """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+        "alphafold", "sma_structures", len(alphafold.SMA_PROTEINS), updated_count, 0,
+        json.dumps(errors[:10]) if errors else None, duration,
+    )
+
+    return {
+        "source": "alphafold",
+        "proteins_queried": len(alphafold.SMA_PROTEINS),
+        "structures_found": len(structures),
+        "targets_updated": updated_count,
         "errors": len(errors),
         "duration_secs": round(duration, 2),
     }
@@ -213,6 +532,7 @@ async def trigger_network_ingestion():
 
     # --- KEGG pathway genes ---
     kegg_edges = 0
+    our_kegg_genes: set[str] = set()
     try:
         pathway_genes = await kegg.fetch_pathway_genes()
         # Find which KEGG genes overlap with our targets
@@ -262,7 +582,7 @@ async def trigger_network_ingestion():
         "string_edges": string_edges,
         "kegg_edges": kegg_edges,
         "kegg_pathway_genes": len(kegg_gene_list) if kegg_gene_list else 0,
-        "our_genes_in_kegg": len(our_kegg_genes) if 'our_kegg_genes' in dir() else 0,
+        "our_genes_in_kegg": len(our_kegg_genes),
         "errors": errors,
         "duration_secs": round(duration, 2),
     }

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 from uuid import UUID
 
@@ -87,6 +88,8 @@ async def get_drug_by_name(name: str):
 @router.get("/drugs/{drug_id}/trials")
 async def get_drug_trials(drug_id: str):
     """Get clinical trials related to a specific drug."""
+    if not re.match(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', drug_id, re.I):
+        raise HTTPException(status_code=400, detail="Invalid UUID format")
     drug = await fetchrow("SELECT * FROM drugs WHERE id = $1", drug_id)
     if not drug:
         raise HTTPException(404, "Drug not found")
@@ -148,4 +151,6 @@ async def create_drug(body: DrugCreate):
             json.dumps(body.approved_for), body.manufacturer, json.dumps(body.metadata),
         )
     row = await fetchrow("SELECT * FROM drugs WHERE name = $1", body.name.lower())
+    if not row:
+        raise HTTPException(500, "Failed to create drug")
     return dict(row)

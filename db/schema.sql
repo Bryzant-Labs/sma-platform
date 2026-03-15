@@ -11,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE sources (
     id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    source_type TEXT NOT NULL CHECK (source_type IN ('pubmed', 'clinicaltrials', 'geo', 'pride', 'knowledgebase', 'preprint', 'manual')),
+    source_type TEXT NOT NULL CHECK (source_type IN ('pubmed', 'clinicaltrials', 'geo', 'pride', 'knowledgebase', 'preprint', 'manual', 'patent')),
     external_id TEXT NOT NULL,               -- PMID, NCT number, GSE accession, etc.
     title       TEXT,
     authors     TEXT[],

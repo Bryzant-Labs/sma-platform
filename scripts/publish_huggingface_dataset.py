@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("hf-publish")
 
-REPO_ID = "Bryzant-Labs/sma-evidence-graph"
+REPO_ID = "SMAResearch/sma-evidence-graph"
 EXPORT_DIR = Path(__file__).parent.parent / "data" / "hf-export"
 
 TABLES = [
@@ -36,6 +36,8 @@ TABLES = [
     ("hypotheses", "SELECT id, hypothesis_type, title, description, rationale, supporting_evidence, confidence, status, generated_by, metadata, created_at FROM hypotheses ORDER BY confidence DESC"),
     ("graph_edges", "SELECT id, src_id, dst_id, relation, direction, confidence, metadata, created_at FROM graph_edges ORDER BY confidence DESC"),
     ("drug_outcomes", "SELECT id, compound_name, target, mechanism, outcome, failure_reason, failure_detail, trial_phase, model_system, key_finding, confidence, source_id, created_at FROM drug_outcomes ORDER BY compound_name"),
+    ("molecule_screenings", "SELECT id, target_symbol, chembl_id, pubchem_cid, compound_name, smiles, pchembl_value, activity_type, molecular_weight, alogp, source, drug_likeness_pass, metadata, screened_by, created_at FROM molecule_screenings ORDER BY pchembl_value DESC NULLS LAST"),
+    ("splice_variants", "SELECT id, position, region, ref_base, alt_base, variant_id, splice_site_proximity, motif_disruption, conservation, therapeutic_relevance, composite_score, annotation, metadata FROM splice_variants ORDER BY composite_score DESC"),
 ]
 
 DATASET_CARD = """---
@@ -84,6 +86,9 @@ by making the evidence landscape machine-readable and openly accessible.
 | `evidence` | Links between claims and source papers | {evidence_count} |
 | `hypotheses` | Generated hypothesis cards per target | {hypotheses_count} |
 | `graph_edges` | Knowledge graph edges (STRING, KEGG, ChEMBL) | {edges_count} |
+| `drug_outcomes` | Structured drug success/failure database | {outcomes_count} |
+| `molecule_screenings` | ChEMBL/PubChem bioactive compounds screened | {mol_screen_count} |
+| `splice_variants` | SMN2 splice variant benchmark (SNVs scored) | {splice_count} |
 
 ## Key Features
 
@@ -115,7 +120,7 @@ by making the evidence landscape machine-readable and openly accessible.
 ```python
 from datasets import load_dataset
 
-ds = load_dataset("Bryzant-Labs/sma-evidence-graph")
+ds = load_dataset("SMAResearch/sma-evidence-graph")
 
 # Access claims
 claims = ds["claims"]
@@ -138,7 +143,7 @@ If you use this dataset, please cite:
   author={{Christian Fischer}},
   year={{2026}},
   publisher={{HuggingFace}},
-  url={{https://huggingface.co/datasets/Bryzant-Labs/sma-evidence-graph}}
+  url={{https://huggingface.co/datasets/SMAResearch/sma-evidence-graph}}
 }}
 ```
 
@@ -224,6 +229,9 @@ def write_dataset_card(counts: dict[str, int]) -> Path:
         evidence_count=counts.get("evidence", 0),
         hypotheses_count=counts.get("hypotheses", 0),
         edges_count=counts.get("graph_edges", 0),
+        outcomes_count=counts.get("drug_outcomes", 0),
+        mol_screen_count=counts.get("molecule_screenings", 0),
+        splice_count=counts.get("splice_variants", 0),
         last_updated=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
     )
     readme_path = EXPORT_DIR / "README.md"

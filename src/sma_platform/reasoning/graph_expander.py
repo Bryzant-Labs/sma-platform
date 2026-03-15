@@ -258,6 +258,106 @@ async def expand_from_conservation() -> dict:
     return {"conservation_edges_created": created, "conservation_edges_skipped": skipped}
 
 
+async def expand_from_analytical_modules() -> dict:
+    """Create edges from curated knowledge in the reasoning/analytical modules.
+
+    Extracts biological relationships from:
+    - Regeneration signatures (regen gene → SMA target)
+    - NMJ signaling (signal → target)
+    - Multisystem SMA (organ → target)
+    - Bioelectric (ion channel → target)
+    - Dual-target (compound → target pairs)
+    - Digital twin (drug → pathway → compartment)
+    """
+    targets = await fetch("SELECT id, symbol FROM targets")
+    symbol_to_id = {dict(t)["symbol"]: str(dict(t)["id"]) for t in targets}
+
+    # Curated analytical edges from reasoning modules
+    # Format: (src_symbol, dst_symbol, relation, effect, confidence, source_module)
+    analytical_edges = [
+        # Phase 7.2: Regeneration signatures — regen genes connect to SMA targets
+        ("PLS3", "NMJ_MATURATION", "regeneration_link", "activates", 0.75, "regeneration_signatures"),
+        ("STMN2", "NMJ_MATURATION", "regeneration_link", "activates", 0.80, "regeneration_signatures"),
+        ("NCALD", "SMN_PROTEIN", "modifier_interaction", "activates", 0.70, "regeneration_signatures"),
+
+        # Phase 7.3: NMJ retrograde signaling — happy muscle hypothesis
+        ("NMJ_MATURATION", "SMN_PROTEIN", "retrograde_signal", "activates", 0.85, "nmj_signaling"),
+        ("NMJ_MATURATION", "PLS3", "retrograde_signal", "activates", 0.70, "nmj_signaling"),
+        ("NMJ_MATURATION", "STMN2", "retrograde_signal", "activates", 0.65, "nmj_signaling"),
+
+        # Phase 7.4: Multisystem SMA — organ system connections
+        ("MTOR_PATHWAY", "SMN_PROTEIN", "metabolic_link", "activates", 0.75, "multisystem_sma"),
+        ("UBA1", "MTOR_PATHWAY", "ubiquitin_regulation", "inhibits", 0.65, "multisystem_sma"),
+        ("LDHA", "MTOR_PATHWAY", "metabolic_link", "activates", 0.60, "multisystem_sma"),
+        ("SPATA18", "MTOR_PATHWAY", "mitochondrial_link", "activates", 0.55, "multisystem_sma"),
+
+        # Phase 7.5: Bioelectric reprogramming — ion channel connections
+        ("NCALD", "NMJ_MATURATION", "bioelectric_link", "activates", 0.70, "bioelectric_module"),
+        ("ANK3", "NMJ_MATURATION", "bioelectric_link", "activates", 0.65, "bioelectric_module"),
+        ("ANK3", "NCALD", "ion_channel_cluster", "associates", 0.60, "bioelectric_module"),
+
+        # Phase 6.1: Dual-target screening — compound-mediated links
+        ("SMN2", "NCALD", "dual_target_candidate", "activates", 0.80, "dual_target"),
+        ("SMN2", "ANK3", "dual_target_candidate", "activates", 0.70, "dual_target"),
+
+        # Phase 9.3: Cross-species splicing — splicing programs
+        ("SMN2", "STMN2", "splicing_program", "activates", 0.85, "splicing_map"),
+        ("SMN2", "PLS3", "splicing_program", "activates", 0.75, "splicing_map"),
+
+        # Phase 10.3: Digital twin — pathway connections
+        ("SMN2", "MTOR_PATHWAY", "pathway_crosstalk", "activates", 0.80, "digital_twin"),
+        ("SMN_PROTEIN", "UBA1", "pathway_crosstalk", "activates", 0.75, "digital_twin"),
+        ("STMN2", "NMJ_MATURATION", "pathway_crosstalk", "activates", 0.80, "digital_twin"),
+
+        # Discovery target connections (from omics convergence)
+        ("NEDD4L", "UBA1", "ubiquitin_pathway", "associates", 0.65, "analytical_convergence"),
+        ("SULF1", "NMJ_MATURATION", "ecm_remodeling", "activates", 0.55, "analytical_convergence"),
+        ("DNMT3B", "SMN2", "epigenetic_modifier", "activates", 0.60, "analytical_convergence"),
+        ("CAST", "MTOR_PATHWAY", "neuroprotection", "inhibits", 0.50, "analytical_convergence"),
+        ("CD44", "SULF1", "ecm_signaling", "associates", 0.55, "analytical_convergence"),
+        ("CTNNA1", "PLS3", "cytoskeletal_link", "associates", 0.50, "analytical_convergence"),
+        ("GALNT6", "NMJ_MATURATION", "glycosylation", "activates", 0.50, "analytical_convergence"),
+        ("LY96", "MTOR_PATHWAY", "neuroinflammation", "inhibits", 0.55, "analytical_convergence"),
+    ]
+
+    created = 0
+    skipped = 0
+
+    for src_sym, dst_sym, relation, effect, confidence, source_module in analytical_edges:
+        src_id = symbol_to_id.get(src_sym)
+        dst_id = symbol_to_id.get(dst_sym)
+        if not src_id or not dst_id:
+            missing = src_sym if not src_id else dst_sym
+            logger.warning("Skipped analytical edge %s → %s: target '%s' not in DB", src_sym, dst_sym, missing)
+            skipped += 1
+            continue
+
+        result = await execute(
+            """INSERT INTO graph_edges (src_id, dst_id, relation, direction, effect, confidence, metadata)
+               VALUES ($1, $2, $3, $4, $5, $6, $7)
+               ON CONFLICT (src_id, dst_id, relation) DO UPDATE
+               SET confidence = GREATEST(graph_edges.confidence, EXCLUDED.confidence),
+                   metadata = EXCLUDED.metadata""",
+            src_id,
+            dst_id,
+            relation,
+            "src_to_dst",
+            effect,
+            confidence,
+            json.dumps({
+                "source": f"analytical_module:{source_module}",
+                "expanded_at": datetime.now(timezone.utc).isoformat(),
+            }),
+        )
+        if "INSERT" in str(result):
+            created += 1
+        else:
+            skipped += 1
+
+    logger.info("Analytical module edges: %d created, %d skipped", created, skipped)
+    return {"analytical_edges_created": created, "analytical_edges_skipped": skipped}
+
+
 async def expand_graph() -> dict:
     """Run all graph expansion strategies and return combined results."""
     logger.info("Starting knowledge graph expansion...")
@@ -276,6 +376,10 @@ async def expand_graph() -> dict:
     cons_result = await expand_from_conservation()
     results.update(cons_result)
 
+    # 4. Analytical module edges (curated biology from reasoning modules)
+    analytical_result = await expand_from_analytical_modules()
+    results.update(analytical_result)
+
     # Get final edge count
     total = await fetchrow("SELECT COUNT(*) as cnt FROM graph_edges")
     results["total_edges"] = total["cnt"] if total else 0
@@ -284,6 +388,7 @@ async def expand_graph() -> dict:
         claim_result.get("claim_edges_created", 0)
         + drug_result.get("drug_outcome_edges_created", 0)
         + cons_result.get("conservation_edges_created", 0)
+        + analytical_result.get("analytical_edges_created", 0)
     )
     results["total_new_edges"] = total_created
 

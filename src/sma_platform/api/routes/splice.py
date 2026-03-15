@@ -184,8 +184,8 @@ async def variants_at_position(pos: int):
 
     Position coordinates:
       - Negative: intron 6 (e.g. -1 = last base of intron 6)
-      - 1-54: exon 7
-      - Positive >54 not used; intron 7 uses +1 to +100
+      - 1-55: exon 7
+      - Positive >55 not used; intron 7 uses +1 to +100
 
     Note: intron 7 positions are stored as 1-100 in the DB, not 55-154.
     """

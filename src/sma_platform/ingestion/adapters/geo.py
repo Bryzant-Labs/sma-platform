@@ -6,6 +6,7 @@ Uses NCBI E-utilities (same as PubMed, different database).
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any
 
@@ -30,36 +31,47 @@ KNOWN_DATASETS = [
 ]
 
 
+async def _geo_search(query: str, max_results: int) -> list[str]:
+    """Run GEO Entrez search in a thread to avoid blocking the event loop."""
+    def _search() -> list[str]:
+        handle = Entrez.esearch(db="gds", term=query, retmax=max_results)
+        record = Entrez.read(handle)
+        handle.close()
+        return record.get("IdList", [])
+
+    return await asyncio.to_thread(_search)
+
+
+async def _geo_summary(geo_id: str) -> list:
+    """Run GEO Entrez esummary in a thread to avoid blocking the event loop."""
+    def _summarise() -> list:
+        handle = Entrez.esummary(db="gds", id=geo_id)
+        summary = Entrez.read(handle)
+        handle.close()
+        return summary
+
+    return await asyncio.to_thread(_summarise)
+
+
 async def search_geo(
     query: str = "spinal muscular atrophy",
     max_results: int = 50,
 ) -> list[str]:
     """Search GEO for dataset accessions matching query."""
-    handle = Entrez.esearch(db="gds", term=query, retmax=max_results)
-    record = Entrez.read(handle)
-    handle.close()
-
-    ids = record.get("IdList", [])
-    logger.info(f"GEO search '{query}' returned {len(ids)} dataset IDs")
+    ids = await _geo_search(query, max_results)
+    logger.info("GEO search '%s' returned %d dataset IDs", query, len(ids))
     return ids
 
 
 async def fetch_dataset_metadata(accession: str) -> dict[str, Any] | None:
     """Fetch metadata for a specific GEO accession (e.g., GSE69175)."""
     try:
-        handle = Entrez.esearch(db="gds", term=f"{accession}[Accession]", retmax=1)
-        record = Entrez.read(handle)
-        handle.close()
-
-        ids = record.get("IdList", [])
+        ids = await _geo_search(f"{accession}[Accession]", max_results=1)
         if not ids:
-            logger.warning(f"No GEO record found for {accession}")
+            logger.warning("No GEO record found for %s", accession)
             return None
 
-        handle = Entrez.esummary(db="gds", id=ids[0])
-        summary = Entrez.read(handle)
-        handle.close()
-
+        summary = await _geo_summary(ids[0])
         if not summary:
             return None
 
@@ -76,7 +88,7 @@ async def fetch_dataset_metadata(accession: str) -> dict[str, Any] | None:
             "url": f"https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={accession}",
         }
     except Exception as e:
-        logger.error(f"Failed to fetch GEO metadata for {accession}: {e}")
+        logger.error("Failed to fetch GEO metadata for %s: %s", accession, e)
         return None
 
 

@@ -5,7 +5,7 @@
 set -euo pipefail
 
 API="http://localhost:8090/api/v2"
-KEY="sma-admin-2026"
+KEY="${SMA_ADMIN_KEY:?SMA_ADMIN_KEY env var is required}"
 LOG="/home/bryzant/sma-platform/logs/daily_ingest.log"
 
 mkdir -p "$(dirname "$LOG")"

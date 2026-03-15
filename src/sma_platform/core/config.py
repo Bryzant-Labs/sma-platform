@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     slack_channel_id: str = ""
 
     # Admin
-    sma_admin_key: str = "sma-admin-2026"
+    sma_admin_key: str = ""
     enable_docs: bool = True
 
     # Server
