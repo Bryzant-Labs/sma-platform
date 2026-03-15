@@ -44,6 +44,12 @@ async def list_preprints(
 
     Results are ordered by relevance score descending, then by posted_date descending.
     """
+    # Gracefully handle table not yet created (first scan creates it)
+    try:
+        await fetch("SELECT 1 FROM preprints LIMIT 1")
+    except Exception:
+        return {"preprints": [], "count": 0, "offset": offset, "note": "No preprints scanned yet. Trigger POST /preprints/scan first."}
+
     if server:
         rows = await fetch(
             """SELECT id, server, doi, title, authors, category, posted_date,
