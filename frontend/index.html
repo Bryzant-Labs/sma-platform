@@ -514,10 +514,10 @@
         .smiles-cell { font-family: 'JetBrains Mono', monospace; font-size: 10px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
 
         /* Knowledge Graph */
-        #graph-canvas { width: 100%; height: 600px; background: var(--panel); border: 1px solid var(--line); position: relative; }
-        .graph-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; font-size: 11px; color: var(--text-secondary); }
-        .graph-legend-item { display: flex; align-items: center; gap: 4px; }
-        .graph-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        #graph-canvas { width: 100%; height: 650px; background: var(--panel); border: 1px solid var(--line); position: relative; overflow: hidden; }
+        .graph-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); font-size: 11px; color: var(--text-secondary); }
+        .graph-legend-item { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .graph-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 
         /* Drug Outcomes */
         .outcome-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
@@ -2407,17 +2407,42 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // ============ Knowledge Graph (Canvas) ============
     function loadGraph() {
         if (loaded.graph) return; loaded.graph = true;
-        fetch(API + '/graph/full').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/graph').then(function(r) { return r.json(); }).then(function(data) {
             var nodes = data.nodes || [];
-            var links = data.links || [];
+            var links = data.edges || [];
             document.getElementById('graph-count').textContent = nodes.length + ' nodes, ' + links.length + ' edges';
+
+            // Edge type legend
+            var legendEl = document.getElementById('graph-legend');
+            legendEl.textContent = '';
+            var relColors = {
+                protein_interaction: '#1a56db', shared_go_process: '#15803d', shared_pathway_uniprot: '#92400e',
+                part_of_pathway: '#7c3aed', co_conserved: '#0891b2', splicing_modifier: '#dc2626',
+                neuroprotective: '#059669', associated_with: '#6b7280', targeted_by: '#d97706',
+                interacts_with: '#2563eb', regulates: '#7c3aed', biomarker_for: '#0d9488',
+                safety_signal: '#ef4444', motor_function: '#ea580c', therapeutic_for: '#16a34a',
+                compound_bioactivity: '#94a3b8'
+            };
+            var edgeTypes = data.edge_types || {};
+            Object.keys(edgeTypes).forEach(function(rel) {
+                var item = document.createElement('div');
+                item.className = 'graph-legend-item';
+                var dot = document.createElement('span');
+                dot.className = 'graph-legend-dot';
+                dot.style.background = relColors[rel] || '#888';
+                item.appendChild(dot);
+                item.appendChild(document.createTextNode(rel.replace(/_/g, ' ') + ' (' + edgeTypes[rel] + ')'));
+                legendEl.appendChild(item);
+            });
+
             var container = clearEl('graph-canvas');
             var canvas = document.createElement('canvas');
             canvas.style.width = '100%';
             canvas.style.height = '100%';
+            canvas.style.cursor = 'pointer';
             container.appendChild(canvas);
             var W = container.clientWidth || 1200;
-            var H = 600;
+            var H = 650;
             canvas.width = W * 2; canvas.height = H * 2;
             canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
             var ctx = canvas.getContext('2d');
@@ -2425,6 +2450,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
             var typeColors = {gene: '#1a56db', protein: '#92400e', pathway: '#15803d', cell_state: '#6b7280', phenotype: '#555', other: '#888'};
             var nodeMap = {};
+            // Count connections per node for sizing
+            var connCount = {};
+            for (var j = 0; j < links.length; j++) {
+                connCount[links[j].source] = (connCount[links[j].source] || 0) + 1;
+                connCount[links[j].target] = (connCount[links[j].target] || 0) + 1;
+            }
             for (var i = 0; i < nodes.length; i++) {
                 var n = nodes[i];
                 var angle = (2 * Math.PI * i) / nodes.length;
@@ -2433,60 +2464,57 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 n.y = H / 2 + radius * Math.sin(angle) + (Math.random() - 0.5) * 40;
                 n.vx = 0; n.vy = 0;
                 n.color = typeColors[n.type] || '#888';
-                n.radius = 8;
+                n.connections = connCount[n.id] || 1;
+                n.radius = Math.max(6, Math.min(16, 5 + n.connections * 0.8));
                 nodeMap[n.id] = n;
             }
 
-            // Resolve links to node refs
             var resolvedLinks = [];
-            for (var j = 0; j < links.length; j++) {
-                var l = links[j];
+            for (var j2 = 0; j2 < links.length; j2++) {
+                var l = links[j2];
                 var src = nodeMap[l.source];
                 var tgt = nodeMap[l.target];
                 if (src && tgt && src !== tgt) {
-                    resolvedLinks.push({source: src, target: tgt, relation: l.relation, confidence: l.confidence || 0.5});
+                    resolvedLinks.push({source: src, target: tgt, relation: l.relation, confidence: l.confidence || 0.5, color: relColors[l.relation] || '#ccc'});
                 }
             }
 
-            // Force simulation (simple spring-charge)
+            // Force simulation (spring-charge with iterations)
             var selectedNode = null;
             function simulate() {
-                for (var si = 0; si < 80; si++) {
-                    // Charge repulsion
+                for (var si = 0; si < 120; si++) {
                     for (var a = 0; a < nodes.length; a++) {
                         for (var b = a + 1; b < nodes.length; b++) {
                             var dx = nodes[b].x - nodes[a].x;
                             var dy = nodes[b].y - nodes[a].y;
                             var dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                            var force = 800 / (dist * dist);
+                            var force = 1200 / (dist * dist);
                             nodes[a].vx -= (dx / dist) * force;
                             nodes[a].vy -= (dy / dist) * force;
                             nodes[b].vx += (dx / dist) * force;
                             nodes[b].vy += (dy / dist) * force;
                         }
                     }
-                    // Spring attraction on edges
                     for (var e = 0; e < resolvedLinks.length; e++) {
                         var link = resolvedLinks[e];
                         var ldx = link.target.x - link.source.x;
                         var ldy = link.target.y - link.source.y;
                         var ldist = Math.sqrt(ldx * ldx + ldy * ldy) || 1;
-                        var lf = (ldist - 80) * 0.01;
+                        var lf = (ldist - 100) * 0.008;
                         link.source.vx += (ldx / ldist) * lf;
                         link.source.vy += (ldy / ldist) * lf;
                         link.target.vx -= (ldx / ldist) * lf;
                         link.target.vy -= (ldy / ldist) * lf;
                     }
-                    // Center gravity
                     for (var c = 0; c < nodes.length; c++) {
                         nodes[c].vx += (W / 2 - nodes[c].x) * 0.001;
                         nodes[c].vy += (H / 2 - nodes[c].y) * 0.001;
                         nodes[c].x += nodes[c].vx * 0.3;
                         nodes[c].y += nodes[c].vy * 0.3;
-                        nodes[c].vx *= 0.9;
-                        nodes[c].vy *= 0.9;
-                        nodes[c].x = Math.max(20, Math.min(W - 20, nodes[c].x));
-                        nodes[c].y = Math.max(20, Math.min(H - 20, nodes[c].y));
+                        nodes[c].vx *= 0.88;
+                        nodes[c].vy *= 0.88;
+                        nodes[c].x = Math.max(30, Math.min(W - 30, nodes[c].x));
+                        nodes[c].y = Math.max(30, Math.min(H - 30, nodes[c].y));
                     }
                 }
             }
@@ -2494,16 +2522,31 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
             function draw() {
                 ctx.clearRect(0, 0, W, H);
-                // Edges
+                // Background
+                ctx.fillStyle = '#fafafa';
+                ctx.fillRect(0, 0, W, H);
+                // Edges with color by relation type
                 for (var e = 0; e < resolvedLinks.length; e++) {
                     var link = resolvedLinks[e];
                     var isHighlighted = selectedNode && (link.source === selectedNode || link.target === selectedNode);
                     ctx.beginPath();
                     ctx.moveTo(link.source.x, link.source.y);
                     ctx.lineTo(link.target.x, link.target.y);
-                    ctx.strokeStyle = isHighlighted ? '#1a56db' : 'rgba(0,0,0,0.08)';
-                    ctx.lineWidth = isHighlighted ? 2 : 1;
+                    if (isHighlighted) {
+                        ctx.strokeStyle = link.color;
+                        ctx.lineWidth = 2.5;
+                        ctx.globalAlpha = 1;
+                    } else if (selectedNode) {
+                        ctx.strokeStyle = '#e5e7eb';
+                        ctx.lineWidth = 0.5;
+                        ctx.globalAlpha = 0.3;
+                    } else {
+                        ctx.strokeStyle = link.color;
+                        ctx.lineWidth = 1;
+                        ctx.globalAlpha = 0.35;
+                    }
                     ctx.stroke();
+                    ctx.globalAlpha = 1;
                 }
                 // Nodes
                 for (var n = 0; n < nodes.length; n++) {
@@ -2518,26 +2561,53 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                             }
                         }
                     }
-                    var opacity = selectedNode ? (isSelected || isConnected ? 1 : 0.15) : 1;
-                    ctx.beginPath();
-                    ctx.arc(node.x, node.y, isSelected ? 12 : 8, 0, Math.PI * 2);
-                    ctx.fillStyle = node.color;
+                    var opacity = selectedNode ? (isSelected || isConnected ? 1 : 0.12) : 1;
                     ctx.globalAlpha = opacity;
+                    // Glow for selected
+                    if (isSelected) {
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, node.radius + 6, 0, Math.PI * 2);
+                        ctx.fillStyle = node.color;
+                        ctx.globalAlpha = 0.15;
+                        ctx.fill();
+                        ctx.globalAlpha = opacity;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, isSelected ? node.radius + 3 : node.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = node.color;
                     ctx.fill();
                     ctx.strokeStyle = isSelected ? '#000' : '#fff';
-                    ctx.lineWidth = isSelected ? 2 : 1.5;
+                    ctx.lineWidth = isSelected ? 2.5 : 1.5;
                     ctx.stroke();
                     // Label
-                    ctx.font = (isSelected ? 'bold 12px' : '10px') + ' Inter, sans-serif';
+                    ctx.font = (isSelected ? 'bold 13px' : '11px') + ' Inter, sans-serif';
                     ctx.fillStyle = '#1a1a1a';
                     ctx.textAlign = 'center';
-                    ctx.fillText(node.symbol, node.x, node.y - 14);
+                    ctx.fillText(node.symbol, node.x, node.y - node.radius - 6);
+                    // Connection count badge for selected
+                    if (isSelected) {
+                        ctx.font = '9px Inter, sans-serif';
+                        ctx.fillStyle = '#666';
+                        ctx.fillText(node.connections + ' connections', node.x, node.y + node.radius + 14);
+                    }
                     ctx.globalAlpha = 1;
+                }
+                // Info panel for selected node
+                if (selectedNode) {
+                    var connEdges = resolvedLinks.filter(function(l) { return l.source === selectedNode || l.target === selectedNode; });
+                    var panel = 'Selected: ' + selectedNode.symbol + (selectedNode.name ? ' (' + selectedNode.name + ')' : '') + ' | Type: ' + selectedNode.type + ' | ' + connEdges.length + ' edges';
+                    ctx.font = '11px Inter, sans-serif';
+                    ctx.fillStyle = 'rgba(0,0,0,0.75)';
+                    var tw = ctx.measureText(panel).width + 20;
+                    ctx.fillRect(10, H - 30, tw, 22);
+                    ctx.fillStyle = '#fff';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(panel, 20, H - 14);
                 }
             }
             draw();
 
-            // Click to select node
+            // Click to select/deselect node
             canvas.addEventListener('click', function(ev) {
                 var rect = canvas.getBoundingClientRect();
                 var mx = (ev.clientX - rect.left);
@@ -2546,10 +2616,24 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 for (var n = 0; n < nodes.length; n++) {
                     var dx = nodes[n].x - mx;
                     var dy = nodes[n].y - my;
-                    if (dx * dx + dy * dy < 200) { hit = nodes[n]; break; }
+                    if (dx * dx + dy * dy < (nodes[n].radius + 4) * (nodes[n].radius + 4)) { hit = nodes[n]; break; }
                 }
                 selectedNode = (hit === selectedNode) ? null : hit;
                 draw();
+            });
+
+            // Hover cursor change
+            canvas.addEventListener('mousemove', function(ev) {
+                var rect = canvas.getBoundingClientRect();
+                var mx = (ev.clientX - rect.left);
+                var my = (ev.clientY - rect.top);
+                var hover = false;
+                for (var n = 0; n < nodes.length; n++) {
+                    var dx = nodes[n].x - mx;
+                    var dy = nodes[n].y - my;
+                    if (dx * dx + dy * dy < (nodes[n].radius + 4) * (nodes[n].radius + 4)) { hover = true; break; }
+                }
+                canvas.style.cursor = hover ? 'pointer' : 'default';
             });
 
         }).catch(function() {

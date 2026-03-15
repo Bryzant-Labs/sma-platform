@@ -230,7 +230,7 @@ async def expand_from_conservation() -> dict:
         shared = r["shared_species"]
         confidence = min(1.0, shared / 5.0)  # 5 species = max confidence
 
-        await execute(
+        result = await execute(
             """INSERT INTO graph_edges (src_id, dst_id, relation, direction, effect, confidence, metadata)
                VALUES ($1, $2, $3, $4, $5, $6, $7)
                ON CONFLICT (src_id, dst_id, relation) DO UPDATE
