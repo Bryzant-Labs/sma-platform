@@ -235,8 +235,9 @@ def _predict_toxicity(mol, mw, logp, tpsa, num_aromatic) -> dict:
     if heavy > 35:
         hepato_score += 0.2
     # Check for known hepatotoxic groups
-    if mol.HasSubstructMatch(Chem.MolFromSmarts('[#6]=[#8]')) and \
-       mol.HasSubstructMatch(Chem.MolFromSmarts('[#7]')):
+    carbonyl = Chem.MolFromSmarts('[#6]=[#8]')
+    nitrogen = Chem.MolFromSmarts('[#7]')
+    if carbonyl and nitrogen and mol.HasSubstructMatch(carbonyl) and mol.HasSubstructMatch(nitrogen):
         hepato_score += 0.2
     hepato_score = min(1.0, hepato_score)
     hepato_risk = "high" if hepato_score > 0.6 else "moderate" if hepato_score > 0.3 else "low"
@@ -303,7 +304,8 @@ async def batch_predict_admet() -> dict[str, Any]:
 
     rows = await fetch(
         """SELECT metadata FROM graph_edges
-           WHERE relation LIKE 'compound_bioactivity:%'"""
+           WHERE relation LIKE 'compound_bioactivity:%'
+           LIMIT 5000"""
     )
 
     seen: dict[str, str] = {}

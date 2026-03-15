@@ -144,7 +144,7 @@ async def process_source_outcomes(source_id: str) -> int:
     stored = 0
     for outcome in outcomes:
         try:
-            compound = outcome.get("compound_name", "").strip()
+            compound = outcome.get("compound_name", "").strip()[:200]
             if not compound:
                 continue
 
@@ -158,6 +158,14 @@ async def process_source_outcomes(source_id: str) -> int:
             if failure_reason and failure_reason not in VALID_FAILURE_REASONS:
                 failure_reason = None
 
+            # Cap LLM-supplied fields to prevent oversized inserts
+            target_val = (outcome.get("target") or "")[:200] or None
+            mechanism_val = (outcome.get("mechanism") or "")[:500] or None
+            failure_detail_val = (outcome.get("failure_detail") or "")[:1000] or None
+            trial_phase_val = (outcome.get("trial_phase") or "")[:100] or None
+            model_system_val = (outcome.get("model_system") or "")[:200] or None
+            key_finding_val = (outcome.get("key_finding") or "")[:1000] or None
+
             await execute(
                 """INSERT INTO drug_outcomes
                    (compound_name, target, mechanism, outcome, failure_reason,
@@ -169,14 +177,14 @@ async def process_source_outcomes(source_id: str) -> int:
                        failure_detail = EXCLUDED.failure_detail, key_finding = EXCLUDED.key_finding,
                        updated_at = CURRENT_TIMESTAMP""",
                 compound,
-                outcome.get("target"),
-                outcome.get("mechanism"),
+                target_val,
+                mechanism_val,
                 result,
                 failure_reason,
-                outcome.get("failure_detail"),
-                outcome.get("trial_phase"),
-                outcome.get("model_system"),
-                outcome.get("key_finding"),
+                failure_detail_val,
+                trial_phase_val,
+                model_system_val,
+                key_finding_val,
                 outcome.get("confidence", 0.5),
                 source["id"],
                 json.dumps({

@@ -200,11 +200,14 @@ async def stage_scoring() -> dict:
     return result
 
 
+STATS_TABLES = frozenset({"sources", "targets", "drugs", "trials", "datasets", "claims", "evidence", "hypotheses"})
+
+
 async def get_platform_stats() -> dict:
     """Get current platform counts for the summary."""
     stats = {}
-    for table in ["sources", "targets", "drugs", "trials", "datasets", "claims", "evidence", "hypotheses"]:
-        row = await fetchrow(f"SELECT COUNT(*) as cnt FROM {table}")
+    for table in STATS_TABLES:
+        row = await fetchrow(f"SELECT COUNT(*) as cnt FROM {table}")  # noqa: S608 — table names are from STATS_TABLES constant
         stats[table] = row["cnt"] if row else 0
     return stats
 

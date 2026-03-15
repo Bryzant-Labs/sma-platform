@@ -9,13 +9,18 @@ The SMA Research Platform aggregates, structures, and prioritizes global SMA evi
 ## Key facts
 
 - 4,582 PubMed sources ingested and analyzed
-- 10,620+ LLM-extracted claims from research abstracts
-- 102 prioritized hypotheses ranked in 3 tiers (A/B/C)
+- 13,000+ LLM-extracted claims from research abstracts (growing daily)
+- 189 prioritized hypotheses ranked in 3 tiers (A/B/C)
 - 449 clinical trials from ClinicalTrials.gov
 - 21 molecular targets scored across 7 dimensions (10 established + 11 from omics convergence analysis)
 - 16 drugs tracked (3 approved + 13 pipeline: Phase 1-3 and preclinical from Cure SMA pipeline)
+- 397+ knowledge graph edges (STRING PPI, UniProt GO, KEGG, ChEMBL, conservation, claim-based)
+- 226 drug outcomes — structured failure/success database from literature
+- 188 compounds screened via RDKit (drug-likeness, BBB, ADMET)
+- 57 drug repurposing candidates from cross-disease + ChEMBL cross-reference
+- 16 cutting-edge research directions (Querdenker + Harvard-level)
 - 53 curated research links across 9 categories
-- Daily automated updates via cron at 06:00 UTC
+- Daily automated 9-stage pipeline at 06:00 UTC
 
 ## Disease context
 
@@ -63,13 +68,20 @@ All data is accessible via REST API at https://sma-research.info/api/v2/
 - GET /api/v2/trials — Clinical trials (449 entries, filterable by status/phase)
 - GET /api/v2/drugs — Drug/therapy data (16 entries, filterable by approval_status)
 - GET /api/v2/sources — PubMed literature (4,582 papers with abstracts)
-- GET /api/v2/claims — LLM-extracted claims (10,620+ structured assertions)
+- GET /api/v2/claims — LLM-extracted claims (13,000+ structured assertions)
 - GET /api/v2/hypotheses — Generated hypotheses
-- GET /api/v2/hypotheses/prioritized — Ranked hypotheses with tier assignments (102 entries)
+- GET /api/v2/hypotheses/prioritized — Ranked hypotheses with tier assignments (189 entries)
 - GET /api/v2/scores — 7-dimension target composite scores
 - GET /api/v2/datasets — Curated omics datasets
 - GET /api/v2/comparative/species — Model organisms for cross-species analysis
 - GET /api/v2/comparative/orthologs/{symbol} — Ortholog mapping across species
+- GET /api/v2/research/directions — 16 cutting-edge research directions
+- GET /api/v2/research/directions/{id} — Deep-dive with connected targets, claims, hypotheses
+- GET /api/v2/screen/candidates — Integrated drug candidate ranking
+- GET /api/v2/screen/repurposing — Drug repurposing candidates
+- GET /api/v2/drug-outcomes — Drug failure/success database
+- GET /api/v2/stats/pipeline — Pipeline run history and extended stats
+- GET /api/v2/export/{table}?fmt=json|csv — Export any table (targets, claims, hypotheses, drug_outcomes, etc.)
 - GET /api/v2/docs — Interactive API documentation (Swagger)
 
 ## Research links
@@ -82,15 +94,24 @@ Categories: Genomic & Molecular Databases, Clinical Trial Registries, Drug & Tar
 Phase 1 (complete): Evidence ingestion → normalization → LLM claim extraction → target linking → network projection → hypothesis generation
 Phase 2 (complete): Multi-criteria scoring → hypothesis prioritization → tier assignment (A/B/C)
 Phase 3 (complete): Data source expansion — ChEMBL bioactivity (188 compounds), UniProt protein annotations (18 proteins), STRING-DB interactions (10 PPI edges), KEGG pathways (41 genes)
-Phase 4 (in progress): Cross-species comparative biology — ortholog mapping across axolotl, zebrafish, naked mole rat, C. elegans, Drosophila
-Phase 5 (in progress): Querdenker research — cross-disease learning (ALS, DMD, SBMA, CMT), bear hibernation muscle preservation, bioelectric reprogramming (Michael Levin), spatial multi-omics (Slide-seq, MERFISH), NMJ-on-a-chip, epigenetic dimming (dCas9/CRISPRi), ECM engineering, SMA as multisystem disease, NDRG1/cell dormancy
-Phase 6 (planned): Computational drug discovery — small molecule design, CRISPR guides, AAV capsid evaluation, dual-target molecules (SMN2 splicing + ion channels)
+Phase 4 (complete): Cross-species comparative biology — ortholog mapping across axolotl, zebrafish, naked mole rat, C. elegans, Drosophila (55 orthologs, 136 conservation edges)
+Phase 5 (complete): Querdenker research directions — cross-disease learning (ALS, DMD, SBMA, CMT), bear hibernation muscle preservation, bioelectric reprogramming (Michael Levin), spatial multi-omics, NMJ-on-a-chip, epigenetic dimming, ECM engineering, SMA as multisystem disease, NDRG1/cell dormancy, RNA decoy, DUBTACs, spinal cord stimulation
+Phase 6 (in progress): Computational drug discovery — RDKit screening (188 compounds), ADMET prediction, drug repurposing, integrated candidate ranking. Planned: molecular docking, CRISPR guides, AAV capsid evaluation, dual-target molecules
+Phase 7-11 (planned): Advanced analytics, knowledge infrastructure, open data commons, warp-speed infrastructure, translation & impact
+
+## Drug Failure & Success Database
+
+Unique structured resource capturing WHY SMA drugs succeed or fail. 226 outcomes extracted from literature:
+- Structured: Molecule → Target → Mechanism → Outcome → Failure Reason → Key Finding
+- Outcome types: success, partial_success, failure, inconclusive, discontinued, ongoing
+- Failure reasons: toxicity, lack_of_efficacy, poor_bioavailability, off_target_effects, poor_bbb_penetration, manufacturing, commercial, safety_signal
 
 ## Technology
 
-Stack: Python / FastAPI / SQLite / Claude Haiku / Vanilla JS
+Stack: Python / FastAPI / PostgreSQL / Claude Haiku / RDKit / Vanilla JS
 All data is freely accessible via the REST API for research purposes.
-MCP server available for AI agent integration.
+MCP server available for AI agent integration (12 tools).
+HuggingFace dataset: Bryzant-Labs/sma-evidence-graph (9 tables as Parquet).
 
 ## Contact
 

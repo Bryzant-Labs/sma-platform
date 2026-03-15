@@ -90,17 +90,7 @@ async def expand_from_claims() -> dict:
         relation = CLAIM_TYPE_TO_RELATION.get(claim_type, "associated_with")
         effect = CLAIM_TYPE_TO_EFFECT.get(claim_type, "unknown")
 
-        # Check if edge already exists
-        existing = await fetchrow(
-            """SELECT id FROM graph_edges
-               WHERE src_id = $1 AND dst_id = $2 AND relation = $3""",
-            r["subject_id"], r["object_id"], relation,
-        )
-        if existing:
-            skipped += 1
-            continue
-
-        await execute(
+        result = await execute(
             """INSERT INTO graph_edges (src_id, dst_id, relation, direction, effect, confidence, metadata)
                VALUES ($1, $2, $3, $4, $5, $6, $7)
                ON CONFLICT (src_id, dst_id, relation) DO UPDATE
@@ -119,7 +109,11 @@ async def expand_from_claims() -> dict:
                 "expanded_at": datetime.now(timezone.utc).isoformat(),
             }),
         )
-        created += 1
+        # ON CONFLICT DO UPDATE returns "UPDATE" not "INSERT" when the row exists
+        if "INSERT" in str(result):
+            created += 1
+        else:
+            skipped += 1
 
     logger.info("Claim-based edges: %d created, %d skipped (already exist)", created, skipped)
     return {"claim_edges_created": created, "claim_edges_skipped": skipped}
@@ -175,16 +169,7 @@ async def expand_from_drug_outcomes() -> dict:
             relation = "drug_interaction"
             effect = "unknown"
 
-        existing = await fetchrow(
-            """SELECT id FROM graph_edges
-               WHERE src_id = $1 AND dst_id = $2 AND relation = $3""",
-            drug_target_id, outcome_target_id, relation,
-        )
-        if existing:
-            skipped += 1
-            continue
-
-        await execute(
+        result = await execute(
             """INSERT INTO graph_edges (src_id, dst_id, relation, direction, effect, confidence, metadata)
                VALUES ($1, $2, $3, $4, $5, $6, $7)
                ON CONFLICT (src_id, dst_id, relation) DO UPDATE
@@ -202,7 +187,10 @@ async def expand_from_drug_outcomes() -> dict:
                 "expanded_at": datetime.now(timezone.utc).isoformat(),
             }),
         )
-        created += 1
+        if "INSERT" in str(result):
+            created += 1
+        else:
+            skipped += 1
 
     logger.info("Drug outcome edges: %d created, %d skipped", created, skipped)
     return {"drug_outcome_edges_created": created, "drug_outcome_edges_skipped": skipped}
@@ -239,15 +227,6 @@ async def expand_from_conservation() -> dict:
         if not src_id or not dst_id:
             continue
 
-        existing = await fetchrow(
-            """SELECT id FROM graph_edges
-               WHERE src_id = $1 AND dst_id = $2 AND relation = $3""",
-            src_id, dst_id, "co_conserved",
-        )
-        if existing:
-            skipped += 1
-            continue
-
         shared = r["shared_species"]
         confidence = min(1.0, shared / 5.0)  # 5 species = max confidence
 
@@ -270,7 +249,10 @@ async def expand_from_conservation() -> dict:
                 "expanded_at": datetime.now(timezone.utc).isoformat(),
             }),
         )
-        created += 1
+        if "INSERT" in str(result):
+            created += 1
+        else:
+            skipped += 1
 
     logger.info("Conservation edges: %d created, %d skipped", created, skipped)
     return {"conservation_edges_created": created, "conservation_edges_skipped": skipped}

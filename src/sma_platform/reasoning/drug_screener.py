@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import json
 import logging
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from typing import Any
 
 from ..core.database import execute, fetch, fetchrow
@@ -47,6 +47,8 @@ class MolecularProfile:
     best_pchembl: float | None = None
     target_symbol: str = ""
     assay_type: str = ""
+    # Composite ranking score (computed during screening)
+    _composite: float = field(default=0.0, repr=False)
 
 
 def _ensure_rdkit():
@@ -255,8 +257,8 @@ async def screen_all_compounds() -> dict[str, Any]:
         "pains_free": len(pains_free),
         "drug_like": len(drug_like),
         "top_candidates": len(top_candidates),
-        "top_10": [asdict(p) for p in profiles[:10]],
-        "top_bbb_cns": [asdict(p) for p in top_candidates[:10]],
+        "top_10": [{k: v for k, v in asdict(p).items() if not k.startswith("_")} for p in profiles[:10]],
+        "top_bbb_cns": [{k: v for k, v in asdict(p).items() if not k.startswith("_")} for p in top_candidates[:10]],
     }
 
 

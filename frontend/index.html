@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMA Research Platform — Open Evidence Graph</title>
-    <meta name="description" content="Open-source evidence-first research platform for Spinal Muscular Atrophy (SMA). 4,582 PubMed sources, 10,620+ extracted claims, 102 prioritized hypotheses, 449 clinical trials, and 21 molecular targets — structured for accelerating SMA therapeutic development.">
+    <meta name="description" content="Open-source evidence-first research platform for Spinal Muscular Atrophy (SMA). 4,582 PubMed sources, 13,000+ extracted claims, 189 prioritized hypotheses, 449 clinical trials, 21 molecular targets, 188 compounds screened — structured for accelerating SMA therapeutic development.">
     <meta name="keywords" content="SMA, Spinal Muscular Atrophy, SMN1, SMN2, drug discovery, evidence graph, clinical trials, nusinersen, risdiplam, onasemnogene, gene therapy, ASO, splicing modifier, motor neuron, rare disease, orphan drug, target discovery, hypothesis prioritization">
     <meta name="author" content="Christian Fischer / Bryzant Labs">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -13,7 +13,7 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="SMA Research Platform — Open Evidence Graph for Spinal Muscular Atrophy">
-    <meta property="og:description" content="Evidence-first drug research for SMA. 4,582 sources, 10,620+ claims, 102 hypotheses, 449 trials, 21 molecular targets. Open source, biology-first, no marketing.">
+    <meta property="og:description" content="Evidence-first drug research for SMA. 4,582 sources, 13,000+ claims, 189 hypotheses, 449 trials, 21 targets, 188 compounds screened. Open source, biology-first, no marketing.">
     <meta property="og:url" content="https://sma-research.info/">
     <meta property="og:site_name" content="SMA Research Platform">
     <meta property="og:locale" content="en_US">
@@ -352,6 +352,15 @@
         .badge-red { background: var(--red-bg); color: var(--red); }
         .badge-purple { background: #f3e8ff; color: #7c3aed; }
         .rationale-cell { font-size: 11px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
+        .directions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; margin-top: 16px; }
+        .direction-card { background: var(--bg-card); border: 1px solid var(--divider); padding: 16px; cursor: pointer; transition: border-color 0.2s; }
+        .direction-card:hover { border-color: var(--accent); }
+        .direction-card h3 { font-size: 14px; font-weight: 600; margin: 0 0 6px; }
+        .direction-card p { font-size: 12px; color: var(--text-secondary); margin: 0 0 10px; line-height: 1.5; }
+        .direction-card .direction-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+        .badge-teal { background: #e0f7f5; color: #0d9488; }
+        .badge-indigo { background: #e8eaf6; color: #3949ab; }
+        .badge-orange { background: #fff3e0; color: #e65100; }
         .filter-tabs { display: flex; gap: 0; margin-bottom: 12px; border: 1px solid var(--line); background: var(--panel); width: fit-content; }
         .filter-tab {
             padding: 6px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase;
@@ -589,6 +598,7 @@
     <a href="#graph" class="nav-link" data-section="graph">Graph</a>
     <a href="#outcomes" class="nav-link" data-section="outcomes">Drug Outcomes</a>
     <a href="#comparative" class="nav-link" data-section="comparative">Species</a>
+    <a href="#directions" class="nav-link" data-section="directions">Directions</a>
     <a href="#links" class="nav-link" data-section="links">Links</a>
 </div></div></nav>
 
@@ -606,6 +616,12 @@
         <div class="mission-stat"><div class="mission-stat-val" id="m-targets">...</div><div class="mission-stat-label">Targets</div></div>
         <div class="mission-stat"><div class="mission-stat-val" id="m-trials">...</div><div class="mission-stat-label">Trials</div></div>
         <div class="mission-stat"><div class="mission-stat-val" id="m-drugs">...</div><div class="mission-stat-label">Drugs</div></div>
+    </div>
+    <div class="mission-stats" id="mission-stats-ext" style="margin-top:8px">
+        <div class="mission-stat"><div class="mission-stat-val" id="m-edges">...</div><div class="mission-stat-label">Graph Edges</div></div>
+        <div class="mission-stat"><div class="mission-stat-val" id="m-outcomes">...</div><div class="mission-stat-label">Drug Outcomes</div></div>
+        <div class="mission-stat"><div class="mission-stat-val" id="m-orthologs">...</div><div class="mission-stat-label">Orthologs</div></div>
+        <div class="mission-stat"><div class="mission-stat-val" id="m-directions">16</div><div class="mission-stat-label">Research Directions</div></div>
     </div>
     <div class="diff-section">
         <h3>What Makes Us Different</h3>
@@ -662,15 +678,15 @@
             <div class="pipeline-phase">
                 <div class="pipeline-phase-num">Phase 5</div>
                 <div class="pipeline-phase-title">Querdenker</div>
-                <span class="pipeline-phase-status pipeline-progress">In Progress</span>
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;line-height:1.4">16 radical research directions: bear hibernation muscle preservation, bioelectric reprogramming (Levin), epigenetic dimming (dCas9), DUBTACs, RNA decoys, engineered probiotics, mechanotransduction, NMJ-on-chip, spatial multi-omics, digital twin.</div>
+                <span class="pipeline-phase-status pipeline-complete">Done</span>
+                <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;line-height:1.4">16 research directions with evidence integration. Bear hibernation, bioelectric reprogramming (Levin), epigenetic dimming (dCas9), DUBTACs, RNA decoys, NMJ-on-chip, spatial multi-omics. Deep-dive API + frontend.</div>
                 <span class="pipeline-arrow">&rarr;</span>
             </div>
             <div class="pipeline-phase">
                 <div class="pipeline-phase-num">Phase 6</div>
                 <div class="pipeline-phase-title">Drug Discovery</div>
-                <span class="pipeline-phase-status pipeline-planned">Planned</span>
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;line-height:1.4">SMN2 splice variant benchmark (SpliceAI). ESM-2/ProtT5 protein embeddings. RDKit drug-likeness filter. CRISPR guide design. In silico screening for dual-target molecules. OpenSMA-Engine on HuggingFace.</div>
+                <span class="pipeline-phase-status pipeline-progress">In Progress</span>
+                <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;line-height:1.4">RDKit screening (188 compounds), ADMET prediction, drug repurposing (57 candidates), integrated candidate ranking. Next: molecular docking, CRISPR guides, dual-target molecules.</div>
             </div>
         </div>
     </div>
@@ -1131,6 +1147,24 @@
     <div class="table-wrap" id="heatmap-wrap"><div class="loading" style="padding:30px;text-align:center">Loading heatmap...</div></div>
 </section>
 
+<section class="section" id="directions">
+    <div class="section-header"><h2 class="section-title">Research Directions</h2><span class="section-count" id="directions-count"></span></div>
+    <p class="section-desc">16 cutting-edge research directions connecting Querdenker thinking, Harvard-level insights, and unconventional approaches to SMA biology. Click any direction to see connected targets, claims, and hypotheses.</p>
+    <div class="stats-grid" id="directions-categories"></div>
+    <div class="directions-grid" id="directions-grid"><div class="loading" style="padding:30px;text-align:center">Loading research directions...</div></div>
+    <div id="direction-detail" style="display:none;margin-top:24px">
+        <div class="card" style="padding:20px">
+            <h3 id="direction-detail-title" style="font-size:16px;margin:0 0 8px"></h3>
+            <p id="direction-detail-desc" style="font-size:13px;color:var(--text-secondary);margin:0 0 16px"></p>
+            <div id="direction-detail-targets" style="margin-bottom:16px"></div>
+            <h4 style="font-size:13px;font-weight:600;margin:0 0 8px">Matching Claims</h4>
+            <div class="table-wrap" id="direction-claims-table"></div>
+            <h4 style="font-size:13px;font-weight:600;margin:16px 0 8px">Connected Hypotheses</h4>
+            <div id="direction-hypotheses"></div>
+        </div>
+    </div>
+</section>
+
 <section class="section" id="links">
     <div class="section-header"><h2 class="section-title">Research Links</h2><span class="section-count">53 curated resources</span></div>
     <p class="section-desc">Essential databases, tools, registries, and organizations for SMA researchers. <a href="/links/" style="color:var(--accent)">Open as standalone page</a></p>
@@ -1525,6 +1559,13 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var mr = document.getElementById('m-trials'); if(mr) mr.textContent = (d.trials||0).toLocaleString();
         var md = document.getElementById('m-drugs'); if(md) md.textContent = (d.drugs||0).toLocaleString();
     });
+    // Extended stats from pipeline endpoint
+    fetch(API + '/stats/pipeline').then(function(r) { return r.json(); }).then(function(d) {
+        var ext = d.extended_stats || {};
+        var me = document.getElementById('m-edges'); if(me) me.textContent = (ext.graph_edges||0).toLocaleString();
+        var mo = document.getElementById('m-outcomes'); if(mo) mo.textContent = (ext.drug_outcomes||0).toLocaleString();
+        var ml = document.getElementById('m-orthologs'); if(ml) ml.textContent = (ext.orthologs||0).toLocaleString();
+    }).catch(function() {});
 
     // ============ Section loaders (lazy) ============
     var loaded = {};
@@ -2765,6 +2806,126 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function loadResearch() { loaded.research = true; }
     function loadLinks() { loaded.links = true; }
 
+    // Research Directions
+    function loadDirections() {
+        if (loaded.directions) return;
+        loaded.directions = true;
+        var catColors = {harvard_cutting_edge: 'badge-indigo', querdenker_gemini: 'badge-teal', unconventional: 'badge-orange'};
+        var catLabels = {harvard_cutting_edge: 'Harvard Cutting-Edge', querdenker_gemini: 'Querdenker Gemini', unconventional: 'Unconventional'};
+        fetch(API + '/research/directions').then(function(r) { return r.json(); }).then(function(data) {
+            setText('directions-count', data.total + ' directions');
+            // Category summary
+            var catGrid = clearEl('directions-categories');
+            Object.keys(data.categories || {}).forEach(function(cat) {
+                var card = el('div', {className: 'stat-card'});
+                card.appendChild(el('div', {className: 'stat-number', text: String(data.categories[cat])}));
+                card.appendChild(el('div', {className: 'stat-label', text: catLabels[cat] || cat}));
+                catGrid.appendChild(card);
+            });
+            // Direction cards
+            var grid = clearEl('directions-grid');
+            data.directions.forEach(function(d) {
+                var card = document.createElement('div');
+                card.className = 'direction-card';
+                card.addEventListener('click', function() { loadDirectionDetail(d.id); });
+                var h3 = el('h3', {text: d.title});
+                card.appendChild(h3);
+                var p = el('p', {text: d.description});
+                card.appendChild(p);
+                var meta = document.createElement('div');
+                meta.className = 'direction-meta';
+                var catBadge = el('span', {className: 'badge ' + (catColors[d.category] || 'badge-gray'), text: catLabels[d.category] || d.category});
+                meta.appendChild(catBadge);
+                d.connected_targets.forEach(function(t) {
+                    meta.appendChild(el('span', {className: 'badge badge-blue', text: t}));
+                });
+                card.appendChild(meta);
+                grid.appendChild(card);
+            });
+        }).catch(function() {
+            clearEl('directions-grid').appendChild(el('div', {className: 'loading', text: 'Research directions not available.'}));
+        });
+    }
+
+    function loadDirectionDetail(dirId) {
+        var detail = document.getElementById('direction-detail');
+        detail.style.display = 'block';
+        fetch(API + '/research/directions/' + dirId).then(function(r) { return r.json(); }).then(function(d) {
+            setText('direction-detail-title', d.title);
+            setText('direction-detail-desc', d.description);
+            // Targets
+            var tDiv = clearEl('direction-detail-targets');
+            if (d.targets && d.targets.length) {
+                d.targets.forEach(function(t) {
+                    var badge = el('span', {className: 'badge badge-blue', text: t.symbol + (t.name ? ' — ' + t.name : '')});
+                    badge.style.marginRight = '6px';
+                    tDiv.appendChild(badge);
+                });
+            }
+            // Claims table
+            var tWrap = clearEl('direction-claims-table');
+            if (d.claims && d.claims.length) {
+                var table = document.createElement('table');
+                table.className = 'data-table';
+                var thead = document.createElement('thead');
+                var hr = document.createElement('tr');
+                ['Claim', 'Type', 'Confidence'].forEach(function(h) {
+                    var th = document.createElement('th');
+                    th.textContent = h;
+                    hr.appendChild(th);
+                });
+                thead.appendChild(hr);
+                table.appendChild(thead);
+                var tbody = document.createElement('tbody');
+                d.claims.slice(0, 20).forEach(function(c) {
+                    var tr = document.createElement('tr');
+                    var td1 = document.createElement('td');
+                    td1.textContent = (c.predicate || '').substring(0, 120);
+                    td1.style.fontSize = '12px';
+                    tr.appendChild(td1);
+                    var td2 = document.createElement('td');
+                    td2.appendChild(el('span', {className: 'badge badge-gray', text: c.claim_type || ''}));
+                    tr.appendChild(td2);
+                    var td3 = document.createElement('td');
+                    td3.textContent = c.confidence ? c.confidence.toFixed(2) : '';
+                    tr.appendChild(td3);
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+                tWrap.appendChild(table);
+                if (d.claim_count > 20) {
+                    tWrap.appendChild(el('div', {className: 'loading', text: '... and ' + (d.claim_count - 20) + ' more claims'}));
+                }
+            } else {
+                tWrap.appendChild(el('div', {className: 'loading', text: 'No matching claims yet. Run claim extraction first.'}));
+            }
+            // Hypotheses
+            var hDiv = clearEl('direction-hypotheses');
+            if (d.hypotheses && d.hypotheses.length) {
+                d.hypotheses.forEach(function(h) {
+                    var card = document.createElement('div');
+                    card.style.cssText = 'padding:10px;border:1px solid var(--divider);margin-bottom:8px;font-size:12px;';
+                    card.appendChild(el('div', {text: h.title, className: 'fw-600'}));
+                    if (h.description) {
+                        var desc = el('div', {text: (h.description || '').substring(0, 200)});
+                        desc.style.cssText = 'color:var(--text-secondary);margin-top:4px;font-size:11px;';
+                        card.appendChild(desc);
+                    }
+                    var meta = document.createElement('div');
+                    meta.style.cssText = 'margin-top:6px;display:flex;gap:6px;';
+                    meta.appendChild(el('span', {className: 'badge badge-green', text: 'conf: ' + (h.confidence ? h.confidence.toFixed(2) : '?')}));
+                    meta.appendChild(el('span', {className: 'badge badge-gray', text: h.status || 'proposed'}));
+                    card.appendChild(meta);
+                    hDiv.appendChild(card);
+                });
+            } else {
+                hDiv.appendChild(el('div', {className: 'loading', text: 'No connected hypotheses yet.'}));
+            }
+        }).catch(function(e) {
+            detail.style.display = 'none';
+        });
+    }
+
     // Section loader map
     var loaders = {
         mission: loadMission, research: loadResearch,
@@ -2773,7 +2934,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         hypotheses: loadHypotheses, scores: loadScores, evidence: loadEvidence,
         screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
         outcomes: loadOutcomes, comparative: loadComparative,
-        links: loadLinks, contact: loadContact
+        directions: loadDirections, links: loadLinks, contact: loadContact
     };
 
     // Show one section at a time (tab behavior)

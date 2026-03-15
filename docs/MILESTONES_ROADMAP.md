@@ -85,11 +85,13 @@
 - [x] Axolotl c-Fos/JunB switch (regeneration vs scar molecular switch, miR-200a, sustained ERK)
 - [x] Spinal Cord Stimulation in SMA (epidural stimulation, Nature Medicine 2024)
 
-### 5.4 Evidence Integration (TODO)
-- [ ] Run claim extraction on all Querdenker papers
-- [ ] Link Querdenker claims to existing targets (DNMT3B, SULF1, ANK3, CD44, CTNNA1)
-- [ ] Generate Querdenker-specific hypotheses
-- [ ] Score new hypotheses against established targets
+### 5.4 Evidence Integration (IN PROGRESS)
+- [x] Run claim extraction on all Querdenker papers (12,900+ claims and growing)
+- [x] Link Querdenker claims to existing targets (DNMT3B, SULF1, ANK3, CD44, CTNNA1)
+- [x] Generate Querdenker-specific hypotheses (189 hypotheses across all targets)
+- [x] Score new hypotheses against established targets
+- [x] Research Directions API with deep-dive (16 directions, connected targets/claims/hypotheses)
+- [x] Research Directions frontend tab with interactive deep-dive
 
 ## Phase 6: Computational Drug Discovery (IN PROGRESS)
 
@@ -169,7 +171,7 @@
 - [x] Unpaywall OA DOI resolver
 - [x] Full-text stored in `sources.full_text` column
 - [x] Daily pipeline stage for incremental fetching
-- [ ] Full-text claim extraction (vs abstract-only) — extractor uses full_text when available
+- [x] Full-text claim extraction — extractor uses full_text when available, falls back to abstract
 
 ## Phase 9: SMA Open Data Commons (PLANNED)
 
@@ -279,10 +281,10 @@ These emerged from Querdenker and Harvard-level thinking:
 | Metric | Count |
 |--------|-------|
 | PubMed Sources | 4,582 |
-| LLM-Extracted Claims | 11,252+ (growing) |
-| Prioritized Hypotheses | 150 (A/B/C tiers) |
+| LLM-Extracted Claims | 12,400+ (growing) |
+| Prioritized Hypotheses | 189 (A/B/C tiers) |
 | Knowledge Graph Edges | 397 |
-| Drug Outcomes | 223 |
+| Drug Outcomes | 226 |
 | Drug Repurposing Candidates | 57 |
 | Clinical Trials | 449 |
 | Molecular Targets | 21 (10 established + 11 discovery) |
