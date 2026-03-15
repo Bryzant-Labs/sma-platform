@@ -14,6 +14,7 @@ data/raw/*.h5
 data/processed/
 data/datasets/*.gz
 data/datasets/*.zip
+data/hf-export/*.json
 *.parquet
 artifacts/
 
