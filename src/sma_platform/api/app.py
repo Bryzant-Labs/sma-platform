@@ -98,6 +98,7 @@ def create_app() -> FastAPI:
     app.include_router(comparative.router, prefix="/api/v2/comparative", tags=["comparative"])
 
     @app.get("/health")
+    @app.get("/api/v2/health")
     async def health():
         return {"status": "ok", "version": "0.1.0"}
 
