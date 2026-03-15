@@ -322,6 +322,19 @@
         }
         .nav-link:hover { color: var(--text); }
         .nav-link.active { color: var(--text); border-bottom-color: var(--text); }
+        .nav-sep { color: var(--line); font-size: 11px; padding: 10px 4px; user-select: none; }
+        .nav-group-toggle {
+            display: block; padding: 10px 14px; font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.3px; color: var(--muted);
+            cursor: pointer; white-space: nowrap; user-select: none;
+        }
+        .nav-group-toggle:hover { color: var(--text); }
+        .nav-group-toggle .nav-arrow { font-size: 9px; transition: transform 0.2s; display: inline-block; }
+        .nav-group-toggle.open .nav-arrow { transform: rotate(180deg); }
+        .nav-group { display: none; }
+        .nav-group.open { display: contents; }
+        .nav-highlight { color: #2563eb !important; font-weight: 700; }
+        .nav-highlight:hover { color: #1d4ed8 !important; }
         .section { padding: 32px 0; display: none; }
         .section.active { display: block; }
         .section + .section { border-top: 1px solid var(--line-light); }
@@ -477,8 +490,16 @@
         .claim-detail-panel .cd-meta-item { }
         .claim-detail-panel .cd-meta-key { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
         .claim-detail-panel .cd-meta-val { color: var(--text); font-weight: 500; }
-        .claim-filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
-        .claim-filter-btn { background: none; border: 1px solid var(--line); padding: 4px 12px; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .claims-toolbar { background: var(--panel); border: 1px solid var(--line); padding: 16px; margin-bottom: 16px; }
+        .claims-filters-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+        .claims-filter-group { display: flex; flex-direction: column; gap: 4px; }
+        .claims-filter-group label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+        .claims-filter-group select, .claims-filter-group input { font-size: 12px; font-family: inherit; padding: 6px 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); min-width: 140px; }
+        .claims-filter-search { flex: 1; min-width: 180px; }
+        .claims-filter-search input { width: 100%; box-sizing: border-box; }
+        .claims-active-filters { font-size: 11px; color: var(--text-secondary); margin-top: 8px; padding: 6px 0; border-top: 1px solid var(--line); }
+        .claim-filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+        .claim-filter-btn { background: none; border: 1px solid var(--line); padding: 3px 10px; font-size: 10px; font-weight: 600; cursor: pointer; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
         .claim-filter-btn:hover { background: var(--bg); color: var(--text); }
         .claim-filter-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
         /* Semantic search styles */
@@ -507,10 +528,37 @@
         .sr-score { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
         .search-empty { text-align: center; padding: 48px 0; color: var(--muted); font-size: 14px; }
         .search-stats { text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+        /* Ask AI tab styles */
+        .ask-box { max-width: 700px; margin: 0 auto 32px; }
+        .ask-examples { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+        .ask-example { background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; font-size: 11px; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+        .ask-example:hover, .write-example:hover { border-color: var(--text); color: var(--text); background: var(--panel); }
+        .write-example { background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; font-size: 11px; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+        .ask-result { max-width: 800px; margin: 0 auto; }
+        .ask-answer { background: var(--panel); border: 1px solid var(--line); padding: 24px 28px; font-size: 14px; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
+        .ask-answer h2, .ask-answer h3 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 20px 0 8px; color: var(--text); }
+        .ask-answer h2:first-child, .ask-answer h3:first-child { margin-top: 0; }
+        .ask-meta { margin-top: 12px; padding: 12px 16px; background: var(--bg); border: 1px solid var(--line); font-size: 11px; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
         /* Mission tab styles */
         .mission-hero { text-align: center; padding: 48px 0 40px; max-width: 800px; margin: 0 auto; }
         .mission-hero h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.3; margin-bottom: 12px; }
         .mission-hero .hero-sub { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 640px; margin: 0 auto; }
+        .hero-ask { max-width: 680px; margin: 32px auto 0; text-align: center; }
+        .hero-ask-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text); margin-bottom: 12px; }
+        .hero-ask-row { display: flex; gap: 0; border: 2px solid var(--text); }
+        .hero-ask-row input { flex: 1; padding: 14px 16px; font-size: 15px; font-family: inherit; border: none; background: var(--panel); color: var(--text); outline: none; }
+        .hero-ask-row input::placeholder { color: var(--muted); }
+        .hero-ask-row button { padding: 14px 28px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; background: var(--text); color: #fff; border: none; cursor: pointer; font-family: inherit; }
+        .hero-ask-row button:hover { background: #000; }
+        .hero-ask-row button:disabled { opacity: 0.5; cursor: wait; }
+        .hero-ask-examples { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+        .hero-ask-ex { font-size: 11px; padding: 4px 12px; border: 1px solid var(--line); cursor: pointer; color: var(--muted); font-weight: 500; }
+        .hero-ask-ex:hover { background: var(--bg); color: var(--text); border-color: var(--text); }
+        .hero-ask-result { text-align: left; margin-top: 24px; padding: 20px; border: 1px solid var(--line); background: var(--panel); max-height: 500px; overflow-y: auto; }
+        .hero-ask-result h3 { font-size: 15px; margin: 16px 0 8px; font-weight: 700; }
+        .hero-ask-result h3:first-child { margin-top: 0; }
+        .freshness-badge { text-align: center; font-size: 11px; color: var(--muted); margin-top: 12px; }
+        .freshness-badge .freshness-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4caf50; margin-right: 4px; vertical-align: middle; }
         .mission-stats { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; padding: 24px 0; margin: 32px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
         .mission-stat { text-align: center; }
         .mission-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--text); }
@@ -629,24 +677,52 @@
 <div class="stats-bar"><div class="container"><div class="stats-row" id="stats-row"><div class="loading">Loading stats...</div></div></div></div>
 
 <nav class="nav-bar"><div class="container"><div class="nav-row">
-    <a href="#mission" class="nav-link active" data-section="mission">Mission</a>
-    <a href="#research" class="nav-link" data-section="research">Research</a>
+    <a href="#mission" class="nav-link active" data-section="mission">Home</a>
+    <a href="#search" class="nav-link" data-section="search">Search</a>
+    <a href="#ask" class="nav-link nav-highlight" data-section="ask">Ask AI</a>
+    <span class="nav-sep">|</span>
     <a href="#targets" class="nav-link" data-section="targets">Targets</a>
     <a href="#trials" class="nav-link" data-section="trials">Trials</a>
     <a href="#drugs" class="nav-link" data-section="drugs">Drugs</a>
-    <a href="#sources" class="nav-link" data-section="sources">Sources</a>
+    <a href="#sources" class="nav-link" data-section="sources">Literature</a>
     <a href="#claims" class="nav-link" data-section="claims">Claims</a>
     <a href="#hypotheses" class="nav-link" data-section="hypotheses">Hypotheses</a>
-    <a href="#scores" class="nav-link" data-section="scores">Scores</a>
-    <a href="#screening" class="nav-link" data-section="screening">Screening</a>
-    <a href="#repurposing" class="nav-link" data-section="repurposing">Repurposing</a>
-    <a href="#candidates" class="nav-link" data-section="candidates">Top Candidates</a>
     <a href="#graph" class="nav-link" data-section="graph">Graph</a>
+    <span class="nav-sep">|</span>
+    <a href="#scores" class="nav-link" data-section="scores">Scores</a>
     <a href="#outcomes" class="nav-link" data-section="outcomes">Drug Outcomes</a>
+    <a href="#screening" class="nav-link" data-section="screening">Screening</a>
+    <a href="#candidates" class="nav-link" data-section="candidates">Candidates</a>
     <a href="#comparative" class="nav-link" data-section="comparative">Species</a>
     <a href="#directions" class="nav-link" data-section="directions">Directions</a>
+    <span class="nav-sep">|</span>
+    <span class="nav-group-toggle" data-group="advanced">Advanced <span class="nav-arrow">&#9662;</span></span>
+    <span class="nav-group" id="nav-group-advanced" style="display:none">
+        <a href="#spatial" class="nav-link" data-section="spatial">Spatial</a>
+        <a href="#regen" class="nav-link" data-section="regen">Regen</a>
+        <a href="#nmj" class="nav-link" data-section="nmj">NMJ</a>
+        <a href="#multisystem" class="nav-link" data-section="multisystem">Multisystem</a>
+        <a href="#bioelectric" class="nav-link" data-section="bioelectric">Bioelectric</a>
+        <a href="#splicemap" class="nav-link" data-section="splicemap">Splice</a>
+        <a href="#rnabind" class="nav-link" data-section="rnabind">RNA</a>
+        <a href="#dualtarget" class="nav-link" data-section="dualtarget">Dual Target</a>
+        <a href="#twin" class="nav-link" data-section="twin">Twin</a>
+        <a href="#molecules" class="nav-link" data-section="molecules">Molecules</a>
+        <a href="#crispr" class="nav-link" data-section="crispr">CRISPR</a>
+        <a href="#aav" class="nav-link" data-section="aav">AAV</a>
+        <a href="#docking" class="nav-link" data-section="docking">Docking</a>
+        <a href="#prime" class="nav-link" data-section="prime">Prime Edit</a>
+        <a href="#mdsim" class="nav-link" data-section="mdsim">MD Sim</a>
+        <a href="#labos" class="nav-link" data-section="labos">Lab-OS</a>
+        <a href="#federated" class="nav-link" data-section="federated">Federated</a>
+        <a href="#translate" class="nav-link" data-section="translate">Translation</a>
+    </span>
+    <span class="nav-sep">|</span>
+    <a href="#research" class="nav-link" data-section="research">About</a>
     <a href="#links" class="nav-link" data-section="links">Links</a>
-    <a href="#search" class="nav-link" data-section="search">Search</a>
+    <a href="#write" class="nav-link" data-section="write">Write</a>
+    <a href="#repurposing" class="nav-link" data-section="repurposing">Repurposing</a>
+    <a href="#versions" class="nav-link" data-section="versions">Versions</a>
 </div></div></nav>
 
 <main class="container">
@@ -656,6 +732,25 @@
         <h2>Accelerating SMA Drug Discovery Through Computational Science</h2>
         <p class="hero-sub" id="hero-sub">We combine molecular screening, evidence analysis, and computational biology to identify and validate new therapeutic candidates for SMA &mdash; from target discovery to drug-likeness prediction</p>
     </div>
+    <div class="hero-ask">
+        <div class="hero-ask-label">Ask the Evidence Graph</div>
+        <div class="hero-ask-row">
+            <input type="text" id="hero-ask-input" placeholder="e.g. What evidence supports NCALD as a therapeutic target?">
+            <button id="hero-ask-btn">Ask</button>
+        </div>
+        <div class="hero-ask-examples">
+            <span class="hero-ask-ex" data-q="What is the role of PLS3 in SMA?">PLS3 in SMA</span>
+            <span class="hero-ask-ex" data-q="Compare nusinersen and risdiplam mechanisms">Nusinersen vs Risdiplam</span>
+            <span class="hero-ask-ex" data-q="What are promising SMN-independent targets?">SMN-independent targets</span>
+            <span class="hero-ask-ex" data-q="What biomarkers predict SMA treatment response?">SMA biomarkers</span>
+        </div>
+        <div id="hero-ask-result" class="hero-ask-result" style="display:none">
+            <div id="hero-ask-loading" class="loader" style="display:none">Searching evidence base...</div>
+            <div id="hero-ask-answer"></div>
+            <div id="hero-ask-meta" class="ask-meta"></div>
+        </div>
+    </div>
+    <div id="freshness-badge" class="freshness-badge" style="display:none"></div>
     <div class="mission-stats" id="mission-stats">
         <div class="mission-stat"><div class="mission-stat-val" id="m-sources">...</div><div class="mission-stat-label">Sources</div></div>
         <div class="mission-stat"><div class="mission-stat-val" id="m-claims">...</div><div class="mission-stat-label">Claims</div></div>
@@ -1075,7 +1170,35 @@
 
 <section class="section" id="claims">
     <div class="section-header"><h2 class="section-title">Extracted Claims</h2><span class="section-count" id="claims-count"></span></div>
-    <p class="section-desc">Structured assertions extracted from paper abstracts using LLM analysis. Each claim is typed, scored for confidence, and linked to its source paper. Click any row to see the full paper context, abstract excerpt, and related metadata.</p>
+    <p class="section-desc">Structured assertions extracted from paper abstracts using LLM analysis. Each claim is typed, scored for confidence, and linked to its source paper. Click any row to see the full provenance chain: paper, abstract, evidence excerpt, and metadata.</p>
+    <div class="claims-toolbar">
+        <div class="claims-filters-row">
+            <div class="claims-filter-group">
+                <label>Type</label>
+                <select id="claims-f-type"><option value="">All types</option></select>
+            </div>
+            <div class="claims-filter-group">
+                <label>Confidence</label>
+                <select id="claims-f-conf">
+                    <option value="">Any</option>
+                    <option value="0.7">High (&ge; 70%)</option>
+                    <option value="0.4">Medium (&ge; 40%)</option>
+                    <option value="0.01">Low (&ge; 1%)</option>
+                </select>
+            </div>
+            <div class="claims-filter-group">
+                <label>Target</label>
+                <select id="claims-f-target"><option value="">All targets</option></select>
+            </div>
+            <div class="claims-filter-group claims-filter-search">
+                <label>Search</label>
+                <input type="text" id="claims-f-q" placeholder="keyword in claim text...">
+            </div>
+            <button id="claims-f-apply" class="btn btn-primary" style="align-self:flex-end;margin-bottom:1px">Filter</button>
+            <button id="claims-f-reset" class="btn" style="align-self:flex-end;margin-bottom:1px">Reset</button>
+        </div>
+        <div id="claims-active-filters" class="claims-active-filters" style="display:none"></div>
+    </div>
     <div id="claim-type-filters" class="claim-filter-bar"></div>
     <div class="table-wrap"><table><thead><tr><th>Claim</th><th>Source Paper</th><th>Type</th><th>Confidence</th><th>Targets</th><th></th></tr></thead>
     <tbody id="claims-body"><tr><td colspan="6" class="loading">Loading claims...</td></tr></tbody></table></div>
@@ -1354,6 +1477,323 @@
     <div id="search-results" class="search-results"></div>
 </section>
 
+<section class="section" id="ask">
+    <div class="section-header"><h2 class="section-title">Research Assistant</h2></div>
+    <p class="section-desc">Ask any question about SMA biology, targets, drugs, or evidence. The AI assistant searches the full evidence base (22,607 claims + 4,582 papers) and synthesizes a grounded answer using Claude Sonnet.</p>
+    <div class="ask-box">
+        <div class="search-input-wrap">
+            <input type="text" id="ask-query" placeholder="e.g. What evidence supports NCALD as an SMA modifier? How does risdiplam modify SMN2 splicing?" autocomplete="off">
+            <button id="ask-btn" type="button">Ask</button>
+        </div>
+        <div class="ask-examples">
+            <span class="ask-example" data-q="What is the role of NCALD in SMA pathology?">NCALD role in SMA</span>
+            <span class="ask-example" data-q="How does risdiplam modify SMN2 splicing?">Risdiplam mechanism</span>
+            <span class="ask-example" data-q="What are the main failure reasons for SMA drug candidates?">Drug failure reasons</span>
+            <span class="ask-example" data-q="What evidence supports PLS3 as a natural SMA severity modifier?">PLS3 as modifier</span>
+            <span class="ask-example" data-q="What is the bioelectric reprogramming hypothesis for SMA?">Bioelectric reprogramming</span>
+        </div>
+    </div>
+    <div id="ask-loading" class="loader" style="display:none">Searching evidence base and synthesizing answer...</div>
+    <div id="ask-result" class="ask-result" style="display:none">
+        <div id="ask-answer" class="ask-answer"></div>
+        <div id="ask-meta" class="ask-meta"></div>
+    </div>
+</section>
+
+<section class="section" id="write">
+    <div class="section-header"><h2 class="section-title">Evidence Writer</h2></div>
+    <p class="section-desc">Generate publication-ready evidence summaries for any SMA target or topic. Powered by Claude Sonnet synthesizing across all platform data (claims, hypotheses, trials, drug outcomes).</p>
+    <div class="ask-box">
+        <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end">
+            <div>
+                <label for="write-subject" style="display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:4px">Target or Topic</label>
+                <input type="text" id="write-subject" placeholder="e.g. SMN2, NCALD, bioelectric reprogramming, nusinersen" autocomplete="off" style="width:100%;padding:8px 10px;border:1px solid var(--line);font-family:inherit;font-size:13px;background:var(--bg);color:var(--text)">
+            </div>
+            <div>
+                <label for="write-format" style="display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:4px">Format</label>
+                <select id="write-format" style="padding:8px 10px;border:1px solid var(--line);font-family:inherit;font-size:13px;background:var(--bg);color:var(--text)">
+                    <option value="briefing">Executive Briefing</option>
+                    <option value="grant_section">Grant Section (NIH R01)</option>
+                    <option value="paper_intro">Paper Introduction</option>
+                    <option value="hypothesis_rationale">Hypothesis Rationale</option>
+                </select>
+            </div>
+            <button id="write-btn" type="button" style="padding:8px 18px;background:var(--text);color:#fff;border:none;font-family:inherit;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;white-space:nowrap">Generate</button>
+        </div>
+        <div class="ask-examples" style="margin-top:12px">
+            <span class="write-example" data-s="SMN2" data-f="grant_section">SMN2 Grant</span>
+            <span class="write-example" data-s="NCALD" data-f="hypothesis_rationale">NCALD Hypothesis</span>
+            <span class="write-example" data-s="nusinersen" data-f="briefing">Nusinersen Briefing</span>
+            <span class="write-example" data-s="bioelectric reprogramming" data-f="paper_intro" data-t="topic">Bioelectric Paper Intro</span>
+            <span class="write-example" data-s="PLS3" data-f="briefing">PLS3 Briefing</span>
+        </div>
+        <div style="margin-top:8px">
+            <label style="font-size:11px;color:var(--muted)"><input type="checkbox" id="write-compare-mode" style="margin-right:4px"> Compare multiple targets (comma-separated)</label>
+        </div>
+    </div>
+    <div id="write-loading" class="loader" style="display:none">Gathering evidence and generating summary (20-40s)...</div>
+    <div id="write-result" class="ask-result" style="display:none">
+        <div id="write-answer" class="ask-answer" style="white-space:pre-wrap"></div>
+        <div id="write-meta" class="ask-meta"></div>
+        <button id="write-copy" type="button" style="margin-top:8px;padding:6px 14px;background:var(--bg);border:1px solid var(--line);font-family:inherit;font-size:11px;cursor:pointer;display:none">Copy to Clipboard</button>
+    </div>
+</section>
+
+<section class="section" id="molecules">
+    <div class="section-header"><h2 class="section-title">Molecule Screening</h2><span class="section-count" id="molecules-count"></span></div>
+    <p class="section-desc">Direct ChEMBL/PubChem bioactive compound screening against all 21 SMA targets. Compounds are filtered for drug-likeness (MW &le; 800, pChEMBL &ge; 5.0, aLogP &le; 7.0) and ranked by potency. This is a broader search than the RDKit-based screening — it queries external databases via API.</p>
+    <div id="molecules-summary" class="screen-summary"><div class="loading">Loading molecule screening data...</div></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Top Compounds by Potency</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Target</th><th>ChEMBL ID</th><th>pChEMBL</th><th>Type</th><th>MW</th><th>aLogP</th><th>Drug-Like</th>
+    </tr></thead>
+    <tbody id="molecules-body"><tr><td colspan="8" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="crispr">
+    <div class="section-header"><h2 class="section-title">CRISPR Guide Design</h2></div>
+    <p class="section-desc">CRISPR/CRISPRi guide RNA design for SMN2 exon 7 region. Three therapeutic strategies: CRISPRi at ISS-N1 (mimic nusinersen), CRISPRi at ESS (block hnRNP A1), CRISPRa at ESE (enhance Tra2-beta). 20 nt protospacer + NGG PAM, GC 40-70%, polyT filtered.</p>
+    <div id="crispr-strategies"></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">SMN2 Regulatory Motifs</h3>
+    <div id="crispr-motifs"></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Top Guides (All Strategies)</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Strategy</th><th>Sequence (20 nt)</th><th>PAM</th><th>Strand</th><th>Region</th><th>GC%</th><th>On-Target</th><th>Specificity</th>
+    </tr></thead>
+    <tbody id="crispr-body"><tr><td colspan="9" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="aav">
+    <div class="section-header"><h2 class="section-title">AAV Capsid Evaluation</h2></div>
+    <p class="section-desc">AAV serotype evaluation for SMA gene therapy delivery. 9 capsids scored across motor neuron tropism, BBB crossing, immunogenicity (NAb seroprevalence), manufacturing feasibility, and packaging capacity. Zolgensma uses AAV9 (scAAV9-SMN1).</p>
+    <div id="aav-strategies"></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Capsid Rankings</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Serotype</th><th>MN Tropism</th><th>BBB</th><th>Immunogenicity</th><th>Mfg</th><th>Packaging</th><th>Score</th><th>Clinical Precedent</th>
+    </tr></thead>
+    <tbody id="aav-body"><tr><td colspan="9" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="versions">
+    <div class="section-header"><h2 class="section-title">Gene Edit Versioning</h2></div>
+    <p class="section-desc">"GitHub for Life" &mdash; every SMN2 sequence variant is a deterministic commit with a SHA-256 hash. The disease (SMA) is a single-nucleotide bug (C&rarr;T at position 6). Therapeutic edits are patches that restore function. Track the lineage from SMN1 (healthy) through SMN2 (disease) to corrected variants.</p>
+    <div id="versions-lineage"></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Version Tree</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Commit Hash</th><th>Type</th><th>Region</th><th>Parent</th><th>Edit</th><th>Impact</th>
+    </tr></thead>
+    <tbody id="versions-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Diffs</h3>
+    <div id="versions-diffs"></div>
+</section>
+
+<section class="section" id="docking">
+    <div class="section-header"><h2 class="section-title">Molecular Docking</h2></div>
+    <p class="section-desc">Pharmacophore-based docking score prediction for SMA drug candidates against 7 target binding pockets. Scores compounds from the molecule_screenings database by shape complementarity, H-bond potential, hydrophobic match, electrostatic alignment, and strain penalty.</p>
+    <div id="docking-pockets"></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Top Predicted Binders</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Compound</th><th>Target</th><th>Affinity (kcal/mol)</th><th>Shape</th><th>H-Bond</th><th>Hydrophobic</th><th>Score</th><th>Class</th>
+    </tr></thead>
+    <tbody id="docking-body"><tr><td colspan="9" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="prime">
+    <div class="section-header"><h2 class="section-title">Prime Editing Feasibility</h2></div>
+    <p class="section-desc">Prime editing (PE2/PE3/PEmax) assessment for SMA: SMN2 C6T correction (the root cause fix), ISS-N1 disruption (permanent nusinersen), and ESE strengthening. Compared with approved therapies. Prime editing = reverse transcriptase + Cas9 nickase + pegRNA &mdash; no double-strand breaks.</p>
+    <div id="prime-designs"></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Therapy Comparison</h3>
+    <div id="prime-comparison"></div>
+</section>
+
+<section class="section" id="mdsim">
+    <div class="section-header"><h2 class="section-title">MD Simulations</h2></div>
+    <p class="section-desc">Agent C &mdash; Molecular Dynamics simulation code generator. Generates ready-to-run OpenMM Python scripts for SMA-relevant protein simulations: SMN oligomerization, hnRNP A1-ISS-N1 binding, risdiplam mechanism, NCALD calcium dynamics, PLS3 actin bundling, SMN-Gemin2 stability.</p>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Simulation</th><th>Target</th><th>Type</th><th>PDB</th><th>Atoms</th><th>Time (ns)</th><th>GPU Hours</th>
+    </tr></thead>
+    <tbody id="mdsim-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="spatial">
+    <div class="section-header"><h2 class="section-title">Spatial Multi-Omics</h2></div>
+    <p class="section-desc">Phase 7.1 &mdash; Drug penetration modeling across spinal cord microanatomy. Maps which SMA drugs reach which tissue compartments based on molecular properties, BBB permeability, and CSF exposure. Identifies therapeutic "silent zones" where current drugs underperform.</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Spinal Cord Zones</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Zone</th><th>Region</th><th>BBB Perm.</th><th>CSF Exp.</th><th>Vasc. Density</th><th>SMA Relevance</th><th>Cell Types</th>
+    </tr></thead>
+    <tbody id="spatial-zones-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Drug Penetration</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Drug</th><th>Type</th><th>Route</th><th>Best Zone</th><th>Worst Zone</th><th>Ventral Horn</th><th>NMJ</th>
+    </tr></thead>
+    <tbody id="spatial-drugs-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Silent Zones</h3>
+    <div id="spatial-silent" style="margin-top:8px"><span class="loading">Loading...</span></div>
+</section>
+
+<section class="section" id="regen">
+    <div class="section-header"><h2 class="section-title">Regeneration Signatures</h2></div>
+    <p class="section-desc">Phase 7.2 &mdash; Cross-species regeneration programs in axolotl and zebrafish compared with degeneration in human SMA motor neurons. Identifies conserved repair pathways that are silenced in SMA and could be therapeutically reactivated.</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Regeneration Genes</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Gene</th><th>Organism</th><th>Human Ortholog</th><th>Pathway</th><th>SMA Status</th><th>Reactivation Potential</th>
+    </tr></thead>
+    <tbody id="regen-genes-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Pathway Comparisons</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Pathway</th><th>Regen State</th><th>SMA State</th><th>Gap Score</th><th>Strategy</th>
+    </tr></thead>
+    <tbody id="regen-pathways-body"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody></table></div>
+    <div id="regen-insight" style="margin-top:12px"></div>
+</section>
+
+<section class="section" id="nmj">
+    <div class="section-header"><h2 class="section-title">NMJ Retrograde Signaling</h2></div>
+    <p class="section-desc">Phase 7.3 &mdash; Muscle-to-nerve retrograde signaling at the neuromuscular junction. Tests the "happy muscle &rarr; surviving neuron" hypothesis: can improving muscle health rescue motor neurons via retrograde trophic signals?</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Retrograde Signals</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Signal</th><th>Type</th><th>Source</th><th>Target</th><th>SMA Status</th><th>Therap. Potential</th><th>Evidence</th>
+    </tr></thead>
+    <tbody id="nmj-signals-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">EV Therapeutic Cargo</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Cargo</th><th>Type</th><th>Function</th><th>SMA Relevance</th><th>Feasibility</th>
+    </tr></thead>
+    <tbody id="nmj-ev-body"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Organ-on-Chip Models</h3>
+    <div id="nmj-chips" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:8px"></div>
+    <div id="nmj-insight" style="margin-top:12px"></div>
+</section>
+
+<section class="section" id="multisystem">
+    <div class="section-header"><h2 class="section-title">Multisystem SMA</h2></div>
+    <p class="section-desc">Phase 7.4 &mdash; SMA is not just a motor neuron disease. Liver, cardiac, metabolic, pancreatic, vascular, skeletal, and GI pathology emerges especially in severe SMA types. Models the full systemic picture and combination therapy strategies.</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Affected Organ Systems</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>System</th><th>Organ</th><th>SMA Types</th><th>Prevalence</th><th>Severity</th><th>SMN-Dependent</th><th>Biomarkers</th>
+    </tr></thead>
+    <tbody id="multi-organs-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Combination Therapies</h3>
+    <div id="multi-combos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:8px"></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Energy Budget</h3>
+    <div id="multi-energy" style="margin-top:8px"></div>
+</section>
+
+<section class="section" id="bioelectric">
+    <div class="section-header"><h2 class="section-title">Bioelectric Reprogramming</h2></div>
+    <p class="section-desc">Phase 7.5 &mdash; Ion channel expression, membrane potential (Vmem) states, and electroceutical interventions for SMA motor neurons. Based on Michael Levin's bioelectricity framework: many SMA MNs are alive but electrically dormant — they can potentially be reactivated.</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Ion Channels</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Gene</th><th>Channel</th><th>Type</th><th>Vmem Role</th><th>SMA Expression</th><th>Drug Candidates</th>
+    </tr></thead>
+    <tbody id="bio-channels-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Vmem States</h3>
+    <div id="bio-vmem" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:8px"></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Electroceuticals</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Intervention</th><th>Modality</th><th>Target State</th><th>Evidence</th><th>Feasibility</th>
+    </tr></thead>
+    <tbody id="bio-electro-body"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody></table></div>
+    <div id="bio-insight" style="margin-top:12px"></div>
+</section>
+
+<section class="section" id="splicemap">
+    <div class="section-header"><h2 class="section-title">Cross-Species Splicing Map</h2></div>
+    <p class="section-desc">Phase 9.3 &mdash; Axolotl and zebrafish use alternative splicing as a master switch for regeneration. The same genes exist in humans but their regeneration-promoting isoforms are epigenetically silenced. This module maps 10 regeneration-specific splice events to human orthologs.</p>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Axolotl Gene</th><th>Human Ortholog</th><th>Event Type</th><th>Exon</th><th>Axolotl State</th><th>Human SMA</th><th>Conservation</th><th>Feasibility</th>
+    </tr></thead>
+    <tbody id="splicemap-body"><tr><td colspan="8" class="loading">Loading...</td></tr></tbody></table></div>
+    <div id="splicemap-insight" style="margin-top:12px"></div>
+</section>
+
+<section class="section" id="rnabind">
+    <div class="section-header"><h2 class="section-title">RNA-Binding Prediction</h2></div>
+    <p class="section-desc">Phase 9.4 &mdash; Predicts RNA-binding affinity of compounds toward SMN2 pre-mRNA regulatory elements. 6 RNA target sites mapped (ISS-N1, 5'ss/U1 interface, ESE2, ESS, branch point, TSL2). Benchmarks against known modulators like risdiplam and branaplam.</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">RNA Target Sites in SMN2</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Site</th><th>Location</th><th>Sequence Motif</th><th>Binding Proteins</th><th>Druggability</th><th>Approved Drug</th>
+    </tr></thead>
+    <tbody id="rna-targets-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Known SMN2 Modulators</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Compound</th><th>MW</th><th>Target</th><th>EC50 (nM)</th><th>Status</th>
+    </tr></thead>
+    <tbody id="rna-modulators-body"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody></table></div>
+    <div id="rna-insight" style="margin-top:12px"></div>
+</section>
+
+<section class="section" id="dualtarget">
+    <div class="section-header"><h2 class="section-title">Dual-Target Molecules</h2></div>
+    <p class="section-desc">Phase 6.1 &mdash; Compounds that simultaneously modify SMN2 splicing AND influence ion channels. The bioelectricity intersection: fixing the gene is not enough &mdash; reactivating the electrical function of rescued motor neurons is the missing therapeutic layer.</p>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Compound</th><th>SMN2 Score</th><th>Ion Channel</th><th>Channel Score</th><th>BBB</th><th>Composite</th><th>Status</th>
+    </tr></thead>
+    <tbody id="dual-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
+    <div id="dual-insight" style="margin-top:12px"></div>
+</section>
+
+<section class="section" id="twin">
+    <div class="section-header"><h2 class="section-title">Digital Twin</h2></div>
+    <p class="section-desc">Phase 10.3 &mdash; Multi-scale computational model of the SMA motor neuron. Simulates drug combinations across 5 compartments (soma, axon, NMJ, dendrites, nucleus) and 8 signaling pathways. Predicts synergistic drug combinations in silico.</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Motor Neuron Compartments</h3>
+    <div id="twin-compartments" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:8px"></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Signaling Pathways</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Pathway</th><th>SMA State</th><th>Activity</th><th>Compartments</th><th>Therapeutic Targets</th>
+    </tr></thead>
+    <tbody id="twin-pathways-body"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Optimal Drug Combinations</h3>
+    <div id="twin-combos" style="margin-top:8px"><span class="loading">Loading...</span></div>
+</section>
+
+<section class="section" id="labos">
+    <div class="section-header"><h2 class="section-title">Lab-OS</h2></div>
+    <p class="section-desc">Phase 10.4 &mdash; Open-source experiment design automation. 8 standardized SMA assays with cost/timeline/protocol specs. 3 cloud lab integrations (Emerald Cloud Lab, Strateos, Opentrons). Generates complete experiment designs from hypothesis text.</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">SMA Assay Library</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Assay</th><th>Category</th><th>Readout</th><th>Timeline</th><th>Cost</th><th>Throughput</th>
+    </tr></thead>
+    <tbody id="labos-assays-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Cloud Lab Integrations</h3>
+    <div id="labos-labs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:8px"></div>
+</section>
+
+<section class="section" id="federated">
+    <div class="section-header"><h2 class="section-title">Federated Learning</h2></div>
+    <p class="section-desc">Phase 10.5 &mdash; Zero-knowledge data sharing framework for SMA research. Enables cross-institutional collaboration without sharing raw patient data. Federated learning protocols, OMOP/OHDSI data model mapping, privacy budget calculator, and 4-tier data sharing framework.</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Federated Learning Protocols</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Protocol</th><th>Algorithm</th><th>Use Case</th><th>Participants</th><th>Utility</th><th>Privacy</th>
+    </tr></thead>
+    <tbody id="fed-protocols-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Data Sharing Tiers</h3>
+    <div id="fed-tiers" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:8px"></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">OMOP/OHDSI Mappings</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>SMA Concept</th><th>OMOP Domain</th><th>Concept Name</th><th>Vocabulary</th><th>Notes</th>
+    </tr></thead>
+    <tbody id="fed-omop-body"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="translate">
+    <div class="section-header"><h2 class="section-title">Translation &amp; Impact</h2></div>
+    <p class="section-desc">Phase 11 &mdash; Translating platform discoveries into real-world impact. Regulatory pathway mapping (FDA/EMA), grant application templates, and a 5-level hypothesis validation pipeline from computational validation to IND filing.</p>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Regulatory Pathways</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Pathway</th><th>Agency</th><th>Designation</th><th>Timeline</th><th>SMA Drugs</th><th>Relevance</th>
+    </tr></thead>
+    <tbody id="trans-reg-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Grant Templates</h3>
+    <div id="trans-grants" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:8px"></div>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Validation Pipeline</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Level</th><th>Name</th><th>Assays</th><th>Timeline</th><th>Cost</th><th>Go/No-Go</th>
+    </tr></thead>
+    <tbody id="trans-val-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
 <section class="section" id="contact">
     <div class="section-header"><h2 class="section-title">Contact</h2></div>
     <p class="section-desc">Questions about the platform, data, or collaboration? Send us a message.</p>
@@ -1507,6 +1947,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     var API = '/api/v2';
     var PER_PAGE = 25;
     var cache = {};
+    function getAdminKey() {
+        var k = sessionStorage.getItem('sma-admin-key');
+        if (!k) { k = prompt('Admin API key:'); if (k) sessionStorage.setItem('sma-admin-key', k); }
+        return k || '';
+    }
 
     // Safe DOM helpers
     function el(tag, attrs, children) {
@@ -1569,9 +2014,10 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     // Pagination helper
-    function renderPagination(containerId, totalItems, currentPage, onPageChange) {
+    function renderPagination(containerId, totalItems, currentPage, onPageChange, perPage) {
         var container = clearEl(containerId);
-        var totalPages = Math.ceil(totalItems / PER_PAGE);
+        var pp = perPage || PER_PAGE;
+        var totalPages = Math.ceil(totalItems / pp);
         if (totalPages <= 1) {
             container.appendChild(el('div', {className: 'page-info', text: totalItems + ' items'}));
             return;
@@ -1632,6 +2078,122 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var mo = document.getElementById('m-outcomes'); if(mo) mo.textContent = (ext.drug_outcomes||0).toLocaleString();
         var ml = document.getElementById('m-orthologs'); if(ml) ml.textContent = (ext.orthologs||0).toLocaleString();
     }).catch(function() {});
+
+    // Freshness badge
+    fetch(API + '/stats/freshness').then(function(r) { return r.json(); }).then(function(d) {
+        var badge = document.getElementById('freshness-badge');
+        if (!badge || !d.last_ingestion) return;
+        var lastDate = new Date(d.last_ingestion);
+        var hoursAgo = Math.round((Date.now() - lastDate.getTime()) / 3600000);
+        var freshText = hoursAgo < 1 ? 'just now' : hoursAgo < 24 ? hoursAgo + 'h ago' : Math.round(hoursAgo / 24) + 'd ago';
+        var dotColor = hoursAgo < 24 ? '#4caf50' : hoursAgo < 72 ? '#ff9800' : '#f44336';
+        badge.style.display = '';
+        var dot = document.createElement('span');
+        dot.className = 'freshness-dot';
+        dot.style.background = dotColor;
+        badge.appendChild(dot);
+        badge.appendChild(document.createTextNode('Data updated ' + freshText + ' \u00B7 Last: ' + (d.last_ingestion_type || '') + ' (' + (d.last_ingestion_items || 0) + ' items)'));
+    }).catch(function() {});
+
+    // Hero Ask AI
+    (function() {
+        var heroInput = document.getElementById('hero-ask-input');
+        var heroBtn = document.getElementById('hero-ask-btn');
+        var heroResult = document.getElementById('hero-ask-result');
+        var heroAnswer = document.getElementById('hero-ask-answer');
+        var heroMeta = document.getElementById('hero-ask-meta');
+        var heroLoading = document.getElementById('hero-ask-loading');
+        if (!heroInput || !heroBtn) return;
+
+        function doHeroAsk() {
+            var q = heroInput.value.trim();
+            if (!q || q.length < 5) return;
+            heroBtn.textContent = 'Thinking...';
+            heroBtn.disabled = true;
+            heroResult.style.display = '';
+            heroLoading.style.display = '';
+            heroAnswer.textContent = '';
+            heroMeta.textContent = '';
+
+            fetch(API + '/ask?q=' + encodeURIComponent(q) + '&max_context=30')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    heroBtn.textContent = 'Ask';
+                    heroBtn.disabled = false;
+                    heroLoading.style.display = 'none';
+
+                    if (data.error) {
+                        heroAnswer.textContent = 'Error: ' + (data.answer || data.error);
+                        return;
+                    }
+
+                    // Render answer with basic markdown
+                    var lines = (data.answer || '').split('\n');
+                    for (var i = 0; i < lines.length; i++) {
+                        var line = lines[i];
+                        if (line.match(/^#{1,3}\s/)) {
+                            var h = document.createElement('h3');
+                            h.textContent = line.replace(/^#{1,3}\s+/, '');
+                            heroAnswer.appendChild(h);
+                        } else if (line.match(/^\*\*.*\*\*$/)) {
+                            var hb = document.createElement('h3');
+                            hb.textContent = line.replace(/\*\*/g, '');
+                            heroAnswer.appendChild(hb);
+                        } else if (line.match(/^- /)) {
+                            var li = document.createElement('div');
+                            li.style.cssText = 'padding-left:16px;margin:2px 0;font-size:13px;line-height:1.6';
+                            li.textContent = '\u2022 ' + line.substring(2);
+                            heroAnswer.appendChild(li);
+                        } else if (line.trim()) {
+                            var p = document.createElement('p');
+                            p.style.cssText = 'font-size:13px;line-height:1.7;margin:6px 0';
+                            p.textContent = line;
+                            heroAnswer.appendChild(p);
+                        }
+                    }
+
+                    // Meta
+                    var parts = [];
+                    if (data.claims_in_context) parts.push(data.claims_in_context + ' claims used');
+                    if (data.sources_in_context) parts.push(data.sources_in_context + ' papers');
+                    if (data.model) parts.push(data.model);
+                    heroMeta.textContent = parts.join(' \u00B7 ');
+
+                    // "View full answer" link to Ask AI tab
+                    var viewFull = document.createElement('div');
+                    viewFull.style.cssText = 'margin-top:12px;font-size:11px';
+                    var fullLink = document.createElement('a');
+                    fullLink.href = '#ask';
+                    fullLink.style.cssText = 'color:var(--accent);cursor:pointer';
+                    fullLink.textContent = 'Open in Research Assistant \u2192';
+                    fullLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showSection('ask');
+                        document.getElementById('ask-query').value = q;
+                    });
+                    viewFull.appendChild(fullLink);
+                    heroAnswer.appendChild(viewFull);
+                })
+                .catch(function(err) {
+                    heroBtn.textContent = 'Ask';
+                    heroBtn.disabled = false;
+                    heroLoading.style.display = 'none';
+                    heroAnswer.textContent = 'Network error: ' + err.message;
+                });
+        }
+
+        heroBtn.addEventListener('click', doHeroAsk);
+        heroInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') doHeroAsk(); });
+
+        // Example chips
+        var exs = document.querySelectorAll('.hero-ask-ex');
+        for (var i = 0; i < exs.length; i++) {
+            exs[i].addEventListener('click', function() {
+                heroInput.value = this.getAttribute('data-q');
+                doHeroAsk();
+            });
+        }
+    })();
 
     // ============ Section loaders (lazy) ============
     var loaded = {};
@@ -1736,8 +2298,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
-    // Sources with pagination, year filter, date sort, claim counts
-    var sourcesData = []; var sourcesFiltered = []; var sourcesPage = 1; var sourcesYearFilter = 'all';
+    // Sources with pagination, year filter, type filter, date sort, claim counts
+    var sourcesData = []; var sourcesFiltered = []; var sourcesPage = 1; var sourcesYearFilter = 'all'; var sourcesTypeFilter = 'all';
     var claimCountBySource = {};
     function getYear(dateStr) { if (!dateStr) return 'unknown'; return dateStr.substring(0, 4); }
     function makeFilterBtn(text, filterVal, isActive) {
@@ -1746,11 +2308,39 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         return b;
     }
     function buildSourceFilters() {
-        var years = {}; for (var j = 0; j < sourcesData.length; j++) { var y = getYear(sourcesData[j].pub_date); years[y] = (years[y]||0)+1; }
+        // Source type filter
+        var types = {}; for (var j = 0; j < sourcesData.length; j++) { var t = sourcesData[j].source_type || 'pubmed'; types[t] = (types[t]||0)+1; }
+        var typeTabs = document.getElementById('sources-type-tabs');
+        if (!typeTabs) {
+            typeTabs = el('div', {id: 'sources-type-tabs', className: 'filter-tabs', style: 'margin-bottom:6px'});
+            var filterParent = document.getElementById('sources-filter-tabs').parentNode;
+            filterParent.insertBefore(typeTabs, document.getElementById('sources-filter-tabs'));
+        }
+        while (typeTabs.firstChild) typeTabs.removeChild(typeTabs.firstChild);
+        typeTabs.appendChild(makeFilterBtn('All Sources (' + sourcesData.length + ')', 'all', true));
+        var typeKeys = Object.keys(types).sort();
+        for (var t = 0; t < typeKeys.length; t++) {
+            typeTabs.appendChild(makeFilterBtn(typeKeys[t].charAt(0).toUpperCase() + typeKeys[t].slice(1) + ' (' + types[typeKeys[t]] + ')', typeKeys[t], false));
+        }
+        typeTabs.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('filter-tab')) return;
+            var btns = typeTabs.querySelectorAll('.filter-tab'); for (var b = 0; b < btns.length; b++) btns[b].classList.remove('active');
+            e.target.classList.add('active');
+            sourcesTypeFilter = e.target.getAttribute('data-filter');
+            sourcesYearFilter = 'all';
+            buildYearFilters();
+            applySourceFilter();
+        });
+        // Year filters
+        buildYearFilters();
+    }
+    function buildYearFilters() {
+        var base = sourcesTypeFilter === 'all' ? sourcesData : sourcesData.filter(function(s) { return (s.source_type || 'pubmed') === sourcesTypeFilter; });
+        var years = {}; for (var j = 0; j < base.length; j++) { var y = getYear(base[j].pub_date); years[y] = (years[y]||0)+1; }
         var sorted = Object.keys(years).sort(function(a,b) { return b.localeCompare(a); });
         var tabs = document.getElementById('sources-filter-tabs');
-        tabs.innerHTML = '';
-        tabs.appendChild(makeFilterBtn('All (' + sourcesData.length + ')', 'all', true));
+        while (tabs.firstChild) tabs.removeChild(tabs.firstChild);
+        tabs.appendChild(makeFilterBtn('All (' + base.length + ')', 'all', true));
         for (var k = 0; k < sorted.length; k++) {
             tabs.appendChild(makeFilterBtn(sorted[k] + ' (' + years[sorted[k]] + ')', sorted[k], false));
         }
@@ -1764,19 +2354,39 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
     function applySourceFilter() {
-        if (sourcesYearFilter === 'all') { sourcesFiltered = sourcesData.slice(); }
-        else { sourcesFiltered = sourcesData.filter(function(s) { return getYear(s.pub_date) === sourcesYearFilter; }); }
+        var result = sourcesData;
+        if (sourcesTypeFilter !== 'all') {
+            result = result.filter(function(s) { return (s.source_type || 'pubmed') === sourcesTypeFilter; });
+        }
+        if (sourcesYearFilter !== 'all') {
+            result = result.filter(function(s) { return getYear(s.pub_date) === sourcesYearFilter; });
+        }
+        sourcesFiltered = result;
         sourcesPage = 1; renderSourcesPage();
+    }
+    function sourceUrl(s) {
+        if (s.source_type === 'patent') return s.url || ('https://patents.google.com/patent/' + s.external_id + '/en');
+        return 'https://pubmed.ncbi.nlm.nih.gov/' + s.external_id;
+    }
+    function sourceLinkLabel(s) {
+        if (s.source_type === 'patent') return 'View Patent';
+        return 'View on PubMed';
+    }
+    function sourceTypeBadge(st) {
+        var colors = {pubmed:'#2196F3',patent:'#FF9800',biorxiv:'#4CAF50',clinicaltrials:'#9C27B0'};
+        var c = colors[st] || '#757575';
+        return el('span', {text: st, style: 'font-size:10px;padding:2px 6px;border-radius:3px;background:' + c + '1a;color:' + c + ';font-weight:600;text-transform:uppercase'});
     }
     function renderSourcesPage() {
         var showing = sourcesFiltered.length;
-        document.getElementById('sources-count').textContent = showing + ' papers' + (sourcesYearFilter !== 'all' ? ' (' + sourcesYearFilter + ')' : '');
+        var label = sourcesTypeFilter === 'patent' ? ' patents' : sourcesTypeFilter === 'pubmed' ? ' papers' : ' sources';
+        document.getElementById('sources-count').textContent = showing + label + (sourcesYearFilter !== 'all' ? ' (' + sourcesYearFilter + ')' : '');
         var body = clearEl('sources-body');
         var start = (sourcesPage - 1) * PER_PAGE;
         var end = Math.min(start + PER_PAGE, showing);
         for (var i = start; i < end; i++) {
             var s = sourcesFiltered[i];
-            var pmidUrl = 'https://pubmed.ncbi.nlm.nih.gov/' + s.external_id;
+            var sUrl = sourceUrl(s);
             var hasAbstract = s.abstract && s.abstract.length > 20;
             var expandId = 'source-expand-' + i;
             var cc = claimCountBySource[s.id] || 0;
@@ -1789,10 +2399,14 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 }); })(expandId, btn);
                 btnTd.appendChild(btn);
             }
+            var idCell = el('td');
+            idCell.appendChild(el('a', {href: sUrl, target: '_blank', rel: 'noopener', text: s.external_id, style: 'font-size:12px'}));
+            idCell.appendChild(el('br'));
+            idCell.appendChild(sourceTypeBadge(s.source_type || 'pubmed'));
             body.appendChild(el('tr', null, [
-                tdLink(s.external_id, pmidUrl),
+                idCell,
                 td(s.title || '', '', 'max-width:500px'),
-                td(s.journal || '', '', 'font-size:12px;color:var(--text-secondary)'),
+                td(s.source_type === 'patent' ? (parseJ(s.authors)||[]).join(', ') : (s.journal || ''), '', 'font-size:12px;color:var(--text-secondary)'),
                 td(s.pub_date || '', 'mono', 'font-size:11px;white-space:nowrap'),
                 td(cc > 0 ? String(cc) : '\u2014', 'mono', 'font-size:12px;text-align:center;' + (cc > 0 ? 'color:var(--green);font-weight:600' : 'color:var(--muted)')),
                 btnTd
@@ -1814,7 +2428,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     meta.appendChild(doiLink);
                     meta.appendChild(document.createTextNode(' | '));
                 }
-                var pubLink = el('a', {href: pmidUrl, target: '_blank', rel: 'noopener', text: 'View on PubMed'});
+                var pubLink = el('a', {href: sUrl, target: '_blank', rel: 'noopener', text: sourceLinkLabel(s)});
                 meta.appendChild(pubLink);
                 if (cc > 0) { meta.appendChild(document.createTextNode(' | ' + cc + ' claims extracted')); }
                 expandCell.appendChild(detail);
@@ -1824,7 +2438,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             }
         }
         if (showing === 0) {
-            body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: 'No papers found.'})]));
+            body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: 'No sources found.'})]));
         }
         renderPagination('sources-pagination', showing, sourcesPage, function(p) { sourcesPage = p; renderSourcesPage(); });
     }
@@ -1847,41 +2461,107 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
-    // Claims with pagination and enriched source data
-    var claimsData = []; var claimsPage = 1; var claimsFilter = null;
-    function buildClaimFilters() {
-        var types = {}; for (var i = 0; i < claimsData.length; i++) { var t = claimsData[i].claim_type || 'other'; types[t] = (types[t] || 0) + 1; }
+    // Claims with server-side pagination and filters
+    var claimsData = []; var claimsPage = 1; var claimsTotal = 0;
+    var claimsFilters = { type: '', conf: '', target: '', q: '' };
+    var CLAIMS_PER_PAGE = 50;
+
+    function buildClaimFilterParams() {
+        var params = 'enriched=true&limit=' + CLAIMS_PER_PAGE + '&offset=' + ((claimsPage - 1) * CLAIMS_PER_PAGE);
+        if (claimsFilters.type) params += '&claim_type=' + encodeURIComponent(claimsFilters.type);
+        if (claimsFilters.conf) params += '&confidence_min=' + claimsFilters.conf;
+        if (claimsFilters.target) params += '&target=' + encodeURIComponent(claimsFilters.target);
+        if (claimsFilters.q) params += '&q=' + encodeURIComponent(claimsFilters.q);
+        return params;
+    }
+    function buildClaimCountParams() {
+        var params = '';
+        var parts = [];
+        if (claimsFilters.type) parts.push('claim_type=' + encodeURIComponent(claimsFilters.type));
+        if (claimsFilters.conf) parts.push('confidence_min=' + claimsFilters.conf);
+        if (claimsFilters.target) parts.push('target=' + encodeURIComponent(claimsFilters.target));
+        if (claimsFilters.q) parts.push('q=' + encodeURIComponent(claimsFilters.q));
+        return parts.length ? '?' + parts.join('&') : '';
+    }
+    function initClaimFilterDropdowns() {
+        // Populate type dropdown from count endpoint
+        fetch(API + '/claims/count').then(function(r) { return r.json(); }).then(function(data) {
+            var sel = document.getElementById('claims-f-type');
+            var types = data.by_type || {};
+            var sorted = Object.keys(types).sort(function(a,b) { return types[b] - types[a]; });
+            for (var i = 0; i < sorted.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = sorted[i];
+                opt.textContent = sorted[i].replace(/_/g, ' ') + ' (' + types[sorted[i]] + ')';
+                sel.appendChild(opt);
+            }
+        });
+        // Populate target dropdown
+        fetch(API + '/targets?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+            var sel = document.getElementById('claims-f-target');
+            data.sort(function(a,b) { return (a.symbol||'').localeCompare(b.symbol||''); });
+            for (var i = 0; i < data.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = data[i].symbol;
+                opt.textContent = data[i].symbol + (data[i].name ? ' \u2014 ' + data[i].name : '');
+                sel.appendChild(opt);
+            }
+        });
+    }
+    function showActiveFilters() {
+        var wrap = document.getElementById('claims-active-filters');
+        var parts = [];
+        if (claimsFilters.type) parts.push('Type: ' + claimsFilters.type.replace(/_/g, ' '));
+        if (claimsFilters.conf) parts.push('Confidence \u2265 ' + (parseFloat(claimsFilters.conf)*100).toFixed(0) + '%');
+        if (claimsFilters.target) parts.push('Target: ' + claimsFilters.target);
+        if (claimsFilters.q) parts.push('Search: "' + claimsFilters.q + '"');
+        if (parts.length) {
+            wrap.style.display = '';
+            wrap.textContent = 'Active filters: ' + parts.join(' \u00B7 ') + ' \u2014 ' + claimsTotal + ' matching claims';
+        } else {
+            wrap.style.display = 'none';
+        }
+    }
+    function buildClaimTypeQuickFilters(byType) {
         var bar = clearEl('claim-type-filters');
-        var allBtn = el('button', {className: 'claim-filter-btn' + (claimsFilter === null ? ' active' : ''), text: 'All (' + claimsData.length + ')'});
-        allBtn.addEventListener('click', function() { claimsFilter = null; claimsPage = 1; buildClaimFilters(); renderClaimsPage(); });
+        var allBtn = el('button', {className: 'claim-filter-btn' + (!claimsFilters.type ? ' active' : ''), text: 'All'});
+        allBtn.addEventListener('click', function() { claimsFilters.type = ''; document.getElementById('claims-f-type').value = ''; claimsPage = 1; fetchClaimsPage(); });
         bar.appendChild(allBtn);
-        var sorted = Object.keys(types).sort(function(a,b) { return types[b] - types[a]; });
+        var sorted = Object.keys(byType).sort(function(a,b) { return byType[b] - byType[a]; });
         for (var j = 0; j < sorted.length; j++) {
             (function(t) {
-                var btn = el('button', {className: 'claim-filter-btn' + (claimsFilter === t ? ' active' : ''), text: t.replace(/_/g, ' ') + ' (' + types[t] + ')'});
-                btn.addEventListener('click', function() { claimsFilter = t; claimsPage = 1; buildClaimFilters(); renderClaimsPage(); });
+                var btn = el('button', {className: 'claim-filter-btn' + (claimsFilters.type === t ? ' active' : ''), text: t.replace(/_/g, ' ')});
+                btn.addEventListener('click', function() { claimsFilters.type = t; document.getElementById('claims-f-type').value = t; claimsPage = 1; fetchClaimsPage(); });
                 bar.appendChild(btn);
             })(sorted[j]);
         }
     }
-    function getFilteredClaims() {
-        if (!claimsFilter) return claimsData;
-        return claimsData.filter(function(c) { return c.claim_type === claimsFilter; });
+    function fetchClaimsPage() {
+        var body = clearEl('claims-body');
+        body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: 'Loading claims...'})]));
+        Promise.all([
+            fetch(API + '/claims?' + buildClaimFilterParams()).then(function(r) { return r.json(); }),
+            fetch(API + '/claims/count' + buildClaimCountParams()).then(function(r) { return r.json(); })
+        ]).then(function(results) {
+            claimsData = results[0];
+            var countData = results[1];
+            claimsTotal = countData.total || 0;
+            document.getElementById('claims-count').textContent = claimsTotal.toLocaleString() + ' claims';
+            buildClaimTypeQuickFilters(countData.by_type || {});
+            showActiveFilters();
+            renderClaimsPage();
+        });
     }
     function renderClaimsPage() {
-        var filtered = getFilteredClaims();
-        document.getElementById('claims-count').textContent = filtered.length + ' claims' + (claimsFilter ? ' (' + claimsFilter.replace(/_/g, ' ') + ')' : '');
         var body = clearEl('claims-body');
-        var start = (claimsPage - 1) * PER_PAGE;
-        var end = Math.min(start + PER_PAGE, filtered.length);
-        for (var i = start; i < end; i++) {
+        for (var i = 0; i < claimsData.length; i++) {
             (function(idx) {
-                var c = filtered[idx];
+                var c = claimsData[idx];
                 var meta = parseJ(c.metadata) || {};
                 var targets = (meta.related_targets || []).join(', ');
                 var subjectLabel = meta.subject_label || c.subject_type || '';
                 var conf = c.confidence ? (c.confidence * 100).toFixed(0) + '%' : '';
-                var confCls = c.confidence >= 0.8 ? 'badge-green' : c.confidence >= 0.5 ? 'badge-amber' : 'badge-gray';
+                var confCls = c.confidence >= 0.7 ? 'badge-green' : c.confidence >= 0.4 ? 'badge-amber' : 'badge-gray';
                 var predText = c.predicate || '';
                 var shortPred = predText.length > 140 ? predText.substring(0, 140) + '...' : predText;
 
@@ -1965,9 +2645,10 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                         if (fullJournal) metaParts.push(fullJournal);
                         if (fullDate) metaParts.push(fullDate);
                         if (fullAuthors) {
-                            var authArr = typeof fullAuthors === 'string' ? fullAuthors : '';
-                            if (authArr.length > 100) authArr = authArr.substring(0, 100) + '...';
-                            metaParts.push(authArr);
+                            var authStr = typeof fullAuthors === 'string' ? fullAuthors : '';
+                            try { var authArr = JSON.parse(authStr); authStr = authArr.join(', '); } catch(e) {}
+                            if (authStr.length > 150) authStr = authStr.substring(0, 150) + '...';
+                            metaParts.push(authStr);
                         }
                         metaLine.textContent = metaParts.join(' \u00B7 ');
                         srcSec.appendChild(metaLine);
@@ -2030,21 +2711,40 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     detailRow.appendChild(detailCell);
                     row.parentNode.insertBefore(detailRow, row.nextSibling);
                 }
-                row.addEventListener('click', function(e) { if (e.target.tagName !== 'BUTTON') toggleDetail(); });
+                row.addEventListener('click', function(e) { if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') toggleDetail(); });
                 detailBtn.addEventListener('click', function(e) { e.stopPropagation(); toggleDetail(); });
                 body.appendChild(row);
             })(i);
         }
-        if (filtered.length === 0) {
-            body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: claimsFilter ? 'No claims of type "' + claimsFilter + '".' : 'No claims extracted yet.'})]));
+        if (claimsData.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: 'No claims match your filters.'})]));
         }
-        renderPagination('claims-pagination', filtered.length, claimsPage, function(p) { claimsPage = p; renderClaimsPage(); });
+        var totalPages = Math.ceil(claimsTotal / CLAIMS_PER_PAGE);
+        renderPagination('claims-pagination', claimsTotal, claimsPage, function(p) { claimsPage = p; fetchClaimsPage(); }, CLAIMS_PER_PAGE);
     }
     function loadClaims() {
         if (loaded.claims) return; loaded.claims = true;
-        fetch(API + '/claims?enriched=true&limit=50000').then(function(r) { return r.json(); }).then(function(data) {
-            claimsData = data; claimsPage = 1; buildClaimFilters(); renderClaimsPage();
+        initClaimFilterDropdowns();
+        // Filter bar event listeners
+        document.getElementById('claims-f-apply').addEventListener('click', function() {
+            claimsFilters.type = document.getElementById('claims-f-type').value;
+            claimsFilters.conf = document.getElementById('claims-f-conf').value;
+            claimsFilters.target = document.getElementById('claims-f-target').value;
+            claimsFilters.q = document.getElementById('claims-f-q').value.trim();
+            claimsPage = 1; fetchClaimsPage();
         });
+        document.getElementById('claims-f-reset').addEventListener('click', function() {
+            claimsFilters = { type: '', conf: '', target: '', q: '' };
+            document.getElementById('claims-f-type').value = '';
+            document.getElementById('claims-f-conf').value = '';
+            document.getElementById('claims-f-target').value = '';
+            document.getElementById('claims-f-q').value = '';
+            claimsPage = 1; fetchClaimsPage();
+        });
+        document.getElementById('claims-f-q').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') document.getElementById('claims-f-apply').click();
+        });
+        fetchClaimsPage();
     }
 
     function loadDrugs() {
@@ -2441,7 +3141,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // ============ Drug Screening ============
     function loadScreening() {
         if (loaded.screening) return; loaded.screening = true;
-        fetch(API + '/screen/compounds', {method: 'POST', headers: {'x-admin-key': 'sma-admin-2026'}})
+        fetch(API + '/screen/compounds/results')
         .then(function(r) { return r.json(); })
         .then(function(data) {
             document.getElementById('screening-count').textContent = data.screened + ' compounds screened';
@@ -3112,8 +3812,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 card.appendChild(meta);
                 grid.appendChild(card);
             });
-        }).catch(function() {
-            clearEl('directions-grid').appendChild(el('div', {className: 'loading', text: 'Research directions not available.'}));
+        }).catch(function(e) {
+            console.error('Directions load error:', e);
+            clearEl('directions-grid').appendChild(el('div', {className: 'empty-state', text: 'Research directions not available: ' + (e.message || e)}));
         });
     }
 
@@ -3300,6 +4001,1261 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             });
     }
 
+    // ----------- Ask AI tab -----------
+    var askLoaded = false;
+    function loadAsk() {
+        if (askLoaded) return;
+        askLoaded = true;
+
+        var askInput = document.getElementById('ask-query');
+        var askBtn = document.getElementById('ask-btn');
+        var askLoading = document.getElementById('ask-loading');
+        var askResult = document.getElementById('ask-result');
+        var askAnswer = document.getElementById('ask-answer');
+        var askMeta = document.getElementById('ask-meta');
+
+        // Example click handlers
+        var examples = document.querySelectorAll('.ask-example');
+        for (var i = 0; i < examples.length; i++) {
+            examples[i].addEventListener('click', function() {
+                askInput.value = this.dataset.q;
+                doAsk();
+            });
+        }
+
+        askBtn.addEventListener('click', doAsk);
+        askInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') doAsk(); });
+
+        function doAsk() {
+            var q = askInput.value.trim();
+            if (!q || q.length < 5) return;
+
+            askBtn.textContent = 'Thinking...';
+            askBtn.disabled = true;
+            askLoading.style.display = 'block';
+            askResult.style.display = 'none';
+
+            fetch(API + '/ask?q=' + encodeURIComponent(q) + '&max_context=30')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    askBtn.textContent = 'Ask';
+                    askBtn.disabled = false;
+                    askLoading.style.display = 'none';
+                    askResult.style.display = 'block';
+
+                    if (data.error) {
+                        askAnswer.textContent = 'Error: ' + (data.answer || data.error);
+                        askMeta.textContent = '';
+                        return;
+                    }
+
+                    // Render answer — convert markdown-style headers to styled text
+                    askAnswer.textContent = '';
+                    var lines = (data.answer || '').split('\n');
+                    for (var i = 0; i < lines.length; i++) {
+                        var line = lines[i];
+                        if (line.match(/^#{1,3}\s/)) {
+                            var h = el('h3', {text: line.replace(/^#{1,3}\s+/, '')});
+                            askAnswer.appendChild(h);
+                        } else if (line.match(/^\*\*.*\*\*$/)) {
+                            var b = el('h3', {text: line.replace(/\*\*/g, '')});
+                            askAnswer.appendChild(b);
+                        } else {
+                            var p = document.createTextNode(line + '\n');
+                            askAnswer.appendChild(p);
+                        }
+                    }
+
+                    // Meta line
+                    askMeta.textContent = '';
+                    var parts = [];
+                    if (data.model) parts.push('Model: ' + data.model);
+                    if (data.claims_in_context) parts.push('Claims used: ' + data.claims_in_context);
+                    if (data.sources_in_context) parts.push('Papers used: ' + data.sources_in_context);
+                    if (data.usage) parts.push('Tokens: ' + data.usage.input_tokens + ' in / ' + data.usage.output_tokens + ' out');
+                    askMeta.textContent = parts.join(' | ');
+                })
+                .catch(function(err) {
+                    askBtn.textContent = 'Ask';
+                    askBtn.disabled = false;
+                    askLoading.style.display = 'none';
+                    askResult.style.display = 'block';
+                    askAnswer.textContent = 'Request failed: ' + err.message;
+                    askMeta.textContent = '';
+                });
+        }
+    }
+
+    // ----------- Evidence Writer tab -----------
+    var writeLoaded = false;
+    function loadWrite() {
+        if (writeLoaded) return;
+        writeLoaded = true;
+
+        var writeSubject = document.getElementById('write-subject');
+        var writeFormat = document.getElementById('write-format');
+        var writeBtn = document.getElementById('write-btn');
+        var writeLoading = document.getElementById('write-loading');
+        var writeResult = document.getElementById('write-result');
+        var writeAnswer = document.getElementById('write-answer');
+        var writeMeta = document.getElementById('write-meta');
+        var writeCopy = document.getElementById('write-copy');
+        var writeCompare = document.getElementById('write-compare-mode');
+
+        // Example click handlers
+        var examples = document.querySelectorAll('.write-example');
+        for (var i = 0; i < examples.length; i++) {
+            examples[i].addEventListener('click', function() {
+                writeSubject.value = this.dataset.s;
+                writeFormat.value = this.dataset.f;
+                if (this.dataset.t === 'topic') writeCompare.checked = false;
+                doWrite();
+            });
+        }
+
+        writeBtn.addEventListener('click', doWrite);
+        writeSubject.addEventListener('keydown', function(e) { if (e.key === 'Enter') doWrite(); });
+
+        writeCopy.addEventListener('click', function() {
+            var text = writeAnswer.textContent;
+            navigator.clipboard.writeText(text).then(function() {
+                writeCopy.textContent = 'Copied!';
+                setTimeout(function() { writeCopy.textContent = 'Copy to Clipboard'; }, 1500);
+            });
+        });
+
+        function doWrite() {
+            var subject = writeSubject.value.trim();
+            if (!subject || subject.length < 2) return;
+
+            var format = writeFormat.value;
+            var isCompare = writeCompare.checked && subject.indexOf(',') > -1;
+
+            writeBtn.textContent = 'Generating...';
+            writeBtn.disabled = true;
+            writeLoading.style.display = 'block';
+            writeResult.style.display = 'none';
+
+            var url;
+            if (isCompare) {
+                url = API + '/write/compare?targets=' + encodeURIComponent(subject) + '&format=' + format;
+            } else {
+                var subjectType = 'target';
+                // Heuristic: if subject has spaces or is lowercase, treat as topic
+                if (subject.indexOf(' ') > -1 || subject !== subject.toUpperCase() && !/^[A-Z][A-Z0-9_]+$/.test(subject)) {
+                    subjectType = 'topic';
+                }
+                url = API + '/write/summary?subject=' + encodeURIComponent(subject) + '&format=' + format + '&type=' + subjectType;
+            }
+
+            fetch(url)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    writeBtn.textContent = 'Generate';
+                    writeBtn.disabled = false;
+                    writeLoading.style.display = 'none';
+                    writeResult.style.display = 'block';
+                    writeCopy.style.display = 'inline-block';
+
+                    if (data.error) {
+                        writeAnswer.textContent = 'Error: ' + (data.summary || data.error);
+                        writeMeta.textContent = '';
+                        writeCopy.style.display = 'none';
+                        return;
+                    }
+
+                    // Render summary with markdown-like formatting
+                    writeAnswer.textContent = '';
+                    var lines = (data.summary || '').split('\n');
+                    for (var i = 0; i < lines.length; i++) {
+                        var line = lines[i];
+                        if (line.match(/^#{1,3}\s/)) {
+                            var h = el('h3', {text: line.replace(/^#{1,3}\s+/, '')});
+                            writeAnswer.appendChild(h);
+                        } else if (line.match(/^\*\*.*\*\*:?$/)) {
+                            var b = el('h3', {text: line.replace(/\*\*/g, '')});
+                            writeAnswer.appendChild(b);
+                        } else {
+                            writeAnswer.appendChild(document.createTextNode(line + '\n'));
+                        }
+                    }
+
+                    // Meta
+                    writeMeta.textContent = '';
+                    var parts = [];
+                    if (data.format) parts.push('Format: ' + data.format);
+                    if (data.evidence_used) parts.push('Evidence: ' + data.evidence_used + ' items');
+                    if (data.claims_count) parts.push('Claims: ' + data.claims_count);
+                    if (data.model) parts.push('Model: ' + data.model);
+                    if (data.duration) parts.push('Time: ' + data.duration + 's');
+                    if (data.usage) parts.push('Tokens: ' + data.usage.input_tokens + ' in / ' + data.usage.output_tokens + ' out');
+                    writeMeta.textContent = parts.join(' | ');
+                })
+                .catch(function(err) {
+                    writeBtn.textContent = 'Generate';
+                    writeBtn.disabled = false;
+                    writeLoading.style.display = 'none';
+                    writeResult.style.display = 'block';
+                    writeAnswer.textContent = 'Request failed: ' + err.message;
+                    writeMeta.textContent = '';
+                    writeCopy.style.display = 'none';
+                });
+        }
+    }
+
+    // Molecules section — ChEMBL/PubChem screening
+    function loadMolecules() {
+        if (loaded.molecules) return; loaded.molecules = true;
+        fetch(API + '/screen/molecules').then(function(r) { return r.json(); }).then(function(data) {
+            var total = data.total_screened || 0;
+            var pass = data.drug_likeness_pass || 0;
+            var passRate = total > 0 ? Math.round(100 * pass / total) : 0;
+            document.getElementById('molecules-count').textContent = total.toLocaleString() + ' compounds';
+            var summary = clearEl('molecules-summary');
+            var stats = [
+                {val: total.toLocaleString(), label: 'Total Screened', cls: ''},
+                {val: pass.toLocaleString(), label: 'Drug-Like (' + passRate + '%)', cls: 'highlight'},
+                {val: String(data.targets_covered || 0), label: 'Targets Covered', cls: ''},
+                {val: (data.chembl_compounds || 0).toLocaleString(), label: 'ChEMBL', cls: ''},
+                {val: String(data.pubchem_compounds || 0), label: 'PubChem', cls: ''},
+            ];
+            if (data.screening_running) {
+                stats.push({val: 'RUNNING', label: 'Screening Active', cls: 'highlight'});
+            }
+            for (var s = 0; s < stats.length; s++) {
+                var card = el('div', {className: 'screen-stat'});
+                card.appendChild(el('div', {className: 'screen-stat-val' + (stats[s].cls ? ' ' + stats[s].cls : ''), text: stats[s].val}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
+                summary.appendChild(card);
+            }
+            var body = clearEl('molecules-body');
+            var top = data.top_10_by_pchembl || [];
+            for (var i = 0; i < top.length; i++) {
+                var c = top[i];
+                var chemblLink = el('a', {text: c.chembl_id || '-', title: 'View on ChEMBL'});
+                if (c.chembl_id) chemblLink.href = 'https://www.ebi.ac.uk/chembl/compound_report_card/' + c.chembl_id;
+                chemblLink.target = '_blank';
+                chemblLink.rel = 'noopener';
+                chemblLink.style.cssText = 'color:var(--text);font-weight:600;font-family:var(--mono);font-size:11px;text-decoration:underline';
+                var linkTd = el('td');
+                linkTd.appendChild(chemblLink);
+                body.appendChild(el('tr', null, [
+                    td(String(i + 1), 'mono'),
+                    tdBadge(c.target_symbol || '-', 'badge-blue'),
+                    linkTd,
+                    td(c.pchembl_value ? c.pchembl_value.toFixed(1) : '-', 'mono', 'font-weight:700'),
+                    td(c.activity_type || '-'),
+                    td(c.molecular_weight ? c.molecular_weight.toFixed(0) : '-', 'mono'),
+                    td(c.alogp ? c.alogp.toFixed(1) : '-', 'mono'),
+                    tdBadge(c.drug_likeness_pass ? 'PASS' : 'fail', c.drug_likeness_pass ? 'badge-green' : 'badge-gray')
+                ]));
+            }
+        });
+    }
+
+    function loadCrispr() {
+        if (loaded.crispr) return; loaded.crispr = true;
+        fetch(API + '/crispr/guides?max_guides=30').then(function(r) { return r.json(); }).then(function(data) {
+            var strategies = data.strategies || [];
+            var container = clearEl('crispr-strategies');
+            var grid = el('div', {className: 'screen-summary'});
+            grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px';
+            for (var s = 0; s < strategies.length; s++) {
+                var st = strategies[s];
+                var card = el('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var title = el('div', {text: st.strategy});
+                title.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:8px';
+                card.appendChild(title);
+                var rat = el('div', {text: st.rationale});
+                rat.style.cssText = 'font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px';
+                card.appendChild(rat);
+                var cnt = el('div', {text: st.guide_count + ' guides found'});
+                cnt.style.cssText = 'font-size:11px;font-weight:600;color:var(--accent)';
+                card.appendChild(cnt);
+                grid.appendChild(card);
+            }
+            container.appendChild(grid);
+
+            var motifContainer = clearEl('crispr-motifs');
+            var motifs = data.motifs || {};
+            var motifGrid = el('div');
+            motifGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px';
+            var motifNames = Object.keys(motifs);
+            for (var m = 0; m < motifNames.length; m++) {
+                var mn = motifNames[m];
+                var mi = motifs[mn];
+                var mc = el('div');
+                mc.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:12px;font-size:11px';
+                mc.appendChild(el('div', {text: mn, className: 'font-weight:700'}));
+                mc.firstChild.style.cssText = 'font-weight:700;font-size:12px;margin-bottom:4px';
+                mc.appendChild(el('div', {text: mi.region + ' [' + mi.start + '-' + mi.end + '] — ' + mi.role}));
+                mc.lastChild.style.cssText = 'color:var(--muted);margin-bottom:4px';
+                mc.appendChild(el('div', {text: mi.note}));
+                mc.lastChild.style.cssText = 'color:var(--text-secondary);line-height:1.5';
+                motifGrid.appendChild(mc);
+            }
+            motifContainer.appendChild(motifGrid);
+
+            var body = clearEl('crispr-body');
+            var guides = data.all_guides || [];
+            for (var i = 0; i < Math.min(guides.length, 30); i++) {
+                var g = guides[i];
+                var motifList = (g.overlapping_motifs || []).join(', ');
+                body.appendChild(el('tr', null, [
+                    td(String(i + 1), 'mono'),
+                    tdBadge(motifList || g.region, motifList ? 'badge-blue' : 'badge-gray'),
+                    td(g.sequence, 'mono', 'font-size:10px;letter-spacing:0.5px'),
+                    td(g.pam, 'mono'),
+                    td(g.strand, 'mono'),
+                    td(g.region),
+                    td((g.gc_content * 100).toFixed(0) + '%', 'mono'),
+                    td(g.on_target_score.toFixed(2), 'mono', 'font-weight:700'),
+                    td(g.specificity_score.toFixed(2), 'mono')
+                ]));
+            }
+        });
+    }
+
+    function loadAav() {
+        if (loaded.aav) return; loaded.aav = true;
+        fetch(API + '/aav/evaluate?cargo=SMN1_cDNA').then(function(r) { return r.json(); }).then(function(data) {
+            var stContainer = clearEl('aav-strategies');
+            var strategies = data.strategies || [];
+            var grid = el('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:24px';
+            for (var s = 0; s < strategies.length; s++) {
+                var st = strategies[s];
+                var card = el('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var title = el('div', {text: st.strategy});
+                title.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:6px';
+                card.appendChild(title);
+                var capsidInfo = el('div', {text: 'Capsid: ' + st.capsid});
+                capsidInfo.style.cssText = 'font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px';
+                card.appendChild(capsidInfo);
+                var rat = el('div', {text: st.rationale});
+                rat.style.cssText = 'font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:6px';
+                card.appendChild(rat);
+                var lim = el('div', {text: 'Limitations: ' + st.limitations});
+                lim.style.cssText = 'font-size:10px;color:var(--text-secondary);line-height:1.5;font-style:italic';
+                card.appendChild(lim);
+                grid.appendChild(card);
+            }
+            stContainer.appendChild(grid);
+
+            var body = clearEl('aav-body');
+            var capsids = data.capsids || [];
+            for (var i = 0; i < capsids.length; i++) {
+                var c = capsids[i];
+                var pkg = c.packaging || {};
+                var pkgText = pkg.fits ? 'OK (' + pkg.headroom_kb + ' kb free)' : 'EXCEED';
+                var scoreClass = c.composite_score >= 0.65 ? 'badge-green' : (c.composite_score >= 0.45 ? 'badge-yellow' : 'badge-gray');
+                body.appendChild(el('tr', null, [
+                    td(String(c.rank), 'mono'),
+                    td(c.serotype, null, 'font-weight:700'),
+                    td((c.motor_neuron_tropism * 100).toFixed(0) + '%', 'mono'),
+                    td((c.bbb_crossing * 100).toFixed(0) + '%', 'mono'),
+                    td((c.immunogenicity * 100).toFixed(0) + '%', 'mono'),
+                    td((c.manufacturing_score * 100).toFixed(0) + '%', 'mono'),
+                    tdBadge(pkgText, pkg.fits ? 'badge-green' : 'badge-red'),
+                    tdBadge(c.composite_score.toFixed(2), scoreClass),
+                    td(c.clinical_precedent ? c.clinical_precedent.substring(0, 80) + (c.clinical_precedent.length > 80 ? '...' : '') : '-', null, 'font-size:10px')
+                ]));
+            }
+        });
+    }
+
+    function loadVersions() {
+        if (loaded.versions) return; loaded.versions = true;
+        fetch(API + '/gene-versions/smn2').then(function(r) { return r.json(); }).then(function(data) {
+            var lineageContainer = clearEl('versions-lineage');
+            var lineage = data.lineage || {};
+            var grid = el('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px';
+            var lineageKeys = Object.keys(lineage);
+            var labels = {smn1_healthy: 'SMN1 (Healthy)', smn2_disease: 'SMN2 (Disease)', smn2_corrected: 'Base Edit Corrected', ese_enhanced: 'ESE Enhanced', ess_disrupted: 'ESS Disrupted'};
+            for (var k = 0; k < lineageKeys.length; k++) {
+                var key = lineageKeys[k];
+                var card = el('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:12px;text-align:center';
+                var lbl = el('div', {text: labels[key] || key});
+                lbl.style.cssText = 'font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px';
+                card.appendChild(lbl);
+                var hash = el('div', {text: lineage[key]});
+                hash.style.cssText = 'font-family:var(--mono);font-size:12px;font-weight:700;color:var(--text);letter-spacing:0.5px';
+                card.appendChild(hash);
+                grid.appendChild(card);
+            }
+            lineageContainer.appendChild(grid);
+
+            var body = clearEl('versions-body');
+            var versions = data.versions || [];
+            for (var i = 0; i < versions.length; i++) {
+                var v = versions[i];
+                body.appendChild(el('tr', null, [
+                    td(v.commit_hash, 'mono', 'font-weight:700;font-size:11px'),
+                    tdBadge(v.edit_type, v.edit_type === 'reference' ? 'badge-blue' : (v.edit_type === 'base_edit' ? 'badge-green' : 'badge-yellow')),
+                    td(v.region),
+                    td(v.parent_hash || 'ROOT', 'mono', 'font-size:10px'),
+                    td(v.edit_description ? v.edit_description.substring(0, 80) + (v.edit_description.length > 80 ? '...' : '') : '-', null, 'font-size:10px'),
+                    td(v.functional_impact || '-', null, 'font-size:10px')
+                ]));
+            }
+
+            var diffsContainer = clearEl('versions-diffs');
+            var diffs = data.diffs || [];
+            for (var d = 0; d < diffs.length; d++) {
+                var diff = diffs[d];
+                var diffCard = el('div');
+                diffCard.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px;margin-bottom:12px';
+                var diffTitle = el('div', {text: diff.name});
+                diffTitle.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:8px';
+                diffCard.appendChild(diffTitle);
+                var meta = el('div', {text: diff.parent_hash + ' \u2192 ' + diff.child_hash + ' | ' + diff.total_changes + ' change(s) | edit distance: ' + diff.edit_distance});
+                meta.style.cssText = 'font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:8px';
+                diffCard.appendChild(meta);
+                var changes = diff.changes || [];
+                for (var ci = 0; ci < changes.length; ci++) {
+                    var ch = changes[ci];
+                    var chLine = el('div', {text: 'pos ' + ch.position + ': ' + (ch.ref || '-') + ' \u2192 ' + (ch.alt || '-') + ' (' + ch.type + ')'});
+                    chLine.style.cssText = 'font-family:var(--mono);font-size:11px;padding:2px 8px;background:var(--bg);margin-bottom:2px';
+                    diffCard.appendChild(chLine);
+                }
+                diffsContainer.appendChild(diffCard);
+            }
+        });
+    }
+
+    function loadDocking() {
+        if (loaded.docking) return; loaded.docking = true;
+        fetch(API + '/dock/score?pocket=SMN2_SPLICE_SITE&limit=30').then(function(r) { return r.json(); }).then(function(data) {
+            var pocketsDiv = clearEl('docking-pockets');
+            if (data.pocket_details) {
+                var pd = data.pocket_details;
+                var grid = el('div');
+                grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px';
+                var stats = [
+                    {val: String(data.total_scored || 0), label: 'Compounds Scored'},
+                    {val: String(data.strong_binders || 0), label: 'Strong Binders'},
+                    {val: String(data.moderate_binders || 0), label: 'Moderate Binders'},
+                    {val: pd.pocket_name || '-', label: 'Binding Pocket'},
+                ];
+                for (var s = 0; s < stats.length; s++) {
+                    var card = el('div', {className: 'screen-stat'});
+                    card.appendChild(el('div', {className: 'screen-stat-val', text: stats[s].val}));
+                    card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
+                    grid.appendChild(card);
+                }
+                pocketsDiv.appendChild(grid);
+            }
+            var body = clearEl('docking-body');
+            var compounds = data.top_compounds || [];
+            for (var i = 0; i < Math.min(compounds.length, 30); i++) {
+                var c = compounds[i];
+                var classColor = c.binding_class === 'strong' ? 'badge-green' : (c.binding_class === 'moderate' ? 'badge-yellow' : 'badge-gray');
+                body.appendChild(el('tr', null, [
+                    td(String(c.rank || i+1), 'mono'),
+                    td(c.compound_name || c.compound_id, null, 'font-size:11px'),
+                    td(c.target_symbol || c.target),
+                    td(String(c.predicted_affinity_kcal), 'mono', 'font-weight:700'),
+                    td(c.shape_score.toFixed(2), 'mono'),
+                    td(c.hbond_score.toFixed(2), 'mono'),
+                    td(c.hydrophobic_score.toFixed(2), 'mono'),
+                    tdBadge(c.composite_score.toFixed(2), classColor),
+                    tdBadge(c.binding_class, classColor)
+                ]));
+            }
+        });
+    }
+
+    function loadPrime() {
+        if (loaded.prime) return; loaded.prime = true;
+        fetch(API + '/prime-editing/feasibility').then(function(r) { return r.json(); }).then(function(data) {
+            var designsDiv = clearEl('prime-designs');
+            var designs = data.designs || [];
+            var grid = el('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:24px';
+            for (var i = 0; i < designs.length; i++) {
+                var d = designs[i];
+                var card = el('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var title = el('div', {text: d.edit_name});
+                title.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:6px';
+                card.appendChild(title);
+                var score = el('div', {text: 'Feasibility: ' + (d.feasibility_score * 100).toFixed(0) + '% | Efficiency: ' + (d.estimated_efficiency * 100).toFixed(0) + '%'});
+                score.style.cssText = 'font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px';
+                card.appendChild(score);
+                var impact = el('div', {text: d.biological_impact});
+                impact.style.cssText = 'font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:8px';
+                card.appendChild(impact);
+                var relevance = el('div', {text: d.clinical_relevance});
+                relevance.style.cssText = 'font-size:10px;color:var(--text-secondary);font-style:italic;line-height:1.4';
+                card.appendChild(relevance);
+                grid.appendChild(card);
+            }
+            designsDiv.appendChild(grid);
+
+            var compDiv = clearEl('prime-comparison');
+            var comparison = data.comparison_with_approved_therapies || [];
+            var compTable = el('div', {className: 'table-wrap'});
+            var table = el('table');
+            var thead = el('thead');
+            var headerRow = el('tr');
+            var headers = ['Approach', 'Precision', 'Permanence', 'Delivery', 'Safety', 'Efficiency', 'Cost', 'Maturity'];
+            for (var h = 0; h < headers.length; h++) {
+                headerRow.appendChild(el('th', {text: headers[h]}));
+            }
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            var tbody = el('tbody');
+            for (var c = 0; c < comparison.length; c++) {
+                var cm = comparison[c];
+                tbody.appendChild(el('tr', null, [
+                    td(cm.approach, null, 'font-weight:700;font-size:11px'),
+                    td(cm.precision, null, 'font-size:10px'),
+                    td(cm.permanence, null, 'font-size:10px'),
+                    td(cm.delivery, null, 'font-size:10px'),
+                    td(cm.safety, null, 'font-size:10px'),
+                    td(cm.efficiency, null, 'font-size:10px'),
+                    td(cm.cost_model, null, 'font-size:10px'),
+                    td(cm.maturity, null, 'font-size:10px')
+                ]));
+            }
+            table.appendChild(tbody);
+            compTable.appendChild(table);
+            compDiv.appendChild(compTable);
+        });
+    }
+
+    function loadMdsim() {
+        if (loaded.mdsim) return; loaded.mdsim = true;
+        fetch(API + '/md/simulations').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('mdsim-body');
+            var sims = data.simulations || [];
+            for (var i = 0; i < sims.length; i++) {
+                var s = sims[i];
+                body.appendChild(el('tr', null, [
+                    td(s.name, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(s.target, 'badge-blue'),
+                    td(s.simulation_type),
+                    td(s.pdb_id || s.alphafold_id || '-', 'mono', 'font-size:10px'),
+                    td(s.system_size_atoms.toLocaleString(), 'mono'),
+                    td(String(s.simulation_time_ns), 'mono'),
+                    td(String(s.gpu_hours_estimate), 'mono', 'font-weight:700')
+                ]));
+            }
+        });
+    }
+
+    // --- Phase 7.1: Spatial Multi-Omics ---
+    function loadSpatial() {
+        if (loaded.spatial) return; loaded.spatial = true;
+        fetch(API + '/spatial/penetration').then(function(r) { return r.json(); }).then(function(data) {
+            // Zones table
+            var zb = clearEl('spatial-zones-body');
+            var zones = data.zones || {};
+            var keys = Object.keys(zones);
+            for (var i = 0; i < keys.length; i++) {
+                var z = zones[keys[i]];
+                zb.appendChild(el('tr', null, [
+                    td(z.name, null, 'font-weight:600;font-size:11px'),
+                    td(z.anatomical_region),
+                    td(String(z.bbb_permeability), 'mono'),
+                    td(String(z.csf_exposure), 'mono'),
+                    td(String(z.vascular_density), 'mono'),
+                    tdBadge(String(z.sma_relevance), z.sma_relevance >= 0.8 ? 'badge-green' : z.sma_relevance >= 0.4 ? 'badge-blue' : ''),
+                    td((z.cell_types || []).join(', '), null, 'font-size:10px')
+                ]));
+            }
+            // Drug penetration table
+            var db = clearEl('spatial-drugs-body');
+            var drugs = data.penetration || [];
+            for (var j = 0; j < drugs.length; j++) {
+                var d = drugs[j];
+                var zp = d.zone_penetration || {};
+                db.appendChild(el('tr', null, [
+                    td(d.name, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(d.type, 'badge-blue'),
+                    td(d.route),
+                    tdBadge(d.best_zone, 'badge-green'),
+                    tdBadge(d.worst_zone, 'badge-red'),
+                    td(String(zp.ventral_horn || '-'), 'mono'),
+                    td(String(zp.nmj || '-'), 'mono')
+                ]));
+            }
+        });
+        fetch(API + '/spatial/silent-zones').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('spatial-silent');
+            var sz = data.silent_zones || [];
+            if (sz.length === 0) {
+                var p = document.createElement('p');
+                p.textContent = 'No silent zones detected — all SMA-relevant zones have adequate therapeutic coverage (>50% access).';
+                p.style.cssText = 'color:var(--muted);font-size:12px';
+                box.appendChild(p);
+            } else {
+                for (var i = 0; i < sz.length; i++) {
+                    var card = document.createElement('div');
+                    card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px;margin-bottom:8px';
+                    var h = document.createElement('h4');
+                    h.textContent = sz[i].zone_name + ' (relevance: ' + sz[i].sma_relevance + ')';
+                    h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                    card.appendChild(h);
+                    var desc = document.createElement('p');
+                    desc.textContent = 'Best access: ' + sz[i].best_therapy_access + ' | Gap: ' + sz[i].gap;
+                    desc.style.cssText = 'font-size:11px;color:var(--muted);margin:0';
+                    card.appendChild(desc);
+                    box.appendChild(card);
+                }
+            }
+            if (data.insight) {
+                var ins = document.createElement('p');
+                ins.textContent = data.insight;
+                ins.style.cssText = 'font-size:11px;color:var(--muted);margin-top:8px;font-style:italic';
+                box.appendChild(ins);
+            }
+        });
+    }
+
+    // --- Phase 7.2: Regeneration Signatures ---
+    function loadRegen() {
+        if (loaded.regen) return; loaded.regen = true;
+        fetch(API + '/regen/genes').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('regen-genes-body');
+            var genes = data.genes || [];
+            for (var i = 0; i < genes.length; i++) {
+                var g = genes[i];
+                body.appendChild(el('tr', null, [
+                    td(g.symbol, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(g.organism, g.organism === 'both' ? 'badge-green' : 'badge-blue'),
+                    td(g.human_ortholog, 'mono'),
+                    td(g.pathway),
+                    tdBadge(g.sma_status, g.sma_status === 'downregulated' ? 'badge-red' : g.sma_status === 'upregulated' ? 'badge-green' : ''),
+                    td(String(g.reactivation_potential), 'mono', 'font-weight:700')
+                ]));
+            }
+            if (data.insight) {
+                var ins = document.createElement('p');
+                ins.textContent = data.insight;
+                ins.style.cssText = 'font-size:11px;color:var(--muted);margin-top:8px;font-style:italic';
+                document.getElementById('regen-insight').appendChild(ins);
+            }
+        });
+        fetch(API + '/regen/pathways').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('regen-pathways-body');
+            var paths = data.comparisons || [];
+            for (var i = 0; i < paths.length; i++) {
+                var p = paths[i];
+                body.appendChild(el('tr', null, [
+                    td(p.pathway, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(p.regeneration_state, 'badge-green'),
+                    tdBadge(p.sma_state, p.sma_state === 'suppressed' ? 'badge-red' : 'badge-blue'),
+                    td(String(p.gap_score), 'mono', 'font-weight:700'),
+                    td(p.strategy, null, 'font-size:10px')
+                ]));
+            }
+        });
+    }
+
+    // --- Phase 7.3: NMJ Retrograde Signaling ---
+    function loadNmj() {
+        if (loaded.nmj) return; loaded.nmj = true;
+        fetch(API + '/nmj/signals').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('nmj-signals-body');
+            var sigs = data.signals || [];
+            for (var i = 0; i < sigs.length; i++) {
+                var s = sigs[i];
+                body.appendChild(el('tr', null, [
+                    td(s.name, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(s.molecule_type, 'badge-blue'),
+                    td(s.source),
+                    td(s.target, null, 'font-size:10px'),
+                    tdBadge(s.sma_status, s.sma_status === 'reduced' ? 'badge-red' : 'badge-green'),
+                    td(String(s.therapeutic_potential), 'mono', 'font-weight:700'),
+                    tdBadge(s.evidence_strength, s.evidence_strength === 'strong' ? 'badge-green' : '')
+                ]));
+            }
+            if (data.insight) {
+                var ins = document.createElement('p');
+                ins.textContent = data.insight;
+                ins.style.cssText = 'font-size:11px;color:var(--muted);margin-top:8px;font-style:italic';
+                document.getElementById('nmj-insight').appendChild(ins);
+            }
+        });
+        fetch(API + '/nmj/ev-cargo').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('nmj-ev-body');
+            var cargo = data.cargo || [];
+            for (var i = 0; i < cargo.length; i++) {
+                var c = cargo[i];
+                body.appendChild(el('tr', null, [
+                    td(c.name, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(c.cargo_type, 'badge-blue'),
+                    td(c.function, null, 'font-size:10px'),
+                    td(c.sma_relevance, null, 'font-size:10px'),
+                    td(String(c.delivery_feasibility), 'mono', 'font-weight:700')
+                ]));
+            }
+        });
+        fetch(API + '/nmj/chip-models').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('nmj-chips');
+            var models = data.models || [];
+            for (var i = 0; i < models.length; i++) {
+                var m = models[i];
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var h = document.createElement('h4');
+                h.textContent = m.name;
+                h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                card.appendChild(h);
+                var trl = document.createElement('span');
+                trl.textContent = 'TRL ' + m.trl;
+                trl.className = 'badge badge-blue';
+                trl.style.cssText = 'margin-bottom:8px;display:inline-block';
+                card.appendChild(trl);
+                var cost = document.createElement('p');
+                cost.textContent = m.cost_per_chip + ' | ' + m.throughput;
+                cost.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0';
+                card.appendChild(cost);
+                var desc = document.createElement('p');
+                desc.textContent = m.sma_modeling;
+                desc.style.cssText = 'font-size:11px;margin:4px 0 0';
+                card.appendChild(desc);
+                box.appendChild(card);
+            }
+        });
+    }
+
+    // --- Phase 7.4: Multisystem SMA ---
+    function loadMultisystem() {
+        if (loaded.multisystem) return; loaded.multisystem = true;
+        fetch(API + '/multisystem/organs').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('multi-organs-body');
+            var systems = data.systems || [];
+            for (var i = 0; i < systems.length; i++) {
+                var o = systems[i];
+                body.appendChild(el('tr', null, [
+                    td(o.name, null, 'font-weight:600;font-size:11px'),
+                    td(o.organ),
+                    td(o.sma_type_affected),
+                    td((o.prevalence * 100).toFixed(0) + '%', 'mono'),
+                    td((o.severity * 100).toFixed(0) + '%', 'mono', 'font-weight:700'),
+                    tdBadge(o.smn_dependent ? 'Yes' : 'No', o.smn_dependent ? 'badge-green' : ''),
+                    td((o.biomarkers || []).slice(0, 3).join(', '), null, 'font-size:10px')
+                ]));
+            }
+        });
+        fetch(API + '/multisystem/combinations').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('multi-combos');
+            var combos = data.strategies || [];
+            for (var i = 0; i < combos.length; i++) {
+                var c = combos[i];
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var h = document.createElement('h4');
+                h.textContent = c.name;
+                h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                card.appendChild(h);
+                var feas = document.createElement('span');
+                feas.textContent = (c.feasibility * 100).toFixed(0) + '% feasible';
+                feas.className = 'badge ' + (c.feasibility >= 0.8 ? 'badge-green' : 'badge-blue');
+                feas.style.cssText = 'margin-bottom:8px;display:inline-block';
+                card.appendChild(feas);
+                var organs = document.createElement('p');
+                organs.textContent = (c.target_organs || []).join(', ');
+                organs.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0';
+                card.appendChild(organs);
+                var rat = document.createElement('p');
+                rat.textContent = c.rationale;
+                rat.style.cssText = 'font-size:11px;margin:4px 0';
+                card.appendChild(rat);
+                var st = document.createElement('p');
+                st.textContent = c.clinical_status;
+                st.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 0;font-style:italic';
+                card.appendChild(st);
+                box.appendChild(card);
+            }
+        });
+        fetch(API + '/multisystem/energy').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('multi-energy');
+            var states = ['normal_motor_neuron', 'sma_motor_neuron', 'treated_sma_motor_neuron'];
+            var labels = ['Normal MN', 'SMA MN', 'Treated SMA MN'];
+            var grid = document.createElement('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:16px';
+            for (var i = 0; i < states.length; i++) {
+                var s = data[states[i]];
+                if (!s) continue;
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var h = document.createElement('h4');
+                h.textContent = labels[i];
+                h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                card.appendChild(h);
+                var ratio = document.createElement('span');
+                ratio.textContent = 'Supply/Demand: ' + s.supply_demand_ratio;
+                ratio.className = 'badge ' + (s.supply_demand_ratio >= 0.9 ? 'badge-green' : s.supply_demand_ratio >= 0.7 ? 'badge-blue' : 'badge-red');
+                card.appendChild(ratio);
+                var details = ['atp_demand', 'energy_source', 'mitochondrial_function'];
+                for (var j = 0; j < details.length; j++) {
+                    var p = document.createElement('p');
+                    p.textContent = details[j].replace(/_/g, ' ') + ': ' + s[details[j]];
+                    p.style.cssText = 'font-size:10px;margin:4px 0 0;color:var(--muted)';
+                    card.appendChild(p);
+                }
+                grid.appendChild(card);
+            }
+            box.appendChild(grid);
+            if (data.therapeutic_gap) {
+                var gap = document.createElement('p');
+                gap.textContent = data.therapeutic_gap;
+                gap.style.cssText = 'font-size:11px;color:var(--muted);margin-top:12px;font-style:italic';
+                box.appendChild(gap);
+            }
+        });
+    }
+
+    // --- Phase 7.5: Bioelectric Reprogramming ---
+    function loadBioelectric() {
+        if (loaded.bioelectric) return; loaded.bioelectric = true;
+        fetch(API + '/bioelectric/channels').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('bio-channels-body');
+            var chs = data.channels || [];
+            for (var i = 0; i < chs.length; i++) {
+                var c = chs[i];
+                body.appendChild(el('tr', null, [
+                    td(c.gene, 'mono', 'font-weight:600;font-size:11px'),
+                    td(c.name, null, 'font-size:11px'),
+                    tdBadge(c.channel_type, 'badge-blue'),
+                    td(c.vmem_role),
+                    tdBadge(c.sma_expression, c.sma_expression === 'downregulated' ? 'badge-red' : c.sma_expression === 'upregulated' ? 'badge-green' : ''),
+                    td((c.drug_candidates || []).join(', '), null, 'font-size:10px')
+                ]));
+            }
+            if (data.insight) {
+                var ins = document.createElement('p');
+                ins.textContent = data.insight;
+                ins.style.cssText = 'font-size:11px;color:var(--muted);margin-top:8px;font-style:italic';
+                document.getElementById('bio-insight').appendChild(ins);
+            }
+        });
+        fetch(API + '/bioelectric/vmem').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('bio-vmem');
+            var states = data.states || [];
+            for (var i = 0; i < states.length; i++) {
+                var v = states[i];
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var h = document.createElement('h4');
+                h.textContent = v.state;
+                h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                card.appendChild(h);
+                var mv = document.createElement('span');
+                mv.textContent = v.vmem_range_mv;
+                mv.className = 'badge badge-blue';
+                mv.style.cssText = 'display:inline-block;margin-bottom:8px';
+                card.appendChild(mv);
+                var prev = document.createElement('span');
+                prev.textContent = (v.prevalence_in_sma * 100).toFixed(0) + '% of SMA MNs';
+                prev.className = 'badge';
+                prev.style.cssText = 'display:inline-block;margin-left:4px;margin-bottom:8px';
+                card.appendChild(prev);
+                var desc = document.createElement('p');
+                desc.textContent = v.phenotype;
+                desc.style.cssText = 'font-size:11px;margin:4px 0';
+                card.appendChild(desc);
+                var rel = document.createElement('p');
+                rel.textContent = v.sma_relevance;
+                rel.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 0;font-style:italic';
+                card.appendChild(rel);
+                box.appendChild(card);
+            }
+        });
+        fetch(API + '/bioelectric/electroceuticals').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('bio-electro-body');
+            var items = data.interventions || [];
+            for (var i = 0; i < items.length; i++) {
+                var e = items[i];
+                body.appendChild(el('tr', null, [
+                    td(e.name, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(e.modality, 'badge-blue'),
+                    td(e.target_vmem_state, null, 'font-size:10px'),
+                    tdBadge(e.evidence_level, e.evidence_level === 'clinical' ? 'badge-green' : e.evidence_level === 'preclinical' ? 'badge-blue' : ''),
+                    td((e.feasibility * 100).toFixed(0) + '%', 'mono', 'font-weight:700')
+                ]));
+            }
+        });
+    }
+
+    // --- Phase 9.3: Cross-Species Splicing Map ---
+    function loadSpliceMap() {
+        if (loaded.splicemap) return; loaded.splicemap = true;
+        fetch(API + '/splice/cross-species').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('splicemap-body');
+            var events = data.splice_events || [];
+            for (var i = 0; i < events.length; i++) {
+                var s = events[i];
+                body.appendChild(el('tr', null, [
+                    td(s.gene_axolotl, null, 'font-weight:600;font-size:11px'),
+                    td(s.gene_human, 'mono'),
+                    tdBadge(s.event_type, 'badge-blue'),
+                    td(s.exon, null, 'font-size:10px'),
+                    tdBadge(s.axolotl_state, 'badge-green'),
+                    tdBadge(s.human_sma_state, s.human_sma_state === 'silenced' ? 'badge-red' : ''),
+                    td(String(s.conservation_score), 'mono'),
+                    td(String(s.reactivation_feasibility), 'mono', 'font-weight:700')
+                ]));
+            }
+            if (data.insight) {
+                var ins = document.createElement('p');
+                ins.textContent = data.insight;
+                ins.style.cssText = 'font-size:11px;color:var(--muted);font-style:italic';
+                document.getElementById('splicemap-insight').appendChild(ins);
+            }
+        });
+    }
+
+    // --- Phase 9.4: RNA-Binding Prediction ---
+    function loadRnaBinding() {
+        if (loaded.rnabind) return; loaded.rnabind = true;
+        fetch(API + '/rna/targets').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('rna-targets-body');
+            var sites = data.sites || [];
+            for (var i = 0; i < sites.length; i++) {
+                var s = sites[i];
+                body.appendChild(el('tr', null, [
+                    td(s.name, null, 'font-weight:600;font-size:11px'),
+                    td(s.location, null, 'font-size:10px'),
+                    td(s.sequence_motif, 'mono', 'font-size:10px'),
+                    td((s.binding_proteins || []).join(', '), null, 'font-size:10px'),
+                    td(String(s.druggability), 'mono', 'font-weight:700'),
+                    tdBadge(s.approved_drug || 'None', s.approved_drug && s.approved_drug !== 'None' ? 'badge-green' : '')
+                ]));
+            }
+            if (data.insight) {
+                var ins = document.createElement('p');
+                ins.textContent = data.insight;
+                ins.style.cssText = 'font-size:11px;color:var(--muted);font-style:italic';
+                document.getElementById('rna-insight').appendChild(ins);
+            }
+        });
+        fetch(API + '/rna/modulators').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('rna-modulators-body');
+            var mods = data.modulators || [];
+            for (var i = 0; i < mods.length; i++) {
+                var m = mods[i];
+                body.appendChild(el('tr', null, [
+                    td(m.name, null, 'font-weight:600;font-size:11px'),
+                    td(String(m.mw), 'mono'),
+                    td(m.target, null, 'font-size:10px'),
+                    td(String(m.ec50_nm), 'mono', 'font-weight:700'),
+                    tdBadge(m.status, m.status.indexOf('Approved') >= 0 ? 'badge-green' : m.status.indexOf('Discontinued') >= 0 ? 'badge-red' : 'badge-blue')
+                ]));
+            }
+        });
+    }
+
+    // --- Phase 6.1: Dual-Target Molecules ---
+    function loadDualTarget() {
+        if (loaded.dualtarget) return; loaded.dualtarget = true;
+        fetch(API + '/screen/dual-target').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('dual-body');
+            var cands = data.candidates || [];
+            for (var i = 0; i < cands.length; i++) {
+                var c = cands[i];
+                body.appendChild(el('tr', null, [
+                    td(c.name, null, 'font-weight:600;font-size:11px'),
+                    td(String(c.smn2_score), 'mono'),
+                    td(c.ion_channel_target, 'mono', 'font-size:10px'),
+                    td(String(c.ion_channel_score), 'mono'),
+                    td(String(c.bbb_penetration), 'mono'),
+                    td(String(c.composite_score), 'mono', 'font-weight:700;color:var(--accent)'),
+                    tdBadge(c.clinical_status.split('.')[0], c.clinical_status.indexOf('Approved') >= 0 ? 'badge-green' : 'badge-blue')
+                ]));
+            }
+            if (data.insight) {
+                var ins = document.createElement('p');
+                ins.textContent = data.insight;
+                ins.style.cssText = 'font-size:11px;color:var(--muted);font-style:italic';
+                document.getElementById('dual-insight').appendChild(ins);
+            }
+        });
+    }
+
+    // --- Phase 10.3: Digital Twin ---
+    function loadDigitalTwin() {
+        if (loaded.twin) return; loaded.twin = true;
+        fetch(API + '/twin/compartments').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('twin-compartments');
+            var comps = data.compartments || [];
+            for (var i = 0; i < comps.length; i++) {
+                var c = comps[i];
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var h = document.createElement('h4');
+                h.textContent = c.name;
+                h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                card.appendChild(h);
+                var health = document.createElement('span');
+                health.textContent = 'Health: ' + (c.health_baseline * 100).toFixed(0) + '%';
+                health.className = 'badge ' + (c.health_baseline >= 0.35 ? 'badge-blue' : 'badge-red');
+                health.style.cssText = 'display:inline-block;margin-bottom:8px';
+                card.appendChild(health);
+                var vol = document.createElement('span');
+                vol.textContent = c.volume_um3.toLocaleString() + ' \u00b5m\u00b3';
+                vol.className = 'badge';
+                vol.style.cssText = 'display:inline-block;margin-left:4px;margin-bottom:8px';
+                card.appendChild(vol);
+                var defects = document.createElement('p');
+                defects.textContent = (c.sma_defects || []).slice(0, 2).join('; ');
+                defects.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 0';
+                card.appendChild(defects);
+                box.appendChild(card);
+            }
+        });
+        fetch(API + '/twin/pathways').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('twin-pathways-body');
+            var paths = data.pathways || [];
+            for (var i = 0; i < paths.length; i++) {
+                var p = paths[i];
+                body.appendChild(el('tr', null, [
+                    td(p.name, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(p.sma_state, p.sma_state === 'hypoactive' ? 'badge-red' : p.sma_state === 'dysregulated' ? 'badge-blue' : ''),
+                    td((p.activity_level * 100).toFixed(0) + '%', 'mono', 'font-weight:700'),
+                    td((p.compartments || []).join(', '), null, 'font-size:10px'),
+                    td((p.therapeutic_targets || []).slice(0, 2).join(', '), null, 'font-size:10px')
+                ]));
+            }
+        });
+        fetch(API + '/twin/optimize').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('twin-combos');
+            var best = data.best_combination;
+            if (best) {
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px;margin-bottom:12px';
+                var h = document.createElement('h4');
+                h.textContent = 'Best Combination: ' + (best.combination || []).join(' + ');
+                h.style.cssText = 'margin:0 0 8px;font-size:13px';
+                card.appendChild(h);
+                var score = document.createElement('span');
+                score.textContent = 'Functional Score: ' + (best.functional_score * 100).toFixed(0) + '%';
+                score.className = 'badge badge-green';
+                score.style.cssText = 'display:inline-block;margin-right:8px';
+                card.appendChild(score);
+                var syn = document.createElement('span');
+                syn.textContent = best.synergy_type;
+                syn.className = 'badge ' + (best.synergy_type === 'synergistic' ? 'badge-green' : 'badge-blue');
+                card.appendChild(syn);
+                box.appendChild(card);
+            }
+            // Top pairs table
+            var pairs = data.top_pairs || [];
+            if (pairs.length > 0) {
+                var h3 = document.createElement('h4');
+                h3.textContent = 'Top Drug Pairs';
+                h3.style.cssText = 'font-size:12px;margin:16px 0 8px';
+                box.appendChild(h3);
+                for (var i = 0; i < Math.min(pairs.length, 5); i++) {
+                    var p = pairs[i];
+                    var row = document.createElement('div');
+                    row.style.cssText = 'display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid var(--line);font-size:11px';
+                    var name = document.createElement('span');
+                    name.textContent = (p.combination || []).join(' + ');
+                    name.style.fontWeight = '600';
+                    row.appendChild(name);
+                    var sc = document.createElement('span');
+                    sc.textContent = (p.functional_score * 100).toFixed(0) + '% | ' + p.synergy_type;
+                    sc.className = 'mono';
+                    row.appendChild(sc);
+                    box.appendChild(row);
+                }
+            }
+            if (data.insight) {
+                var ins = document.createElement('p');
+                ins.textContent = data.insight;
+                ins.style.cssText = 'font-size:11px;color:var(--muted);margin-top:12px;font-style:italic';
+                box.appendChild(ins);
+            }
+        });
+    }
+
+    function loadLabOs() {
+        if (loaded.labos) return; loaded.labos = true;
+        fetch(API + '/lab/assays').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('labos-assays-body');
+            var assays = data.assays || [];
+            for (var i = 0; i < assays.length; i++) {
+                var a = assays[i];
+                body.appendChild(el('tr', null, [
+                    td(a.name, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(a.category, a.category === 'cell_based' ? 'badge-blue' : a.category === 'in_vivo' ? 'badge-red' : 'badge-green'),
+                    td(a.readout, null, 'font-size:10px'),
+                    td(a.timeline, 'mono'),
+                    td(a.cost_estimate, 'mono'),
+                    tdBadge(a.throughput, a.throughput === 'high' ? 'badge-green' : a.throughput === 'medium' ? 'badge-blue' : '')
+                ]));
+            }
+        });
+        fetch(API + '/lab/cloud-labs').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('labos-labs');
+            var labs = data.labs || [];
+            for (var i = 0; i < labs.length; i++) {
+                var l = labs[i];
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var h = document.createElement('h4');
+                h.textContent = l.name;
+                h.style.cssText = 'margin:0 0 8px;font-size:13px';
+                card.appendChild(h);
+                var type = document.createElement('span');
+                type.textContent = l.lab_type;
+                type.className = 'badge badge-blue';
+                type.style.cssText = 'display:inline-block;margin-bottom:8px';
+                card.appendChild(type);
+                var api = document.createElement('span');
+                api.textContent = 'API: ' + l.api_type;
+                api.className = 'badge';
+                api.style.cssText = 'display:inline-block;margin-left:4px;margin-bottom:8px';
+                card.appendChild(api);
+                var desc = document.createElement('p');
+                desc.textContent = l.sma_fit || '';
+                desc.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 0';
+                card.appendChild(desc);
+                box.appendChild(card);
+            }
+        });
+    }
+
+    function loadFederated() {
+        if (loaded.federated) return; loaded.federated = true;
+        fetch(API + '/federated/protocols').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('fed-protocols-body');
+            var protos = data.protocols || [];
+            for (var i = 0; i < protos.length; i++) {
+                var p = protos[i];
+                body.appendChild(el('tr', null, [
+                    td(p.name, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(p.algorithm, 'badge-blue'),
+                    td(p.sma_use_case, null, 'font-size:10px'),
+                    td(p.min_participants + '+', 'mono'),
+                    td((p.expected_utility * 100).toFixed(0) + '%', 'mono', 'font-weight:700'),
+                    td(p.privacy_guarantee, null, 'font-size:9px')
+                ]));
+            }
+        });
+        fetch(API + '/federated/data-tiers').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('fed-tiers');
+            var tiers = data.tiers || [];
+            for (var i = 0; i < tiers.length; i++) {
+                var t = tiers[i];
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var h = document.createElement('h4');
+                h.textContent = t.tier;
+                h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                card.appendChild(h);
+                var mech = document.createElement('span');
+                mech.textContent = t.privacy_mechanism;
+                mech.className = 'badge badge-green';
+                mech.style.cssText = 'display:inline-block;margin-bottom:8px';
+                card.appendChild(mech);
+                var desc = document.createElement('p');
+                desc.textContent = t.description;
+                desc.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 4px';
+                card.appendChild(desc);
+                var val = document.createElement('p');
+                val.textContent = 'SMA Value: ' + t.sma_value;
+                val.style.cssText = 'font-size:10px;margin:4px 0 0';
+                card.appendChild(val);
+                box.appendChild(card);
+            }
+        });
+        fetch(API + '/federated/omop').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('fed-omop-body');
+            var maps = data.mappings || [];
+            for (var i = 0; i < maps.length; i++) {
+                var m = maps[i];
+                body.appendChild(el('tr', null, [
+                    td(m.sma_concept, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(m.omop_domain, m.omop_domain === 'Condition' ? 'badge-red' : m.omop_domain === 'Drug' ? 'badge-green' : 'badge-blue'),
+                    td(m.omop_concept_name, null, 'font-size:10px'),
+                    td(m.vocabulary, 'mono'),
+                    td(m.notes, null, 'font-size:10px')
+                ]));
+            }
+        });
+    }
+
+    function loadTranslation() {
+        if (loaded.translate) return; loaded.translate = true;
+        fetch(API + '/translate/regulatory').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('trans-reg-body');
+            var paths = data.pathways || [];
+            for (var i = 0; i < paths.length; i++) {
+                var p = paths[i];
+                body.appendChild(el('tr', null, [
+                    td(p.name, null, 'font-weight:600;font-size:11px'),
+                    tdBadge(p.agency, p.agency === 'both' ? 'badge-green' : 'badge-blue'),
+                    td(p.designation, null, 'font-size:10px'),
+                    td(p.timeline, 'mono', 'font-size:10px'),
+                    td((p.current_sma_drugs || []).join(', '), null, 'font-size:10px'),
+                    td(p.sma_relevance, null, 'font-size:9px;max-width:250px')
+                ]));
+            }
+        });
+        fetch(API + '/translate/grants').then(function(r) { return r.json(); }).then(function(data) {
+            var box = clearEl('trans-grants');
+            var templates = data.templates || [];
+            for (var i = 0; i < templates.length; i++) {
+                var g = templates[i];
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var h = document.createElement('h4');
+                h.textContent = g.name;
+                h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                card.appendChild(h);
+                var mech = document.createElement('span');
+                mech.textContent = g.mechanism;
+                mech.className = 'badge badge-blue';
+                mech.style.cssText = 'display:inline-block;margin-right:4px;margin-bottom:8px';
+                card.appendChild(mech);
+                var budget = document.createElement('span');
+                budget.textContent = g.budget_range;
+                budget.className = 'badge badge-green';
+                budget.style.cssText = 'display:inline-block;margin-bottom:8px';
+                card.appendChild(budget);
+                var fit = document.createElement('p');
+                fit.textContent = g.sma_fit;
+                fit.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 4px';
+                card.appendChild(fit);
+                var tips = document.createElement('p');
+                tips.textContent = 'Tips: ' + (g.success_tips || []).slice(0, 2).join('; ');
+                tips.style.cssText = 'font-size:10px;margin:4px 0 0';
+                card.appendChild(tips);
+                box.appendChild(card);
+            }
+        });
+        fetch(API + '/translate/validation').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('trans-val-body');
+            var levels = data.levels || [];
+            for (var i = 0; i < levels.length; i++) {
+                var v = levels[i];
+                body.appendChild(el('tr', null, [
+                    td('L' + v.level, 'mono', 'font-weight:700'),
+                    td(v.name, null, 'font-weight:600;font-size:11px'),
+                    td((v.assays || []).slice(0, 2).join(', '), null, 'font-size:9px'),
+                    td(v.timeline, 'mono', 'font-size:10px'),
+                    td(v.cost_estimate, 'mono', 'font-size:10px'),
+                    td(v.go_no_go, null, 'font-size:9px;max-width:200px')
+                ]));
+            }
+            if (data.insight) {
+                var ins = document.createElement('p');
+                ins.textContent = data.insight;
+                ins.style.cssText = 'font-size:11px;color:var(--muted);margin-top:12px;font-style:italic';
+                body.parentNode.parentNode.parentNode.appendChild(ins);
+            }
+        });
+    }
+
     // Section loader map
     var loaders = {
         mission: loadMission, research: loadResearch,
@@ -3309,7 +5265,14 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
         outcomes: loadOutcomes, comparative: loadComparative,
         directions: loadDirections, links: loadLinks, contact: loadContact,
-        search: loadSearch
+        search: loadSearch, ask: loadAsk, write: loadWrite,
+        molecules: loadMolecules, crispr: loadCrispr, aav: loadAav, versions: loadVersions,
+        docking: loadDocking, prime: loadPrime, mdsim: loadMdsim,
+        spatial: loadSpatial, regen: loadRegen, nmj: loadNmj,
+        multisystem: loadMultisystem, bioelectric: loadBioelectric,
+        splicemap: loadSpliceMap, rnabind: loadRnaBinding,
+        dualtarget: loadDualTarget, twin: loadDigitalTwin,
+        labos: loadLabOs, federated: loadFederated, translate: loadTranslation
     };
 
     // Show one section at a time (tab behavior)
@@ -3323,6 +5286,17 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         // Update nav
         var navLinks = document.querySelectorAll('.nav-link');
         for (var j = 0; j < navLinks.length; j++) navLinks[j].classList.toggle('active', navLinks[j].dataset.section === sectionId);
+        // Auto-expand nav group if the active link is inside one
+        var activeLink = document.querySelector('.nav-link[data-section="' + sectionId + '"]');
+        if (activeLink) {
+            var parentGroup = activeLink.closest('.nav-group');
+            if (parentGroup && !parentGroup.classList.contains('open')) {
+                parentGroup.classList.add('open');
+                parentGroup.style.display = '';
+                var toggle = document.querySelector('.nav-group-toggle[data-group="' + parentGroup.id.replace('nav-group-', '') + '"]');
+                if (toggle) toggle.classList.add('open');
+            }
+        }
         // Load data if not loaded
         if (loaders[sectionId]) loaders[sectionId]();
         // Scroll to top
@@ -3339,6 +5313,20 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             if (!this.dataset.section) return;
             e.preventDefault();
             showSection(this.dataset.section);
+        });
+    }
+
+    // Nav group toggle (Advanced collapsible)
+    var toggles = document.querySelectorAll('.nav-group-toggle');
+    for (var t = 0; t < toggles.length; t++) {
+        toggles[t].addEventListener('click', function() {
+            var groupId = 'nav-group-' + this.dataset.group;
+            var group = document.getElementById(groupId);
+            if (!group) return;
+            var isOpen = group.classList.contains('open');
+            group.classList.toggle('open', !isOpen);
+            group.style.display = isOpen ? 'none' : '';
+            this.classList.toggle('open', !isOpen);
         });
     }
 })();
