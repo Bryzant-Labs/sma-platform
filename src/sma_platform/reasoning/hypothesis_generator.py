@@ -171,18 +171,18 @@ async def generate_hypothesis_for_target(target_id: str) -> dict | None:
     if mapped_status not in VALID_STATUSES:
         mapped_status = "proposed"
 
-    claim_ids = [c["id"] for c in claims]
+    claim_ids = [str(c["id"]) for c in claims]
     hyp_data = {
         "hypothesis_type": "target",
         "title": hypothesis.get("title", f"Hypothesis for {target['symbol']}"),
         "description": hypothesis.get("description", ""),
         "rationale": hypothesis.get("description", ""),
-        "supporting_evidence": json.dumps(claim_ids),
+        "supporting_evidence": claim_ids,
         "confidence": hypothesis.get("confidence", 0.5),
         "status": mapped_status,
         "generated_by": "claude-haiku-4-5-20251001",
         "metadata": json.dumps({
-            "target_id": target_id,
+            "target_id": str(target_id),
             "target_symbol": target["symbol"],
             "claim_count": len(claims),
             "source_count": len(source_ids),
@@ -334,7 +334,7 @@ async def generate_modality_hypotheses(target_id: str) -> list[dict]:
         if mapped_status not in VALID_STATUSES:
             mapped_status = "proposed"
 
-        claim_ids = [c["id"] for c in claims]
+        claim_ids = [str(c["id"]) for c in claims]
         await execute(
             """INSERT INTO hypotheses (hypothesis_type, title, description, rationale,
                supporting_evidence, confidence, status, generated_by, metadata)
@@ -343,12 +343,12 @@ async def generate_modality_hypotheses(target_id: str) -> list[dict]:
             hyp.get("title", f"[{modality_label}] Hypothesis for {target['symbol']}"),
             hyp.get("description", ""),
             hyp.get("description", ""),
-            json.dumps(claim_ids),
+            claim_ids,
             hyp.get("confidence", 0.5),
             mapped_status,
             "claude-haiku-4-5-20251001",
             json.dumps({
-                "target_id": target_id,
+                "target_id": str(target_id),
                 "target_symbol": target["symbol"],
                 "claim_type": claim_type,
                 "claim_count": len(claims),
@@ -516,18 +516,18 @@ async def generate_modality_hypotheses_safe(target_id: str) -> list[dict] | None
         if mapped_status not in VALID_STATUSES:
             mapped_status = "proposed"
 
-        claim_ids = [c["id"] for c in claims]
+        claim_ids = [str(c["id"]) for c in claims]
         results.append({
             "hypothesis_type": "target",
             "title": hyp.get("title", f"[{modality_label}] Hypothesis for {target['symbol']}"),
             "description": hyp.get("description", ""),
             "rationale": hyp.get("description", ""),
-            "supporting_evidence": json.dumps(claim_ids),
+            "supporting_evidence": claim_ids,
             "confidence": hyp.get("confidence", 0.5),
             "status": mapped_status,
             "generated_by": "claude-haiku-4-5-20251001",
             "metadata": json.dumps({
-                "target_id": target_id,
+                "target_id": str(target_id),
                 "target_symbol": target["symbol"],
                 "claim_type": claim_type,
                 "claim_count": len(claims),

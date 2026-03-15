@@ -234,7 +234,7 @@ async def notify_slack(results: dict, stats: dict, total_duration: float) -> Non
             f"*Stage 1 — PubMed*: {pubmed.get('new', 0)} new papers, {pubmed.get('updated', 0)} updated\n"
             f"*Stage 2 — Trials*: {trials.get('new', 0)} new, {trials.get('updated', 0)} updated (total: {trials.get('trials_found', 0)})\n"
             f"*Stage 3 — Claims*: {claims.get('sources_processed', 0)} abstracts → {claims.get('claims_extracted', 0)} claims\n"
-            f"*Stage 4 — Hypotheses*: {hypotheses.get('generated', 0)} generated\n"
+            f"*Stage 4 — Hypotheses*: {hypotheses.get('hypotheses_generated', 0)} generated\n"
             f"*Stage 5 — Full Text*: {fulltext.get('fetched', 0)} papers fetched from PMC OA\n"
             f"*Stage 6 — Drug Outcomes*: {drug_outcomes.get('outcomes_extracted', 0)} outcomes from {drug_outcomes.get('sources_processed', 0)} papers\n"
             f"*Stage 7 — Relinking*: {relink.get('claims_updated', 0)}/{relink.get('claims_checked', 0)} claims linked to targets\n"

@@ -6,7 +6,7 @@ import json
 import logging
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from ...core.database import execute, fetch, fetchrow
 from ...ingestion.adapters import chembl, clinicaltrials, kegg, pmc, pubmed, string_db, uniprot
@@ -21,7 +21,7 @@ router = APIRouter()
 
 
 @router.post("/ingest/pubmed", dependencies=[Depends(require_admin_key)])
-async def trigger_pubmed_ingestion(days_back: int = 7):
+async def trigger_pubmed_ingestion(days_back: int = Query(default=7, ge=1, le=365)):
     """Pull recent SMA papers from PubMed and store in sources table."""
     start = datetime.now(timezone.utc)
     papers = await pubmed.search_recent_sma(days_back=days_back)
@@ -269,7 +269,7 @@ async def trigger_network_ingestion():
 
 
 @router.post("/ingest/compounds", dependencies=[Depends(require_admin_key)])
-async def trigger_compound_ingestion(limit_per_target: int = 50):
+async def trigger_compound_ingestion(limit_per_target: int = Query(default=50, ge=1, le=500)):
     """Pull bioactivity data from ChEMBL for all gene targets.
 
     Searches ChEMBL for each gene target in the database, retrieves
@@ -488,7 +488,7 @@ async def trigger_protein_ingestion():
 
 
 @router.post("/ingest/fulltext", dependencies=[Depends(require_admin_key)])
-async def trigger_fulltext_fetching(batch_size: int = 50):
+async def trigger_fulltext_fetching(batch_size: int = Query(default=50, ge=1, le=200)):
     """Fetch full-text papers from PubMed Central OA for sources that only have abstracts.
 
     Sources: Europe PMC → NCBI PMC → Unpaywall (in order of preference).
@@ -509,7 +509,7 @@ async def trigger_fulltext_fetching(batch_size: int = 50):
 
 
 @router.post("/extract/drug-outcomes", dependencies=[Depends(require_admin_key)])
-async def trigger_drug_outcome_extraction(batch_size: int = 100):
+async def trigger_drug_outcome_extraction(batch_size: int = Query(default=100, ge=1, le=500)):
     """Extract structured drug failure/success outcomes from SMA literature.
 
     Builds the Drug Failure & Success Database — captures why drugs succeeded or
@@ -532,7 +532,7 @@ async def list_drug_outcomes(
     if outcome and compound:
         rows = await fetch(
             """SELECT dout.*, s.title as source_title, s.external_id as pmid
-               FROM drug_outcomes doutut
+               FROM drug_outcomes dout
                LEFT JOIN sources s ON dout.source_id = s.id
                WHERE dout.outcome = $1 AND LOWER(dout.compound_name) LIKE $2
                ORDER BY dout.confidence DESC LIMIT $3""",
@@ -552,7 +552,7 @@ async def list_drug_outcomes(
             """SELECT dout.*, s.title as source_title, s.external_id as pmid
                FROM drug_outcomes dout
                LEFT JOIN sources s ON dout.source_id = s.id
-               WHERE LOWER(do.compound_name) LIKE $1
+               WHERE LOWER(dout.compound_name) LIKE $1
                ORDER BY dout.confidence DESC LIMIT $2""",
             f"%{compound.lower()}%", limit,
         )
@@ -603,11 +603,3 @@ async def trigger_graph_expansion():
     return result
 
 
-@router.post("/relink/claims", dependencies=[Depends(require_admin_key)])
-async def trigger_claim_relinking():
-    """Retroactively link unlinked claims to targets using fuzzy matching."""
-    start = datetime.now(timezone.utc)
-    result = await relink_all_claims()
-    duration = (datetime.now(timezone.utc) - start).total_seconds()
-    result["duration_secs"] = round(duration, 2)
-    return result

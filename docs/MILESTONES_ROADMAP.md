@@ -97,8 +97,11 @@
 - [x] RDKit molecular descriptor calculation (Lipinski, BBB, CNS MPO, QED, PAINS)
 - [x] Drug screening dashboard (188 compounds screened, 100 drug-like, 18 BBB-permeable)
 - [x] SMILES-based single compound screening API
+- [x] ADMET prediction pipeline (absorption, distribution, metabolism, excretion, toxicity)
+- [x] Drug repurposing candidate identification (57 candidates from cross-disease + ChEMBL)
+- [x] Knowledge graph auto-expansion (claim-based + drug-outcome + conservation edges)
+- [x] 9-stage daily pipeline (PubMed → Trials → Claims → Hypotheses → Full-text → Drug Outcomes → Relinking → Graph Expansion → Scoring)
 - [ ] Molecular docking (AutoDock Vina / DiffDock)
-- [ ] ADMET prediction pipeline
 - [ ] Virtual screening against SMN2 splicing targets
 - [ ] In silico screening for dual-target molecules (SMN2 + ion channels — bioelectricity intersection)
 
@@ -276,8 +279,11 @@ These emerged from Querdenker and Harvard-level thinking:
 | Metric | Count |
 |--------|-------|
 | PubMed Sources | 4,582 |
-| LLM-Extracted Claims | 10,956+ (growing) |
-| Prioritized Hypotheses | 102 (A/B/C tiers) |
+| LLM-Extracted Claims | 11,252+ (growing) |
+| Prioritized Hypotheses | 150 (A/B/C tiers) |
+| Knowledge Graph Edges | 397 |
+| Drug Outcomes | 223 |
+| Drug Repurposing Candidates | 57 |
 | Clinical Trials | 449 |
 | Molecular Targets | 21 (10 established + 11 discovery) |
 | Drugs Tracked | 16 (3 approved + 13 pipeline) |

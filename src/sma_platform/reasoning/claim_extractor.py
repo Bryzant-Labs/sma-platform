@@ -297,7 +297,7 @@ async def process_source(source_id: str) -> int:
                     "related_targets": claim.get("related_targets", []),
                     "extraction_model": "claude-haiku-4-5-20251001",
                     "extracted_at": datetime.now(timezone.utc).isoformat(),
-                    "source_paper_id": source["id"],
+                    "source_paper_id": str(source["id"]),
                 }),
             )
 

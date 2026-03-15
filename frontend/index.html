@@ -350,6 +350,8 @@
         .badge-amber { background: var(--amber-bg); color: var(--amber); }
         .badge-gray { background: var(--gray-bg); color: var(--gray); }
         .badge-red { background: var(--red-bg); color: var(--red); }
+        .badge-purple { background: #f3e8ff; color: #7c3aed; }
+        .rationale-cell { font-size: 11px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
         .filter-tabs { display: flex; gap: 0; margin-bottom: 12px; border: 1px solid var(--line); background: var(--panel); width: fit-content; }
         .filter-tab {
             padding: 6px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase;
@@ -582,6 +584,8 @@
     <a href="#hypotheses" class="nav-link" data-section="hypotheses">Hypotheses</a>
     <a href="#scores" class="nav-link" data-section="scores">Scores</a>
     <a href="#screening" class="nav-link" data-section="screening">Screening</a>
+    <a href="#repurposing" class="nav-link" data-section="repurposing">Repurposing</a>
+    <a href="#candidates" class="nav-link" data-section="candidates">Top Candidates</a>
     <a href="#graph" class="nav-link" data-section="graph">Graph</a>
     <a href="#outcomes" class="nav-link" data-section="outcomes">Drug Outcomes</a>
     <a href="#comparative" class="nav-link" data-section="comparative">Species</a>
@@ -1074,6 +1078,28 @@
         <th>ChEMBL ID</th><th>SMILES</th><th>MW</th><th>LogP</th><th>QED</th><th>CNS MPO</th><th>BBB</th><th>Lipinski</th><th>PAINS</th><th>pChEMBL</th>
     </tr></thead>
     <tbody id="screening-body"><tr><td colspan="10" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="repurposing">
+    <div class="section-header"><h2 class="section-title">Drug Repurposing</h2><span class="section-count" id="repurposing-count"></span></div>
+    <p class="section-desc">Candidates identified through two strategies: (1) drugs successful in related neuromuscular diseases (ALS, DMD, SBMA) that target SMA pathways, and (2) ChEMBL compounds with high bioactivity on top-scored SMA targets. Each candidate has a repurposing score combining target relevance, potency, and clinical advancement.</p>
+    <div id="repurposing-summary" class="screen-summary"><div class="loading">Loading repurposing candidates...</div></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Top Candidates</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Rank</th><th>Compound</th><th>SMA Target</th><th>Score</th><th>Source</th><th>Phase</th><th>Rationale</th>
+    </tr></thead>
+    <tbody id="repurposing-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="candidates">
+    <div class="section-header"><h2 class="section-title">Top Drug Candidates</h2><span class="section-count" id="candidates-count"></span></div>
+    <p class="section-desc">Integrated ranking combining drug-likeness (QED, Lipinski), BBB/CNS access, ADMET safety, potency (pChEMBL), target relevance, and repurposing evidence. Each candidate is scored 0-1 and assigned a tier (A/B/C). This is the unified view — the best compounds from all analysis pipelines.</p>
+    <div id="candidates-summary" class="screen-summary"><div class="loading">Loading integrated candidates...</div></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Ranked Candidates</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>ChEMBL ID</th><th>Target</th><th>Score</th><th>Tier</th><th>QED</th><th>BBB</th><th>ADMET</th><th>pChEMBL</th><th>Flags</th>
+    </tr></thead>
+    <tbody id="candidates-body"><tr><td colspan="10" class="loading">Loading...</td></tr></tbody></table></div>
 </section>
 
 <section class="section" id="graph">
@@ -2232,6 +2258,111 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+    // ============ Drug Repurposing ============
+    function loadRepurposing() {
+        if (loaded.repurposing) return; loaded.repurposing = true;
+        fetch(API + '/screen/repurposing?top_n=50')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            document.getElementById('repurposing-count').textContent = data.total + ' candidates';
+            var summary = clearEl('repurposing-summary');
+            var stats = [
+                {val: data.total, label: 'Total Candidates', cls: ''},
+                {val: data.cross_disease_hits, label: 'Cross-Disease', cls: 'highlight'},
+                {val: data.chembl_hits, label: 'ChEMBL Hits', cls: 'highlight'},
+            ];
+            // Add by-target breakdown
+            var targets = data.by_target || {};
+            var targetKeys = Object.keys(targets).sort(function(a,b) { return targets[b] - targets[a]; });
+            for (var t = 0; t < Math.min(5, targetKeys.length); t++) {
+                stats.push({val: targets[targetKeys[t]], label: targetKeys[t], cls: ''});
+            }
+            for (var s = 0; s < stats.length; s++) {
+                var card = el('div', {className: 'screen-stat'});
+                card.appendChild(el('div', {className: 'screen-stat-val' + (stats[s].cls ? ' ' + stats[s].cls : ''), text: String(stats[s].val)}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
+                summary.appendChild(card);
+            }
+            // Candidates table
+            var body = clearEl('repurposing-body');
+            var candidates = data.candidates || [];
+            for (var i = 0; i < candidates.length; i++) {
+                var c = candidates[i];
+                var scoreClass = c.repurposing_score >= 0.7 ? 'badge-green' : c.repurposing_score >= 0.4 ? 'badge-amber' : 'badge-gray';
+                var sourceClass = c.source === 'cross_disease' ? 'badge-blue' : 'badge-purple';
+                body.appendChild(el('tr', {className: 'compound-row'}, [
+                    td(String(c.rank || (i+1)), 'mono', 'font-weight:600;text-align:center'),
+                    td(c.compound_name, 'mono', 'font-weight:600'),
+                    td(c.proposed_sma_target || '-'),
+                    tdBadge(String(c.repurposing_score), scoreClass),
+                    tdBadge(c.source === 'cross_disease' ? 'Cross-Disease' : 'ChEMBL', sourceClass),
+                    td(c.trial_phase || '-'),
+                    el('td', {className: 'rationale-cell', text: (c.rationale || '').substring(0, 120) + ((c.rationale || '').length > 120 ? '...' : ''), title: c.rationale || ''})
+                ]));
+            }
+        }).catch(function(e) {
+            clearEl('repurposing-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Repurposing data not available: ' + e.message})]));
+        });
+    }
+
+    // ============ Top Drug Candidates (Integrated) ============
+    function loadCandidates() {
+        if (loaded.candidates) return; loaded.candidates = true;
+        fetch(API + '/screen/candidates?top_n=50')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) {
+                clearEl('candidates-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: data.error})]));
+                return;
+            }
+            document.getElementById('candidates-count').textContent = data.total_screened + ' screened, top ' + data.top_n;
+            var summary = clearEl('candidates-summary');
+            var tiers = data.by_tier || {};
+            var stats = [
+                {val: data.total_screened, label: 'Total Screened', cls: ''},
+                {val: tiers.A || 0, label: 'Tier A', cls: 'highlight'},
+                {val: tiers.B || 0, label: 'Tier B', cls: ''},
+                {val: tiers.C || 0, label: 'Tier C', cls: ''},
+            ];
+            var targets = data.by_target || {};
+            var tkeys = Object.keys(targets).sort(function(a,b) { return targets[b] - targets[a]; });
+            for (var t = 0; t < Math.min(4, tkeys.length); t++) {
+                stats.push({val: targets[tkeys[t]], label: tkeys[t], cls: ''});
+            }
+            for (var s = 0; s < stats.length; s++) {
+                var card = el('div', {className: 'screen-stat'});
+                card.appendChild(el('div', {className: 'screen-stat-val' + (stats[s].cls ? ' ' + stats[s].cls : ''), text: String(stats[s].val)}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
+                summary.appendChild(card);
+            }
+            // Candidates table
+            var body = clearEl('candidates-body');
+            var candidates = data.candidates || [];
+            for (var i = 0; i < candidates.length; i++) {
+                var c = candidates[i];
+                var scoreClass = c.integrated_score >= 0.6 ? 'badge-green' : c.integrated_score >= 0.4 ? 'badge-amber' : 'badge-gray';
+                var tierClass = c.tier === 'A' ? 'badge-green' : c.tier === 'B' ? 'badge-amber' : 'badge-gray';
+                var admetClass = (c.admet_score || 0) >= 0.6 ? 'badge-green' : (c.admet_score || 0) >= 0.4 ? 'badge-amber' : 'badge-red';
+                var flagsText = (c.flags || []).join(', ') || 'none';
+                var flagsClass = (c.flags || []).length > 0 ? 'badge-red' : 'badge-green';
+                body.appendChild(el('tr', {className: 'compound-row'}, [
+                    td(String(c.rank), 'mono', 'font-weight:600;text-align:center'),
+                    td(c.chembl_id, 'mono', 'font-weight:600'),
+                    td(c.target || '-'),
+                    tdBadge(String(c.integrated_score), scoreClass),
+                    tdBadge(c.tier, tierClass),
+                    td(String(c.qed || '-'), 'mono'),
+                    tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
+                    tdBadge(c.admet_score ? String(c.admet_score) : '-', admetClass),
+                    td(c.pchembl ? String(c.pchembl) : '-', 'mono'),
+                    tdBadge(flagsText, flagsClass)
+                ]));
+            }
+        }).catch(function(e) {
+            clearEl('candidates-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Candidates not available: ' + e.message})]));
+        });
+    }
+
     // ============ Knowledge Graph (Canvas) ============
     function loadGraph() {
         if (loaded.graph) return; loaded.graph = true;
@@ -2640,7 +2771,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         targets: loadTargets, trials: loadTrials, drugs: loadDrugs,
         sources: loadSources, datasets: loadDatasets, claims: loadClaims,
         hypotheses: loadHypotheses, scores: loadScores, evidence: loadEvidence,
-        screening: loadScreening, graph: loadGraph,
+        screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
         outcomes: loadOutcomes, comparative: loadComparative,
         links: loadLinks, contact: loadContact
     };

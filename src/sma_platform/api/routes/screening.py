@@ -113,3 +113,29 @@ async def get_repurposing_candidates(
     duration = (datetime.now(timezone.utc) - start).total_seconds()
     result["duration_secs"] = round(duration, 2)
     return result
+
+
+@router.get("/screen/candidates")
+async def get_top_candidates(
+    top_n: int = Query(default=50, ge=1, le=200),
+):
+    """Get integrated ranked drug candidates combining screening, ADMET, repurposing, and target scores.
+
+    Each candidate has an integrated_score (0-1) computed from:
+    - Drug-likeness (QED + Lipinski): 15%
+    - BBB/CNS access: 15%
+    - ADMET safety: 20%
+    - Potency (pChEMBL): 15%
+    - Target relevance: 20%
+    - Repurposing evidence: 15%
+    """
+    try:
+        from ...reasoning.candidate_ranker import rank_all_candidates
+    except ImportError as e:
+        raise HTTPException(503, f"RDKit not installed: {e}")
+
+    start = datetime.now(timezone.utc)
+    result = await rank_all_candidates(top_n=top_n)
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration_secs"] = round(duration, 2)
+    return result
