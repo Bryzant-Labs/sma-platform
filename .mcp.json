@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "sma-knowledge": {
+      "command": "python3",
+      "args": ["mcp_server/server.py"],
+      "cwd": "/mnt/c/Users/bryza/Dropbox/Christian fischer/SMA/sma-platform"
+    }
+  }
+}
