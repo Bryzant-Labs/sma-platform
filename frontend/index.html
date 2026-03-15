@@ -461,6 +461,26 @@
             cursor: pointer; white-space: nowrap;
         }
         .btn-expand:hover { background: var(--bg); color: var(--text); }
+        /* Enriched claims styles */
+        .claim-source-line { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+        .claim-source-line a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .claim-source-line a:hover { text-decoration: underline; }
+        .claim-detail-panel { background: var(--bg); padding: 16px 20px; border-top: none; line-height: 1.8; }
+        .claim-detail-panel .cd-section { margin-bottom: 12px; }
+        .claim-detail-panel .cd-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 4px; }
+        .claim-detail-panel .cd-text { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+        .claim-detail-panel .cd-abstract { font-size: 12px; color: var(--text-secondary); line-height: 1.7; max-height: 120px; overflow: hidden; transition: max-height 0.3s; }
+        .claim-detail-panel .cd-abstract.expanded { max-height: none; }
+        .claim-detail-panel .cd-show-more { font-size: 11px; color: var(--accent); cursor: pointer; margin-top: 4px; font-weight: 600; }
+        .claim-detail-panel .cd-show-more:hover { text-decoration: underline; }
+        .claim-detail-panel .cd-meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; font-size: 12px; }
+        .claim-detail-panel .cd-meta-item { }
+        .claim-detail-panel .cd-meta-key { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .claim-detail-panel .cd-meta-val { color: var(--text); font-weight: 500; }
+        .claim-filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+        .claim-filter-btn { background: none; border: 1px solid var(--line); padding: 4px 12px; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .claim-filter-btn:hover { background: var(--bg); color: var(--text); }
+        .claim-filter-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
         /* Mission tab styles */
         .mission-hero { text-align: center; padding: 48px 0 40px; max-width: 800px; margin: 0 auto; }
         .mission-hero h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.3; margin-bottom: 12px; }
@@ -1028,9 +1048,10 @@
 
 <section class="section" id="claims">
     <div class="section-header"><h2 class="section-title">Extracted Claims</h2><span class="section-count" id="claims-count"></span></div>
-    <p class="section-desc">Structured assertions extracted from paper abstracts using LLM analysis. Each claim is typed, scored for confidence, and linked to source papers and known targets.</p>
-    <div class="table-wrap"><table><thead><tr><th>Claim</th><th>Type</th><th>Confidence</th><th>Related Targets</th></tr></thead>
-    <tbody id="claims-body"><tr><td colspan="4" class="loading">Loading claims...</td></tr></tbody></table></div>
+    <p class="section-desc">Structured assertions extracted from paper abstracts using LLM analysis. Each claim is typed, scored for confidence, and linked to its source paper. Click any row to see the full paper context, abstract excerpt, and related metadata.</p>
+    <div id="claim-type-filters" class="claim-filter-bar"></div>
+    <div class="table-wrap"><table><thead><tr><th>Claim</th><th>Source Paper</th><th>Type</th><th>Confidence</th><th>Targets</th><th></th></tr></thead>
+    <tbody id="claims-body"><tr><td colspan="6" class="loading">Loading claims...</td></tr></tbody></table></div>
     <div id="claims-pagination"></div>
 </section>
 
@@ -1781,83 +1802,203 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
-    // Claims with pagination
-    var claimsData = []; var claimsPage = 1;
+    // Claims with pagination and enriched source data
+    var claimsData = []; var claimsPage = 1; var claimsFilter = null;
+    function buildClaimFilters() {
+        var types = {}; for (var i = 0; i < claimsData.length; i++) { var t = claimsData[i].claim_type || 'other'; types[t] = (types[t] || 0) + 1; }
+        var bar = clearEl('claim-type-filters');
+        var allBtn = el('button', {className: 'claim-filter-btn' + (claimsFilter === null ? ' active' : ''), text: 'All (' + claimsData.length + ')'});
+        allBtn.addEventListener('click', function() { claimsFilter = null; claimsPage = 1; buildClaimFilters(); renderClaimsPage(); });
+        bar.appendChild(allBtn);
+        var sorted = Object.keys(types).sort(function(a,b) { return types[b] - types[a]; });
+        for (var j = 0; j < sorted.length; j++) {
+            (function(t) {
+                var btn = el('button', {className: 'claim-filter-btn' + (claimsFilter === t ? ' active' : ''), text: t.replace(/_/g, ' ') + ' (' + types[t] + ')'});
+                btn.addEventListener('click', function() { claimsFilter = t; claimsPage = 1; buildClaimFilters(); renderClaimsPage(); });
+                bar.appendChild(btn);
+            })(sorted[j]);
+        }
+    }
+    function getFilteredClaims() {
+        if (!claimsFilter) return claimsData;
+        return claimsData.filter(function(c) { return c.claim_type === claimsFilter; });
+    }
     function renderClaimsPage() {
-        document.getElementById('claims-count').textContent = claimsData.length + ' claims';
+        var filtered = getFilteredClaims();
+        document.getElementById('claims-count').textContent = filtered.length + ' claims' + (claimsFilter ? ' (' + claimsFilter.replace(/_/g, ' ') + ')' : '');
         var body = clearEl('claims-body');
         var start = (claimsPage - 1) * PER_PAGE;
-        var end = Math.min(start + PER_PAGE, claimsData.length);
+        var end = Math.min(start + PER_PAGE, filtered.length);
         for (var i = start; i < end; i++) {
             (function(idx) {
-                var c = claimsData[idx];
+                var c = filtered[idx];
                 var meta = parseJ(c.metadata) || {};
                 var targets = (meta.related_targets || []).join(', ');
                 var subjectLabel = meta.subject_label || c.subject_type || '';
                 var conf = c.confidence ? (c.confidence * 100).toFixed(0) + '%' : '';
                 var confCls = c.confidence >= 0.8 ? 'badge-green' : c.confidence >= 0.5 ? 'badge-amber' : 'badge-gray';
                 var predText = c.predicate || '';
-                var shortPred = predText.length > 120 ? predText.substring(0, 120) + '...' : predText;
+                var shortPred = predText.length > 140 ? predText.substring(0, 140) + '...' : predText;
+
+                // Source paper column
+                var srcTd = el('td', {style: 'max-width:220px;font-size:11px;line-height:1.5'});
+                var srcTitle = c.source_title || meta.source_title || '';
+                var srcPmid = c.source_pmid || meta.source_pmid || '';
+                var srcJournal = c.source_journal || '';
+                if (srcTitle) {
+                    var shortTitle = srcTitle.length > 80 ? srcTitle.substring(0, 80) + '...' : srcTitle;
+                    srcTd.appendChild(el('div', {style: 'font-weight:500;color:var(--text)', text: shortTitle}));
+                }
+                if (srcPmid) {
+                    var pmidLine = el('div', {className: 'claim-source-line'});
+                    var pmidLink = el('a', {href: 'https://pubmed.ncbi.nlm.nih.gov/' + srcPmid + '/', target: '_blank', rel: 'noopener', text: 'PMID: ' + srcPmid});
+                    pmidLine.appendChild(pmidLink);
+                    if (srcJournal) { pmidLine.appendChild(document.createTextNode(' \u00B7 ' + srcJournal)); }
+                    srcTd.appendChild(pmidLine);
+                } else if (!srcTitle) {
+                    srcTd.appendChild(el('span', {style: 'color:var(--muted)', text: '\u2014'}));
+                }
+
+                // Details button
+                var detailTd = el('td', {style: 'text-align:right'});
+                var detailBtn = el('button', {className: 'btn-expand', text: 'Details'});
+
                 var row = el('tr', {style: 'cursor:pointer'}, [
-                    td(shortPred, 'desc', 'max-width:600px'),
-                    tdBadge(c.claim_type || 'unknown', 'badge-blue'),
+                    td(shortPred, 'desc', 'max-width:400px'),
+                    srcTd,
+                    tdBadge(c.claim_type ? c.claim_type.replace(/_/g, ' ') : 'unknown', 'badge-blue'),
                     tdBadge(conf, confCls),
-                    td(targets || subjectLabel, 'mono', 'font-size:11px')
+                    td(targets || subjectLabel, 'mono', 'font-size:11px'),
+                    detailTd
                 ]);
-                row.addEventListener('click', function() {
+                detailTd.appendChild(detailBtn);
+
+                function toggleDetail() {
                     var detailId = 'claim-detail-' + idx;
                     var existing = document.getElementById(detailId);
-                    if (existing) { existing.remove(); return; }
+                    if (existing) { existing.remove(); detailBtn.textContent = 'Details'; return; }
+                    detailBtn.textContent = 'Close';
+
                     var detailRow = document.createElement('tr');
                     detailRow.id = detailId;
                     var detailCell = document.createElement('td');
-                    detailCell.colSpan = 4;
-                    detailCell.style.cssText = 'background:var(--bg);padding:16px;font-size:12px;line-height:1.8;border-top:none';
-                    var lines = [];
-                    lines.push(el('div', {style: 'font-weight:600;font-size:13px;margin-bottom:8px', text: predText}));
-                    if (meta.subject_label) {
-                        var subj = el('div'); subj.appendChild(el('span', {style: 'color:var(--muted)', text: 'Subject: '}));
-                        subj.appendChild(badgeEl(meta.subject_label, 'badge-blue'));
-                        if (meta.subject_type) { subj.appendChild(el('span', {style: 'color:var(--muted);margin-left:4px', text: '(' + meta.subject_type + ')'})); }
-                        lines.push(subj);
+                    detailCell.colSpan = 6;
+                    detailCell.className = 'claim-detail-panel';
+
+                    // Full claim text
+                    var claimSec = el('div', {className: 'cd-section'});
+                    claimSec.appendChild(el('div', {className: 'cd-label', text: 'Full Claim'}));
+                    claimSec.appendChild(el('div', {className: 'cd-text', style: 'font-weight:500', text: predText}));
+                    detailCell.appendChild(claimSec);
+
+                    // Source paper section
+                    var fullTitle = c.source_title || meta.source_title || '';
+                    var fullPmid = c.source_pmid || meta.source_pmid || '';
+                    var fullAbstract = c.source_abstract || '';
+                    var fullAuthors = c.source_authors || '';
+                    var fullDate = c.source_date || '';
+                    var fullDoi = c.source_doi || '';
+                    var fullJournal = c.source_journal || '';
+                    var evidenceExcerpt = c.evidence_excerpt || '';
+
+                    if (fullTitle || fullPmid) {
+                        var srcSec = el('div', {className: 'cd-section'});
+                        srcSec.appendChild(el('div', {className: 'cd-label', text: 'Source Paper'}));
+                        if (fullTitle) {
+                            var titleEl = el('div', {style: 'font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px'});
+                            if (fullPmid) {
+                                var titleLink = el('a', {href: 'https://pubmed.ncbi.nlm.nih.gov/' + fullPmid + '/', target: '_blank', rel: 'noopener', text: fullTitle});
+                                titleEl.appendChild(titleLink);
+                            } else {
+                                titleEl.textContent = fullTitle;
+                            }
+                            srcSec.appendChild(titleEl);
+                        }
+                        var metaLine = el('div', {style: 'font-size:11px;color:var(--muted);margin-bottom:6px'});
+                        var metaParts = [];
+                        if (fullPmid) metaParts.push('PMID: ' + fullPmid);
+                        if (fullJournal) metaParts.push(fullJournal);
+                        if (fullDate) metaParts.push(fullDate);
+                        if (fullAuthors) {
+                            var authArr = typeof fullAuthors === 'string' ? fullAuthors : '';
+                            if (authArr.length > 100) authArr = authArr.substring(0, 100) + '...';
+                            metaParts.push(authArr);
+                        }
+                        metaLine.textContent = metaParts.join(' \u00B7 ');
+                        srcSec.appendChild(metaLine);
+                        if (fullDoi) {
+                            var doiLine = el('div', {style: 'font-size:11px;margin-bottom:4px'});
+                            doiLine.appendChild(el('span', {style: 'color:var(--muted)', text: 'DOI: '}));
+                            var doiLink = el('a', {href: 'https://doi.org/' + fullDoi, target: '_blank', rel: 'noopener', text: fullDoi});
+                            doiLink.style.cssText = 'color:var(--accent);text-decoration:none;font-size:11px';
+                            doiLine.appendChild(doiLink);
+                            srcSec.appendChild(doiLine);
+                        }
+                        detailCell.appendChild(srcSec);
                     }
-                    if (meta.object_label) {
-                        var obj = el('div'); obj.appendChild(el('span', {style: 'color:var(--muted)', text: 'Object: '}));
-                        obj.appendChild(badgeEl(meta.object_label, 'badge-gray'));
-                        if (meta.object_type) { obj.appendChild(el('span', {style: 'color:var(--muted);margin-left:4px', text: '(' + meta.object_type + ')'})); }
-                        lines.push(obj);
+
+                    // Evidence excerpt if available
+                    if (evidenceExcerpt) {
+                        var excerptSec = el('div', {className: 'cd-section'});
+                        excerptSec.appendChild(el('div', {className: 'cd-label', text: 'Evidence Excerpt'}));
+                        excerptSec.appendChild(el('div', {className: 'cd-text', style: 'font-style:italic', text: '\u201C' + evidenceExcerpt + '\u201D'}));
+                        detailCell.appendChild(excerptSec);
                     }
-                    if (meta.source_pmid) {
-                        var src = el('div'); src.appendChild(el('span', {style: 'color:var(--muted)', text: 'Source: '}));
-                        src.appendChild(badgeEl('PMID:' + meta.source_pmid, 'badge-green'));
-                        lines.push(src);
+
+                    // Abstract section with show more/less
+                    if (fullAbstract) {
+                        var absSec = el('div', {className: 'cd-section'});
+                        absSec.appendChild(el('div', {className: 'cd-label', text: 'Paper Abstract'}));
+                        var absDiv = el('div', {className: 'cd-abstract', text: fullAbstract});
+                        absSec.appendChild(absDiv);
+                        var showMore = el('div', {className: 'cd-show-more', text: 'Show full abstract \u25BC'});
+                        var absExpanded = false;
+                        showMore.addEventListener('click', function() {
+                            absExpanded = !absExpanded;
+                            if (absExpanded) { absDiv.classList.add('expanded'); showMore.textContent = 'Show less \u25B2'; }
+                            else { absDiv.classList.remove('expanded'); showMore.textContent = 'Show full abstract \u25BC'; }
+                        });
+                        absSec.appendChild(showMore);
+                        detailCell.appendChild(absSec);
                     }
-                    if (meta.evidence_type) {
-                        var ev = el('div'); ev.appendChild(el('span', {style: 'color:var(--muted)', text: 'Evidence: '}));
-                        ev.appendChild(el('span', {text: meta.evidence_type}));
-                        lines.push(ev);
+
+                    // Metadata grid
+                    var gridSec = el('div', {className: 'cd-section'});
+                    gridSec.appendChild(el('div', {className: 'cd-label', text: 'Claim Metadata'}));
+                    var grid = el('div', {className: 'cd-meta-grid'});
+                    var metaItems = [];
+                    if (meta.subject_label) metaItems.push(['Subject', meta.subject_label + (meta.subject_type ? ' (' + meta.subject_type + ')' : '')]);
+                    if (meta.object_label) metaItems.push(['Object', meta.object_label + (meta.object_type ? ' (' + meta.object_type + ')' : '')]);
+                    if (meta.evidence_type) metaItems.push(['Evidence Type', meta.evidence_type]);
+                    if (meta.direction) metaItems.push(['Direction', meta.direction]);
+                    if (c.value) metaItems.push(['Value', c.value]);
+                    if (targets) metaItems.push(['Related Targets', targets]);
+                    if (c.confidence) metaItems.push(['Confidence', (c.confidence * 100).toFixed(1) + '%']);
+                    for (var m = 0; m < metaItems.length; m++) {
+                        var item = el('div', {className: 'cd-meta-item'});
+                        item.appendChild(el('div', {className: 'cd-meta-key', text: metaItems[m][0]}));
+                        item.appendChild(el('div', {className: 'cd-meta-val', text: metaItems[m][1]}));
+                        grid.appendChild(item);
                     }
-                    if (meta.direction) {
-                        var dir = el('div'); dir.appendChild(el('span', {style: 'color:var(--muted)', text: 'Direction: '}));
-                        dir.appendChild(el('span', {text: meta.direction}));
-                        lines.push(dir);
-                    }
-                    for (var li = 0; li < lines.length; li++) detailCell.appendChild(lines[li]);
+                    if (metaItems.length > 0) { gridSec.appendChild(grid); detailCell.appendChild(gridSec); }
+
                     detailRow.appendChild(detailCell);
                     row.parentNode.insertBefore(detailRow, row.nextSibling);
-                });
+                }
+                row.addEventListener('click', function(e) { if (e.target.tagName !== 'BUTTON') toggleDetail(); });
+                detailBtn.addEventListener('click', function(e) { e.stopPropagation(); toggleDetail(); });
                 body.appendChild(row);
             })(i);
         }
-        if (claimsData.length === 0) {
-            body.appendChild(el('tr', null, [el('td', {colSpan: 4, className: 'loading', text: 'No claims extracted yet.'})]));
+        if (filtered.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: claimsFilter ? 'No claims of type "' + claimsFilter + '".' : 'No claims extracted yet.'})]));
         }
-        renderPagination('claims-pagination', claimsData.length, claimsPage, function(p) { claimsPage = p; renderClaimsPage(); });
+        renderPagination('claims-pagination', filtered.length, claimsPage, function(p) { claimsPage = p; renderClaimsPage(); });
     }
     function loadClaims() {
         if (loaded.claims) return; loaded.claims = true;
-        fetch(API + '/claims?limit=50000').then(function(r) { return r.json(); }).then(function(data) {
-            claimsData = data; claimsPage = 1; renderClaimsPage();
+        fetch(API + '/claims?enriched=true&limit=50000').then(function(r) { return r.json(); }).then(function(data) {
+            claimsData = data; claimsPage = 1; buildClaimFilters(); renderClaimsPage();
         });
     }
 

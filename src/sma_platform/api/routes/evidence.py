@@ -36,19 +36,45 @@ async def list_evidence(
 @router.get("/claims")
 async def list_claims(
     claim_type: str | None = None,
+    enriched: bool = Query(default=False),
     limit: int = Query(default=100, ge=1, le=MAX_LIMIT),
     offset: int = Query(default=0, ge=0),
 ):
-    if claim_type:
-        rows = await fetch(
-            "SELECT * FROM claims WHERE claim_type = $1 ORDER BY confidence DESC LIMIT $2 OFFSET $3",
-            claim_type, limit, offset,
-        )
+    """List claims, optionally enriched with source paper details."""
+    if enriched:
+        # JOIN through evidence → sources to get paper context
+        base = """SELECT c.id, c.claim_type, c.subject_id, c.subject_type,
+                         c.predicate, c.object_id, c.object_type, c.value,
+                         c.confidence, c.metadata, c.created_at,
+                         s.title AS source_title, s.external_id AS source_pmid,
+                         s.journal AS source_journal, s.pub_date AS source_date,
+                         s.doi AS source_doi, s.abstract AS source_abstract,
+                         s.authors AS source_authors, s.url AS source_url,
+                         e.excerpt AS evidence_excerpt
+                  FROM claims c
+                  LEFT JOIN evidence e ON e.claim_id = c.id
+                  LEFT JOIN sources s ON e.source_id = s.id"""
+        if claim_type:
+            rows = await fetch(
+                base + " WHERE c.claim_type = $1 ORDER BY c.confidence DESC LIMIT $2 OFFSET $3",
+                claim_type, limit, offset,
+            )
+        else:
+            rows = await fetch(
+                base + " ORDER BY c.confidence DESC LIMIT $1 OFFSET $2",
+                limit, offset,
+            )
     else:
-        rows = await fetch(
-            "SELECT * FROM claims ORDER BY confidence DESC LIMIT $1 OFFSET $2",
-            limit, offset,
-        )
+        if claim_type:
+            rows = await fetch(
+                "SELECT * FROM claims WHERE claim_type = $1 ORDER BY confidence DESC LIMIT $2 OFFSET $3",
+                claim_type, limit, offset,
+            )
+        else:
+            rows = await fetch(
+                "SELECT * FROM claims ORDER BY confidence DESC LIMIT $1 OFFSET $2",
+                limit, offset,
+            )
     return [dict(r) for r in rows]
 
 

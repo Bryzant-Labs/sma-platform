@@ -13,7 +13,7 @@ from fastapi.responses import PlainTextResponse, Response as RawResponse
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import comparative, contact, datasets, drugs, evidence, export, graph, ingestion, research, scoring, screening, stats, targets, trials
+from .routes import comparative, contact, datasets, drugs, evidence, export, graph, ingestion, preprints, research, scoring, screening, stats, targets, trials
 
 
 @asynccontextmanager
@@ -96,6 +96,7 @@ def create_app() -> FastAPI:
     app.include_router(export.router, prefix="/api/v2", tags=["export"])
     app.include_router(graph.router, prefix="/api/v2", tags=["graph"])
     app.include_router(comparative.router, prefix="/api/v2/comparative", tags=["comparative"])
+    app.include_router(preprints.router, prefix="/api/v2", tags=["preprints"])
 
     @app.get("/health")
     @app.get("/api/v2/health")
