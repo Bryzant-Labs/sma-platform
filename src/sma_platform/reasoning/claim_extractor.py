@@ -41,6 +41,108 @@ TYPE_MAP = {
     "motor": "motor_function",
 }
 
+# Known aliases for SMA-relevant targets.
+# Keys are uppercased labels the LLM may produce; values are canonical DB symbols.
+TARGET_ALIASES: dict[str, str] = {
+    "SMN": "SMN_PROTEIN",
+    "SMN PROTEIN": "SMN_PROTEIN",
+    "SURVIVAL MOTOR NEURON": "SMN1",
+    "SURVIVAL MOTOR NEURON 1": "SMN1",
+    "SURVIVAL MOTOR NEURON 2": "SMN2",
+    "STATHMIN": "STMN2",
+    "STATHMIN-2": "STMN2",
+    "STATHMIN2": "STMN2",
+    "PLASTIN": "PLS3",
+    "PLASTIN-3": "PLS3",
+    "PLASTIN 3": "PLS3",
+    "T-PLASTIN": "PLS3",
+    "NEUROCALCIN DELTA": "NCALD",
+    "NEUROCALCIN": "NCALD",
+    "UBE1": "UBA1",
+    "UBIQUITIN": "UBA1",
+    "CORONIN": "CORO1C",
+    "CORONIN-1C": "CORO1C",
+    "MTOR": "MTOR_PATHWAY",
+    "MAMMALIAN TARGET OF RAPAMYCIN": "MTOR_PATHWAY",
+    "MTOR PATHWAY": "MTOR_PATHWAY",
+    "NMJ": "NMJ_MATURATION",
+    "NEUROMUSCULAR JUNCTION": "NMJ_MATURATION",
+    # Discovery targets (TargetDiscovery_A omics convergence)
+    "CD44 ANTIGEN": "CD44",
+    "HERMES": "CD44",
+    "SULFATASE 1": "SULF1",
+    "HSULF-1": "SULF1",
+    "DNA METHYLTRANSFERASE 3B": "DNMT3B",
+    "DNMT3BETA": "DNMT3B",
+    "ANKYRIN-G": "ANK3",
+    "ANKYRIN 3": "ANK3",
+    "ANKYRIN-3": "ANK3",
+    "MD-2": "LY96",
+    "MD2": "LY96",
+    "LYMPHOCYTE ANTIGEN 96": "LY96",
+    "MIEAP": "SPATA18",
+    "LDH-A": "LDHA",
+    "LACTATE DEHYDROGENASE A": "LDHA",
+    "LACTATE DEHYDROGENASE": "LDHA",
+    "CALPASTATIN": "CAST",
+    "NEDD4-2": "NEDD4L",
+    "NEDD4.2": "NEDD4L",
+    "ALPHA-CATENIN": "CTNNA1",
+    "ALPHA CATENIN": "CTNNA1",
+    "CATENIN ALPHA-1": "CTNNA1",
+}
+
+# Drug names → their primary mechanism-of-action target.
+# Used in relinking: if a claim is about a drug, link it to the target it acts on.
+DRUG_TARGET_MAP: dict[str, str] = {
+    "NUSINERSEN": "SMN2",
+    "SPINRAZA": "SMN2",
+    "RISDIPLAM": "SMN2",
+    "EVRYSDI": "SMN2",
+    "BRANAPLAM": "SMN2",
+    "ONASEMNOGENE": "SMN1",
+    "ONASEMNOGENE ABEPARVOVEC": "SMN1",
+    "ZOLGENSMA": "SMN1",
+}
+
+
+async def _resolve_target_id(label: str) -> str | None:
+    """Resolve a free-text target label to a target ID using multiple strategies.
+
+    Strategies (tried in order):
+    1. Exact symbol match in DB
+    2. Alias map lookup → then exact symbol match
+    3. Case-insensitive partial name match in DB
+    """
+    if not label or not label.strip():
+        return None
+
+    normalized = label.strip().upper()
+
+    # Strategy 1: Exact symbol match
+    row = await fetchrow("SELECT id FROM targets WHERE symbol = $1", normalized)
+    if row:
+        return dict(row)["id"]
+
+    # Strategy 2: Alias map → symbol lookup
+    alias_symbol = TARGET_ALIASES.get(normalized)
+    if alias_symbol:
+        row = await fetchrow("SELECT id FROM targets WHERE symbol = $1", alias_symbol)
+        if row:
+            return dict(row)["id"]
+
+    # Strategy 3: Case-insensitive partial name match
+    label_lower = label.strip().lower()
+    row = await fetchrow(
+        "SELECT id FROM targets WHERE LOWER(name) LIKE $1 LIMIT 1",
+        f"%{label_lower}%",
+    )
+    if row:
+        return dict(row)["id"]
+
+    return None
+
+
 EXTRACTION_PROMPT = """You are a biomedical research analyst specializing in Spinal Muscular Atrophy (SMA).
 
 Given the following paper abstract, extract structured claims. Each claim should be:
@@ -98,7 +200,7 @@ async def extract_claims_from_abstract(
             },
             json={
                 "model": "claude-haiku-4-5-20251001",
-                "max_tokens": 2000,
+                "max_tokens": 4096,
                 "messages": [{"role": "user", "content": prompt}],
             },
         )
@@ -162,19 +264,21 @@ async def process_source(source_id: str) -> int:
             # Resolve subject to a target ID if possible
             subject = claim.get("subject", "SMA")
             subject_type = claim.get("subject_type", "disease")
-            subject_id = None
-            target_row = await fetchrow("SELECT id FROM targets WHERE symbol = $1", subject.upper())
-            if target_row:
-                subject_id = dict(target_row)["id"]
+            subject_id = await _resolve_target_id(subject)
+
+            # If subject didn't resolve, try related_targets from the LLM
+            if subject_id is None:
+                for rt in claim.get("related_targets", []):
+                    subject_id = await _resolve_target_id(rt)
+                    if subject_id:
+                        break
 
             # Resolve object to a target ID if possible
             obj = claim.get("object")
             object_type = claim.get("object_type")
             object_id = None
             if obj:
-                obj_row = await fetchrow("SELECT id FROM targets WHERE symbol = $1", obj.upper())
-                if obj_row:
-                    object_id = dict(obj_row)["id"]
+                object_id = await _resolve_target_id(obj)
 
             # Insert claim
             await execute(
@@ -223,6 +327,129 @@ async def process_source(source_id: str) -> int:
 
     logger.info("Extracted %d claims from source %s (%s)", stored, source_id, source.get("title", "")[:60])
     return stored
+
+
+async def relink_all_claims() -> dict:
+    """Retroactively link existing unlinked claims to targets using fuzzy matching.
+
+    Scans all claims where subject_id IS NULL and attempts to resolve them
+    using the alias map, case-insensitive name matching, related_targets
+    metadata, and predicate text scanning. Also resolves object_id where possible.
+    """
+    rows = await fetch(
+        "SELECT id, predicate, metadata FROM claims WHERE subject_id IS NULL",
+    )
+
+    # Pre-load all target symbols for predicate scanning
+    all_targets = await fetch("SELECT id, symbol, name FROM targets")
+    target_lookup = {dict(t)["symbol"]: str(dict(t)["id"]) for t in all_targets}
+    # Build reverse alias map: alias → target_id
+    alias_to_id: dict[str, str] = {}
+    for alias, symbol in TARGET_ALIASES.items():
+        tid = target_lookup.get(symbol)
+        if tid:
+            alias_to_id[alias] = tid
+
+    claims_checked = 0
+    claims_updated = 0
+    targets_linked: dict[str, int] = {}
+
+    for row in rows:
+        row = dict(row)
+        claims_checked += 1
+
+        try:
+            meta = json.loads(row.get("metadata") or "{}")
+        except (json.JSONDecodeError, TypeError):
+            meta = {}
+
+        subject_label = meta.get("subject_label", "")
+        related_targets = meta.get("related_targets", [])
+        object_label = meta.get("object_label")
+        predicate = row.get("predicate", "")
+
+        # Try to resolve subject_id
+        subject_id = None
+        if subject_label:
+            subject_id = await _resolve_target_id(subject_label)
+
+        # If subject is a drug name, map to its MOA target
+        if subject_id is None and subject_label:
+            drug_target_sym = DRUG_TARGET_MAP.get(subject_label.strip().upper())
+            if drug_target_sym:
+                subject_id = target_lookup.get(drug_target_sym)
+
+        # If subject didn't resolve, try each symbol in related_targets
+        if subject_id is None and related_targets:
+            for rt in related_targets:
+                subject_id = await _resolve_target_id(rt)
+                if subject_id:
+                    break
+
+        # If still not resolved, scan predicate text for target symbols/aliases
+        if subject_id is None and predicate:
+            pred_upper = predicate.upper()
+            # Check exact target symbols in predicate
+            for symbol, tid in target_lookup.items():
+                if symbol in pred_upper:
+                    subject_id = tid
+                    break
+            # Check aliases in predicate
+            if subject_id is None:
+                for alias, tid in alias_to_id.items():
+                    if alias in pred_upper:
+                        subject_id = tid
+                        break
+            # Check drug names in predicate → MOA target
+            if subject_id is None:
+                for drug_name, target_sym in DRUG_TARGET_MAP.items():
+                    if drug_name in pred_upper:
+                        subject_id = target_lookup.get(target_sym)
+                        if subject_id:
+                            break
+
+        # Try to resolve object_id
+        object_id = None
+        if object_label:
+            object_id = await _resolve_target_id(object_label)
+
+        # Update if we resolved at least one
+        if subject_id or object_id:
+            if subject_id and object_id:
+                await execute(
+                    "UPDATE claims SET subject_id = $1, object_id = $2 WHERE id = $3",
+                    subject_id, object_id, row["id"],
+                )
+            elif subject_id:
+                await execute(
+                    "UPDATE claims SET subject_id = $1 WHERE id = $2",
+                    subject_id, row["id"],
+                )
+            else:
+                await execute(
+                    "UPDATE claims SET object_id = $1 WHERE id = $2",
+                    object_id, row["id"],
+                )
+            claims_updated += 1
+
+            # Track which target symbols got linked (for reporting)
+            if subject_id:
+                # Look up the symbol for the resolved target
+                t_row = await fetchrow("SELECT symbol FROM targets WHERE id = $1", subject_id)
+                if t_row:
+                    sym = dict(t_row)["symbol"]
+                    targets_linked[sym] = targets_linked.get(sym, 0) + 1
+
+    logger.info(
+        "Relinked %d/%d claims (targets: %s)",
+        claims_updated, claims_checked, targets_linked,
+    )
+
+    return {
+        "claims_checked": claims_checked,
+        "claims_updated": claims_updated,
+        "targets_linked": targets_linked,
+    }
 
 
 async def process_all_unprocessed() -> dict:

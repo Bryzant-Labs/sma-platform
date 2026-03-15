@@ -4,19 +4,21 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from ...core.database import fetch, fetchrow
 
 router = APIRouter()
+
+MAX_LIMIT = 2000
 
 
 @router.get("/trials")
 async def list_trials(
     status: str | None = None,
     phase: str | None = None,
-    limit: int = 100,
-    offset: int = 0,
+    limit: int = Query(default=100, ge=1, le=MAX_LIMIT),
+    offset: int = Query(default=0, ge=0),
 ):
     conditions = []
     params: list = []

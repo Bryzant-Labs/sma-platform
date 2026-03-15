@@ -239,6 +239,18 @@ CREATE INDEX idx_ingestion_source ON ingestion_log(source_type);
 CREATE INDEX idx_ingestion_date ON ingestion_log(run_at DESC);
 
 -- ============================================================
+-- CONTACT MESSAGES
+-- ============================================================
+
+CREATE TABLE contact_messages (
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name        TEXT NOT NULL,
+    email       TEXT NOT NULL,
+    message     TEXT NOT NULL,
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================================
 -- AGENT RUNS
 -- ============================================================
 
@@ -257,3 +269,52 @@ CREATE TABLE agent_runs (
 
 CREATE INDEX idx_agent_runs_name ON agent_runs(agent_name);
 CREATE INDEX idx_agent_runs_status ON agent_runs(status);
+
+-- ============================================================
+-- CROSS-SPECIES TARGETS (Querdenker comparative biology)
+-- ============================================================
+
+CREATE TABLE cross_species_targets (
+    id          TEXT PRIMARY KEY,
+    human_symbol TEXT NOT NULL,
+    human_target_id TEXT,
+    species     TEXT NOT NULL,
+    species_taxon_id TEXT,
+    ortholog_symbol TEXT,
+    ortholog_id TEXT,
+    conservation_score NUMERIC,
+    functional_divergence TEXT,
+    regeneration_relevant BOOLEAN DEFAULT FALSE,
+    notes       TEXT,
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_cross_species_human ON cross_species_targets(human_symbol);
+CREATE INDEX idx_cross_species_species ON cross_species_targets(species_taxon_id);
+
+-- ============================================================
+-- DRUG OUTCOMES (failure & success database)
+-- ============================================================
+
+CREATE TABLE drug_outcomes (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    compound_name   TEXT NOT NULL,
+    target          TEXT,
+    mechanism       TEXT,
+    outcome         TEXT NOT NULL CHECK (outcome IN ('success', 'partial_success', 'failure', 'inconclusive', 'discontinued', 'ongoing')),
+    failure_reason  TEXT,
+    failure_detail  TEXT,
+    trial_phase     TEXT,
+    model_system    TEXT,
+    key_finding     TEXT,
+    confidence      NUMERIC(3,2) DEFAULT 0.5,
+    source_id       UUID REFERENCES sources(id),
+    metadata        JSONB DEFAULT '{}',
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (compound_name, source_id)
+);
+
+CREATE INDEX idx_drug_outcomes_compound ON drug_outcomes(compound_name);
+CREATE INDEX idx_drug_outcomes_outcome ON drug_outcomes(outcome);
+CREATE INDEX idx_drug_outcomes_source ON drug_outcomes(source_id);

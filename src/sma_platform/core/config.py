@@ -16,6 +16,14 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     openai_api_key: str = ""
 
+    # Slack notifications
+    slack_bot_token: str = ""
+    slack_channel_id: str = ""
+
+    # Admin
+    sma_admin_key: str = "sma-admin-2026"
+    enable_docs: bool = True
+
     # Server
     host: str = "0.0.0.0"
     port: int = 8100

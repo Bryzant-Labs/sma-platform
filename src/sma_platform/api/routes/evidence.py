@@ -4,18 +4,40 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from ...core.database import fetch, fetchrow
 
 router = APIRouter()
 
+MAX_LIMIT = 50000
+
+
+@router.get("/evidence")
+async def list_evidence(
+    limit: int = Query(default=500, ge=1, le=MAX_LIMIT),
+    offset: int = Query(default=0, ge=0),
+):
+    """List evidence records linking claims to sources."""
+    rows = await fetch(
+        """SELECT e.id, e.claim_id, e.source_id, e.method, e.excerpt, e.created_at,
+                  c.predicate as claim_text, c.claim_type, c.confidence as claim_confidence,
+                  s.title as source_title, s.external_id as source_pmid, s.journal, s.pub_date
+           FROM evidence e
+           JOIN claims c ON e.claim_id = c.id
+           JOIN sources s ON e.source_id = s.id
+           ORDER BY c.confidence DESC
+           LIMIT $1 OFFSET $2""",
+        limit, offset,
+    )
+    return [dict(r) for r in rows]
+
 
 @router.get("/claims")
 async def list_claims(
     claim_type: str | None = None,
-    limit: int = 100,
-    offset: int = 0,
+    limit: int = Query(default=100, ge=1, le=MAX_LIMIT),
+    offset: int = Query(default=0, ge=0),
 ):
     if claim_type:
         rows = await fetch(
@@ -55,18 +77,18 @@ async def get_claim_evidence(claim_id: UUID):
 @router.get("/sources")
 async def list_sources(
     source_type: str | None = None,
-    limit: int = 100,
-    offset: int = 0,
+    limit: int = Query(default=100, ge=1, le=MAX_LIMIT),
+    offset: int = Query(default=0, ge=0),
 ):
     if source_type:
         rows = await fetch(
-            "SELECT id, source_type, external_id, title, journal, pub_date, doi, url, created_at "
+            "SELECT id, source_type, external_id, title, authors, journal, pub_date, doi, url, abstract, created_at "
             "FROM sources WHERE source_type = $1 ORDER BY pub_date DESC NULLS LAST LIMIT $2 OFFSET $3",
             source_type, limit, offset,
         )
     else:
         rows = await fetch(
-            "SELECT id, source_type, external_id, title, journal, pub_date, doi, url, created_at "
+            "SELECT id, source_type, external_id, title, authors, journal, pub_date, doi, url, abstract, created_at "
             "FROM sources ORDER BY pub_date DESC NULLS LAST LIMIT $1 OFFSET $2",
             limit, offset,
         )
@@ -76,8 +98,8 @@ async def list_sources(
 @router.get("/hypotheses")
 async def list_hypotheses(
     status: str | None = None,
-    limit: int = 50,
-    offset: int = 0,
+    limit: int = Query(default=50, ge=1, le=MAX_LIMIT),
+    offset: int = Query(default=0, ge=0),
 ):
     if status:
         rows = await fetch(

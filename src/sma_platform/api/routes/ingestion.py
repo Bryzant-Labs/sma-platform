@@ -6,17 +6,21 @@ import json
 import logging
 from datetime import datetime, timezone
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-from ...core.database import execute
-from ...ingestion.adapters import clinicaltrials, pubmed
-from ...reasoning.claim_extractor import process_all_unprocessed
+from ...core.database import execute, fetch, fetchrow
+from ...ingestion.adapters import chembl, clinicaltrials, kegg, pmc, pubmed, string_db, uniprot
+from ...reasoning.claim_extractor import process_all_unprocessed, relink_all_claims
+from ...reasoning.failure_extractor import process_all_drug_outcomes
+from ...reasoning.graph_expander import expand_graph
+from ...reasoning.hypothesis_generator import generate_all_hypotheses, generate_hypothesis_for_target
+from ..auth import require_admin_key
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.post("/ingest/pubmed")
+@router.post("/ingest/pubmed", dependencies=[Depends(require_admin_key)])
 async def trigger_pubmed_ingestion(days_back: int = 7):
     """Pull recent SMA papers from PubMed and store in sources table."""
     start = datetime.now(timezone.utc)
@@ -32,7 +36,7 @@ async def trigger_pubmed_ingestion(days_back: int = 7):
                 """INSERT INTO sources (source_type, external_id, title, authors, journal, pub_date, doi, url, abstract)
                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                    ON CONFLICT (source_type, external_id) DO UPDATE
-                   SET title = excluded.title, abstract = excluded.abstract, updated_at = datetime('now')""",
+                   SET title = excluded.title, abstract = excluded.abstract, updated_at = CURRENT_TIMESTAMP""",
                 "pubmed",
                 paper["pmid"],
                 paper["title"],
@@ -69,7 +73,7 @@ async def trigger_pubmed_ingestion(days_back: int = 7):
     }
 
 
-@router.post("/ingest/trials")
+@router.post("/ingest/trials", dependencies=[Depends(require_admin_key)])
 async def trigger_trials_ingestion():
     """Pull all SMA clinical trials from ClinicalTrials.gov."""
     start = datetime.now(timezone.utc)
@@ -87,7 +91,7 @@ async def trigger_trials_ingestion():
                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
                    ON CONFLICT (nct_id) DO UPDATE
                    SET title = excluded.title, status = excluded.status, phase = excluded.phase,
-                       enrollment = excluded.enrollment, updated_at = datetime('now')""",
+                       enrollment = excluded.enrollment, updated_at = CURRENT_TIMESTAMP""",
                 trial["nct_id"],
                 trial["title"],
                 trial["status"],
@@ -127,11 +131,483 @@ async def trigger_trials_ingestion():
     }
 
 
-@router.post("/extract/claims")
+@router.post("/extract/claims", dependencies=[Depends(require_admin_key)])
 async def trigger_claim_extraction():
     """Extract structured claims from all unprocessed paper abstracts using LLM."""
     start = datetime.now(timezone.utc)
     result = await process_all_unprocessed()
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration_secs"] = round(duration, 2)
+    return result
+
+
+@router.post("/relink/claims", dependencies=[Depends(require_admin_key)])
+async def trigger_claim_relinking():
+    """Retroactively link existing claims to targets using fuzzy matching."""
+    start = datetime.now(timezone.utc)
+    result = await relink_all_claims()
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration_secs"] = round(duration, 2)
+    return result
+
+
+@router.post("/generate/hypotheses", dependencies=[Depends(require_admin_key)])
+async def trigger_hypothesis_generation():
+    """Generate hypothesis cards for all targets by cross-referencing claims."""
+    start = datetime.now(timezone.utc)
+    result = await generate_all_hypotheses()
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration_secs"] = round(duration, 2)
+    return result
+
+
+@router.post("/generate/hypothesis/{target_id}", dependencies=[Depends(require_admin_key)])
+async def trigger_single_hypothesis(target_id: str):
+    """Generate a hypothesis card for a single target."""
+    result = await generate_hypothesis_for_target(target_id)
+    if not result:
+        from fastapi import HTTPException
+        raise HTTPException(404, "Target not found or no claims available")
+    return result
+
+
+@router.post("/ingest/network", dependencies=[Depends(require_admin_key)])
+async def trigger_network_ingestion():
+    """Pull protein-protein interactions from STRING and pathway data from KEGG.
+
+    Populates graph_edges table for network_centrality scoring.
+    """
+    start = datetime.now(timezone.utc)
+    errors: list[str] = []
+
+    # Build symbol → target_id lookup
+    targets = await fetch("SELECT id, symbol FROM targets WHERE target_type = 'gene'")
+    symbol_to_id = {t["symbol"]: str(t["id"]) for t in targets}
+
+    # --- STRING interactions ---
+    string_edges = 0
+    try:
+        interactions = await string_db.fetch_interactions(required_score=400)
+        for inter in interactions:
+            src_sym = inter["source"]
+            dst_sym = inter["target"]
+            src_id = symbol_to_id.get(src_sym)
+            dst_id = symbol_to_id.get(dst_sym)
+            if not src_id or not dst_id or src_id == dst_id:
+                continue
+
+            await execute(
+                """INSERT INTO graph_edges (src_id, dst_id, relation, direction, confidence, metadata)
+                   VALUES ($1, $2, $3, $4, $5, $6)
+                   ON CONFLICT DO NOTHING""",
+                src_id, dst_id, "protein_interaction", "undirected",
+                inter["combined_score"],
+                json.dumps({"source": "STRING", "nscore": inter["nscore"],
+                            "fscore": inter["fscore"], "escore": inter["escore"],
+                            "dscore": inter["dscore"], "tscore": inter["tscore"]}),
+            )
+            string_edges += 1
+    except Exception as e:
+        errors.append(f"STRING: {e}")
+        logger.error("STRING ingestion failed: %s", e)
+
+    # --- KEGG pathway genes ---
+    kegg_edges = 0
+    try:
+        pathway_genes = await kegg.fetch_pathway_genes()
+        # Find which KEGG genes overlap with our targets
+        kegg_symbols = {g["symbol"] for g in pathway_genes}
+        our_kegg_genes = kegg_symbols & set(symbol_to_id.keys())
+
+        # Create pathway membership edges (gene → pathway target if exists)
+        pathway_target = await fetchrow(
+            "SELECT id FROM targets WHERE symbol = 'MTOR_PATHWAY' OR target_type = 'pathway' LIMIT 1"
+        )
+
+        # Create co-pathway edges between genes that share the SMA pathway
+        our_genes_list = sorted(our_kegg_genes)
+        for i, g1 in enumerate(our_genes_list):
+            for g2 in our_genes_list[i + 1:]:
+                src_id = symbol_to_id.get(g1)
+                dst_id = symbol_to_id.get(g2)
+                if src_id and dst_id:
+                    await execute(
+                        """INSERT INTO graph_edges (src_id, dst_id, relation, direction, confidence, metadata)
+                           VALUES ($1, $2, $3, $4, $5, $6)
+                           ON CONFLICT DO NOTHING""",
+                        src_id, dst_id, "shared_pathway", "undirected", 0.8,
+                        json.dumps({"source": "KEGG", "pathway": "hsa05033",
+                                    "pathway_name": "Spinal muscular atrophy"}),
+                    )
+                    kegg_edges += 1
+
+        # Store all KEGG pathway gene symbols for reference
+        kegg_gene_list = [g["symbol"] for g in pathway_genes]
+    except Exception as e:
+        errors.append(f"KEGG: {e}")
+        logger.error("KEGG ingestion failed: %s", e)
+        kegg_gene_list = []
+
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+
+    await execute(
+        """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+        "network", "string+kegg", string_edges + kegg_edges, string_edges + kegg_edges, 0,
+        json.dumps(errors) if errors else None, duration,
+    )
+
+    return {
+        "source": "network",
+        "string_edges": string_edges,
+        "kegg_edges": kegg_edges,
+        "kegg_pathway_genes": len(kegg_gene_list) if kegg_gene_list else 0,
+        "our_genes_in_kegg": len(our_kegg_genes) if 'our_kegg_genes' in dir() else 0,
+        "errors": errors,
+        "duration_secs": round(duration, 2),
+    }
+
+
+@router.post("/ingest/compounds", dependencies=[Depends(require_admin_key)])
+async def trigger_compound_ingestion(limit_per_target: int = 50):
+    """Pull bioactivity data from ChEMBL for all gene targets.
+
+    Searches ChEMBL for each gene target in the database, retrieves
+    bioactivity records, and stores compound-target edges in graph_edges.
+    """
+    start = datetime.now(timezone.utc)
+    errors: list[str] = []
+
+    # Get all gene targets
+    targets = await fetch("SELECT id, symbol FROM targets WHERE target_type = 'gene'")
+    symbol_to_id = {t["symbol"]: str(t["id"]) for t in targets}
+    symbols = list(symbol_to_id.keys())
+
+    # Fetch bioactivities from ChEMBL
+    compound_edges = 0
+    compounds_seen: set[str] = set()
+    try:
+        activities = await chembl.search_sma_bioactivities(
+            target_symbols=symbols,
+            limit_per_target=limit_per_target,
+        )
+
+        for act in activities:
+            mol_id = act.get("molecule_chembl_id", "")
+            target_sym = act.get("target_symbol", "")
+            target_id = symbol_to_id.get(target_sym)
+            if not target_id or not mol_id:
+                continue
+
+            # We need a target node for the compound too; use the gene target as dst
+            # and store compound info in metadata
+            pchembl = act.get("pchembl_value")
+            confidence = 0.5
+            if pchembl is not None:
+                try:
+                    # pChEMBL >= 6 is moderately active, >= 8 is highly active
+                    pval = float(pchembl)
+                    confidence = min(1.0, max(0.1, pval / 10.0))
+                except (ValueError, TypeError):
+                    pass
+
+            metadata = {
+                "source": "ChEMBL",
+                "molecule_chembl_id": mol_id,
+                "canonical_smiles": act.get("canonical_smiles", ""),
+                "standard_type": act.get("standard_type", ""),
+                "standard_value": act.get("standard_value"),
+                "standard_units": act.get("standard_units", ""),
+                "pchembl_value": pchembl,
+                "assay_type": act.get("assay_type", ""),
+                "target_chembl_id": act.get("target_chembl_id", ""),
+            }
+
+            # Use a self-referential edge on the target to store compound binding data
+            # (compound is not in targets table, so we store it as metadata on the gene target)
+            await execute(
+                """INSERT INTO graph_edges (src_id, dst_id, relation, direction, confidence, metadata)
+                   VALUES ($1, $2, $3, $4, $5, $6)
+                   ON CONFLICT DO NOTHING""",
+                target_id, target_id, f"compound_bioactivity:{mol_id}", "undirected",
+                confidence, json.dumps(metadata),
+            )
+            compound_edges += 1
+            compounds_seen.add(mol_id)
+
+    except Exception as e:
+        errors.append(f"ChEMBL: {e}")
+        logger.error("ChEMBL ingestion failed: %s", e, exc_info=True)
+
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+
+    await execute(
+        """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+        "chembl", "sma_bioactivities", compound_edges, compound_edges, 0,
+        json.dumps(errors[:10]) if errors else None, duration,
+    )
+
+    return {
+        "source": "chembl",
+        "bioactivity_edges": compound_edges,
+        "unique_compounds": len(compounds_seen),
+        "targets_queried": len(symbols),
+        "errors": errors,
+        "duration_secs": round(duration, 2),
+    }
+
+
+@router.post("/ingest/proteins", dependencies=[Depends(require_admin_key)])
+async def trigger_protein_ingestion():
+    """Pull protein annotations from UniProt for all gene targets.
+
+    Maps each gene symbol to its UniProt accession, fetches full protein
+    annotations (GO terms, pathways, function), and stores shared-pathway
+    and shared-GO-process edges in graph_edges.
+    """
+    start = datetime.now(timezone.utc)
+    errors: list[str] = []
+
+    # Get all gene targets
+    targets = await fetch("SELECT id, symbol FROM targets WHERE target_type = 'gene'")
+    symbol_to_id = {t["symbol"]: str(t["id"]) for t in targets}
+    symbols = list(symbol_to_id.keys())
+
+    # Fetch protein annotations from UniProt
+    protein_count = 0
+    go_edges = 0
+    pathway_edges = 0
+    try:
+        annotations = await uniprot.get_protein_annotations(gene_symbols=symbols)
+
+        # Build lookup: gene_symbol -> {go_processes, pathways}
+        gene_go: dict[str, set[str]] = {}
+        gene_pathways: dict[str, set[str]] = {}
+
+        for ann in annotations:
+            symbol = ann.get("source_gene_symbol", "")
+            if not symbol or symbol not in symbol_to_id:
+                continue
+            protein_count += 1
+
+            # Store protein metadata on the target (update targets.metadata)
+            target_id = symbol_to_id[symbol]
+            protein_meta = {
+                "uniprot_id": ann.get("uniprot_id", ""),
+                "protein_name": ann.get("protein_name", ""),
+                "function": ann.get("function", ""),
+                "keywords": ann.get("keywords", []),
+            }
+            await execute(
+                """UPDATE targets SET metadata = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2""",
+                json.dumps(protein_meta), target_id,
+            )
+
+            # Collect GO biological_process terms
+            go_procs = set()
+            for go in ann.get("go_terms", []):
+                if go.get("category") == "biological_process":
+                    go_procs.add(go["id"])
+            gene_go[symbol] = go_procs
+
+            # Collect pathway IDs
+            pw_ids = set()
+            for pw in ann.get("pathways", []):
+                pw_ids.add(pw["id"])
+            gene_pathways[symbol] = pw_ids
+
+        # Create shared-GO-process edges between genes that share GO BP terms
+        sorted_symbols = sorted(gene_go.keys())
+        for i, g1 in enumerate(sorted_symbols):
+            for g2 in sorted_symbols[i + 1:]:
+                shared = gene_go[g1] & gene_go[g2]
+                if not shared:
+                    continue
+                src_id = symbol_to_id.get(g1)
+                dst_id = symbol_to_id.get(g2)
+                if not src_id or not dst_id:
+                    continue
+
+                await execute(
+                    """INSERT INTO graph_edges (src_id, dst_id, relation, direction, confidence, metadata)
+                       VALUES ($1, $2, $3, $4, $5, $6)
+                       ON CONFLICT DO NOTHING""",
+                    src_id, dst_id, "shared_go_process", "undirected",
+                    min(1.0, 0.3 + 0.05 * len(shared)),
+                    json.dumps({"source": "UniProt", "shared_go_terms": sorted(shared),
+                                "count": len(shared)}),
+                )
+                go_edges += 1
+
+        # Create shared-pathway edges between genes that share Reactome/KEGG pathways
+        sorted_pw_symbols = sorted(gene_pathways.keys())
+        for i, g1 in enumerate(sorted_pw_symbols):
+            for g2 in sorted_pw_symbols[i + 1:]:
+                shared = gene_pathways[g1] & gene_pathways[g2]
+                if not shared:
+                    continue
+                src_id = symbol_to_id.get(g1)
+                dst_id = symbol_to_id.get(g2)
+                if not src_id or not dst_id:
+                    continue
+
+                await execute(
+                    """INSERT INTO graph_edges (src_id, dst_id, relation, direction, confidence, metadata)
+                       VALUES ($1, $2, $3, $4, $5, $6)
+                       ON CONFLICT DO NOTHING""",
+                    src_id, dst_id, "shared_pathway_uniprot", "undirected",
+                    min(1.0, 0.4 + 0.1 * len(shared)),
+                    json.dumps({"source": "UniProt", "shared_pathways": sorted(shared),
+                                "count": len(shared)}),
+                )
+                pathway_edges += 1
+
+    except Exception as e:
+        errors.append(f"UniProt: {e}")
+        logger.error("UniProt ingestion failed: %s", e, exc_info=True)
+
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+
+    await execute(
+        """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+        "uniprot", "protein_annotations", protein_count, go_edges + pathway_edges, 0,
+        json.dumps(errors[:10]) if errors else None, duration,
+    )
+
+    return {
+        "source": "uniprot",
+        "proteins_resolved": protein_count,
+        "go_process_edges": go_edges,
+        "pathway_edges": pathway_edges,
+        "targets_queried": len(symbols),
+        "errors": errors,
+        "duration_secs": round(duration, 2),
+    }
+
+
+@router.post("/ingest/fulltext", dependencies=[Depends(require_admin_key)])
+async def trigger_fulltext_fetching(batch_size: int = 50):
+    """Fetch full-text papers from PubMed Central OA for sources that only have abstracts.
+
+    Sources: Europe PMC → NCBI PMC → Unpaywall (in order of preference).
+    """
+    start = datetime.now(timezone.utc)
+    result = await pmc.fetch_all_fulltext(batch_size=batch_size)
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration_secs"] = round(duration, 2)
+
+    await execute(
+        """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)""",
+        "pmc_fulltext", "fetch_all_fulltext", result["checked"], result["fetched"], 0,
+        None, duration,
+    )
+
+    return result
+
+
+@router.post("/extract/drug-outcomes", dependencies=[Depends(require_admin_key)])
+async def trigger_drug_outcome_extraction(batch_size: int = 100):
+    """Extract structured drug failure/success outcomes from SMA literature.
+
+    Builds the Drug Failure & Success Database — captures why drugs succeeded or
+    failed, with structured failure reasons (toxicity, efficacy, bioavailability, etc.).
+    """
+    start = datetime.now(timezone.utc)
+    result = await process_all_drug_outcomes(batch_size=batch_size)
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration_secs"] = round(duration, 2)
+    return result
+
+
+@router.get("/drug-outcomes")
+async def list_drug_outcomes(
+    outcome: str | None = None,
+    compound: str | None = None,
+    limit: int = 200,
+):
+    """List drug outcomes with optional filtering."""
+    if outcome and compound:
+        rows = await fetch(
+            """SELECT dout.*, s.title as source_title, s.external_id as pmid
+               FROM drug_outcomes doutut
+               LEFT JOIN sources s ON dout.source_id = s.id
+               WHERE dout.outcome = $1 AND LOWER(dout.compound_name) LIKE $2
+               ORDER BY dout.confidence DESC LIMIT $3""",
+            outcome, f"%{compound.lower()}%", limit,
+        )
+    elif outcome:
+        rows = await fetch(
+            """SELECT dout.*, s.title as source_title, s.external_id as pmid
+               FROM drug_outcomes dout
+               LEFT JOIN sources s ON dout.source_id = s.id
+               WHERE dout.outcome = $1
+               ORDER BY dout.confidence DESC LIMIT $2""",
+            outcome, limit,
+        )
+    elif compound:
+        rows = await fetch(
+            """SELECT dout.*, s.title as source_title, s.external_id as pmid
+               FROM drug_outcomes dout
+               LEFT JOIN sources s ON dout.source_id = s.id
+               WHERE LOWER(do.compound_name) LIKE $1
+               ORDER BY dout.confidence DESC LIMIT $2""",
+            f"%{compound.lower()}%", limit,
+        )
+    else:
+        rows = await fetch(
+            """SELECT dout.*, s.title as source_title, s.external_id as pmid
+               FROM drug_outcomes dout
+               LEFT JOIN sources s ON dout.source_id = s.id
+               ORDER BY dout.confidence DESC LIMIT $1""",
+            limit,
+        )
+    return [dict(r) for r in rows]
+
+
+@router.get("/drug-outcomes/summary")
+async def drug_outcomes_summary():
+    """Get summary statistics for the Drug Failure & Success Database."""
+    total = await fetchrow("SELECT COUNT(*) as count FROM drug_outcomes")
+    by_outcome = await fetch(
+        "SELECT outcome, COUNT(*) as count FROM drug_outcomes GROUP BY outcome ORDER BY count DESC"
+    )
+    by_compound = await fetch(
+        """SELECT compound_name, COUNT(*) as count,
+                  COUNT(DISTINCT outcome) as distinct_outcomes
+           FROM drug_outcomes GROUP BY compound_name ORDER BY count DESC LIMIT 20"""
+    )
+    by_failure = await fetch(
+        """SELECT failure_reason, COUNT(*) as count FROM drug_outcomes
+           WHERE failure_reason IS NOT NULL
+           GROUP BY failure_reason ORDER BY count DESC"""
+    )
+
+    return {
+        "total_outcomes": dict(total)["count"] if total else 0,
+        "by_outcome": [dict(r) for r in by_outcome],
+        "top_compounds": [dict(r) for r in by_compound],
+        "failure_reasons": [dict(r) for r in by_failure],
+    }
+
+
+@router.post("/expand/graph", dependencies=[Depends(require_admin_key)])
+async def trigger_graph_expansion():
+    """Auto-expand the knowledge graph from claims, drug outcomes, and conservation data."""
+    start = datetime.now(timezone.utc)
+    result = await expand_graph()
+    duration = (datetime.now(timezone.utc) - start).total_seconds()
+    result["duration_secs"] = round(duration, 2)
+    return result
+
+
+@router.post("/relink/claims", dependencies=[Depends(require_admin_key)])
+async def trigger_claim_relinking():
+    """Retroactively link unlinked claims to targets using fuzzy matching."""
+    start = datetime.now(timezone.utc)
+    result = await relink_all_claims()
     duration = (datetime.now(timezone.utc) - start).total_seconds()
     result["duration_secs"] = round(duration, 2)
     return result

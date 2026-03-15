@@ -170,6 +170,14 @@ CREATE TABLE IF NOT EXISTS ingestion_log (
     metadata        TEXT DEFAULT '{}'
 );
 
+CREATE TABLE IF NOT EXISTS contact_messages (
+    id          TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    name        TEXT NOT NULL,
+    email       TEXT NOT NULL,
+    message     TEXT NOT NULL,
+    created_at  TEXT DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS agent_runs (
     id          TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
     agent_name  TEXT NOT NULL,
@@ -181,4 +189,19 @@ CREATE TABLE IF NOT EXISTS agent_runs (
     started_at  TEXT DEFAULT (datetime('now')),
     finished_at TEXT,
     duration_secs REAL
+);
+
+CREATE TABLE IF NOT EXISTS cross_species_targets (
+    id TEXT PRIMARY KEY,
+    human_symbol TEXT NOT NULL,
+    human_target_id TEXT,
+    species TEXT NOT NULL,
+    species_taxon_id TEXT,
+    ortholog_symbol TEXT,
+    ortholog_id TEXT,
+    conservation_score REAL,
+    functional_divergence TEXT,
+    regeneration_relevant BOOLEAN DEFAULT 0,
+    notes TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );

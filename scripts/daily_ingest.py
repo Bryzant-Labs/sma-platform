@@ -45,7 +45,7 @@ async def ingest_pubmed(days_back: int = 7):
                 """INSERT INTO sources (source_type, external_id, title, authors, journal, pub_date, doi, url, abstract)
                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                    ON CONFLICT (source_type, external_id) DO UPDATE
-                   SET title = excluded.title, abstract = excluded.abstract, updated_at = datetime('now')""",
+                   SET title = excluded.title, abstract = excluded.abstract, updated_at = CURRENT_TIMESTAMP""",
                 "pubmed", paper["pmid"], paper["title"],
                 json.dumps(paper["authors"]), paper["journal"],
                 paper["pub_date"], paper["doi"], paper["url"], paper["abstract"],
@@ -91,7 +91,7 @@ async def ingest_trials():
                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
                    ON CONFLICT (nct_id) DO UPDATE
                    SET title = excluded.title, status = excluded.status, phase = excluded.phase,
-                       enrollment = excluded.enrollment, updated_at = datetime('now')""",
+                       enrollment = excluded.enrollment, updated_at = CURRENT_TIMESTAMP""",
                 trial["nct_id"], trial["title"], trial["status"], trial["phase"],
                 json.dumps(trial["conditions"]), json.dumps(trial["interventions"]),
                 trial["sponsor"], trial.get("start_date"), trial.get("completion_date"),

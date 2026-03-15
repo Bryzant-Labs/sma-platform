@@ -1,0 +1,435 @@
+{
+  "metadata": {
+    "query_date": "2026-03-15",
+    "api_endpoint": "https://api.platform.opentargets.org/api/v4/graphql",
+    "sma_disease_id": "EFO_0008525",
+    "sma_disease_name": "spinal muscular atrophy",
+    "total_sma_associated_targets": 1205,
+    "note_on_disease_ids": "Orphanet_70 and EFO_0000253 both returned null. Correct ID discovered via search: EFO_0008525. ENSG00000158473 resolves to CD1D (not NCALD); correct NCALD Ensembl ID is ENSG00000104490."
+  },
+  "sma_disease": {
+    "id": "EFO_0008525",
+    "name": "spinal muscular atrophy",
+    "description": "A motor neuron disease that affect the muscles, and characterized by muscle weakness and atrophy resulting from progressive degeneration and irreversible loss of the anterior horn cells in the spinal cord (i.e., lower motor neurons) and the brain stem nuclei. SMA is generally caused by changes (mutations) in the SMN1 gene and is inherited in an autosomal recessive manner. Extra copies of the SMN2 gene modify the severity of SMA. Rare autosomal dominant (DYNC1H1, BICD2, VAPB) and X-linked (UBA1) forms exist.",
+    "known_drugs": {
+      "unique_drugs": 17,
+      "unique_targets": 69,
+      "approved_drugs": [
+        {
+          "name": "NUSINERSEN SODIUM",
+          "drug_type": "Oligonucleotide",
+          "max_phase": 4,
+          "target": "SMN2",
+          "mechanism": "SMN2 pre-mRNA positive modulator",
+          "chembl_id": "CHEMBL3833342"
+        },
+        {
+          "name": "ONASEMNOGENE ABEPARVOVEC",
+          "drug_type": "Gene",
+          "max_phase": 4,
+          "target": "SMN1",
+          "mechanism": "Survival motor neuron protein exogenous gene",
+          "chembl_id": "CHEMBL4297240"
+        },
+        {
+          "name": "RISDIPLAM",
+          "drug_type": "Small molecule",
+          "max_phase": 4,
+          "target": "SMN2",
+          "mechanism": "SMN2 pre-mRNA positive modulator",
+          "chembl_id": "CHEMBL4297528"
+        },
+        {
+          "name": "VALPROIC ACID",
+          "drug_type": "Small molecule",
+          "max_phase": 4,
+          "target": "ALDH5A1",
+          "mechanism": "Succinate semialdehyde dehydrogenase inhibitor",
+          "note": "Off-target SMA association"
+        },
+        {
+          "name": "APITEGROMAB",
+          "drug_type": "Antibody",
+          "max_phase": 3,
+          "target": "MSTN",
+          "mechanism": "Growth/differentiation factor 8 inhibitor",
+          "note": "Myostatin inhibitor for SMA muscle function"
+        }
+      ]
+    }
+  },
+  "targets": {
+    "SMN1": {
+      "ensembl_id": "ENSG00000172062",
+      "approved_symbol": "SMN1",
+      "approved_name": "survival of motor neuron 1, telomeric",
+      "biotype": "protein_coding",
+      "sma_association": {
+        "overall_score": 0.8843530775303997,
+        "rank_in_sma": 1,
+        "datatype_scores": {
+          "known_drug": 0.8490273776503695,
+          "genetic_association": 0.9644102661508024,
+          "genetic_literature": 0.9726386167458255,
+          "literature": 0.35544864618961775,
+          "animal_model": 0.5013056461488529
+        }
+      },
+      "tractability": {
+        "small_molecule": {
+          "approved_drug": false,
+          "advanced_clinical": false,
+          "phase_1_clinical": false,
+          "structure_with_ligand": true,
+          "high_quality_ligand": true,
+          "high_quality_pocket": false,
+          "med_quality_pocket": false,
+          "druggable_family": true
+        },
+        "antibody": {
+          "approved_drug": false,
+          "advanced_clinical": false,
+          "phase_1_clinical": false,
+          "uniProt_loc_high_conf": false
+        },
+        "protac": {
+          "approved_drug": false,
+          "uniProt_ubiquitination": true,
+          "database_ubiquitination": true,
+          "small_molecule_binder": true
+        },
+        "other_clinical": {
+          "approved_drug": true,
+          "advanced_clinical": false,
+          "phase_1_clinical": false
+        }
+      },
+      "known_drugs": [
+        {
+          "name": "ONASEMNOGENE ABEPARVOVEC",
+          "drug_type": "Gene",
+          "max_phase": 4,
+          "mechanism": "Survival motor neuron protein exogenous gene",
+          "chembl_id": "CHEMBL4297240",
+          "statuses": ["Approved (Phase 4)", "Phase 3 Completed", "Phase 3 Active/Recruiting", "Phase 1 Completed", "Phase 1 Terminated"]
+        }
+      ],
+      "genetic_constraint": {
+        "syn": 0.28979000449180603,
+        "mis": 0.12500999867916107,
+        "lof": 0.6179199814796448
+      }
+    },
+    "SMN2": {
+      "ensembl_id": "ENSG00000205571",
+      "approved_symbol": "SMN2",
+      "approved_name": "survival of motor neuron 2, centromeric",
+      "biotype": "protein_coding",
+      "sma_association": {
+        "overall_score": 0.8519217181503226,
+        "rank_in_sma": 2,
+        "datatype_scores": {
+          "known_drug": 0.9542605965616132,
+          "genetic_association": 0.92112749896999,
+          "genetic_literature": 0.9190679877429972,
+          "literature": 0.5455614260926316,
+          "animal_model": 0.5013056461488529
+        }
+      },
+      "tractability": {
+        "small_molecule": {
+          "approved_drug": false,
+          "advanced_clinical": false,
+          "phase_1_clinical": false,
+          "structure_with_ligand": false,
+          "high_quality_ligand": false,
+          "druggable_family": false
+        },
+        "note": "No tractability flags set — SMN2 is targeted via RNA splicing modulation, not classical protein binding"
+      },
+      "known_drugs": [
+        {
+          "name": "NUSINERSEN SODIUM",
+          "drug_type": "Oligonucleotide",
+          "max_phase": 4,
+          "mechanism": "SMN2 pre-mRNA positive modulator",
+          "chembl_id": "CHEMBL3833342"
+        },
+        {
+          "name": "RISDIPLAM",
+          "drug_type": "Small molecule",
+          "max_phase": 4,
+          "mechanism": "SMN2 pre-mRNA positive modulator",
+          "chembl_id": "CHEMBL4297528"
+        },
+        {
+          "name": "ONASEMNOGENE ABEPARVOVEC",
+          "drug_type": "Gene",
+          "max_phase": 4,
+          "mechanism": "Survival motor neuron protein exogenous gene",
+          "chembl_id": "CHEMBL4297240"
+        }
+      ]
+    },
+    "STMN2": {
+      "ensembl_id": "ENSG00000104435",
+      "approved_symbol": "STMN2",
+      "approved_name": "stathmin 2",
+      "biotype": "protein_coding",
+      "sma_association": {
+        "overall_score": null,
+        "rank_in_sma": "not in top 1205",
+        "note": "No direct SMA association in OpenTargets. Top associations are neurodegenerative disease (0.371) and ALS-related (0.031). STMN2 is an SMA modifier identified via TDP-43/UsnRNP research — this evidence is likely in literature but below the scoring threshold for SMA specifically.",
+        "closest_motor_neuron": {
+          "amyotrophic_lateral_sclerosis_type_11": 0.030623386759174392,
+          "familial_amyotrophic_lateral_sclerosis": 0.030623386759174392
+        }
+      },
+      "tractability": {
+        "small_molecule": {
+          "approved_drug": false,
+          "structure_with_ligand": false,
+          "high_quality_ligand": false,
+          "high_quality_pocket": false,
+          "med_quality_pocket": false,
+          "druggable_family": false
+        },
+        "antibody": {
+          "uniProt_loc_high_conf": true
+        },
+        "protac": {
+          "uniProt_ubiquitination": true,
+          "database_ubiquitination": true,
+          "half_life_data": true
+        },
+        "assessment": "Low tractability for small molecules. Antibody approach possible (surface-localized). PROTAC feasible (ubiquitination signal present). No known drugs."
+      },
+      "known_drugs": []
+    },
+    "PLS3": {
+      "ensembl_id": "ENSG00000102024",
+      "approved_symbol": "PLS3",
+      "approved_name": "plastin 3",
+      "biotype": "protein_coding",
+      "sma_association": {
+        "overall_score": null,
+        "rank_in_sma": "not in top 1205",
+        "note": "No direct SMA association in OpenTargets. PLS3 overexpression is a well-documented SMA modifier in literature (particularly in females), but this is primarily experimental/mouse model data not yet aggregated in OpenTargets scoring. Top disease: X-linked osteoporosis with fractures (0.721).",
+        "top_diseases": [
+          {"name": "X-linked osteoporosis with fractures", "score": 0.7214091983305218},
+          {"name": "congenital diaphragmatic hernia", "score": 0.6167294453170954},
+          {"name": "Osteoporosis", "score": 0.4748501641253304}
+        ]
+      },
+      "tractability": {
+        "small_molecule": {
+          "approved_drug": false,
+          "structure_with_ligand": true,
+          "high_quality_ligand": false,
+          "high_quality_pocket": false,
+          "druggable_family": false
+        },
+        "antibody": {
+          "GO_CC_high_conf": true
+        },
+        "protac": {
+          "database_ubiquitination": true,
+          "half_life_data": true
+        },
+        "assessment": "Structure with ligand available — early-stage small molecule tractability. Intracellular actin-binding protein, so classical antibody approach limited. PLS3 upregulation (not inhibition) is the therapeutic goal, making this a transcriptional/gene therapy target rather than a classical inhibitor target."
+      },
+      "known_drugs": []
+    },
+    "NCALD": {
+      "ensembl_id_provided": "ENSG00000158473",
+      "ensembl_id_correct": "ENSG00000104490",
+      "approved_symbol": "NCALD",
+      "approved_name": "neurocalcin delta",
+      "biotype": "protein_coding",
+      "note_on_id": "ENSG00000158473 resolves to CD1D (CD1d molecule), NOT NCALD. Correct NCALD ID confirmed as ENSG00000104490 via OpenTargets search.",
+      "sma_association": {
+        "overall_score": null,
+        "rank_in_sma": "not in top 1205",
+        "note": "No direct SMA association in OpenTargets. NCALD is an SMA modifier identified in specialized research — its neuroprotective role in SMA motor neurons is not yet captured in OpenTargets evidence aggregation. Top diseases: hypertension (0.511), coronary artery disease (0.425).",
+        "top_diseases": [
+          {"name": "hypertension", "score": 0.5108497281932116},
+          {"name": "coronary artery disease", "score": 0.4250403855805931},
+          {"name": "Increased blood pressure", "score": 0.38567445141783685}
+        ]
+      },
+      "tractability": {
+        "small_molecule": {
+          "approved_drug": false,
+          "structure_with_ligand": false,
+          "high_quality_ligand": false,
+          "high_quality_pocket": false,
+          "druggable_family": false
+        },
+        "antibody": {
+          "uniProt_loc_high_conf": false,
+          "GO_CC_high_conf": false
+        },
+        "protac": {
+          "database_ubiquitination": true,
+          "half_life_data": true
+        },
+        "assessment": "Low tractability across all modalities. NCALD inhibition (reducing its activity) is the therapeutic goal in SMA. PROTAC degradation approach may be viable given ubiquitination data."
+      },
+      "known_drugs": []
+    },
+    "UBA1": {
+      "ensembl_id": "ENSG00000130985",
+      "approved_symbol": "UBA1",
+      "approved_name": "ubiquitin like modifier activating enzyme 1",
+      "biotype": "protein_coding",
+      "sma_association": {
+        "overall_score_ot_top200": 0.7681829535662633,
+        "rank_in_sma": 17,
+        "note": "OpenTargets EFO_0008525 score of 0.768 reflects general SMA. UBA1 also has strong specific associations with X-linked SMA forms.",
+        "specific_sma_associations": {
+          "infantile_onset_xlinked_sma": {
+            "score": 0.763034822596015,
+            "datatype_scores": {
+              "literature": 0.021277577916406734,
+              "genetic_association": 0.828569737371405,
+              "genetic_literature": 0.8334055756591312
+            }
+          },
+          "xlinked_distal_sma_type3": {
+            "score": 0.4736281148006291,
+            "datatype_scores": {
+              "genetic_association": 0.7790822847951985
+            }
+          },
+          "spinal_muscular_atrophy_general": {
+            "score": 0.035377757451219134,
+            "datatype_scores": {
+              "literature": 0.29096862332199486
+            }
+          }
+        },
+        "datatype_scores_top200": {
+          "genetic_association": 0.8399781638274506,
+          "genetic_literature": 0.8334055756591312,
+          "literature": 0.3033179129980153
+        }
+      },
+      "tractability": {
+        "small_molecule": {
+          "approved_drug": false,
+          "structure_with_ligand": false,
+          "high_quality_ligand": false,
+          "high_quality_pocket": false,
+          "druggable_family": false
+        },
+        "antibody": {
+          "all_flags": false
+        },
+        "protac": {
+          "uniProt_ubiquitination": true,
+          "database_ubiquitination": true,
+          "half_life_data": true,
+          "small_molecule_binder": true
+        },
+        "assessment": "Small molecule binder confirmed — UBA1 has enzyme active site amenable to inhibitors. PROTAC approach supported by ubiquitination data. In SMA context, UBA1 activity is REDUCED (X-linked SMA mechanism), so ACTIVATORS rather than inhibitors are needed — an unusual therapeutic direction."
+      },
+      "known_drugs": []
+    },
+    "CORO1C": {
+      "ensembl_id": "ENSG00000110880",
+      "approved_symbol": "CORO1C",
+      "approved_name": "coronin 1C",
+      "biotype": "protein_coding",
+      "sma_association": {
+        "overall_score": null,
+        "rank_in_sma": "not in top 1205",
+        "note": "No SMA or motor neuron disease associations found in OpenTargets. CORO1C's role in SMA is as an actin cytoskeleton regulator involved in axonal biology. This is a less-established modifier target with limited OpenTargets evidence.",
+        "top_diseases": [
+          {"name": "neurodegenerative disease", "score": 0.4529757348595657},
+          {"name": "liver disease", "score": 0.3330123627434088},
+          {"name": "Alzheimer disease", "score": 0.31166815018472416}
+        ]
+      },
+      "tractability": {
+        "small_molecule": {
+          "approved_drug": false,
+          "structure_with_ligand": false,
+          "high_quality_ligand": false,
+          "high_quality_pocket": false,
+          "druggable_family": false
+        },
+        "antibody": {
+          "uniProt_loc_high_conf": true,
+          "GO_CC_med_conf": true
+        },
+        "protac": {
+          "database_ubiquitination": true,
+          "half_life_data": true
+        },
+        "assessment": "Low small-molecule tractability. Antibody approach feasible (surface expression predicted). PROTAC supported. CORO1C is a cytoskeletal WD-repeat protein — challenging to drug directly. May be better targeted via upstream regulators."
+      },
+      "known_drugs": []
+    },
+    "MTOR": {
+      "ensembl_id": "ENSG00000198793",
+      "approved_symbol": "MTOR",
+      "approved_name": "mechanistic target of rapamycin kinase",
+      "biotype": "protein_coding",
+      "role_in_sma": "MTOR_PATHWAY — not a primary SMA gene but a modifier pathway target. mTOR pathway activation has been proposed to compensate for SMN deficiency by promoting motor neuron survival.",
+      "sma_association": {
+        "overall_score": null,
+        "rank_in_sma": "not in top 1205",
+        "note": "MTOR has no direct SMA association in OpenTargets. Its relevance to SMA is via pathway modulation, not genetic causation. MTOR has very high evidence in mTORopathies (score 0.830) and neurodegenerative disease (0.560)."
+      },
+      "tractability": {
+        "small_molecule": {
+          "approved_drug": true,
+          "structure_with_ligand": true,
+          "high_quality_ligand": true,
+          "druggable_family": true
+        },
+        "antibody": {
+          "uniProt_loc_high_conf": true,
+          "GO_CC_high_conf": true
+        },
+        "protac": {
+          "uniProt_ubiquitination": true,
+          "database_ubiquitination": true,
+          "half_life_data": true,
+          "small_molecule_binder": true
+        },
+        "assessment": "HIGHEST tractability of all 8 targets. Approved small molecule drugs exist. Multiple clinical-stage inhibitors. Rapamycin and rapalogs are approved MTOR inhibitors (everolimus, temsirolimus). Key challenge: MTOR inhibition may actually be counterproductive in SMA if the goal is motor neuron survival."
+      },
+      "known_drugs_summary": {
+        "unique_drugs": 25,
+        "max_phase_achieved": 4,
+        "approved_drugs": ["PERHEXILINE (indirectly via MTOR)", "multiple rapalogs"],
+        "phase_3_drugs": ["DACTOLISIB", "RIDAFOROLIMUS", "GEDATOLISIB"],
+        "phase_2_drugs": ["SAPANISERTIB", "VISTUSERTIB", "ONATASERTIB", "SF-1126", "INDOXIMOD"],
+        "note": "25 unique drugs in clinical trials targeting MTOR across all indications — primarily oncology."
+      }
+    }
+  },
+  "sma_disease_top_associations": {
+    "description": "Top 17 targets with SMA association scores above 0.75",
+    "targets": [
+      {"rank": 1, "symbol": "SMN1", "id": "ENSG00000172062", "score": 0.8843530775303997},
+      {"rank": 2, "symbol": "SMN2", "id": "ENSG00000205571", "score": 0.8519217181503226},
+      {"rank": 3, "symbol": "IGHMBP2", "id": "ENSG00000132740", "score": 0.8415382431068585},
+      {"rank": 4, "symbol": "BICD2", "id": "ENSG00000185963", "score": 0.8362533591844205},
+      {"rank": 5, "symbol": "HSPB1", "id": "ENSG00000106211", "score": 0.824927417738631},
+      {"rank": 6, "symbol": "DYNC1H1", "id": "ENSG00000197102", "score": 0.8229656763175666},
+      {"rank": 7, "symbol": "ASAH1", "id": "ENSG00000104763", "score": 0.8099890483433779},
+      {"rank": 8, "symbol": "ATP7A", "id": "ENSG00000165240", "score": 0.7994405502194699},
+      {"rank": 9, "symbol": "BSCL2", "id": "ENSG00000168000", "score": 0.7982224277462132},
+      {"rank": 10, "symbol": "SEPSECS", "id": "ENSG00000109618", "score": 0.7973566428383508},
+      {"rank": 11, "symbol": "TSEN54", "id": "ENSG00000182173", "score": 0.7968341787351703},
+      {"rank": 12, "symbol": "TRPV4", "id": "ENSG00000111199", "score": 0.7931689123573105},
+      {"rank": 13, "symbol": "VRK1", "id": "ENSG00000100749", "score": 0.7928475884786138},
+      {"rank": 14, "symbol": "HSPB8", "id": "ENSG00000152137", "score": 0.7877537235705584},
+      {"rank": 15, "symbol": "TSEN2", "id": "ENSG00000154743", "score": 0.77953857524108},
+      {"rank": 16, "symbol": "CHCHD10", "id": "ENSG00000250479", "score": 0.7711587167296569},
+      {"rank": 17, "symbol": "UBA1", "id": "ENSG00000130985", "score": 0.7681829535662633}
+    ]
+  }
+}

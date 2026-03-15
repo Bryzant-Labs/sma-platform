@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMA Research Links — Top 50+ Resources for Researchers</title>
+    <meta name="description" content="Curated collection of 50+ essential links for SMA (Spinal Muscular Atrophy) researchers: databases, clinical trials, drug pipelines, patient registries, computational tools, and genomic resources.">
+    <meta name="keywords" content="SMA resources, Spinal Muscular Atrophy research, SMA databases, SMA clinical trials, SMN1, SMN2, gene therapy, rare disease research">
+    <meta name="author" content="Christian Fischer / Bryzant Labs">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sma-research.info/links">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SMA Research Links — 50+ Essential Resources">
+    <meta property="og:description" content="Curated link collection for SMA researchers: databases, trials, pipelines, tools, and genomic resources.">
+    <meta property="og:url" content="https://sma-research.info/links">
+    <meta property="og:site_name" content="SMA Research Platform">
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "SMA Research Links",
+        "description": "Curated collection of 50+ essential links for Spinal Muscular Atrophy researchers, including databases, clinical trial registries, drug pipelines, computational tools, and genomic resources.",
+        "url": "https://sma-research.info/links",
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": "SMA Research Platform",
+            "url": "https://sma-research.info"
+        },
+        "about": {
+            "@type": "MedicalCondition",
+            "name": "Spinal Muscular Atrophy"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Bryzant Labs"
+        }
+    }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fafafa;
+            --panel: #ffffff;
+            --text: #1a1a1a;
+            --text-secondary: #555;
+            --muted: #888;
+            --line: #e0e0e0;
+            --line-light: #f0f0f0;
+            --accent: #1a56db;
+            --green: #15803d; --green-bg: #f0fdf4;
+            --blue: #1e40af; --blue-bg: #eff6ff;
+            --amber: #92400e; --amber-bg: #fffbeb;
+            --gray: #6b7280; --gray-bg: #f3f4f6;
+            --red: #991b1b; --red-bg: #fef2f2;
+            --purple: #6b21a8; --purple-bg: #faf5ff;
+            --teal: #115e59; --teal-bg: #f0fdfa;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        .site-header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 32px 0 24px; }
+        .site-header h1 { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .site-header .subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+        .header-meta { font-size: 12px; color: var(--muted); text-align: right; }
+        .header-meta a { color: var(--accent); text-decoration: none; }
+        .header-meta a:hover { text-decoration: underline; }
+
+        .toc { background: var(--panel); border: 1px solid var(--line); padding: 20px 24px; margin: 24px 0; }
+        .toc h3 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 12px; }
+        .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px; }
+        .toc a { font-size: 13px; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .toc a:hover { text-decoration: underline; }
+        .toc .count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+
+        .category { margin: 32px 0; }
+        .category-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--text); }
+        .category-title { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .category-count { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+
+        .link-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .link-card {
+            background: var(--panel); border: 1px solid var(--line); padding: 14px 18px;
+            display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start;
+            transition: border-color 0.15s;
+        }
+        .link-card:hover { border-color: var(--accent); }
+        .link-title { font-size: 14px; font-weight: 600; }
+        .link-title a { color: var(--text); text-decoration: none; }
+        .link-title a:hover { color: var(--accent); }
+        .link-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; line-height: 1.6; }
+        .link-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 4px; word-break: break-all; }
+        .link-badge {
+            display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;
+            align-self: center;
+        }
+        .b-db { background: var(--blue-bg); color: var(--blue); }
+        .b-org { background: var(--green-bg); color: var(--green); }
+        .b-tool { background: var(--purple-bg); color: var(--purple); }
+        .b-trial { background: var(--amber-bg); color: var(--amber); }
+        .b-lit { background: var(--teal-bg); color: var(--teal); }
+        .b-news { background: var(--red-bg); color: var(--red); }
+        .b-drug { background: var(--gray-bg); color: var(--gray); }
+
+        .back-link { display: inline-block; margin: 24px 0; font-size: 13px; color: var(--accent); text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+
+        footer { border-top: 1px solid var(--line); padding: 24px 0; margin-top: 32px; text-align: center; font-size: 12px; color: var(--muted); }
+        footer a { color: var(--accent); text-decoration: none; }
+
+        @media (max-width: 640px) {
+            .toc-grid { grid-template-columns: 1fr; }
+            .link-card { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="container">
+        <div class="header-row">
+            <div>
+                <h1>SMA Research Links</h1>
+                <p class="subtitle">Curated collection of essential resources for Spinal Muscular Atrophy researchers</p>
+            </div>
+            <div class="header-meta">
+                <a href="/">&#8592; Back to Platform</a><br>
+                <span>Last updated: March 2026</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+<div class="toc">
+    <h3>Categories</h3>
+    <div class="toc-grid">
+        <a href="#genomic"><span class="count">8</span> Genomic &amp; Molecular Databases</a>
+        <a href="#clinical"><span class="count">5</span> Clinical Trial Registries</a>
+        <a href="#drug"><span class="count">6</span> Drug &amp; Target Discovery</a>
+        <a href="#protein"><span class="count">5</span> Protein &amp; Pathway Tools</a>
+        <a href="#literature"><span class="count">7</span> Literature &amp; Reviews</a>
+        <a href="#organizations"><span class="count">8</span> Patient Organizations &amp; Advocacy</a>
+        <a href="#computational"><span class="count">6</span> Computational &amp; AI Tools</a>
+        <a href="#news"><span class="count">4</span> News &amp; Community</a>
+        <a href="#regulatory"><span class="count">4</span> Regulatory &amp; Safety</a>
+    </div>
+</div>
+
+<!-- ===== GENOMIC & MOLECULAR ===== -->
+<section class="category" id="genomic">
+    <div class="category-header">
+        <h2 class="category-title">Genomic &amp; Molecular Databases</h2>
+        <span class="category-count">8 links</span>
+    </div>
+    <div class="link-grid">
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.ncbi.nlm.nih.gov/gene/6606" target="_blank" rel="noopener">NCBI Gene: SMN1</a></div>
+                <div class="link-desc">Official gene entry for Survival Motor Neuron 1 — gene structure, transcripts, expression, orthologs, and literature references.</div>
+                <div class="link-url">ncbi.nlm.nih.gov/gene/6606</div>
+            </div>
+            <span class="link-badge b-db">Database</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.ncbi.nlm.nih.gov/gene/6607" target="_blank" rel="noopener">NCBI Gene: SMN2</a></div>
+                <div class="link-desc">Gene entry for SMN2 — the primary therapeutic target and severity modifier in SMA. Copy number determines disease severity.</div>
+                <div class="link-url">ncbi.nlm.nih.gov/gene/6607</div>
+            </div>
+            <span class="link-badge b-db">Database</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.omim.org/entry/600354" target="_blank" rel="noopener">OMIM: SMN1 (600354)</a></div>
+                <div class="link-desc">Online Mendelian Inheritance in Man — comprehensive clinical and genetic description of SMN1 and its role in SMA.</div>
+                <div class="link-url">omim.org/entry/600354</div>
+            </div>
+            <span class="link-badge b-db">Database</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.ncbi.nlm.nih.gov/clinvar/?term=SMN1" target="_blank" rel="noopener">ClinVar: SMN1 Variants</a></div>
+                <div class="link-desc">Clinically significant variants in SMN1 with pathogenicity classifications and supporting evidence.</div>
+                <div class="link-url">ncbi.nlm.nih.gov/clinvar/?term=SMN1</div>
+            </div>
+            <span class="link-badge b-db">Database</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank" rel="noopener">NCBI GEO — Gene Expression Omnibus</a></div>
+                <div class="link-desc">Repository for functional genomics data. Key SMA datasets: GSE69175 (iPSC motor neurons), GSE108094 (mouse spinal cord), GSE208629 (patient muscle biopsies).</div>
+                <div class="link-url">ncbi.nlm.nih.gov/geo</div>
+            </div>
+            <span class="link-badge b-db">Database</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.uniprot.org/uniprot/Q16637" target="_blank" rel="noopener">UniProt: SMN Protein (Q16637)</a></div>
+                <div class="link-desc">Reviewed entry for human SMN protein — function, interactions, domains, post-translational modifications, and disease annotations.</div>
+                <div class="link-url">uniprot.org/uniprot/Q16637</div>
+            </div>
+            <span class="link-badge b-db">Database</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.ncbi.nlm.nih.gov/snp/?term=SMN1" target="_blank" rel="noopener">dbSNP: SMN1 Variants</a></div>
+                <div class="link-desc">Single Nucleotide Polymorphism database — all cataloged variants in the SMN1 locus with population frequencies.</div>
+                <div class="link-url">ncbi.nlm.nih.gov/snp/?term=SMN1</div>
+            </div>
+            <span class="link-badge b-db">Database</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.orpha.net/en/disease/detail/70" target="_blank" rel="noopener">Orphanet: Spinal Muscular Atrophy</a></div>
+                <div class="link-desc">European rare disease database — epidemiology, clinical description, diagnosis, management, and expert center network for SMA.</div>
+                <div class="link-url">orpha.net/en/disease/detail/70</div>
+            </div>
+            <span class="link-badge b-db">Database</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CLINICAL TRIALS ===== -->
+<section class="category" id="clinical">
+    <div class="category-header">
+        <h2 class="category-title">Clinical Trial Registries</h2>
+        <span class="category-count">5 links</span>
+    </div>
+    <div class="link-grid">
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://clinicaltrials.gov/search?cond=Spinal+Muscular+Atrophy" target="_blank" rel="noopener">ClinicalTrials.gov — SMA Trials</a></div>
+                <div class="link-desc">US National Library of Medicine registry. 449+ SMA trials including nusinersen, risdiplam, onasemnogene, and next-generation therapies.</div>
+                <div class="link-url">clinicaltrials.gov/search?cond=Spinal+Muscular+Atrophy</div>
+            </div>
+            <span class="link-badge b-trial">Trials</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.clinicaltrialsregister.eu/ctr-search/search?query=spinal+muscular+atrophy" target="_blank" rel="noopener">EU Clinical Trials Register</a></div>
+                <div class="link-desc">European Medicines Agency registry for clinical trials conducted in the EU/EEA. Includes EudraCT-registered SMA studies.</div>
+                <div class="link-url">clinicaltrialsregister.eu</div>
+            </div>
+            <span class="link-badge b-trial">Trials</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://trialsearch.who.int/Trial2.aspx?TrialID=spinal+muscular+atrophy" target="_blank" rel="noopener">WHO ICTRP — International Clinical Trials Registry</a></div>
+                <div class="link-desc">World Health Organization International Clinical Trials Registry Platform — aggregates trials from 17+ national registries worldwide.</div>
+                <div class="link-url">trialsearch.who.int</div>
+            </div>
+            <span class="link-badge b-trial">Trials</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.curesma.org/clinical-trials/" target="_blank" rel="noopener">Cure SMA — Clinical Trials</a></div>
+                <div class="link-desc">Patient-friendly clinical trial information from Cure SMA, including trial readiness resources and finding nearby trial sites.</div>
+                <div class="link-url">curesma.org/clinical-trials</div>
+            </div>
+            <span class="link-badge b-trial">Trials</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.treat-nmd.org/resources/sma-registries/" target="_blank" rel="noopener">TREAT-NMD — SMA Patient Registries</a></div>
+                <div class="link-desc">International network coordinating neuromuscular disease registries. Global SMA patient registry with natural history data for trial readiness.</div>
+                <div class="link-url">treat-nmd.org/resources/sma-registries</div>
+            </div>
+            <span class="link-badge b-trial">Trials</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== DRUG & TARGET DISCOVERY ===== -->
+<section class="category" id="drug">
+    <div class="category-header">
+        <h2 class="category-title">Drug &amp; Target Discovery</h2>
+        <span class="category-count">6 links</span>
+    </div>
+    <div class="link-grid">
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://platform.opentargets.org/disease/MONDO_0001516" target="_blank" rel="noopener">Open Targets: Spinal Muscular Atrophy</a></div>
+                <div class="link-desc">Comprehensive target-disease associations for SMA — integrates genetics, expression, pathways, drugs, and literature evidence.</div>
+                <div class="link-url">platform.opentargets.org/disease/MONDO_0001516</div>
+            </div>
+            <span class="link-badge b-drug">Drug</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.ebi.ac.uk/chembl/target_report_card/CHEMBL2363065/" target="_blank" rel="noopener">ChEMBL: SMN2 Bioactivity</a></div>
+                <div class="link-desc">Bioactivity data from medicinal chemistry literature for SMN2-targeting compounds. Includes splicing modifiers and ASOs.</div>
+                <div class="link-url">ebi.ac.uk/chembl/target_report_card/CHEMBL2363065</div>
+            </div>
+            <span class="link-badge b-drug">Drug</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://go.drugbank.com/drugs/DB13161" target="_blank" rel="noopener">DrugBank: Nusinersen</a></div>
+                <div class="link-desc">Comprehensive drug entry — pharmacology, mechanism, targets, interactions, dosage, and regulatory information for Spinraza.</div>
+                <div class="link-url">go.drugbank.com/drugs/DB13161</div>
+            </div>
+            <span class="link-badge b-drug">Drug</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.curesma.org/sma-drug-pipeline/" target="_blank" rel="noopener">Cure SMA Drug Pipeline</a></div>
+                <div class="link-desc">Visual overview of all SMA therapies in development — from basic research through FDA approval. Updated quarterly.</div>
+                <div class="link-url">curesma.org/sma-drug-pipeline</div>
+            </div>
+            <span class="link-badge b-drug">Drug</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.genome.jp/kegg-bin/show_pathway?hsa05033" target="_blank" rel="noopener">KEGG: SMA Pathway (hsa05033)</a></div>
+                <div class="link-desc">Molecular pathway map for Spinal Muscular Atrophy — SMN complex assembly, snRNP biogenesis, and downstream effects on motor neurons.</div>
+                <div class="link-url">genome.jp/kegg-bin/show_pathway?hsa05033</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.guidetopharmacology.org/GRAC/LigandDisplayForward?ligandId=7439" target="_blank" rel="noopener">IUPHAR/BPS Guide: Nusinersen</a></div>
+                <div class="link-desc">International Union of Pharmacology — expert-curated pharmacological data including receptor targets and clinical information.</div>
+                <div class="link-url">guidetopharmacology.org</div>
+            </div>
+            <span class="link-badge b-drug">Drug</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PROTEIN & PATHWAY ===== -->
+<section class="category" id="protein">
+    <div class="category-header">
+        <h2 class="category-title">Protein &amp; Pathway Tools</h2>
+        <span class="category-count">5 links</span>
+    </div>
+    <div class="link-grid">
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://string-db.org/cgi/network?identifiers=SMN1%0dSMN2%0dSTMN2%0dPLS3%0dNCALD%0dUBA1&species=9606" target="_blank" rel="noopener">STRING-DB: SMA Target Network</a></div>
+                <div class="link-desc">Protein-protein interaction network for core SMA targets. Visualizes known and predicted interactions with confidence scores.</div>
+                <div class="link-url">string-db.org</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://alphafold.ebi.ac.uk/entry/Q16637" target="_blank" rel="noopener">AlphaFold: SMN Protein Structure</a></div>
+                <div class="link-desc">AI-predicted 3D structure of the human SMN protein. Essential for understanding protein-protein interactions and drug binding sites.</div>
+                <div class="link-url">alphafold.ebi.ac.uk/entry/Q16637</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.rcsb.org/search?request=%7B%22query%22%3A%7B%22type%22%3A%22terminal%22%2C%22service%22%3A%22full_text%22%2C%22parameters%22%3A%7B%22value%22%3A%22survival+motor+neuron%22%7D%7D%7D" target="_blank" rel="noopener">PDB: SMN Protein Structures</a></div>
+                <div class="link-desc">Experimentally determined crystal and cryo-EM structures of SMN protein complex components from the Protein Data Bank.</div>
+                <div class="link-url">rcsb.org</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://reactome.org/content/detail/R-HSA-72187" target="_blank" rel="noopener">Reactome: mRNA Splicing Pathway</a></div>
+                <div class="link-desc">Detailed pathway visualization of pre-mRNA splicing — the core biological process disrupted in SMA due to SMN protein deficiency.</div>
+                <div class="link-url">reactome.org/content/detail/R-HSA-72187</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.proteinatlas.org/ENSG00000172062-SMN1" target="_blank" rel="noopener">Human Protein Atlas: SMN1</a></div>
+                <div class="link-desc">Tissue and cell-type expression data for SMN1 — immunohistochemistry, RNA-seq, single-cell expression across human tissues.</div>
+                <div class="link-url">proteinatlas.org/ENSG00000172062-SMN1</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== LITERATURE ===== -->
+<section class="category" id="literature">
+    <div class="category-header">
+        <h2 class="category-title">Literature &amp; Key Reviews</h2>
+        <span class="category-count">7 links</span>
+    </div>
+    <div class="link-grid">
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=spinal+muscular+atrophy&sort=date" target="_blank" rel="noopener">PubMed: SMA Literature (by date)</a></div>
+                <div class="link-desc">All PubMed-indexed SMA publications sorted by most recent. ~15,000+ papers covering genetics, therapeutics, and clinical outcomes.</div>
+                <div class="link-url">pubmed.ncbi.nlm.nih.gov/?term=spinal+muscular+atrophy</div>
+            </div>
+            <span class="link-badge b-lit">Literature</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.ncbi.nlm.nih.gov/books/NBK1352/" target="_blank" rel="noopener">GeneReviews: Spinal Muscular Atrophy</a></div>
+                <div class="link-desc">Authoritative clinical review — genetics, diagnosis, clinical management, genetic counseling, and molecular pathogenesis of SMA.</div>
+                <div class="link-url">ncbi.nlm.nih.gov/books/NBK1352</div>
+            </div>
+            <span class="link-badge b-lit">Literature</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=SMN2+splicing+modifier&sort=date" target="_blank" rel="noopener">PubMed: SMN2 Splicing Modifier Research</a></div>
+                <div class="link-desc">Literature on the primary therapeutic strategy — compounds and approaches that modify SMN2 exon 7 splicing to increase full-length SMN protein.</div>
+                <div class="link-url">pubmed.ncbi.nlm.nih.gov/?term=SMN2+splicing+modifier</div>
+            </div>
+            <span class="link-badge b-lit">Literature</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=%22spinal+muscular+atrophy%22+%22gene+therapy%22&sort=date" target="_blank" rel="noopener">PubMed: SMA Gene Therapy</a></div>
+                <div class="link-desc">Publications on AAV-based gene replacement therapy for SMA — including Zolgensma outcomes, novel capsids, and next-generation vectors.</div>
+                <div class="link-url">pubmed.ncbi.nlm.nih.gov — SMA gene therapy</div>
+            </div>
+            <span class="link-badge b-lit">Literature</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=STMN2+motor+neuron&sort=date" target="_blank" rel="noopener">PubMed: STMN2 &amp; Motor Neurons</a></div>
+                <div class="link-desc">Emerging research on stathmin-2 (STMN2) as a neuroprotective target in motor neuron diseases including SMA and ALS.</div>
+                <div class="link-url">pubmed.ncbi.nlm.nih.gov — STMN2 motor neuron</div>
+            </div>
+            <span class="link-badge b-lit">Literature</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=%22spinal+muscular+atrophy%22+%22newborn+screening%22&sort=date" target="_blank" rel="noopener">PubMed: SMA Newborn Screening</a></div>
+                <div class="link-desc">Research on universal newborn screening for SMA — implementation, outcomes, and impact on presymptomatic treatment initiation.</div>
+                <div class="link-url">pubmed.ncbi.nlm.nih.gov — SMA newborn screening</div>
+            </div>
+            <span class="link-badge b-lit">Literature</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://pubmed.ncbi.nlm.nih.gov/?term=%22spinal+muscular+atrophy%22+%22combination+therapy%22&sort=date" target="_blank" rel="noopener">PubMed: SMA Combination Therapy</a></div>
+                <div class="link-desc">Growing field exploring synergistic combinations — SMN-dependent + SMN-independent approaches for improved therapeutic outcomes.</div>
+                <div class="link-url">pubmed.ncbi.nlm.nih.gov — SMA combination therapy</div>
+            </div>
+            <span class="link-badge b-lit">Literature</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ORGANIZATIONS ===== -->
+<section class="category" id="organizations">
+    <div class="category-header">
+        <h2 class="category-title">Patient Organizations &amp; Advocacy</h2>
+        <span class="category-count">8 links</span>
+    </div>
+    <div class="link-grid">
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.curesma.org/" target="_blank" rel="noopener">Cure SMA</a></div>
+                <div class="link-desc">Largest SMA patient advocacy organization. Funds research, maintains drug pipeline tracker, and coordinates the annual SMA Research &amp; Clinical Care Meeting.</div>
+                <div class="link-url">curesma.org</div>
+            </div>
+            <span class="link-badge b-org">Organization</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.smafoundation.org/" target="_blank" rel="noopener">SMA Foundation</a></div>
+                <div class="link-desc">Research-focused foundation driving translational science. Funded early nusinersen and risdiplam development. Invests in next-generation therapies.</div>
+                <div class="link-url">smafoundation.org</div>
+            </div>
+            <span class="link-badge b-org">Organization</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.sma-europe.eu/" target="_blank" rel="noopener">SMA Europe</a></div>
+                <div class="link-desc">European umbrella organization for national SMA groups. Coordinates advocacy, access to treatment, and research priorities across Europe.</div>
+                <div class="link-url">sma-europe.eu</div>
+            </div>
+            <span class="link-badge b-org">Organization</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.treat-nmd.org/" target="_blank" rel="noopener">TREAT-NMD</a></div>
+                <div class="link-desc">International network for neuromuscular diseases. Provides care guidelines, trial readiness infrastructure, and global patient registries.</div>
+                <div class="link-url">treat-nmd.org</div>
+            </div>
+            <span class="link-badge b-org">Organization</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.mda.org/disease/spinal-muscular-atrophy" target="_blank" rel="noopener">Muscular Dystrophy Association — SMA</a></div>
+                <div class="link-desc">MDA SMA resources — care centers, research grants, support services, and educational materials for families and clinicians.</div>
+                <div class="link-url">mda.org/disease/spinal-muscular-atrophy</div>
+            </div>
+            <span class="link-badge b-org">Organization</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.ninds.nih.gov/health-information/disorders/spinal-muscular-atrophy" target="_blank" rel="noopener">NIH NINDS: Spinal Muscular Atrophy</a></div>
+                <div class="link-desc">National Institute of Neurological Disorders and Stroke — disease overview, current research, and NIH-funded SMA programs.</div>
+                <div class="link-url">ninds.nih.gov</div>
+            </div>
+            <span class="link-badge b-org">Organization</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://rarediseases.org/rare-diseases/spinal-muscular-atrophy/" target="_blank" rel="noopener">NORD: Spinal Muscular Atrophy</a></div>
+                <div class="link-desc">National Organization for Rare Disorders — comprehensive disease guide, clinical trials, and patient assistance programs.</div>
+                <div class="link-url">rarediseases.org</div>
+            </div>
+            <span class="link-badge b-org">Organization</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.togetherinsma.com/" target="_blank" rel="noopener">Together in SMA</a></div>
+                <div class="link-desc">Patient community platform with real-world treatment experiences, clinical trial awareness, and peer support resources.</div>
+                <div class="link-url">togetherinsma.com</div>
+            </div>
+            <span class="link-badge b-org">Organization</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== COMPUTATIONAL ===== -->
+<section class="category" id="computational">
+    <div class="category-header">
+        <h2 class="category-title">Computational &amp; AI Tools</h2>
+        <span class="category-count">6 links</span>
+    </div>
+    <div class="link-grid">
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.rdkit.org/" target="_blank" rel="noopener">RDKit — Open-Source Cheminformatics</a></div>
+                <div class="link-desc">Python library for molecular descriptor calculation, fingerprinting, substructure search, and ADMET prediction. Core tool for small molecule drug design.</div>
+                <div class="link-url">rdkit.org</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://github.com/deepchem/deepchem" target="_blank" rel="noopener">DeepChem — Deep Learning for Drug Discovery</a></div>
+                <div class="link-desc">Open-source framework for molecular machine learning — molecular property prediction, generative models, and protein-ligand binding.</div>
+                <div class="link-url">github.com/deepchem/deepchem</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://github.com/facebookresearch/esm" target="_blank" rel="noopener">ESM — Evolutionary Scale Modeling</a></div>
+                <div class="link-desc">Meta AI protein language models — predict protein structure, function, and evolutionary relationships. Useful for SMN protein analysis.</div>
+                <div class="link-url">github.com/facebookresearch/esm</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://swissmodel.expasy.org/" target="_blank" rel="noopener">SWISS-MODEL — Protein Homology Modeling</a></div>
+                <div class="link-desc">Automated protein structure modeling server. Generate 3D models of SMA-related proteins for docking and interaction studies.</div>
+                <div class="link-url">swissmodel.expasy.org</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://scanpy.readthedocs.io/" target="_blank" rel="noopener">Scanpy — Single-Cell Analysis in Python</a></div>
+                <div class="link-desc">Framework for analyzing single-cell RNA-seq data. Used for motor neuron subtype identification and SMA transcriptomic profiling.</div>
+                <div class="link-url">scanpy.readthedocs.io</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://sma-research.info/api/v2/docs" target="_blank" rel="noopener">SMA Research Platform — API</a></div>
+                <div class="link-desc">Open REST API with 21 targets, 16 drugs, 849 sources, 5,116 claims, 449 trials, and 63 prioritized hypotheses. Free access, no auth required for reads.</div>
+                <div class="link-url">sma-research.info/api/v2/docs</div>
+            </div>
+            <span class="link-badge b-tool">Tool</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== NEWS ===== -->
+<section class="category" id="news">
+    <div class="category-header">
+        <h2 class="category-title">News &amp; Community</h2>
+        <span class="category-count">4 links</span>
+    </div>
+    <div class="link-grid">
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://smanewstoday.com/" target="_blank" rel="noopener">SMA News Today</a></div>
+                <div class="link-desc">Daily news coverage of SMA research, clinical trials, treatment access, and patient stories. Columns, podcast, and community forums.</div>
+                <div class="link-url">smanewstoday.com</div>
+            </div>
+            <span class="link-badge b-news">News</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://nmd-united.org/" target="_blank" rel="noopener">NMD United</a></div>
+                <div class="link-desc">Neuromuscular disease community platform — news, research updates, patient voices, and advocacy for SMA and related conditions.</div>
+                <div class="link-url">nmd-united.org</div>
+            </div>
+            <span class="link-badge b-news">News</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.rarediseaseday.org/" target="_blank" rel="noopener">Rare Disease Day</a></div>
+                <div class="link-desc">Annual awareness campaign (Feb 28/29) for rare diseases including SMA. Resources for advocacy, policy change, and public awareness.</div>
+                <div class="link-url">rarediseaseday.org</div>
+            </div>
+            <span class="link-badge b-news">News</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://sma-research.info/" target="_blank" rel="noopener">SMA Research Platform</a></div>
+                <div class="link-desc">This platform — open-source evidence graph with 849 sources, 5,116 claims, 21 targets, 16 drugs, 449 trials, and 63 prioritized hypotheses.</div>
+                <div class="link-url">sma-research.info</div>
+            </div>
+            <span class="link-badge b-news">News</span>
+        </div>
+    </div>
+</section>
+
+<!-- ===== REGULATORY ===== -->
+<section class="category" id="regulatory">
+    <div class="category-header">
+        <h2 class="category-title">Regulatory &amp; Safety</h2>
+        <span class="category-count">4 links</span>
+    </div>
+    <div class="link-grid">
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2016/209531lbl.pdf" target="_blank" rel="noopener">FDA Label: Nusinersen (Spinraza)</a></div>
+                <div class="link-desc">Official FDA prescribing information — indications, dosage, warnings, clinical trial data, and pharmacology for the first approved SMA therapy.</div>
+                <div class="link-url">accessdata.fda.gov — Spinraza label</div>
+            </div>
+            <span class="link-badge b-drug">Drug</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2020/213535s000lbl.pdf" target="_blank" rel="noopener">FDA Label: Risdiplam (Evrysdi)</a></div>
+                <div class="link-desc">Official prescribing information for the first oral SMA therapy — including FIREFISH and SUNFISH trial results.</div>
+                <div class="link-url">accessdata.fda.gov — Evrysdi label</div>
+            </div>
+            <span class="link-badge b-drug">Drug</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.ema.europa.eu/en/medicines/human/EPAR/spinraza" target="_blank" rel="noopener">EMA EPAR: Spinraza (EU)</a></div>
+                <div class="link-desc">European Medicines Agency public assessment report — EU regulatory basis, risk-benefit analysis, and post-marketing requirements.</div>
+                <div class="link-url">ema.europa.eu — Spinraza EPAR</div>
+            </div>
+            <span class="link-badge b-drug">Drug</span>
+        </div>
+        <div class="link-card">
+            <div>
+                <div class="link-title"><a href="https://www.fda.gov/vaccines-blood-biologics/zolgensma" target="_blank" rel="noopener">FDA: Zolgensma Biologics</a></div>
+                <div class="link-desc">FDA biologics page for onasemnogene abeparvovec — safety communications, REMS program, and post-marketing surveillance data.</div>
+                <div class="link-url">fda.gov/vaccines-blood-biologics/zolgensma</div>
+            </div>
+            <span class="link-badge b-drug">Drug</span>
+        </div>
+    </div>
+</section>
+
+<a href="/" class="back-link">&#8592; Back to SMA Research Platform</a>
+
+</main>
+
+<footer>
+    <div class="container">
+        <p>Curated by <a href="https://bryzant.com">Bryzant Labs</a> &middot; <a href="/">SMA Research Platform</a> &middot; <a href="mailto:christian@bryzant.com">Contact</a></p>
+    </div>
+</footer>
+
+</body>
+</html>
