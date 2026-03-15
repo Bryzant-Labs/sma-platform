@@ -9,7 +9,7 @@ The SMA Research Platform aggregates, structures, and prioritizes global SMA evi
 ## Key facts
 
 - 4,582 PubMed sources ingested and analyzed
-- 13,000+ LLM-extracted claims from research abstracts (growing daily)
+- 22,607 LLM-extracted claims from all 4,582 research abstracts (with source paper context)
 - 189 prioritized hypotheses ranked in 3 tiers (A/B/C)
 - 449 clinical trials from ClinicalTrials.gov
 - 21 molecular targets scored across 7 dimensions (10 established + 11 from omics convergence analysis)
@@ -68,7 +68,7 @@ All data is accessible via REST API at https://sma-research.info/api/v2/
 - GET /api/v2/trials — Clinical trials (449 entries, filterable by status/phase)
 - GET /api/v2/drugs — Drug/therapy data (16 entries, filterable by approval_status)
 - GET /api/v2/sources — PubMed literature (4,582 papers with abstracts)
-- GET /api/v2/claims — LLM-extracted claims (13,000+ structured assertions)
+- GET /api/v2/claims — LLM-extracted claims (22,607 structured assertions, ?enriched=true for source paper context)
 - GET /api/v2/hypotheses — Generated hypotheses
 - GET /api/v2/hypotheses/prioritized — Ranked hypotheses with tier assignments (189 entries)
 - GET /api/v2/scores — 7-dimension target composite scores
@@ -84,6 +84,7 @@ All data is accessible via REST API at https://sma-research.info/api/v2/
 - GET /api/v2/graph/stats — Graph statistics and edge type breakdown
 - GET /api/v2/stats/pipeline — Pipeline run history and extended stats
 - GET /api/v2/export/{table}?fmt=json|csv — Export any table (targets, claims, hypotheses, drug_outcomes, etc.)
+- GET /api/v2/preprints — bioRxiv/medRxiv preprints scanned for SMA relevance
 - GET /api/v2/docs — Interactive API documentation (Swagger)
 
 ## Research links
