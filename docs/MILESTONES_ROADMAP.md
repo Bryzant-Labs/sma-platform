@@ -151,9 +151,12 @@
 
 ## Phase 8: Knowledge Infrastructure (PLANNED)
 
-### 8.1 RAG Knowledge Base
-- [ ] LightRAG or similar vector store integration
-- [ ] Full-text paper embedding (where permitted)
+### 8.1 RAG Knowledge Base (IN PROGRESS)
+- [x] FAISS vector index over 22,607 claims + 4,582 source abstracts
+- [x] sentence-transformers `all-mpnet-base-v2` (768-dim PRO model)
+- [x] Hybrid search API: semantic (vector) + keyword (ILIKE) combined
+- [x] Search API: `GET /api/v2/search?q=...&mode=hybrid`
+- [x] Auto-reindex in daily pipeline
 - [ ] Conversational research assistant
 - [ ] Context-aware hypothesis refinement
 
@@ -185,11 +188,12 @@
 - [x] Daily pipeline integration (Stage 6)
 - [ ] Train models to predict "known dead ends" and avoid them
 
-### 9.2 SMN2 Splice Variant Benchmark
-- [ ] Generate all possible SNVs in SMN2 exon 7 region (~300bp × 3 variants = ~900 SNVs)
-- [ ] Run through SpliceAI for delta splice scores
-- [ ] Create "master table" of mutation → splice impact
-- [ ] Identify optimal therapeutic intervention points
+### 9.2 SMN2 Splice Variant Benchmark (IN PROGRESS)
+- [x] Generate all ~762 SNVs across exon 7 + flanking introns (254bp region)
+- [x] Knowledge-based splice impact scoring (4 dimensions: splice site proximity, motif disruption, conservation, therapeutic relevance)
+- [x] Known motif annotation: ISS-N1 (nusinersen target), ESE, ESS, Tra2-beta, branch point
+- [x] Splice benchmark API: `GET /splice/benchmark`, position/region queries
+- [ ] Run through SpliceAI for delta splice scores (requires GPU)
 - [ ] Publish as HuggingFace dataset + GitHub CSV
 
 ### 9.3 Cross-Species Splicing Map (Axolotl vs Human)
@@ -220,11 +224,12 @@
 - [ ] DNA change → protein folding impact prediction (10-step cascade modeling)
 - [ ] Open repo: `OpenSMA-Engine` with cleaned datasets
 
-### 10.2 Agentic Research Swarm — Blackboard Architecture
-- [ ] Agent A: bioRxiv/medRxiv pre-print scanner (real-time, new SMA-relevant papers)
+### 10.2 Agentic Research Swarm — Blackboard Architecture (IN PROGRESS)
+- [x] Agent A: bioRxiv/medRxiv pre-print scanner (keyword relevance scoring, 2 servers)
+- [x] Blackboard Architecture: agents share discoveries via structured message bus (PostgreSQL, JSONB metadata, TEXT[] arrays)
+- [x] Blackboard API: GET/POST /blackboard, stats, read tracking, expiry cleanup
 - [ ] Agent B: ChEMBL/PubChem molecule screener (auto-match new findings to compounds)
 - [ ] Agent C: Molecular dynamics simulation code generator (Python/OpenMM)
-- [ ] Blackboard Architecture: agents share discoveries via structured message bus
 - [ ] Agent D: Hypothesis auto-generator from new evidence convergence
 - [ ] Agent E: Grant/paper writing assistant (auto-generate evidence summaries)
 - [ ] Speed target: compress years of research into weeks
@@ -281,7 +286,7 @@ These emerged from Querdenker and Harvard-level thinking:
 | Metric | Count |
 |--------|-------|
 | PubMed Sources | 4,582 |
-| LLM-Extracted Claims | 12,400+ (growing) |
+| LLM-Extracted Claims | 22,607 (complete) |
 | Prioritized Hypotheses | 189 (A/B/C tiers) |
 | Knowledge Graph Edges | 397 |
 | Drug Outcomes | 226 |

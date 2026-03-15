@@ -481,6 +481,32 @@
         .claim-filter-btn { background: none; border: 1px solid var(--line); padding: 4px 12px; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
         .claim-filter-btn:hover { background: var(--bg); color: var(--text); }
         .claim-filter-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+        /* Semantic search styles */
+        .search-box { max-width: 700px; margin: 0 auto 32px; }
+        .search-input-wrap { display: flex; gap: 0; border: 2px solid var(--line); background: var(--panel); transition: border-color 0.2s; }
+        .search-input-wrap:focus-within { border-color: var(--text); }
+        .search-input-wrap input { flex: 1; border: none; padding: 12px 16px; font-family: inherit; font-size: 14px; background: transparent; color: var(--text); outline: none; }
+        .search-input-wrap input::placeholder { color: var(--muted); }
+        .search-input-wrap button { border: none; background: var(--text); color: #fff; padding: 12px 24px; font-family: inherit; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; white-space: nowrap; }
+        .search-input-wrap button:hover { background: #000; }
+        .search-mode-bar { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+        .search-mode-btn { background: none; border: 1px solid var(--line); padding: 4px 14px; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .search-mode-btn:hover { background: var(--bg); color: var(--text); }
+        .search-mode-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+        .search-results { max-width: 900px; margin: 0 auto; }
+        .search-result-card { background: var(--panel); border: 1px solid var(--line); padding: 16px 20px; margin-bottom: 12px; transition: border-color 0.2s; }
+        .search-result-card:hover { border-color: var(--text); }
+        .sr-type { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 8px; display: inline-block; margin-bottom: 8px; }
+        .sr-type-claim { background: #e3f2fd; color: #1565c0; }
+        .sr-type-source { background: #e8f5e9; color: #2e7d32; }
+        .sr-title { font-size: 14px; font-weight: 600; line-height: 1.5; margin-bottom: 6px; color: var(--text); }
+        .sr-title a { color: var(--text); text-decoration: none; }
+        .sr-title a:hover { color: var(--accent); }
+        .sr-text { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+        .sr-meta { font-size: 11px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
+        .sr-score { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
+        .search-empty { text-align: center; padding: 48px 0; color: var(--muted); font-size: 14px; }
+        .search-stats { text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 16px; }
         /* Mission tab styles */
         .mission-hero { text-align: center; padding: 48px 0 40px; max-width: 800px; margin: 0 auto; }
         .mission-hero h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.3; margin-bottom: 12px; }
@@ -620,6 +646,7 @@
     <a href="#comparative" class="nav-link" data-section="comparative">Species</a>
     <a href="#directions" class="nav-link" data-section="directions">Directions</a>
     <a href="#links" class="nav-link" data-section="links">Links</a>
+    <a href="#search" class="nav-link" data-section="search">Search</a>
 </div></div></nav>
 
 <main class="container">
@@ -1307,6 +1334,24 @@
             <div class="link-card"><div><div class="link-title"><a href="https://www.fda.gov/vaccines-blood-biologics/zolgensma" target="_blank" rel="noopener">FDA: Zolgensma</a></div><div class="link-desc">Biologics page — safety communications, REMS, post-marketing surveillance.</div><div class="link-url">fda.gov</div></div><span class="link-badge b-drug">Drug</span></div>
         </div>
     </div>
+</section>
+
+<section class="section" id="search">
+    <div class="section-header"><h2 class="section-title">Semantic Search</h2><span class="section-count" id="search-index-stats"></span></div>
+    <p class="section-desc">Search across 22,607 claims and 4,582 papers using AI-powered semantic similarity. Hybrid mode combines vector search with keyword matching for best results.</p>
+    <div class="search-box">
+        <div class="search-input-wrap">
+            <input type="text" id="search-query" placeholder="e.g. SMN2 splicing modifier neuroprotection, or bioelectric reprogramming motor neuron..." autocomplete="off">
+            <button id="search-btn" type="button">Search</button>
+        </div>
+        <div class="search-mode-bar">
+            <button class="search-mode-btn active" data-mode="hybrid">Hybrid</button>
+            <button class="search-mode-btn" data-mode="semantic">Semantic</button>
+            <button class="search-mode-btn" data-mode="keyword">Keyword</button>
+        </div>
+    </div>
+    <div id="search-stats-line" class="search-stats" style="display:none"></div>
+    <div id="search-results" class="search-results"></div>
 </section>
 
 <section class="section" id="contact">
@@ -3151,6 +3196,110 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+    // Semantic Search
+    var searchMode = 'hybrid';
+    function loadSearch() {
+        // Load index stats
+        fetch(API + '/search/stats').then(function(r) { return r.json(); }).then(function(data) {
+            var statsEl = document.getElementById('search-index-stats');
+            if (data.indexed_claims || data.indexed_sources) {
+                statsEl.textContent = (data.indexed_claims || 0) + ' claims + ' + (data.indexed_sources || 0) + ' sources indexed';
+            } else if (data.note) {
+                statsEl.textContent = data.note;
+            }
+        }).catch(function() {});
+
+        // Mode buttons
+        var modeBtns = document.querySelectorAll('.search-mode-btn');
+        for (var i = 0; i < modeBtns.length; i++) {
+            modeBtns[i].addEventListener('click', function() {
+                for (var j = 0; j < modeBtns.length; j++) modeBtns[j].classList.remove('active');
+                this.classList.add('active');
+                searchMode = this.getAttribute('data-mode');
+            });
+        }
+
+        // Search button + Enter key
+        var searchInput = document.getElementById('search-query');
+        var searchBtn = document.getElementById('search-btn');
+        searchBtn.addEventListener('click', doSearch);
+        searchInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') doSearch(); });
+    }
+
+    function doSearch() {
+        var query = document.getElementById('search-query').value.trim();
+        if (!query) return;
+        var resultsDiv = document.getElementById('search-results');
+        var statsLine = document.getElementById('search-stats-line');
+        resultsDiv.textContent = '';
+        statsLine.style.display = 'none';
+        var searchBtn = document.getElementById('search-btn');
+        searchBtn.textContent = 'Searching...';
+        searchBtn.disabled = true;
+
+        fetch(API + '/search?q=' + encodeURIComponent(query) + '&mode=' + searchMode + '&top_k=30')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                searchBtn.textContent = 'Search';
+                searchBtn.disabled = false;
+                var results = data.results || [];
+                if (data.note) {
+                    statsLine.textContent = data.note;
+                    statsLine.style.display = 'block';
+                    return;
+                }
+                statsLine.textContent = results.length + ' results for "' + query + '" (mode: ' + (data.mode || searchMode) + ', ' + (data.duration_ms || 0) + 'ms)';
+                statsLine.style.display = 'block';
+
+                if (results.length === 0) {
+                    var emptyDiv = el('div', {className: 'search-empty', text: 'No results found. Try different keywords or switch to hybrid mode.'});
+                    resultsDiv.appendChild(emptyDiv);
+                    return;
+                }
+
+                for (var i = 0; i < results.length; i++) {
+                    var r = results[i];
+                    var card = el('div', {className: 'search-result-card'});
+
+                    // Type badge
+                    var typeCls2 = r.type === 'claim' ? 'sr-type-claim' : 'sr-type-source';
+                    card.appendChild(el('span', {className: 'sr-type ' + typeCls2, text: r.type === 'claim' ? 'CLAIM' : 'PAPER'}));
+
+                    // Title
+                    var titleDiv = el('div', {className: 'sr-title'});
+                    if (r.type === 'source' && r.source_pmid) {
+                        var titleLink = el('a', {href: 'https://pubmed.ncbi.nlm.nih.gov/' + r.source_pmid + '/', target: '_blank', rel: 'noopener', text: r.text || r.title || 'Untitled'});
+                        titleDiv.appendChild(titleLink);
+                    } else {
+                        titleDiv.textContent = r.text || r.title || 'Untitled';
+                    }
+                    card.appendChild(titleDiv);
+
+                    // Text preview
+                    var preview = r.abstract || r.predicate || '';
+                    if (preview.length > 250) preview = preview.substring(0, 250) + '...';
+                    if (preview) card.appendChild(el('div', {className: 'sr-text', text: preview}));
+
+                    // Meta line
+                    var metaDiv = el('div', {className: 'sr-meta'});
+                    if (r.score !== undefined) metaDiv.appendChild(el('span', {className: 'sr-score', text: 'Score: ' + (r.score * 100).toFixed(1) + '%'}));
+                    if (r.claim_type) metaDiv.appendChild(badgeEl(r.claim_type.replace(/_/g, ' '), 'badge-blue'));
+                    if (r.source_pmid) metaDiv.appendChild(el('span', {text: 'PMID: ' + r.source_pmid}));
+                    if (r.journal) metaDiv.appendChild(el('span', {text: r.journal}));
+                    if (r.targets) metaDiv.appendChild(el('span', {text: 'Targets: ' + r.targets}));
+                    card.appendChild(metaDiv);
+
+                    resultsDiv.appendChild(card);
+                }
+            })
+            .catch(function(err) {
+                searchBtn.textContent = 'Search';
+                searchBtn.disabled = false;
+                statsLine.textContent = 'Search failed: ' + err.message;
+                statsLine.style.display = 'block';
+            });
+    }
+
     // Section loader map
     var loaders = {
         mission: loadMission, research: loadResearch,
@@ -3159,7 +3308,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         hypotheses: loadHypotheses, scores: loadScores, evidence: loadEvidence,
         screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
         outcomes: loadOutcomes, comparative: loadComparative,
-        directions: loadDirections, links: loadLinks, contact: loadContact
+        directions: loadDirections, links: loadLinks, contact: loadContact,
+        search: loadSearch
     };
 
     // Show one section at a time (tab behavior)
