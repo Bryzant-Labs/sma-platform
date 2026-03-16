@@ -1,6 +1,6 @@
 # SMA Research Platform — Roadmap
 
-> Last updated: 2026-03-15
+> Last updated: 2026-03-16
 
 ## Milestone Tracker
 
@@ -12,18 +12,18 @@
 | ClinicalTrials.gov v2 adapter (449 trials) | DONE | Feb 2026 |
 | GEO dataset metadata adapter | DONE | Feb 2026 |
 | bioRxiv/medRxiv scanner | DONE | Mar 2026 |
-| LLM claim extraction (22,607 claims) | DONE | Feb 2026 |
+| LLM claim extraction (25,054 claims) | DONE | Mar 2026 |
 | Evidence scoring (method weights + tier multipliers) | DONE | Feb 2026 |
 | Knowledge graph (428 edges, 34 relation types) | DONE | Feb 2026 |
 | UCM Parquet pipeline (HuggingFace) | DONE | Mar 2026 |
-| REST API (~155 endpoints) | DONE | Feb 2026 |
-| Frontend dashboard (vanilla JS) | DONE | Feb 2026 |
+| REST API (~190 endpoints) | DONE | Mar 2026 |
+| Frontend dashboard (vanilla JS) | DONE | Mar 2026 |
 
 ### M2: Analytical Intelligence (COMPLETE)
 
 | Deliverable | Status | Date |
 |------------|--------|------|
-| Mechanistic hypothesis generator (220+ cards) | DONE | Feb 2026 |
+| Mechanistic hypothesis generator (515 cards) | DONE | Mar 2026 |
 | Splice Variant Predictor (rule-based + ESM-2) | DONE | Mar 2026 |
 | Auto-Discovery pipeline (spikes, confirmations, novel) | DONE | Mar 2026 |
 | Computational screening (21,228 molecules) | DONE | Mar 2026 |
@@ -34,93 +34,130 @@
 | ChEMBL bioactivity data | DONE | Mar 2026 |
 | UniProt protein annotations | DONE | Mar 2026 |
 
-### M3: Evidence Depth (IN PROGRESS — March 2026)
+### M3: Evidence Depth (COMPLETE)
 
-| Deliverable | Status | Endpoint | Impact |
-|------------|--------|----------|--------|
-| Full-text analysis (PMC OA, 3 sources) | BUILT | `POST /ingest/fulltext` | 3-5x more claims per paper |
-| Clinical trial results parsing | BUILT | `POST /ingest/trial-results` | Real outcome data (p-values, AEs) |
-| Patent literature (PatentsView) | BUILT | `POST /ingest/patents` | IP landscape + novel mechanisms |
-| AlphaFold protein structures | BUILT | `POST /ingest/structures` | 3D context for all 7 SMA proteins |
-| MCP Server (20 tools, REST-based) | BUILT | npm/pip package | Researcher AI co-pilot |
-| Claim re-scoring (SMA relevance) | ~20% | `POST /rescore/claims` | Remove noise, improve signal |
-| Hypothesis upgrade (Sonnet 4.6) | PENDING | `POST /generate/hypotheses` | Higher-quality mechanistic cards |
+| Deliverable | Status | Date |
+|------------|--------|------|
+| Full-text analysis (PMC OA) | BUILT | Mar 2026 |
+| Clinical trial results parsing (56 with results) | DONE | Mar 2026 |
+| Patent literature (578 patents via Google Patents) | DONE | Mar 2026 |
+| AlphaFold protein structures (7 proteins, v6) | DONE | Mar 2026 |
+| MCP Server (29 tools, REST-based) | DONE | Mar 2026 |
+| Claim re-scoring (SMA relevance) | IN PROGRESS | Mar 2026 |
+| Hypothesis upgrade (Sonnet 4.6, 515 hypotheses) | DONE | Mar 2026 |
 
-**Gate → M4:** All M3 deliverables deployed and triggered on moltbot. Re-scored claims. Regenerated hypotheses with Sonnet 4.6.
+### MG: GPU Compute Infrastructure (MOSTLY COMPLETE)
 
-### M4: Cross-Paper Synthesis (Target: April 2026)
+| Deliverable | Status | Date |
+|------------|--------|------|
+| Docker image (csiicf/sma-gpu-toolkit, 14.7GB) | DONE | Mar 2026 |
+| SpliceAI scoring (252 variants, 21 high-impact) | DONE | Mar 2026 |
+| ESM-2 protein embeddings (6 targets, 1280-dim) | DONE | Mar 2026 |
+| Cas-OFFinder off-target scan (2,631 off-targets) | DONE | Mar 2026 |
+| DiffDock v1 docking (140 complexes) | DONE | Mar 2026 |
+| DiffDock v2.2 NIM batch (378 dockings, $0) | DONE | Mar 2026 |
+| Boltz-2 structure prediction (5 proteins on A100) | DONE | Mar 2026 |
+| NVIDIA NIMs integration (DiffDock, OpenFold3, GenMol) | DONE | Mar 2026 |
+| GenMol de novo molecules (20 4-AP analogs) | DONE | Mar 2026 |
+| OpenMM molecular dynamics | BLOCKED | Needs CUDA OpenMM plugin |
+| Virtual screening (10K-100K) | PLANNED | Needs ChEMBL API uptime |
 
-This is **Differentiator #1** — finding connections no single researcher could see.
+### M4: Cross-Paper Synthesis (IN PROGRESS — March 2026)
 
-| Deliverable | Status | Description |
-|------------|--------|-------------|
-| Temporal evidence analysis | PLANNED | Detect when new evidence retroactively strengthens old findings |
-| Contradiction detection | PLANNED | Flag conflicting high-confidence claims from independent sources |
-| "Evidence surprise" scoring | PLANNED | Rank hypotheses by how non-obvious the connection is |
-| Cross-target pathway synthesis | PLANNED | "NCALD + Calcium signaling → new hypothesis about STMN2" |
-| Hypothesis quality v2 | PLANNED | Move from descriptive summaries to genuine cross-paper synthesis |
-| Full-text claim extraction | PLANNED | Extract claims from full body text, not just abstracts |
-
-**Success metric:** A professor reads a generated hypothesis and says "I never thought of connecting those two."
-
-### M5: Predictive Evidence Layer (Target: May 2026)
-
-This is **Differentiator #2** — quantitative, grounded predictions.
-
-| Deliverable | Status | Description |
-|------------|--------|-------------|
-| Bayesian evidence convergence model | PLANNED | Probability model over claim types, source quality, replication |
-| Drug-target synergy prediction | PLANNED | Combine screening + pathway overlap + literature co-occurrence |
-| Confidence calibration | PLANNED | Back-test predictions against known outcomes (approved therapies) |
-| Uncertainty quantification | PLANNED | Every prediction carries explicit confidence intervals |
-| Target prioritization engine | PLANNED | Multi-criteria scoring: evidence + biology + interventionability |
-
-**Success metric:** A predicted drug-target interaction scores >70% confidence and is later confirmed experimentally.
-
-### M6: Researcher Tools (Target: June 2026)
-
-This is **Differentiator #3** — making the platform accessible to every SMA researcher.
+**Differentiator #1** — finding connections no single researcher could see.
 
 | Deliverable | Status | Description |
 |------------|--------|-------------|
-| MCP Server distribution (npm + pip) | PLANNED | One-command install for Claude Desktop / Claude Code |
-| Researcher documentation | PLANNED | Example queries, use cases, getting started guide |
-| Embedding-based semantic search | PLANNED | FAISS + sentence-transformers for nuanced queries |
-| Automated literature review | PLANNED | Per-target review generation from all evidence |
-| Experiment design suggestions | PLANNED | Grounded in evidence gaps, actionable next steps |
-| BibTeX/CSV/JSON export expansion | PLANNED | Full data portability for researchers |
+| Co-occurrence analysis (30 target pairs) | DONE | Targets discussed in same paper |
+| Transitive bridges (53 bridges) | DONE | A→B→C chains across papers |
+| Shared mechanisms (33 mechanisms) | DONE | Same pathway, different targets |
+| Claude synthesis cards (6 cards) | DONE | Mechanistic explanations |
+| Temporal evidence analysis | PLANNED | New evidence retroactively strengthens old findings |
+| Contradiction detection | PLANNED | Conflicting high-confidence claims |
+| "Evidence surprise" scoring | PLANNED | Rank by non-obviousness |
+| Claim-target linking enrichment | IN PROGRESS | NER on predicates to link more claims to targets |
+| Full-text claim extraction | PLANNED | Claims from body text, not just abstracts |
 
-**Success metric:** A researcher installs the MCP server, asks a complex question, and trusts the answer enough to cite in a grant application.
+**Success metric:** A professor reads a generated hypothesis and says "I never thought of connecting those two." *(SMN1-NCALD calcium bridge = first example)*
 
-### M7: Warp-Speed (Target: Q3-Q4 2026)
+### M5: Predictive Evidence Layer (Target: April 2026)
+
+**Differentiator #2** — quantitative, grounded predictions.
 
 | Deliverable | Status | Description |
 |------------|--------|-------------|
-| Agentic Research Swarm | PLANNED | Multi-agent hypothesis exploration and validation |
-| Digital Twin (in silico SMA model) | PLANNED | Pathway simulation for testing interventions computationally |
-| Lab-OS Integration | PLANNED | LIMS/ELN connectivity to bridge computational → wet lab |
-| Zero-Knowledge Data Sharing | PLANNED | Federated analytics for multi-site collaboration |
-| GitHub for Life (Versioned biology) | PLANNED | Git-like versioning for biological knowledge |
+| Convergence scoring engine (5 dimensions) | DONE | Volume, lab independence, method diversity, temporal, replication |
+| Prediction cards (falsifiable predictions) | DONE | Structured from convergence scores |
+| Bayesian evidence convergence model | PLANNED | Probability model over claim types, source quality |
+| Drug-target synergy prediction | PLANNED | Screening + pathway overlap + literature co-occurrence |
+| Confidence calibration | PLANNED | Back-test against known outcomes (approved therapies) |
+| Uncertainty quantification | PLANNED | Explicit confidence intervals |
+| Target prioritization engine | PLANNED | Multi-criteria: evidence + biology + interventionability |
+
+### M6: Researcher Tools (Target: May 2026)
+
+**Differentiator #3** — making the platform accessible to every SMA researcher.
+
+| Deliverable | Status | Description |
+|------------|--------|-------------|
+| MCP Server (29 tools) | DONE | REST-based, works with Claude Desktop/Code |
+| Embedding-based semantic search (FAISS) | DONE | Claims + sources indexed |
+| English presentation (21 slides) | DONE | PPTX + HTML versions |
+| German presentation (20 slides) | DONE | HTML version |
+| News & Discoveries section | DONE | 4 posts, comments, RSS feed |
+| bioRxiv preprint outline | DONE | 395-line detailed outline |
+| Researcher outreach emails | DONE | 3 drafts (not in repo) |
+| Researcher documentation | PLANNED | Example queries, use cases, getting started |
+| Automated literature review | PLANNED | Per-target review from all evidence |
+| Experiment design suggestions | PLANNED | From evidence gaps |
+
+### M7: Publication & Outreach (Target: April 2026)
+
+| Deliverable | Status | Description |
+|------------|--------|-------------|
+| bioRxiv preprint (multi-target 4-AP) | IN PROGRESS | Outline done, needs full text + MD data |
+| Researcher outreach (Columbia, Cure SMA, EU) | READY | Email drafts written, need review + send |
+| HuggingFace dataset (updated) | DONE | SMAResearch/sma-evidence-graph |
+| GitHub repository (public) | DONE | Bryzant-Labs/sma-platform |
+| Docker Hub image | DONE | csiicf/sma-gpu-toolkit |
+
+### M8: Warp-Speed (Target: Q3-Q4 2026)
+
+| Deliverable | Status | Description |
+|------------|--------|-------------|
+| Digital Twin (pathway simulation) | PARTIAL | Basic temporal simulation built |
+| Agentic Research Swarm | PLANNED | Multi-agent hypothesis exploration |
+| Lab-OS Integration | PLANNED | LIMS/ELN connectivity |
+| Federated analytics | PLANNED | Multi-site collaboration |
 
 ---
 
-## Current Sprint (March 15-31, 2026)
+## Key Discoveries (2026-03-16)
 
-### Priority Actions
+1. **4-AP → CORO1C (+0.251)** — strongest binding of 378 compound-target pairs
+2. **4-AP is a multi-target binder** — engages CORO1C, NCALD, SMN2, SMN1
+3. **SMN1-NCALD calcium signaling bridge** — cross-paper synthesis discovery
+4. **4-AP scaffold is optimal** — GenMol analogs don't improve CORO1C binding
+5. **UBA1 is highly druggable** — 5 compounds in top 25
 
-1. **Deploy M3 to moltbot** — rsync all new adapters + ingestion routes, restart PM2
-2. **Trigger full-text ingestion** — `POST /ingest/fulltext?batch_size=200` (infrastructure ready)
-3. **Trigger trial results ingestion** — `POST /ingest/trial-results` (adapter ready)
-4. **Trigger patent ingestion** — `POST /ingest/patents` (adapter ready)
-5. **Trigger AlphaFold ingestion** — `POST /ingest/structures` (adapter ready)
-6. **Complete claim re-scoring** — currently at ~20%, needs to finish
-7. **Regenerate hypotheses** — `POST /generate/hypotheses` after re-scoring completes
-8. **Update HuggingFace dataset** — with new claims, full-text, trial results
+---
 
-### Blocked On
+## Current Numbers
 
-- Claim re-scoring completion (~80% remaining)
-- Professor feedback (email sent, awaiting response)
+| Metric | Count |
+|--------|-------|
+| Claims | 25,054 |
+| Hypotheses | 515 |
+| Sources | 5,216 |
+| Trials | 449 |
+| Targets | 21 |
+| Drugs | 16 |
+| MCP tools | 29 |
+| API endpoints | ~190 |
+| Synthesis cards | 6 |
+| GPU dockings | 518 (140 v1 + 378 v2.2) |
+| Protein structures | 5 (Boltz-2) |
+| Protein embeddings | 6 (ESM-2) |
 
 ---
 
@@ -128,27 +165,9 @@ This is **Differentiator #3** — making the platform accessible to every SMA re
 
 | Decision | Rationale |
 |----------|-----------|
-| PatentsView over Lens.org | Free, no API key, US patents cover most SMA IP |
-| AlphaFold DB over ESMFold | Pre-computed structures are faster and more reliable; missense scores available |
-| MCP via REST API (not SQLite) | Live data, no sync needed, works from any machine |
-| 3-source full-text fallback | Europe PMC → NCBI PMC → Unpaywall maximizes OA coverage |
-| Plain-text summaries for LLM | Uniform format lets claim_extractor treat all sources the same |
-
----
-
-## Adapter Inventory
-
-| Adapter | File | Source | Records |
-|---------|------|--------|---------|
-| PubMed | `pubmed.py` | NCBI Entrez | 4,582 papers |
-| ClinicalTrials.gov | `clinicaltrials.py` | v2 REST API | 449 trials + results |
-| bioRxiv/medRxiv | `biorxiv.py` | bioRxiv API | ~50 preprints/scan |
-| GEO | `geo.py` | NCBI Entrez | 7 datasets |
-| PMC Full-Text | `pmc.py` | Europe PMC + NCBI + Unpaywall | OA papers |
-| STRING-DB | `string_db.py` | STRING API | Protein interactions |
-| KEGG | `kegg.py` | KEGG REST | Pathway genes |
-| ChEMBL | `chembl.py` | ChEMBL API | Bioactivities |
-| UniProt | `uniprot.py` | UniProt REST | Protein annotations |
-| Orthologs | `orthologs.py` | NCBI Gene | Cross-species data |
-| **Patents** | `patents.py` | PatentsView | SMA patents (NEW) |
-| **AlphaFold** | `alphafold.py` | AlphaFold DB + Missense | Protein structures (NEW) |
+| Google Patents over PatentsView | PatentsView is US-only; Google Patents has global coverage |
+| AlphaFold v6 structures | Latest version, most accurate |
+| NVIDIA NIM API over self-hosted DiffDock | Free credits, no GPU cost, 16% more accurate (v2.2) |
+| pip OpenMM over conda | Single Python environment, simpler Docker |
+| Cross-Paper Synthesis without confidence filter | 97% of claims have confidence 0.1-0.3 (LLM extraction default) |
+| Docker Hub (csiicf) | Public image for Vast.ai pull |
