@@ -5,7 +5,7 @@
 
 ---
 
-## 2030 Strategic Tracks (Professor Mode)
+## 2030 Strategic Tracks (Scientific Advisory)
 
 > Restructured based on scientific advisory feedback. Priority: calibration > features, depth > breadth.
 
@@ -56,7 +56,7 @@ Make the platform usable AND credible.
 |------------|--------|----------------|
 | MCP Server (29 tools) | DONE | Natural language query access |
 | Reproducible benchmarks | PLANNED | Others can verify our claims |
-| Professor Advisory Pack (5 pages) | PLANNED | What it does, where reliable, where uncertain |
+| Scientific Advisory Pack (5 pages) | PLANNED | What it does, where reliable, where uncertain |
 | Grant-ready hypothesis exports | PARTIAL | Translation module has grant templates |
 | Citation-grade evidence summaries | PARTIAL | Literature review module built |
 | External lab collaboration hooks | PLANNED | API for result sharing |
@@ -71,7 +71,7 @@ Make the platform usable AND credible.
 | Brunhilde Wirth | U Cologne | SMA genetics, modifiers | PLS3/NCALD discovery, genetic plausibility |
 
 ### What to Deprioritize
-These are interesting but not essential for professor-credibility:
+These are interesting but not essential for scientific credibility:
 - Agentic swarm "autonomy" narrative → keep simple, calibrated agents
 - Gene edit versioning as showcase → useful internal tool, not a selling point
 - Excessive frontend tabs → focus on data quality, not visualization breadth
