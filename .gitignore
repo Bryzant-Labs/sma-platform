@@ -31,8 +31,17 @@ artifacts/
 .DS_Store
 Thumbs.db
 
+# Private communications (open source ≠ open comms)
+docs/email_*.md
+docs/private/
+
 # Testing
 .coverage
 htmlcov/
 .pytest_cache/
 .mypy_cache/
+
+# Private correspondence — never commit
+docs/outreach-emails-draft.md
+docs/email_professor.md
+docs/*email*
