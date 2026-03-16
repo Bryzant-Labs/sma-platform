@@ -333,15 +333,25 @@ def _run_md_via_conda_subprocess(
         f.write(_MD_HELPER_SCRIPT)
     logger.info("Wrote MD helper script: %s", helper_path)
 
+    # Use SYSTEM python (has numpy/scipy/mdtraj) with PYTHONPATH pointing to conda openmm
+    import glob as _glob
+    conda_paths = sorted(_glob.glob("/opt/conda/lib/python3.*/site-packages/"))
+    extra_path = conda_paths[-1] if conda_paths else ""
+
+    # Prefer system python with conda path injection over conda python without numpy
+    system_python = sys.executable  # /usr/bin/python3
     cmd = [
-        conda_python, str(helper_path),
+        system_python, str(helper_path),
         "--md-dir", str(md_dir),
         "--duration-ns", str(duration_ns),
         "--alphafold-url", SMN2_ALPHAFOLD_URL,
     ]
-    logger.info("Running MD via conda subprocess: %s", " ".join(cmd))
+    env = os.environ.copy()
+    if extra_path:
+        env["PYTHONPATH"] = extra_path + ":" + env.get("PYTHONPATH", "")
+    logger.info("Running MD via system python + conda PYTHONPATH: %s", " ".join(cmd))
 
-    proc = subprocess.run(cmd, capture_output=False, timeout=86400)  # 24h max
+    proc = subprocess.run(cmd, capture_output=False, timeout=86400, env=env)  # 24h max
 
     # Read back results
     results_path = md_dir / "md_results.json"
