@@ -96,6 +96,7 @@ RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.s
 
 # Install OpenMM in conda env but DON'T override system python
 RUN ${CONDA_DIR}/bin/conda install -y -c conda-forge openmm pdbfixer \
+    && ${CONDA_DIR}/bin/pip install --no-cache-dir numpy scipy pandas mdtraj httpx \
     && ${CONDA_DIR}/bin/conda clean -afy \
     || echo "WARN: OpenMM install failed — MD simulations disabled"
 
