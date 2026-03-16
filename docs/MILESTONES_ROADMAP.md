@@ -29,12 +29,16 @@ Go deeper on SMA-specific biology, not broader.
 | Deliverable | Status | Why It Matters |
 |------------|--------|----------------|
 | SMN locus resolution (long-read haplotypes) | PLANNED | Copy number alone doesn't explain phenotype |
-| SMN2 splicing regulatory grammar model | PLANNED | Predict effects on transcriptome, not just exon 7 |
-| Modifier-aware phenotype prediction | PLANNED | PLS3, NCALD, NAIP interaction effects |
+| SMN2 splicing regulatory grammar model | PLANNED | Fine-tune Evo/ESM-2 on SMA splice data (~$100 GPU) |
+| Modifier-aware phenotype prediction | DONE | modifier_predictor.py — SMN2 copies + PLS3/NCALD/NAIP |
 | Off-target splice impact prediction | PLANNED | ASO safety beyond primary target |
 | Cross-disease transfer (mechanistically grounded only) | PARTIAL | ALS/DMD overlap where biologically justified |
 | Spatial/single-cell integration | PLANNED | When Slide-seq/MERFISH data available |
 | RNA structure-informed ligand ranking | PLANNED | Via OpenFold3/RNAPro NIMs |
+| **ASO Sequence Generator** | BUILDING | Design novel ASOs targeting SMN2 ISS-N1/ISS-N2/ESS regions |
+| **Nanopore RNA-seq Data Catalog** | BUILDING | Search SRA/ENA for public SMA direct RNA datasets |
+| **Generative RNA Therapeutics** | PLANNED | Diffusion models for ASO design with BBB penetration |
+| **Bio-LLM for Splicing Grammar** | PLANNED | Fine-tune on 762 SMA splice variants + SpliceAI data |
 
 ### Track 3: Functional Translation Engine (BRIDGE TO WET LAB)
 Prioritize experiments, not just ideas.
