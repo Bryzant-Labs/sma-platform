@@ -30,9 +30,12 @@ NEGATIVE_OUTCOMES = {"failure", "discontinued", "no_efficacy", "inconclusive"}
 
 async def _table_has_data(table_name: str) -> bool:
     """Check whether a table exists and has at least one row."""
+    ALLOWED_TABLES = {"gpu_jobs", "drug_outcomes", "hypotheses", "claims", "targets", "drugs"}
+    if table_name not in ALLOWED_TABLES:
+        return False
     try:
-        count = await fetchval(f"SELECT COUNT(*) FROM {table_name}")
-        return (count or 0) > 0
+        count = await fetchval(f"SELECT 1 FROM {table_name} LIMIT 1")
+        return count is not None
     except Exception:
         return False
 

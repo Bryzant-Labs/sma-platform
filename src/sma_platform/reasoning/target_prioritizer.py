@@ -331,7 +331,7 @@ async def _score_novelty(target_id: str) -> tuple[float, dict[str, Any]]:
 
 
 # ---------------------------------------------------------------------------
-# Core scoring function for a single target
+# Core scoring function for a single target (used for fallback/detail)
 # ---------------------------------------------------------------------------
 
 
@@ -395,6 +395,239 @@ async def _score_single_target(
 
 
 # ---------------------------------------------------------------------------
+# Batch scoring — one big query instead of N per-target queries
+# ---------------------------------------------------------------------------
+
+
+async def _batch_score_all_targets() -> list[dict[str, Any]]:
+    """Score ALL targets with batch queries and return ranked results.
+
+    Runs a small number of aggregate queries (instead of N per-target queries)
+    and computes all 5 dimensions in Python from the aggregated data.
+    """
+    cutoff = datetime.now(timezone.utc) - timedelta(days=_NOVELTY_YEARS * 365)
+    cutoff_str = cutoff.strftime("%Y-%m-%d")
+
+    ceilings = await _normalization_ceilings()
+    max_claims = ceilings["max_claims"]
+    max_sources = ceilings["max_sources"]
+    max_edges = ceilings["max_edges"]
+
+    # --- Batch query: core aggregates per target ---
+    rows = await fetch("""
+        SELECT
+            t.id, t.symbol, t.name, t.target_type,
+            COUNT(DISTINCT c.id) as claim_count,
+            AVG(c.confidence) as avg_confidence,
+            COUNT(DISTINCT s.source_type || ':' || COALESCE(s.journal, '')) as source_diversity,
+            COUNT(DISTINCT c.claim_type) as type_breadth
+        FROM targets t
+        LEFT JOIN claims c ON c.subject_id = t.id
+        LEFT JOIN evidence e ON e.claim_id = c.id
+        LEFT JOIN sources s ON e.source_id = s.id
+        GROUP BY t.id, t.symbol, t.name, t.target_type
+    """)
+
+    if not rows:
+        return []
+
+    # --- Batch query: claim types per target ---
+    type_rows = await fetch(
+        "SELECT subject_id, claim_type FROM claims WHERE subject_id IS NOT NULL GROUP BY subject_id, claim_type"
+    )
+    target_claim_types: dict[str, set[str]] = {}
+    for tr in type_rows:
+        sid = str(tr["subject_id"])
+        target_claim_types.setdefault(sid, set()).add(tr["claim_type"])
+
+    # --- Batch query: graph edges degree per target ---
+    edge_rows = await fetch("""
+        SELECT target_id, SUM(cnt) as total_degree FROM (
+            SELECT src_id AS target_id, COUNT(*) AS cnt FROM graph_edges GROUP BY src_id
+            UNION ALL
+            SELECT dst_id AS target_id, COUNT(*) AS cnt FROM graph_edges GROUP BY dst_id
+        ) sub GROUP BY target_id
+    """)
+    target_edges: dict[str, int] = {str(er["target_id"]): int(er["total_degree"]) for er in edge_rows}
+
+    # --- Batch query: interventionability signals ---
+    drug_claim_rows = await fetch(
+        "SELECT subject_id, COUNT(*) as cnt FROM claims"
+        " WHERE claim_type IN ('drug_target', 'drug_efficacy') AND subject_id IS NOT NULL"
+        " GROUP BY subject_id"
+    )
+    drug_claim_counts: dict[str, int] = {str(r["subject_id"]): int(r["cnt"]) for r in drug_claim_rows}
+
+    docking_rows = await fetch(
+        "SELECT target_id, COUNT(*) as cnt FROM ("
+        "  SELECT src_id AS target_id FROM graph_edges"
+        "  WHERE relation LIKE '%docking%' OR relation LIKE '%binding_affinity%'"
+        "  UNION ALL"
+        "  SELECT dst_id AS target_id FROM graph_edges"
+        "  WHERE relation LIKE '%docking%' OR relation LIKE '%binding_affinity%'"
+        ") sub GROUP BY target_id"
+    )
+    docking_counts: dict[str, int] = {str(r["target_id"]): int(r["cnt"]) for r in docking_rows}
+
+    screening_rows = await fetch(
+        "SELECT target_id, COUNT(*) as cnt FROM ("
+        "  SELECT src_id AS target_id FROM graph_edges WHERE relation LIKE 'compound_bioactivity%'"
+        "  UNION ALL"
+        "  SELECT dst_id AS target_id FROM graph_edges WHERE relation LIKE 'compound_bioactivity%'"
+        ") sub GROUP BY target_id"
+    )
+    screening_counts: dict[str, int] = {str(r["target_id"]): int(r["cnt"]) for r in screening_rows}
+
+    # Known drugs (targets column contains UUID)
+    known_drug_rows = await fetch(
+        "SELECT id, CAST(targets AS TEXT) as targets_text FROM drugs"
+    )
+
+    # --- Batch query: novelty (recent claims) ---
+    novelty_rows = await fetch(
+        "SELECT c.subject_id,"
+        "  COUNT(DISTINCT c.id) as total_dated,"
+        "  COUNT(DISTINCT CASE WHEN s.pub_date >= $1 THEN c.id END) as recent_count"
+        " FROM claims c"
+        " JOIN evidence e ON e.claim_id = c.id"
+        " JOIN sources s ON e.source_id = s.id"
+        " WHERE c.subject_id IS NOT NULL AND s.pub_date IS NOT NULL"
+        " GROUP BY c.subject_id",
+        cutoff_str,
+    )
+    novelty_map: dict[str, tuple[int, int]] = {
+        str(nr["subject_id"]): (int(nr["total_dated"]), int(nr["recent_count"]))
+        for nr in novelty_rows
+    }
+
+    # --- Compute scores for each target ---
+    results: list[dict[str, Any]] = []
+
+    for row in rows:
+        tid = str(row["id"])
+        symbol = row["symbol"]
+        name = row.get("name")
+        target_type = row.get("target_type")
+
+        claim_count = int(row["claim_count"]) if row["claim_count"] else 0
+        avg_conf = float(row["avg_confidence"]) if row["avg_confidence"] is not None else 0.0
+        source_diversity = int(row["source_diversity"]) if row["source_diversity"] else 0
+
+        # --- D1: Evidence Convergence ---
+        volume_norm = claim_count / max_claims if max_claims > 0 else 0.0
+        diversity_norm = source_diversity / max_sources if max_sources > 0 else 0.0
+        raw_ev = volume_norm * avg_conf * diversity_norm
+        ev_score = _clamp(raw_ev ** (1.0 / 3.0)) if raw_ev > 0 else 0.0
+        ev_detail = {
+            "claim_count": claim_count,
+            "avg_confidence": round(avg_conf, 4),
+            "source_diversity_count": source_diversity,
+            "volume_normalized": round(volume_norm, 4),
+            "diversity_normalized": round(diversity_norm, 4),
+        }
+
+        # --- D2: Biological Plausibility ---
+        present_types = target_claim_types.get(tid, set())
+        type_breadth = len(present_types)
+        mechanism_hits = present_types & _MECHANISM_TYPES
+        mechanism_coverage = len(mechanism_hits)
+        bio_score = _clamp(
+            0.5 * (mechanism_coverage / len(_MECHANISM_TYPES))
+            + 0.5 * (type_breadth / _TOTAL_CLAIM_TYPES)
+        )
+        bio_detail = {
+            "has_protein_interaction": "protein_interaction" in present_types,
+            "has_gene_expression": "gene_expression" in present_types,
+            "has_pathway_membership": "pathway_membership" in present_types,
+            "mechanism_coverage": mechanism_coverage,
+            "distinct_claim_types": type_breadth,
+            "claim_types_present": sorted(present_types),
+        }
+
+        # --- D3: Interventionability ---
+        has_drug_claims = drug_claim_counts.get(tid, 0) > 0
+        has_known_drugs = any(tid in (dr.get("targets_text") or "") for dr in known_drug_rows)
+        has_docking = docking_counts.get(tid, 0) > 0
+        has_screening = screening_counts.get(tid, 0) > 0
+        signals = [has_drug_claims, has_known_drugs, has_docking, has_screening]
+        signal_count = sum(1 for s in signals if s)
+        int_score = _clamp(signal_count / len(signals))
+        int_detail = {
+            "has_drug_claims": has_drug_claims,
+            "has_known_drugs": has_known_drugs,
+            "has_docking_results": has_docking,
+            "has_screening_hits": has_screening,
+            "signal_count": signal_count,
+        }
+
+        # --- D4: Network Centrality ---
+        total_degree = target_edges.get(tid, 0)
+        net_score = _clamp(total_degree / max_edges) if max_edges > 0 else 0.0
+        net_detail = {
+            "out_degree": total_degree // 2,  # approximate split
+            "in_degree": total_degree - total_degree // 2,
+            "total_degree": total_degree,
+            "max_degree_in_db": int(max_edges),
+        }
+
+        # --- D5: Novelty ---
+        total_dated, recent_count = novelty_map.get(tid, (0, 0))
+        if total_dated > 0:
+            nov_score = _clamp(recent_count / total_dated)
+        else:
+            nov_score = 0.0
+        nov_detail = {
+            "total_dated_claims": total_dated,
+            "recent_claims": recent_count,
+            "recent_fraction": round(recent_count / total_dated, 4) if total_dated > 0 else 0.0,
+            "cutoff_date": cutoff_str,
+        }
+
+        # --- Composite ---
+        dimensions = {
+            "evidence_convergence": ev_score,
+            "biological_plausibility": bio_score,
+            "interventionability": int_score,
+            "network_centrality": net_score,
+            "novelty": nov_score,
+        }
+        composite = _clamp(sum(WEIGHTS[d] * dimensions[d] for d in WEIGHTS))
+
+        if composite >= 0.65:
+            tier = "tier_1_high"
+        elif composite >= 0.40:
+            tier = "tier_2_medium"
+        elif composite >= 0.20:
+            tier = "tier_3_low"
+        else:
+            tier = "tier_4_insufficient"
+
+        results.append({
+            "target_id": tid,
+            "symbol": symbol,
+            "name": name,
+            "target_type": target_type,
+            "composite_score": composite,
+            "tier": tier,
+            "dimensions": dimensions,
+            "dimension_details": {
+                "evidence_convergence": ev_detail,
+                "biological_plausibility": bio_detail,
+                "interventionability": int_detail,
+                "network_centrality": net_detail,
+                "novelty": nov_detail,
+            },
+            "weights": WEIGHTS,
+        })
+
+    results.sort(key=lambda x: x["composite_score"], reverse=True)
+    for i, r in enumerate(results, start=1):
+        r["rank"] = i
+
+    return results
+
+
+# ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
 
@@ -405,41 +638,18 @@ async def prioritize_targets() -> list[dict[str, Any]]:
     Returns a list sorted descending by composite_score, with per-dimension
     breakdown and detail objects for each target.
     """
-    targets = await fetch(
-        "SELECT id, symbol, name, target_type FROM targets ORDER BY symbol"
-    )
-    if not targets:
-        return []
+    results = await _batch_score_all_targets()
 
-    ceilings = await _normalization_ceilings()
-    results: list[dict[str, Any]] = []
-
-    for t in targets:
-        tid = str(t["id"])
-        scored = await _score_single_target(
-            tid,
-            t["symbol"],
-            t.get("name"),
-            t.get("target_type"),
-            ceilings,
+    if results:
+        logger.info(
+            "Prioritized %d targets. #1: %s (%.4f), #%d: %s (%.4f)",
+            len(results),
+            results[0]["symbol"],
+            results[0]["composite_score"],
+            len(results),
+            results[-1]["symbol"],
+            results[-1]["composite_score"],
         )
-        results.append(scored)
-
-    results.sort(key=lambda x: x["composite_score"], reverse=True)
-
-    # Assign rank
-    for i, r in enumerate(results, start=1):
-        r["rank"] = i
-
-    logger.info(
-        "Prioritized %d targets. #1: %s (%.4f), #%d: %s (%.4f)",
-        len(results),
-        results[0]["symbol"] if results else "N/A",
-        results[0]["composite_score"] if results else 0,
-        len(results),
-        results[-1]["symbol"] if results else "N/A",
-        results[-1]["composite_score"] if results else 0,
-    )
     return results
 
 
@@ -448,31 +658,16 @@ async def prioritize_single(symbol: str) -> dict[str, Any]:
 
     Returns the full 5-dimension scorecard plus rank among all targets.
     """
-    row = await fetchrow(
-        "SELECT id, symbol, name, target_type FROM targets WHERE symbol = $1",
-        symbol.upper(),
-    )
-    if not row:
-        return {"error": f"Target '{symbol}' not found"}
+    # Use the batch results and filter, avoiding redundant full re-scoring
+    all_ranked = await _batch_score_all_targets()
 
-    ceilings = await _normalization_ceilings()
-    scored = await _score_single_target(
-        str(row["id"]),
-        row["symbol"],
-        row.get("name"),
-        row.get("target_type"),
-        ceilings,
-    )
+    symbol_upper = symbol.upper()
+    for r in all_ranked:
+        if r["symbol"] == symbol_upper:
+            r["total_targets"] = len(all_ranked)
+            return r
 
-    # Compute rank among all targets
-    all_ranked = await prioritize_targets()
-    for i, r in enumerate(all_ranked, start=1):
-        if r["target_id"] == str(row["id"]):
-            scored["rank"] = i
-            scored["total_targets"] = len(all_ranked)
-            break
-
-    return scored
+    return {"error": f"Target '{symbol}' not found"}
 
 
 async def compare_targets(symbols: list[str]) -> dict[str, Any]:

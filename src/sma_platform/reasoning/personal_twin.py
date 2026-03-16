@@ -33,6 +33,14 @@ from .bayesian_convergence import bayesian_score
 
 logger = logging.getLogger(__name__)
 
+# ============================================================================
+# SECURITY: All functions in this module access PRIVATE PATIENT DATA.
+# ALL callers MUST enforce authentication before invoking these functions.
+# The API routes in api/routes/personal_twin.py use require_admin_key.
+# If you create any new route or CLI command that calls these functions,
+# you MUST add authentication. Unauthenticated access = data breach.
+# ============================================================================
+
 
 # ---------------------------------------------------------------------------
 # Constants

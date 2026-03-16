@@ -31,9 +31,11 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 async def _table_exists(table_name: str) -> bool:
-    """Check whether a table exists in the database (Postgres or SQLite)."""
+    """Check whether a table exists in the database."""
+    ALLOWED_TABLES = {"gpu_jobs", "drug_outcomes", "hypotheses", "claims", "targets", "drugs", "graph_edges"}
+    if table_name not in ALLOWED_TABLES:
+        return False
     try:
-        # Works on both Postgres (information_schema) and SQLite (pragma)
         await fetchval(f"SELECT 1 FROM {table_name} LIMIT 1")
         return True
     except Exception:
@@ -98,41 +100,37 @@ async def _get_literature_scores(
     """Count papers where drug name AND target symbol co-occur in claims.
 
     Returns mapping of (drug_name_lower, target_symbol_lower) -> normalized score 0-1.
+    Uses a single batch query instead of N*M individual queries.
     """
-    raw_counts: dict[tuple[str, str], int] = {}
-    max_count = 0
+    # Filter empty values
+    drug_names = [d for d in drug_names if d]
+    target_symbols = [t for t in target_symbols if t]
+    if not drug_names or not target_symbols:
+        return {}
 
-    for drug in drug_names:
-        if not drug:
-            continue
-        pattern = f"%{drug}%"
-        for target in target_symbols:
-            if not target:
-                continue
-            tpattern = f"%{target}%"
-            try:
-                count = await fetchval(
-                    """SELECT COUNT(*) FROM claims
-                       WHERE (LOWER(CAST(metadata AS TEXT)) LIKE $1
-                              OR LOWER(predicate) LIKE $1)
-                         AND (LOWER(CAST(metadata AS TEXT)) LIKE $2
-                              OR LOWER(predicate) LIKE $2)""",
-                    pattern,
-                    tpattern,
-                )
-                count = count or 0
-            except Exception:
-                count = 0
+    try:
+        rows = await fetch(
+            """SELECT d.name as drug_name, t.symbol as target_symbol, COUNT(DISTINCT e.source_id) as shared_sources
+            FROM claims c
+            JOIN evidence e ON e.claim_id = c.id
+            JOIN targets t ON t.id = c.subject_id
+            JOIN drugs d ON d.name = ANY($1)
+            WHERE t.symbol = ANY($2)
+              AND (c.predicate ILIKE '%' || d.name || '%' OR c.value ILIKE '%' || d.name || '%')
+            GROUP BY d.name, t.symbol""",
+            drug_names,
+            target_symbols,
+        )
+    except Exception:
+        return {}
 
-            if count > 0:
-                key = (drug.lower(), target.lower())
-                raw_counts[key] = count
-                if count > max_count:
-                    max_count = count
-
-    if max_count > 0:
-        return {k: round(v / max_count, 4) for k, v in raw_counts.items()}
-    return {k: 0.0 for k in raw_counts}
+    scores: dict[tuple[str, str], float] = {}
+    max_score = max((r["shared_sources"] for r in rows), default=1)
+    if max_score == 0:
+        max_score = 1
+    for r in rows:
+        scores[(r["drug_name"].lower(), r["target_symbol"].lower())] = round(r["shared_sources"] / max_score, 4)
+    return scores
 
 
 async def _get_pathway_overlap(
@@ -145,43 +143,67 @@ async def _get_pathway_overlap(
     all_target_ids:   target_symbol -> target_id
 
     Returns mapping of (drug_name_lower, target_symbol_lower) -> 0 or 1.
+    Uses a single batch query instead of N*M individual queries.
     """
-    scores: dict[tuple[str, str], float] = {}
-
+    # Collect all drug target IDs
+    all_drug_target_ids: set[str] = set()
+    drug_name_to_target_ids: dict[str, set[str]] = {}
     for drug_name, drug_target_symbols in drug_targets_map.items():
-        drug_target_id_set: set[str] = set()
+        dt_ids: set[str] = set()
         for sym in drug_target_symbols:
             tid = all_target_ids.get(sym.lower())
             if tid:
-                drug_target_id_set.add(str(tid))
+                dt_ids.add(str(tid))
+                all_drug_target_ids.add(str(tid))
+        if dt_ids:
+            drug_name_to_target_ids[drug_name.lower()] = dt_ids
 
-        if not drug_target_id_set:
-            continue
+    if not all_drug_target_ids:
+        return {}
 
+    all_candidate_ids = [str(tid) for tid in all_target_ids.values()]
+    if not all_candidate_ids:
+        return {}
+
+    # Reverse lookup: target_id -> target_symbol
+    id_to_symbol = {str(v): k for k, v in all_target_ids.items()}
+
+    # Single batch query: find all pathway edges between any drug target and any candidate target
+    try:
+        pathway_rows = await fetch(
+            """SELECT DISTINCT src_id, dst_id FROM graph_edges
+               WHERE relation LIKE '%pathway%'
+                 AND ((src_id = ANY($1) AND dst_id = ANY($2))
+                   OR (dst_id = ANY($1) AND src_id = ANY($2)))""",
+            list(all_drug_target_ids),
+            all_candidate_ids,
+        )
+    except Exception:
+        pathway_rows = []
+
+    # Build a set of connected pairs (drug_target_id, candidate_id)
+    connected_pairs: set[tuple[str, str]] = set()
+    for row in pathway_rows:
+        src = str(row["src_id"])
+        dst = str(row["dst_id"])
+        if src in all_drug_target_ids:
+            connected_pairs.add((src, dst))
+        if dst in all_drug_target_ids:
+            connected_pairs.add((dst, src))
+
+    scores: dict[tuple[str, str], float] = {}
+    for drug_name, dt_ids in drug_name_to_target_ids.items():
         for target_sym, target_id in all_target_ids.items():
             tid_str = str(target_id)
-            # Skip if this target is already one of the drug's known targets
-            if tid_str in drug_target_id_set:
-                scores[(drug_name.lower(), target_sym.lower())] = 1.0
+            # Direct target of the drug
+            if tid_str in dt_ids:
+                scores[(drug_name, target_sym.lower())] = 1.0
                 continue
-
-            # Check for shared pathway edges between any of the drug's
-            # known targets and this candidate target
-            for dt_id in drug_target_id_set:
-                try:
-                    shared = await fetchval(
-                        """SELECT COUNT(*) FROM graph_edges
-                           WHERE ((src_id = $1 AND dst_id = $2)
-                               OR (src_id = $2 AND dst_id = $1))
-                             AND relation LIKE '%pathway%'""",
-                        dt_id,
-                        tid_str,
-                    )
-                    if shared and shared > 0:
-                        scores[(drug_name.lower(), target_sym.lower())] = 1.0
-                        break
-                except Exception:
-                    pass
+            # Check if any drug target is pathway-connected to this candidate
+            for dt_id in dt_ids:
+                if (dt_id, tid_str) in connected_pairs:
+                    scores[(drug_name, target_sym.lower())] = 1.0
+                    break
 
     return scores
 
@@ -196,30 +218,42 @@ async def _get_claim_scores(
     target_ids: target_symbol_lower -> target_id
 
     Returns mapping of (drug_name_lower, target_symbol_lower) -> normalized score 0-1.
+    Uses a single batch query instead of N*M individual queries.
     """
+    drug_id_list = list(set(str(v) for v in drug_ids.values()))
+    target_id_list = list(set(str(v) for v in target_ids.values()))
+    if not drug_id_list or not target_id_list:
+        return {}
+
+    # Reverse lookups: id -> name/symbol
+    drug_id_to_name = {str(v): k for k, v in drug_ids.items()}
+    target_id_to_sym = {str(v): k for k, v in target_ids.items()}
+
+    try:
+        rows = await fetch(
+            """SELECT subject_id, object_id, COUNT(*) as cnt FROM claims
+               WHERE (subject_id = ANY($1) AND object_id = ANY($2))
+                  OR (subject_id = ANY($2) AND object_id = ANY($1))
+               GROUP BY subject_id, object_id""",
+            drug_id_list,
+            target_id_list,
+        )
+    except Exception:
+        return {}
+
     raw_counts: dict[tuple[str, str], int] = {}
-    max_count = 0
+    for row in rows:
+        sid = str(row["subject_id"])
+        oid = str(row["object_id"])
+        cnt = int(row["cnt"])
+        # Determine which is drug and which is target
+        drug_name = drug_id_to_name.get(sid) or drug_id_to_name.get(oid)
+        target_sym = target_id_to_sym.get(oid) or target_id_to_sym.get(sid)
+        if drug_name and target_sym:
+            key = (drug_name, target_sym)
+            raw_counts[key] = raw_counts.get(key, 0) + cnt
 
-    for drug_name, drug_id in drug_ids.items():
-        for target_sym, target_id in target_ids.items():
-            try:
-                count = await fetchval(
-                    """SELECT COUNT(*) FROM claims
-                       WHERE (subject_id = $1 AND object_id = $2)
-                          OR (subject_id = $2 AND object_id = $1)""",
-                    str(drug_id),
-                    str(target_id),
-                )
-                count = count or 0
-            except Exception:
-                count = 0
-
-            if count > 0:
-                key = (drug_name, target_sym)
-                raw_counts[key] = count
-                if count > max_count:
-                    max_count = count
-
+    max_count = max(raw_counts.values(), default=0)
     if max_count > 0:
         return {k: round(v / max_count, 4) for k, v in raw_counts.items()}
     return {k: 0.0 for k in raw_counts}
