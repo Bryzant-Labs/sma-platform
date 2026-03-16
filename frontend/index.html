@@ -698,6 +698,7 @@
     <a href="/comparative" class="nav-link" data-section="comparative">Species</a>
     <a href="/directions" class="nav-link" data-section="directions">Directions</a>
     <a href="/synthesis" class="nav-link" data-section="synthesis">Synthesis</a>
+    <a href="/synergy" class="nav-link" data-section="synergy">Synergy</a>
     <a href="/nim-results" class="nav-link" data-section="nim-results">NIM Docking</a>
     <span class="nav-sep">|</span>
     <span class="nav-group-toggle" data-group="advanced">Advanced <span class="nav-arrow">&#9662;</span></span>
@@ -1931,6 +1932,9 @@
         <button class="filter-tab active" data-synth-tab="cooccurrences">Co-occurrences</button>
         <button class="filter-tab" data-synth-tab="shared-mechanisms">Shared Mechanisms</button>
         <button class="filter-tab" data-synth-tab="cards">Synthesis Cards</button>
+        <button class="filter-tab" data-synth-tab="temporal">Temporal</button>
+        <button class="filter-tab" data-synth-tab="contradictions">Contradictions</button>
+        <button class="filter-tab" data-synth-tab="surprise">Surprise</button>
     </div>
     <div id="synthesis-cooccurrences">
         <div class="table-wrap"><table><thead><tr><th>Target A</th><th>Target B</th><th>Shared Papers</th><th>Avg Confidence</th><th>Score</th></tr></thead>
@@ -1943,6 +1947,25 @@
     <div id="synthesis-cards" style="display:none">
         <div id="synthesis-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px"><div class="loading">Loading synthesis cards...</div></div>
     </div>
+    <div id="synthesis-temporal" style="display:none">
+        <div class="table-wrap"><table><thead><tr><th>Target</th><th>Claim Type</th><th>Old Claims</th><th>New Claims</th><th>Reinforcement Ratio</th><th>Oldest Paper</th><th>Newest Paper</th></tr></thead>
+        <tbody id="synthesis-temporal-body"><tr><td colspan="7" class="loading">Loading temporal reinforcements...</td></tr></tbody></table></div>
+    </div>
+    <div id="synthesis-contradictions" style="display:none">
+        <div class="table-wrap"><table><thead><tr><th>Target</th><th>Claim Type</th><th>Positive Claims</th><th>Negative Claims</th><th>Score</th></tr></thead>
+        <tbody id="synthesis-contradictions-body"><tr><td colspan="5" class="loading">Loading contradictions...</td></tr></tbody></table></div>
+    </div>
+    <div id="synthesis-surprise" style="display:none">
+        <div class="table-wrap"><table><thead><tr><th>Target A</th><th>Target B</th><th>Papers</th><th>Diversity</th><th>Independence</th><th>Recency</th><th>Surprise Score</th></tr></thead>
+        <tbody id="synthesis-surprise-body"><tr><td colspan="7" class="loading">Loading surprise connections...</td></tr></tbody></table></div>
+    </div>
+</section>
+
+<section class="section" id="synergy">
+    <div class="section-header"><h2 class="section-title">Synergy Predictions</h2><span class="section-count" id="synergy-count"></span></div>
+    <p class="section-desc">AI-predicted drug-target synergy scores combining docking affinity, literature evidence, pathway overlap, and claim support. Identifies the most promising multi-mechanism therapeutic combinations for SMA.</p>
+    <div class="table-wrap"><table><thead><tr><th>Drug</th><th>Target</th><th>Synergy Score</th><th>Docking</th><th>Literature</th><th>Pathway</th><th>Claims</th></tr></thead>
+    <tbody id="synergy-body"><tr><td colspan="7" class="loading">Loading synergy predictions...</td></tr></tbody></table></div>
 </section>
 
 <section class="section" id="nim-results">
@@ -5709,7 +5732,10 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var panels = {
             'cooccurrences': document.getElementById('synthesis-cooccurrences'),
             'shared-mechanisms': document.getElementById('synthesis-shared-mechanisms'),
-            'cards': document.getElementById('synthesis-cards')
+            'cards': document.getElementById('synthesis-cards'),
+            'temporal': document.getElementById('synthesis-temporal'),
+            'contradictions': document.getElementById('synthesis-contradictions'),
+            'surprise': document.getElementById('synthesis-surprise')
         };
         tabContainer.addEventListener('click', function(e) {
             if (!e.target.classList.contains('filter-tab')) return;
@@ -5818,6 +5844,140 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var empty = el('div', {className: 'empty-state', style: 'grid-column:1/-1'});
             empty.appendChild(el('p', {text: 'Synthesis cards not available: ' + e.message}));
             grid.appendChild(empty);
+        });
+
+        // Temporal reinforcements
+        fetch(API + '/synthesis/temporal?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+            var items = data.temporal || data.reinforcements || data.results || data;
+            if (!Array.isArray(items)) items = [];
+            var body = clearEl('synthesis-temporal-body');
+            if (items.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No temporal reinforcement data available yet.'})]));
+                return;
+            }
+            items.sort(function(a, b) { return (b.reinforcement_ratio || 0) - (a.reinforcement_ratio || 0); });
+            for (var i = 0; i < items.length; i++) {
+                var t = items[i];
+                var ratio = t.reinforcement_ratio != null ? Number(t.reinforcement_ratio).toFixed(2) : '-';
+                body.appendChild(el('tr', null, [
+                    td(t.target || t.target_symbol || '', '', 'font-weight:600'),
+                    td(t.claim_type || t.type || '', '', 'font-size:12px'),
+                    td(String(t.old_claims || t.early_claims || 0), 'mono'),
+                    td(String(t.new_claims || t.recent_claims || 0), 'mono'),
+                    tdBadge(ratio, Number(t.reinforcement_ratio) >= 2.0 ? 'badge-green' : Number(t.reinforcement_ratio) >= 1.0 ? 'badge-amber' : 'badge-gray'),
+                    td(t.oldest_paper || t.earliest_year || '-', 'mono', 'font-size:11px'),
+                    td(t.newest_paper || t.latest_year || '-', 'mono', 'font-size:11px')
+                ]));
+            }
+        }).catch(function(e) {
+            clearEl('synthesis-temporal-body').appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'Temporal data not available: ' + e.message})]));
+        });
+
+        // Contradictions
+        fetch(API + '/synthesis/contradictions?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+            var items = data.contradictions || data.conflicts || data.results || data;
+            if (!Array.isArray(items)) items = [];
+            var body = clearEl('synthesis-contradictions-body');
+            if (items.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 5, className: 'loading', text: 'No contradiction data available yet.'})]));
+                return;
+            }
+            for (var i = 0; i < items.length; i++) {
+                var c = items[i];
+                var score = c.score != null ? Number(c.score).toFixed(3) : '-';
+                var row = el('tr', null, [
+                    td(c.target || c.target_symbol || '', '', 'font-weight:600'),
+                    td(c.claim_type || c.type || '', '', 'font-size:12px'),
+                    td(String(c.positive_claims || c.positive || 0), 'mono', 'color:var(--green)'),
+                    td(String(c.negative_claims || c.negative || 0), 'mono', 'color:var(--red)'),
+                    tdBadge(score, Number(c.score) >= 0.7 ? 'badge-red' : Number(c.score) >= 0.4 ? 'badge-amber' : 'badge-gray')
+                ]);
+                // Show example predicates below the row on hover via title attribute
+                var examples = [];
+                if (c.positive_examples && Array.isArray(c.positive_examples)) {
+                    for (var p = 0; p < Math.min(c.positive_examples.length, 2); p++) {
+                        examples.push('[+] ' + (c.positive_examples[p].predicate || c.positive_examples[p]));
+                    }
+                }
+                if (c.negative_examples && Array.isArray(c.negative_examples)) {
+                    for (var n = 0; n < Math.min(c.negative_examples.length, 2); n++) {
+                        examples.push('[-] ' + (c.negative_examples[n].predicate || c.negative_examples[n]));
+                    }
+                }
+                if (examples.length > 0) row.setAttribute('title', examples.join('\n'));
+                body.appendChild(row);
+            }
+        }).catch(function(e) {
+            clearEl('synthesis-contradictions-body').appendChild(el('tr', null, [el('td', {colSpan: 5, className: 'loading', text: 'Contradiction data not available: ' + e.message})]));
+        });
+
+        // Surprise connections
+        fetch(API + '/synthesis/surprise?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+            var items = data.surprise || data.connections || data.results || data;
+            if (!Array.isArray(items)) items = [];
+            var body = clearEl('synthesis-surprise-body');
+            if (items.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No surprise connection data available yet.'})]));
+                return;
+            }
+            items.sort(function(a, b) { return (b.surprise_score || b.score || 0) - (a.surprise_score || a.score || 0); });
+            for (var i = 0; i < items.length; i++) {
+                var s = items[i];
+                var surpriseScore = s.surprise_score != null ? Number(s.surprise_score).toFixed(3) : (s.score != null ? Number(s.score).toFixed(3) : '-');
+                var diversity = s.diversity != null ? Number(s.diversity).toFixed(2) : '-';
+                var independence = s.independence != null ? Number(s.independence).toFixed(2) : '-';
+                var recency = s.recency != null ? Number(s.recency).toFixed(2) : '-';
+                var isTop3 = i < 3;
+                var rowStyle = isTop3 ? 'background:color-mix(in srgb, var(--accent) 8%, transparent)' : '';
+                body.appendChild(el('tr', {style: rowStyle}, [
+                    td(s.target_a || s.target_a_symbol || '', '', 'font-weight:600' + (isTop3 ? ';color:var(--accent)' : '')),
+                    td(s.target_b || s.target_b_symbol || '', '', 'font-weight:600' + (isTop3 ? ';color:var(--accent)' : '')),
+                    td(String(s.papers || s.paper_count || 0), 'mono'),
+                    td(diversity, 'mono'),
+                    td(independence, 'mono'),
+                    td(recency, 'mono'),
+                    tdBadge(surpriseScore, Number(s.surprise_score || s.score) >= 0.7 ? 'badge-green' : Number(s.surprise_score || s.score) >= 0.4 ? 'badge-amber' : 'badge-gray')
+                ]));
+            }
+        }).catch(function(e) {
+            clearEl('synthesis-surprise-body').appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'Surprise data not available: ' + e.message})]));
+        });
+    }
+
+    // ============ Synergy Predictions ============
+    function loadSynergy() {
+        if (loaded.synergy) return; loaded.synergy = true;
+
+        fetch(API + '/synergy/predictions?limit=30').then(function(r) { return r.json(); }).then(function(data) {
+            var items = data.predictions || data.results || data;
+            if (!Array.isArray(items)) items = [];
+            var body = clearEl('synergy-body');
+            if (items.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No synergy predictions available yet. Predictions will appear as the analysis engine processes drug-target combinations.'})]));
+                return;
+            }
+            setText('synergy-count', items.length + ' predictions');
+            for (var i = 0; i < items.length; i++) {
+                var s = items[i];
+                var synergyScore = s.synergy_score != null ? Number(s.synergy_score).toFixed(3) : (s.score != null ? Number(s.score).toFixed(3) : '-');
+                var docking = s.docking != null ? Number(s.docking).toFixed(2) : (s.docking_score != null ? Number(s.docking_score).toFixed(2) : '-');
+                var literature = s.literature != null ? Number(s.literature).toFixed(2) : (s.literature_score != null ? Number(s.literature_score).toFixed(2) : '-');
+                var pathway = s.pathway != null ? Number(s.pathway).toFixed(2) : (s.pathway_score != null ? Number(s.pathway_score).toFixed(2) : '-');
+                var claims = String(s.claims || s.claim_count || 0);
+                var scoreNum = Number(s.synergy_score || s.score || 0);
+                var scoreCls = scoreNum > 0.5 ? 'badge-green' : scoreNum > 0.3 ? 'badge-amber' : 'badge-gray';
+                body.appendChild(el('tr', null, [
+                    td(s.drug || s.drug_name || s.compound || '', '', 'font-weight:600'),
+                    td(s.target || s.target_symbol || '', '', 'font-weight:600'),
+                    tdBadge(synergyScore, scoreCls),
+                    td(docking, 'mono'),
+                    td(literature, 'mono'),
+                    td(pathway, 'mono'),
+                    td(claims, 'mono')
+                ]));
+            }
+        }).catch(function(e) {
+            clearEl('synergy-body').appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'Synergy predictions not available: ' + e.message})]));
         });
     }
 
@@ -6131,6 +6291,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         labos: loadLabOs, federated: loadFederated, translate: loadTranslation,
         'gpu-results': loadGpuResults,
         synthesis: loadSynthesis,
+        synergy: loadSynergy,
         'nim-results': loadNimResults,
         news: loadNews
     };
@@ -6173,7 +6334,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         federated:   {title: 'Federated Analysis — SMA Research Platform', desc: 'Federated learning and cross-institutional data analysis for SMA research.'},
         translate:   {title: 'Translation — SMA Research Platform', desc: 'Translational research pipeline from bench to bedside for SMA therapeutics.'},
         'gpu-results': {title: 'GPU Results — SMA Research Platform', desc: 'GPU-accelerated computation results for molecular docking, CRISPR off-target analysis, and MD simulations.'},
-        synthesis:     {title: 'Cross-Paper Synthesis — SMA Research Platform', desc: 'Non-obvious connections across 25,000+ SMA claims. Co-occurring targets, shared mechanisms, and AI-generated synthesis cards from cross-paper analysis.'},
+        synthesis:     {title: 'Cross-Paper Synthesis — SMA Research Platform', desc: 'Non-obvious connections across 25,000+ SMA claims. Co-occurring targets, shared mechanisms, temporal reinforcements, contradictions, and surprise connections from cross-paper analysis.'},
+        synergy:       {title: 'Synergy Predictions — SMA Research Platform', desc: 'AI-predicted drug-target synergy scores combining docking affinity, literature evidence, pathway overlap, and claim support for SMA therapeutic combinations.'},
         'nim-results': {title: 'NIM Docking Results — SMA Research Platform', desc: '700 compound-target docking predictions via NVIDIA NIM DiffDock v2.2 API. Structure-based virtual screening for SMA drug candidates.'},
         news:          {title: 'News & Discoveries — SMA Research Platform', desc: 'Research highlights, computational discoveries, and community discussion on the SMA Research Platform.'},
         research:    {title: 'About — SMA Research Platform', desc: 'About the SMA Research Platform: mission, methodology, team, and open-source commitment.'},

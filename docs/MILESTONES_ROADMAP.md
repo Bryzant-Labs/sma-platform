@@ -5,6 +5,81 @@
 
 ---
 
+## 2030 Strategic Tracks (Professor Mode)
+
+> Restructured based on scientific advisory feedback. Priority: calibration > features, depth > breadth.
+
+### Track 1: Trustworthy Evidence Engine (HIGHEST PRIORITY)
+Before building more features, calibrate what we have.
+
+| Deliverable | Status | Why It Matters |
+|------------|--------|----------------|
+| Gold-standard claim extraction evaluation set | PLANNED | Inter-annotator agreement benchmark |
+| Claim confidence calibration curves | PARTIAL | confidence_calibrator.py built, grade B |
+| Contradiction detection benchmark | DONE | find_contradictions() live |
+| Source quality weighting | PLANNED | Not all PubMed papers are equal |
+| Retrospective validation against known outcomes | DONE | Calibration report with approved drugs |
+| Extraction precision/recall benchmark | PLANNED | How many claims are wrong? |
+| Score reproducibility testing | PLANNED | Same input → same scores? |
+| Evidence uncertainty intervals | PLANNED | Every prediction needs error bars |
+
+### Track 2: SMA Mechanism Engine (CORE SCIENCE)
+Go deeper on SMA-specific biology, not broader.
+
+| Deliverable | Status | Why It Matters |
+|------------|--------|----------------|
+| SMN locus resolution (long-read haplotypes) | PLANNED | Copy number alone doesn't explain phenotype |
+| SMN2 splicing regulatory grammar model | PLANNED | Predict effects on transcriptome, not just exon 7 |
+| Modifier-aware phenotype prediction | PLANNED | PLS3, NCALD, NAIP interaction effects |
+| Off-target splice impact prediction | PLANNED | ASO safety beyond primary target |
+| Cross-disease transfer (mechanistically grounded only) | PARTIAL | ALS/DMD overlap where biologically justified |
+| Spatial/single-cell integration | PLANNED | When Slide-seq/MERFISH data available |
+| RNA structure-informed ligand ranking | PLANNED | Via OpenFold3/RNAPro NIMs |
+
+### Track 3: Functional Translation Engine (BRIDGE TO WET LAB)
+Prioritize experiments, not just ideas.
+
+| Deliverable | Status | Why It Matters |
+|------------|--------|----------------|
+| Organoid/NMJ validation scorecard | PLANNED | Which predictions are testable in organoids? |
+| Expected Value of Experiment score | PLANNED | Cost/time/likelihood ranking per hypothesis |
+| Assay-ready output format | PLANNED | 3 hypotheses with assay + model + readouts + go/no-go |
+| Biomarker atlas (molecular/imaging/fluid) | PLANNED | Treatment response stratification |
+| Compound/ASO/CRISPR comparison engine | PARTIAL | Dual-target + CRISPR + AAV modules exist |
+| Therapy combination ranking | PARTIAL | Digital twin has basic combo scoring |
+| IP/freedom-to-operate signal | PLANNED | Patent landscape integration |
+
+### Track 4: Researcher Distribution (ACCESS + TRUST)
+Make the platform usable AND credible.
+
+| Deliverable | Status | Why It Matters |
+|------------|--------|----------------|
+| MCP Server (29 tools) | DONE | Natural language query access |
+| Reproducible benchmarks | PLANNED | Others can verify our claims |
+| Professor Advisory Pack (5 pages) | PLANNED | What it does, where reliable, where uncertain |
+| Grant-ready hypothesis exports | PARTIAL | Translation module has grant templates |
+| Citation-grade evidence summaries | PARTIAL | Literature review module built |
+| External lab collaboration hooks | PLANNED | API for result sharing |
+| DREAM/CACHE challenge participation | PLANNED | Industry-standard validation |
+
+### Key Researchers to Engage
+| Name | Institution | Expertise | Why |
+|------|------------|-----------|-----|
+| Adrian Krainer | CSHL | RNA splicing, ASO therapeutics | Nusinersen co-inventor, splicing authority |
+| Mina Gouti | MDC Berlin | Organoid/NMJ models | Advanced human NMJ models for drug testing |
+| Ewout Groen | UMC Utrecht | Translational SMA, biomarkers | Clinical translation + patient stratification |
+| Brunhilde Wirth | U Cologne | SMA genetics, modifiers | PLS3/NCALD discovery, genetic plausibility |
+
+### What to Deprioritize
+These are interesting but not essential for professor-credibility:
+- Agentic swarm "autonomy" narrative → keep simple, calibrated agents
+- Gene edit versioning as showcase → useful internal tool, not a selling point
+- Excessive frontend tabs → focus on data quality, not visualization breadth
+- Generic Digital Twin without mechanistic backbone → only if validated
+- "Pharmaceutical Superintelligence" framing → evidence-first, not hype
+
+---
+
 ## Phase 1: Evidence Foundation (COMPLETE)
 
 - [x] PubMed ingestion pipeline (Biopython Entrez)
