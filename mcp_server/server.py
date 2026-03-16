@@ -9,6 +9,7 @@ No local database or credentials required — all read endpoints are public.
 
 from __future__ import annotations
 
+import os
 from typing import Any, Optional
 
 import httpx
@@ -67,6 +68,36 @@ async def _get(path: str, params: dict[str, Any] | None = None) -> Any:
 def _is_error(result: Any) -> bool:
     """Return True if the result is an error dict from _get()."""
     return isinstance(result, dict) and "error" in result
+
+
+async def _post(
+    path: str,
+    json_body: dict[str, Any] | None = None,
+    headers: dict[str, str] | None = None,
+) -> Any:
+    """Perform a POST request to the API and return the parsed JSON response.
+
+    Raises a descriptive error dict if the request fails or the server
+    returns a non-2xx status code.
+    """
+    url = f"{API_BASE}{path}"
+    async with httpx.AsyncClient(timeout=REQUEST_TIMEOUT) as client:
+        try:
+            response = await client.post(url, json=json_body, headers=headers)
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPStatusError as exc:
+            return {
+                "error": f"API returned {exc.response.status_code}",
+                "url": url,
+                "detail": exc.response.text[:500],
+            }
+        except httpx.RequestError as exc:
+            return {
+                "error": f"Request failed: {type(exc).__name__}",
+                "url": url,
+                "detail": str(exc),
+            }
 
 
 # ---------------------------------------------------------------------------
@@ -156,7 +187,7 @@ async def get_claims(
         id, claim_type, subject/object ids and types, predicate, value,
         confidence, evidence_count, and created_at.
     """
-    params: dict[str, Any] = {"limit": limit}
+    params: dict[str, Any] = {"limit": min(limit, 500)}
     if target_symbol:
         # The API resolves the symbol to an id server-side
         params["target_symbol"] = target_symbol
@@ -215,7 +246,7 @@ async def get_sources(limit: int = 50) -> list[dict[str, Any]]:
         List of source records, each including id, source_type, external_id,
         title, authors, journal, pub_date, doi, url, and created_at.
     """
-    result = await _get("/sources", params={"limit": limit})
+    result = await _get("/sources", params={"limit": min(limit, 500)})
     if _is_error(result):
         return [result]  # type: ignore[list-item]
     return result if isinstance(result, list) else result.get("items", result)
@@ -282,7 +313,7 @@ async def get_ingestion_history(limit: int = 10) -> list[dict[str, Any]]:
         including id, source_type, query, items_found, items_new,
         items_updated, errors, run_at, and duration_secs.
     """
-    result = await _get("/ingestion-log", params={"limit": limit})
+    result = await _get("/ingestion-log", params={"limit": min(limit, 200)})
     if _is_error(result):
         return [result]  # type: ignore[list-item]
     return result if isinstance(result, list) else result.get("items", result)
@@ -336,7 +367,7 @@ async def get_trials(
         id, nct_id, title, status, phase, conditions, interventions, sponsor,
         start_date, completion_date, enrollment, and url.
     """
-    params: dict[str, Any] = {"limit": limit}
+    params: dict[str, Any] = {"limit": min(limit, 500)}
     if status:
         params["status"] = status
     if phase:
@@ -962,17 +993,226 @@ async def search_patents(query: str, limit: int = 20) -> dict:
 
 
 @mcp.tool()
-async def get_platform_stats() -> dict:
-    """Get current platform-wide statistics.
+async def get_predictions(target: str = "", min_score: float = 0.0, limit: int = 10) -> dict:
+    """Get prediction cards — falsifiable, evidence-grounded predictions for SMA targets.
 
-    Returns counts of all major entities: sources (PubMed papers + patents),
-    targets, drugs, trials, datasets, claims, evidence links, and hypotheses.
-    Use this to understand the scale and coverage of the knowledge base.
+    Each prediction card contains:
+    - A falsifiable prediction statement
+    - Convergence score (0-1) with 5-dimension breakdown
+    - Supporting, contradicting, and neutral evidence
+    - Suggested experiments and evidence gaps
+
+    All scoring weights are open source at github.com/Bryzant-Labs/sma-platform
+
+    Args:
+        target: Optional target symbol to filter (e.g. "NCALD", "PLS3")
+        min_score: Minimum convergence score threshold (0-1)
+        limit: Maximum number of predictions to return
 
     Returns:
-        Dict with entity counts.
+        Dict with prediction cards and count.
     """
-    return await _get("/stats")
+    params: dict = {"min_score": min_score, "limit": min(limit, 50)}
+    if target:
+        params["target"] = target
+    cards = await _get("/predictions", params=params)
+    if _is_error(cards):
+        return cards
+    return {
+        "predictions": cards,
+        "count": len(cards) if isinstance(cards, list) else 0,
+        "filter": {"target": target, "min_score": min_score},
+    }
+
+
+@mcp.tool()
+async def get_convergence_score(target: str) -> dict:
+    """Get the evidence convergence score breakdown for a specific SMA target.
+
+    Shows 5 scoring dimensions:
+    - Volume (weight: 0.15): claim count, normalized to ceiling of 50
+    - Lab Independence (weight: 0.30): unique research groups
+    - Method Diversity (weight: 0.20): experimental method variety
+    - Temporal Trend (weight: 0.15): evidence consistency over time
+    - Replication (weight: 0.20): findings reproduced by different groups
+
+    All weights are open source at github.com/Bryzant-Labs/sma-platform
+
+    Args:
+        target: Target symbol (e.g. "SMN2", "NCALD", "PLS3")
+
+    Returns:
+        Dict with convergence score breakdown or error.
+    """
+    targets = await _get("/targets", params={"limit": 100})
+    target_lower = target.lower()
+    matched = [
+        t for t in targets
+        if target_lower in (t.get("symbol") or "").lower()
+        or target_lower in (t.get("name") or "").lower()
+    ]
+
+    if not matched:
+        return {
+            "error": f"Target '{target}' not found",
+            "available_targets": [t["symbol"] for t in targets],
+        }
+
+    target_id = matched[0]["id"]
+    try:
+        score = await _get(f"/convergence/{target_id}")
+        return score
+    except Exception:
+        return {
+            "error": f"No convergence score computed for {matched[0]['symbol']}. Run computation first.",
+        }
+
+
+# ---------------------------------------------------------------------------
+# Cross-Paper Synthesis tools
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+async def get_synthesis_cards(
+    target: Optional[str] = None,
+) -> list[dict[str, Any]]:
+    """Get cross-paper synthesis cards that combine findings from multiple sources.
+
+    Synthesis cards highlight emergent insights that only become visible when
+    evidence from multiple papers is combined — for example, independent labs
+    converging on the same pathway, or complementary mechanisms that suggest
+    combination therapy opportunities.
+
+    Args:
+        target: Optional target symbol to filter cards (e.g. "STMN2", "PLS3").
+
+    Returns:
+        List of synthesis card records, each including id, title, summary,
+        target_symbols, source_ids, convergence_score, synthesis_type,
+        and created_at.
+    """
+    params: dict[str, Any] = {}
+    if target:
+        params["target"] = target
+    result = await _get("/synthesis/cards", params=params or None)
+    if _is_error(result):
+        return [result]  # type: ignore[list-item]
+    return result if isinstance(result, list) else result.get("items", result)
+
+
+@mcp.tool()
+async def get_cooccurrences() -> list[dict[str, Any]]:
+    """Get target co-occurrence data from cross-paper analysis.
+
+    Returns pairs of targets that frequently appear together in the same
+    publications, along with co-occurrence counts and statistical significance.
+    High co-occurrence often indicates shared pathways, regulatory relationships,
+    or potential combination therapy candidates.
+
+    Returns:
+        List of co-occurrence records, each including target_a, target_b,
+        cooccurrence_count, pmi_score (pointwise mutual information),
+        top_shared_sources, and relationship_summary.
+    """
+    result = await _get("/synthesis/cooccurrences")
+    if _is_error(result):
+        return [result]  # type: ignore[list-item]
+    return result if isinstance(result, list) else result.get("items", result)
+
+
+@mcp.tool()
+async def get_shared_mechanisms() -> list[dict[str, Any]]:
+    """Get shared molecular mechanisms identified across multiple papers.
+
+    Surfaces mechanisms (pathways, cellular processes, molecular interactions)
+    that are supported by evidence from multiple independent studies.  These
+    represent the most robust biological insights in the knowledge base and
+    are prime candidates for therapeutic intervention.
+
+    Returns:
+        List of shared mechanism records, each including mechanism_id,
+        mechanism_name, mechanism_type, supporting_papers_count,
+        involved_targets, confidence, description, and evidence_summary.
+    """
+    result = await _get("/synthesis/shared-mechanisms")
+    if _is_error(result):
+        return [result]  # type: ignore[list-item]
+    return result if isinstance(result, list) else result.get("items", result)
+
+
+# ---------------------------------------------------------------------------
+# NVIDIA NIMs tools
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+async def check_nim_health() -> dict[str, Any]:
+    """Check the health status of all connected NVIDIA NIM microservices.
+
+    NVIDIA NIMs (NVIDIA Inference Microservices) provide GPU-accelerated
+    molecular docking (DiffDock), protein structure prediction (OpenFold3),
+    and generative molecular design (GenMol).  This tool checks whether
+    the NIM endpoints are reachable and reports their status.
+
+    Returns:
+        Dict with keys:
+          - healthy: overall health (bool)
+          - services: list of service status dicts, each with name, status
+            (healthy/unhealthy/unavailable), latency_ms, and version.
+          - checked_at: ISO timestamp of the health check.
+    """
+    result = await _get("/nims/health")
+    if _is_error(result):
+        return result
+    return result
+
+
+@mcp.tool()
+async def dock_compound_nim(
+    smiles: str,
+    target_pdb_id: str,
+    method: str = "diffdock",
+) -> dict[str, Any]:
+    """Dock a compound against a protein target using NVIDIA NIM (DiffDock).
+
+    Submits a molecular docking job to the GPU-accelerated DiffDock NIM service.
+    Requires an admin API key (set via SMA_ADMIN_KEY environment variable).
+
+    This is a computational chemistry operation that predicts how a small
+    molecule binds to a protein target structure.  Results include predicted
+    binding poses, confidence scores, and estimated binding affinity.
+
+    Args:
+        smiles: SMILES string of the compound to dock (e.g.
+                "CC(=O)Oc1ccccc1C(=O)O" for aspirin).
+        target_pdb_id: PDB identifier of the target protein structure
+                       (e.g. "7VQB" for SMN2 pre-mRNA).
+        method: Docking method — currently only "diffdock" is supported.
+
+    Returns:
+        Dict with keys: job_id, status, smiles, target_pdb_id, method,
+        poses (list of predicted binding poses with scores), top_score,
+        and submitted_at.  Returns an error if the admin key is missing
+        or the NIM service is unavailable.
+    """
+    admin_key = os.environ.get("SMA_ADMIN_KEY")
+    if not admin_key:
+        return {
+            "error": "SMA_ADMIN_KEY environment variable is not set",
+            "detail": "Docking requires admin authentication. Set SMA_ADMIN_KEY.",
+        }
+
+    headers = {"X-Admin-Key": admin_key}
+    body = {
+        "smiles": smiles,
+        "target_pdb_id": target_pdb_id,
+        "method": method,
+    }
+    result = await _post("/nims/dock", json_body=body, headers=headers)
+    if _is_error(result):
+        return result
+    return result
 
 
 # ---------------------------------------------------------------------------

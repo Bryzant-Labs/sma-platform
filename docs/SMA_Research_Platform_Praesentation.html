@@ -470,10 +470,10 @@
             <p class="title-subtitle reveal">Evidenz-basierte Wirkstoffforschung f&uuml;r Spinale Muskelatrophie &mdash; von der automatisierten Literaturanalyse &uuml;ber Splice-Variant-Prediction bis zur Breakthrough-Signal-Detektion</p>
             <div class="title-meta reveal">
                 <span class="tag accent">Evidence-First</span>
-                <span class="tag blue">4.582 Quellen</span>
-                <span class="tag gold">220+ Hypothesen</span>
+                <span class="tag blue">5.216 Quellen</span>
+                <span class="tag gold">515 Hypothesen</span>
                 <span class="tag">21 Targets</span>
-                <span class="tag red">22.607 Claims</span>
+                <span class="tag red">25.026 Claims</span>
             </div>
         </div>
         <div class="dna-helix decorative"></div>
@@ -539,15 +539,15 @@
                     <div style="display: flex; flex-direction: column; gap: clamp(6px, 1vh, 12px);">
                         <div class="card" style="border-left: 2px solid var(--accent);">
                             <h3 style="font-size: var(--small-size); color: var(--accent);">1. Ingestion</h3>
-                            <p>PubMed, ClinicalTrials.gov, bioRxiv/medRxiv, STRING, KEGG, ChEMBL, UniProt &rarr; 4.582 Quellen, 449 Studien</p>
+                            <p>PubMed, ClinicalTrials.gov, bioRxiv/medRxiv, STRING, KEGG, ChEMBL, UniProt &rarr; 5.216 Quellen, 449 Studien</p>
                         </div>
                         <div class="card" style="border-left: 2px solid var(--accent-blue);">
                             <h3 style="font-size: var(--small-size); color: var(--accent-blue);">2. LLM Claim Extraction</h3>
-                            <p>Claude Haiku extrahiert strukturierte Aussagen aus Abstracts &rarr; 22.607 Claims in 12 Typen, SMA-Relevanz-Scoring</p>
+                            <p>Claude Haiku extrahiert strukturierte Aussagen aus Abstracts &rarr; 25.026 Claims in 12 Typen, SMA-Relevanz-Scoring</p>
                         </div>
                         <div class="card" style="border-left: 2px solid var(--accent-gold);">
                             <h3 style="font-size: var(--small-size); color: var(--accent-gold);">3. Hypothesis Generation</h3>
-                            <p>Claude Sonnet 4.6 generiert mechanistische Hypothesenkarten &rarr; 220+ Hypothesen in 3 Tiers mit Experimental-Vorschl&auml;gen</p>
+                            <p>Claude Sonnet 4.6 generiert mechanistische Hypothesenkarten &rarr; 515 Hypothesen in 3 Tiers mit Experimental-Vorschl&auml;gen</p>
                         </div>
                         <div class="card" style="border-left: 2px solid var(--accent-purple);">
                             <h3 style="font-size: var(--small-size); color: var(--accent-purple);">4. Auto-Discovery</h3>
@@ -564,7 +564,7 @@
                         <p><strong style="color: var(--text-primary);">ML:</strong> ESM-2 (HuggingFace)</p>
                         <p><strong style="color: var(--text-primary);">APIs:</strong> NCBI, STRING, KEGG, ChEMBL</p>
                         <p><strong style="color: var(--text-primary);">Frontend:</strong> Vanilla JS SPA</p>
-                        <p><strong style="color: var(--text-primary);">API:</strong> ~155 REST Endpoints</p>
+                        <p><strong style="color: var(--text-primary);">API:</strong> ~190 REST Endpoints</p>
                     </div>
                 </div>
             </div>
@@ -581,15 +581,15 @@
             <h2 class="reveal">Die Zahlen <span class="accent">sprechen</span></h2>
             <div class="stat-grid reveal" style="margin-top: var(--content-gap);">
                 <div class="stat-card">
-                    <div class="stat-number" data-count="4582">4.582</div>
+                    <div class="stat-number" data-count="5216">5.216</div>
                     <div class="stat-label">PubMed-Quellen</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" style="color: var(--accent-blue);" data-count="22607">22.607</div>
+                    <div class="stat-number" style="color: var(--accent-blue);" data-count="25026">25.026</div>
                     <div class="stat-label">Extrahierte Claims</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" style="color: var(--accent-gold);" data-count="220">220+</div>
+                    <div class="stat-number" style="color: var(--accent-gold);" data-count="515">515</div>
                     <div class="stat-label">Hypothesen</div>
                 </div>
                 <div class="stat-card">
@@ -630,7 +630,7 @@
             <div class="card-grid reveal" style="margin-top: var(--content-gap);">
                 <div class="card">
                     <h3 style="color: var(--accent);">PubMed / NCBI</h3>
-                    <p>4.582 Papers &mdash; 250+ spezialisierte SMA-Queries &uuml;ber 14 Kategorien, Biopython Entrez API, automatischer t&auml;glicher Pull</p>
+                    <p>5.216 Papers &mdash; 250+ spezialisierte SMA-Queries &uuml;ber 14 Kategorien, Biopython Entrez API, automatischer t&auml;glicher Pull</p>
                 </div>
                 <div class="card">
                     <h3 style="color: var(--accent-blue);">ClinicalTrials.gov</h3>
@@ -670,7 +670,7 @@
                         Jedes Paper-Abstract wird durch <strong style="color: var(--text-primary);">Claude Haiku</strong> analysiert. Das LLM extrahiert strukturierte Claims &mdash; faktische Aussagen &uuml;ber Gene, Proteine, Wirkstoffe und Mechanismen &mdash; und weist jedem Claim einen von <strong style="color: var(--accent);">12 Typen</strong> und einen <strong style="color: var(--accent-gold);">Konfidenzwert</strong> zu.
                     </p>
                     <p style="color: var(--text-secondary); line-height: 1.7;">
-                        Anschlie&szlig;end Re-Scoring aller 22.607 Claims f&uuml;r SMA-Relevanz (unterscheidet z.B. SMA/Spinale Muskelatrophie von &alpha;-SMA/Smooth Muscle Actin). Claims werden automatisch Targets und Drugs zugeordnet.
+                        Anschlie&szlig;end Re-Scoring aller 25.026 Claims f&uuml;r SMA-Relevanz (unterscheidet z.B. SMA/Spinale Muskelatrophie von &alpha;-SMA/Smooth Muscle Actin). Claims werden automatisch Targets und Drugs zugeordnet.
                     </p>
                 </div>
                 <div class="reveal" style="flex: 0.8; min-width: min(100%, 200px);">
@@ -777,7 +777,7 @@
                 <div class="card" style="border-top: 2px solid var(--accent);">
                     <h3 style="color: var(--accent); font-size: var(--body-size);">Hypothesen-Konfirmation</h3>
                     <p style="margin-top: 4px;">Neue Claims, die bestehende Hypothesen best&auml;tigen oder widerlegen. St&auml;rke-Score aus Konfidenz &times; Quellenanzahl.</p>
-                    <p style="margin-top: 6px;"><span class="tag accent">220 Konfirmationen</span></p>
+                    <p style="margin-top: 6px;"><span class="tag accent">515 Konfirmationen</span></p>
                 </div>
                 <div class="card" style="border-top: 2px solid var(--accent-gold);">
                     <h3 style="color: var(--accent-gold); font-size: var(--body-size);">Novel Targets</h3>
@@ -887,10 +887,87 @@
     </section>
 
     <!-- ===========================================
-         SLIDE 13: HYPOTHESEN & MECHANISTIC DEPTH
+         SLIDE 13: NVIDIA NIMs & DiffDock RESULTS
          =========================================== -->
     <section class="slide">
         <div class="slide-number">12</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Warp-Speed Update</div>
+            <h2 class="reveal">NVIDIA NIMs &amp; <span class="accent">DiffDock v2.2</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap);">
+                <div class="reveal" style="flex: 1.2; min-width: min(100%, 280px);">
+                    <div style="display: flex; flex-direction: column; gap: clamp(6px, 1vh, 12px);">
+                        <div class="card" style="border-left: 2px solid var(--accent);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent);">DiffDock v2.2 Re-docking</h3>
+                            <p>4-AP <strong style="color: var(--text-primary);">best&auml;tigt Bindung an SMN2</strong> via NVIDIA NIM API. Best Confidence: <strong style="color: var(--accent);">&minus;0.280</strong>. Erste KI-gest&uuml;tzte Validierung eines SMN2-Splice-Modifiers.</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-blue);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-blue);">GPU Batch Campaign</h3>
+                            <p><strong style="color: var(--text-primary);">378 NIM-Dockings</strong> (54 Compounds &times; 7 Targets) + 100ns MD-Simulation + Boltz-2-Strukturen &mdash; l&auml;uft aktuell. Erste systematische Screening-Kampagne f&uuml;r SMA.</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-gold);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-gold);">Docker Image</h3>
+                            <p><span style="font-family: var(--font-mono); color: var(--text-primary);">csiicf/sma-gpu-toolkit</span> (14.7 GB) auf Docker Hub. Vollst&auml;ndig reproduzierbare GPU-Pipeline f&uuml;r Drug Discovery.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal" style="flex: 0.8; min-width: min(100%, 200px);">
+                    <div class="card" style="border-color: var(--accent-purple);">
+                        <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-purple); margin-bottom: 8px;">NVIDIA NIMs</div>
+                        <p style="font-size: var(--small-size); line-height: 1.8;">
+                            <strong style="color: var(--accent);">DiffDock v2.2</strong><br>Molecular Docking<br><br>
+                            <strong style="color: var(--accent-blue);">OpenFold3</strong><br>Protein Structure<br><br>
+                            <strong style="color: var(--accent-gold);">GenMol</strong><br>Molecule Generation<br><br>
+                            <strong style="color: var(--accent-purple);">RNAPro</strong><br>RNA-Protein Interaction
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 14: CROSS-PAPER SYNTHESIS & MCP
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">13</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Differenzierungsmerkmale</div>
+            <h2 class="reveal">Cross-Paper <span class="accent-gold">Synthesis</span> &amp; <span class="accent">29 MCP Tools</span></h2>
+            <div class="card-grid reveal" style="margin-top: var(--content-gap); grid-template-columns: 1fr 1fr;">
+                <div class="card" style="border-top: 2px solid var(--accent-gold);">
+                    <h3 style="color: var(--accent-gold); font-size: var(--body-size);">Cross-Paper Synthesis</h3>
+                    <p style="margin-top: 4px;">Differentiator #1 &mdash; jetzt live. Co-occurrence-Analyse, transitive Br&uuml;cken, geteilte Mechanismen &uuml;ber 25k Claims. Findet Verbindungen, die kein einzelner Forscher sehen kann.</p>
+                    <p style="margin-top: 6px;"><span class="tag gold">25.026 Claims vernetzt</span></p>
+                </div>
+                <div class="card" style="border-top: 2px solid var(--accent);">
+                    <h3 style="color: var(--accent); font-size: var(--body-size);">29 MCP Tools</h3>
+                    <p style="margin-top: 4px;">Claude kann die Plattform direkt abfragen: Targets, Claims, Hypothesen, Docking-Ergebnisse, Drug-Kombinationen, Digital Twin, Spatial Analysis &mdash; alles &uuml;ber Model Context Protocol.</p>
+                    <p style="margin-top: 6px;"><span class="tag accent">+5 neue Tools</span></p>
+                </div>
+            </div>
+            <div class="card-grid reveal" style="margin-top: clamp(6px, 1vh, 12px); grid-template-columns: repeat(3, 1fr);">
+                <div class="card">
+                    <h3 style="font-size: var(--small-size); color: var(--accent);">~190 API Endpoints</h3>
+                    <p style="font-size: var(--label-size);">REST + MCP. Targets, Claims, Hypothesen, Docking, Screening, Splice, Discovery, Trials, Drugs, Graph, Export</p>
+                </div>
+                <div class="card">
+                    <h3 style="font-size: var(--small-size); color: var(--accent-blue);">GPU Infrastructure</h3>
+                    <p style="font-size: var(--label-size);">dstack + Vast.ai + NVIDIA NIMs. DiffDock, OpenFold3, Boltz-2, OpenMM, REINVENT 4</p>
+                </div>
+                <div class="card">
+                    <h3 style="font-size: var(--small-size); color: var(--accent-purple);">Docker Hub</h3>
+                    <p style="font-size: var(--label-size);">csiicf/sma-gpu-toolkit &mdash; 14.7 GB. Vollst&auml;ndige reproduzierbare Compute-Pipeline</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 15: HYPOTHESEN & MECHANISTIC DEPTH
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">14</div>
         <div class="slide-content">
             <div class="section-label reveal">Hypothesenqualit&auml;t</div>
             <h2 class="reveal">Mechanistische <span class="accent-gold">Hypothesenkarten</span></h2>
@@ -914,7 +991,7 @@
                 <div class="card reveal" style="border-left: 2px solid var(--accent-blue);">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div><span class="tag blue" style="margin-right: 8px;">3 Tiers</span></div>
-                        <span style="font-family: var(--font-mono); color: var(--accent-blue); font-size: var(--small-size);">220+ Hypothesen</span>
+                        <span style="font-family: var(--font-mono); color: var(--accent-blue); font-size: var(--small-size);">515 Hypothesen</span>
                     </div>
                     <p style="margin-top: 4px;"><strong style="color: var(--accent-gold);">Tier A</strong>: High-Conviction Targets mit starker Evidenz. <strong style="color: var(--text-primary);">Tier B</strong>: Promising mit L&uuml;cken. <strong style="color: var(--text-muted);">Tier C</strong>: Explorativ.</p>
                 </div>
@@ -923,10 +1000,10 @@
     </section>
 
     <!-- ===========================================
-         SLIDE 14: ZUGELASSENE THERAPIEN + PIPELINE
+         SLIDE 16: ZUGELASSENE THERAPIEN + PIPELINE
          =========================================== -->
     <section class="slide grid-bg">
-        <div class="slide-number">13</div>
+        <div class="slide-number">15</div>
         <div class="slide-content">
             <div class="section-label reveal">Therapielandschaft</div>
             <h2 class="reveal">16 Wirkstoffe <span class="accent-purple">im Tracking</span></h2>
@@ -954,10 +1031,10 @@
     </section>
 
     <!-- ===========================================
-         SLIDE 15: TÄGLICHE PIPELINE & AUTOMATISIERUNG
+         SLIDE 17: TÄGLICHE PIPELINE & AUTOMATISIERUNG
          =========================================== -->
     <section class="slide">
-        <div class="slide-number">14</div>
+        <div class="slide-number">16</div>
         <div class="slide-content">
             <div class="section-label reveal">Automatisierung</div>
             <h2 class="reveal">T&auml;gliche <span class="accent">Pipeline</span></h2>
@@ -990,10 +1067,10 @@
     </section>
 
     <!-- ===========================================
-         SLIDE 16: OPEN DATA & API
+         SLIDE 18: OPEN DATA & API
          =========================================== -->
     <section class="slide grid-bg">
-        <div class="slide-number">15</div>
+        <div class="slide-number">17</div>
         <div class="slide-content">
             <div class="section-label reveal">Open Science</div>
             <h2 class="reveal">Offene API &amp; <span class="accent-blue">Daten</span></h2>
@@ -1001,7 +1078,7 @@
                 <div class="reveal" style="flex: 1; min-width: min(100%, 280px);">
                     <div style="display: flex; flex-direction: column; gap: clamp(6px, 1vh, 10px);">
                         <div class="card" style="border-left: 2px solid var(--accent);">
-                            <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent);">~155 REST ENDPOINTS</div>
+                            <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent);">~190 REST ENDPOINTS</div>
                             <p style="margin-top: 4px; font-size: var(--small-size);">Targets, Claims, Hypothesen, Scoring, Screening, Splice Prediction, Discovery, Trials, Drugs, Datasets, Graph, Export</p>
                         </div>
                         <div class="card" style="border-left: 2px solid var(--accent-blue);">
@@ -1034,10 +1111,10 @@
     </section>
 
     <!-- ===========================================
-         SLIDE 17: LINKS & ZUGANG
+         SLIDE 19: LINKS & ZUGANG
          =========================================== -->
     <section class="slide">
-        <div class="slide-number">16</div>
+        <div class="slide-number">18</div>
         <div class="slide-content">
             <div class="section-label reveal">Zugang</div>
             <h2 class="reveal">Links &amp; <span class="accent-blue">Ressourcen</span></h2>
@@ -1050,7 +1127,7 @@
                 <div class="card reveal" style="border-left: 2px solid var(--accent-blue);">
                     <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-blue); margin-bottom: 4px;">API DOKUMENTATION</div>
                     <p style="color: var(--text-primary); font-size: var(--body-size);">https://sma-research.info/api/v2/docs</p>
-                    <p>OpenAPI/Swagger &mdash; ~155 Endpoints, interaktiv testbar</p>
+                    <p>OpenAPI/Swagger &mdash; ~190 Endpoints, interaktiv testbar</p>
                 </div>
                 <div class="card reveal" style="border-left: 2px solid var(--accent-gold);">
                     <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-gold); margin-bottom: 4px;">GITHUB</div>
@@ -1074,7 +1151,7 @@
             <div class="section-label reveal" style="text-align: center;">Einladung</div>
             <h2 class="reveal" style="text-align: center;">Was w&uuml;rden <span class="accent">Sie</span> brauchen?</h2>
             <p class="reveal" style="text-align: center; max-width: min(85%, 600px); margin: var(--content-gap) auto 0; font-size: clamp(0.85rem, 1.5vw, 1.1rem); color: var(--text-secondary); line-height: 1.7;">
-                4.582 Quellen. 22.607 extrahierte Claims. 220+ mechanistische Hypothesen. 21.228 gescreente Molek&uuml;le.<br>
+                5.216 Quellen. 25.026 extrahierte Claims. 515 mechanistische Hypothesen. 29 MCP Tools. ~190 API Endpoints.<br>
                 Die Evidenzbasis steht &mdash; und w&auml;chst jeden Tag automatisch.<br><br>
                 <strong style="color: var(--text-primary);">Welche Daten, Analysen oder Integrationen w&uuml;rden diese Plattform f&uuml;r Ihre Forschung n&uuml;tzlich machen?</strong>
             </p>

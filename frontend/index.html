@@ -130,7 +130,7 @@
             ]
         },
         "keyword": ["SMA", "SMN1", "SMN2", "motor neuron disease", "gene therapy", "antisense oligonucleotide", "drug discovery", "evidence graph", "target prioritization"],
-        "license": "https://opensource.org/licenses/MIT",
+        "license": "https://www.gnu.org/licenses/agpl-3.0.html",
         "codeRepository": "https://sma-research.info/api/v2/docs",
         "programmingLanguage": ["Python", "JavaScript"],
         "isAccessibleForFree": true,
@@ -147,7 +147,7 @@
         "name": "SMA Evidence Graph Dataset",
         "description": "Aggregated dataset containing 4,582 PubMed sources, 10,620+ LLM-extracted claims, 449 clinical trials, 21 molecular targets, 16 drugs, and 102 prioritized hypotheses for Spinal Muscular Atrophy research.",
         "url": "https://sma-research.info/api/v2/stats",
-        "license": "https://opensource.org/licenses/MIT",
+        "license": "https://www.gnu.org/licenses/agpl-3.0.html",
         "creator": {
             "@type": "Person",
             "name": "Christian Fischer"
@@ -248,7 +248,7 @@
         "codeRepository": "https://sma-research.info/api/v2/docs",
         "programmingLanguage": ["Python", "JavaScript"],
         "runtimePlatform": "FastAPI / Uvicorn",
-        "license": "https://opensource.org/licenses/MIT",
+        "license": "https://www.gnu.org/licenses/agpl-3.0.html",
         "author": {
             "@type": "Person",
             "name": "Christian Fischer"
@@ -677,52 +677,57 @@
 <div class="stats-bar"><div class="container"><div class="stats-row" id="stats-row"><div class="loading">Loading stats...</div></div></div></div>
 
 <nav class="nav-bar"><div class="container"><div class="nav-row">
-    <a href="#mission" class="nav-link active" data-section="mission">Home</a>
-    <a href="#search" class="nav-link" data-section="search">Search</a>
-    <a href="#ask" class="nav-link nav-highlight" data-section="ask">Ask AI</a>
+    <a href="/" class="nav-link active" data-section="mission">Home</a>
+    <a href="/news" class="nav-link" data-section="news">News</a>
+    <a href="/search" class="nav-link" data-section="search">Search</a>
+    <a href="/ask" class="nav-link nav-highlight" data-section="ask">Ask AI</a>
     <span class="nav-sep">|</span>
-    <a href="#targets" class="nav-link" data-section="targets">Targets</a>
-    <a href="#trials" class="nav-link" data-section="trials">Trials</a>
-    <a href="#drugs" class="nav-link" data-section="drugs">Drugs</a>
-    <a href="#sources" class="nav-link" data-section="sources">Literature</a>
-    <a href="#claims" class="nav-link" data-section="claims">Claims</a>
-    <a href="#hypotheses" class="nav-link" data-section="hypotheses">Hypotheses</a>
-    <a href="#graph" class="nav-link" data-section="graph">Graph</a>
+    <a href="/targets" class="nav-link" data-section="targets">Targets</a>
+    <a href="/trials" class="nav-link" data-section="trials">Trials</a>
+    <a href="/drugs" class="nav-link" data-section="drugs">Drugs</a>
+    <a href="/sources" class="nav-link" data-section="sources">Literature</a>
+    <a href="/claims" class="nav-link" data-section="claims">Claims</a>
+    <a href="/hypotheses" class="nav-link" data-section="hypotheses">Hypotheses</a>
+    <a href="/predictions" class="nav-link" data-section="predictions">Predictions</a>
+    <a href="/graph" class="nav-link" data-section="graph">Graph</a>
     <span class="nav-sep">|</span>
-    <a href="#scores" class="nav-link" data-section="scores">Scores</a>
-    <a href="#outcomes" class="nav-link" data-section="outcomes">Drug Outcomes</a>
-    <a href="#screening" class="nav-link" data-section="screening">Screening</a>
-    <a href="#candidates" class="nav-link" data-section="candidates">Candidates</a>
-    <a href="#comparative" class="nav-link" data-section="comparative">Species</a>
-    <a href="#directions" class="nav-link" data-section="directions">Directions</a>
+    <a href="/scores" class="nav-link" data-section="scores">Scores</a>
+    <a href="/outcomes" class="nav-link" data-section="outcomes">Drug Outcomes</a>
+    <a href="/screening" class="nav-link" data-section="screening">Screening</a>
+    <a href="/candidates" class="nav-link" data-section="candidates">Candidates</a>
+    <a href="/comparative" class="nav-link" data-section="comparative">Species</a>
+    <a href="/directions" class="nav-link" data-section="directions">Directions</a>
+    <a href="/synthesis" class="nav-link" data-section="synthesis">Synthesis</a>
+    <a href="/nim-results" class="nav-link" data-section="nim-results">NIM Docking</a>
     <span class="nav-sep">|</span>
     <span class="nav-group-toggle" data-group="advanced">Advanced <span class="nav-arrow">&#9662;</span></span>
     <span class="nav-group" id="nav-group-advanced" style="display:none">
-        <a href="#spatial" class="nav-link" data-section="spatial">Spatial</a>
-        <a href="#regen" class="nav-link" data-section="regen">Regen</a>
-        <a href="#nmj" class="nav-link" data-section="nmj">NMJ</a>
-        <a href="#multisystem" class="nav-link" data-section="multisystem">Multisystem</a>
-        <a href="#bioelectric" class="nav-link" data-section="bioelectric">Bioelectric</a>
-        <a href="#splicemap" class="nav-link" data-section="splicemap">Splice</a>
-        <a href="#rnabind" class="nav-link" data-section="rnabind">RNA</a>
-        <a href="#dualtarget" class="nav-link" data-section="dualtarget">Dual Target</a>
-        <a href="#twin" class="nav-link" data-section="twin">Twin</a>
-        <a href="#molecules" class="nav-link" data-section="molecules">Molecules</a>
-        <a href="#crispr" class="nav-link" data-section="crispr">CRISPR</a>
-        <a href="#aav" class="nav-link" data-section="aav">AAV</a>
-        <a href="#docking" class="nav-link" data-section="docking">Docking</a>
-        <a href="#prime" class="nav-link" data-section="prime">Prime Edit</a>
-        <a href="#mdsim" class="nav-link" data-section="mdsim">MD Sim</a>
-        <a href="#labos" class="nav-link" data-section="labos">Lab-OS</a>
-        <a href="#federated" class="nav-link" data-section="federated">Federated</a>
-        <a href="#translate" class="nav-link" data-section="translate">Translation</a>
+        <a href="/spatial" class="nav-link" data-section="spatial">Spatial</a>
+        <a href="/regen" class="nav-link" data-section="regen">Regen</a>
+        <a href="/nmj" class="nav-link" data-section="nmj">NMJ</a>
+        <a href="/multisystem" class="nav-link" data-section="multisystem">Multisystem</a>
+        <a href="/bioelectric" class="nav-link" data-section="bioelectric">Bioelectric</a>
+        <a href="/splicemap" class="nav-link" data-section="splicemap">Splice</a>
+        <a href="/rnabind" class="nav-link" data-section="rnabind">RNA</a>
+        <a href="/dualtarget" class="nav-link" data-section="dualtarget">Dual Target</a>
+        <a href="/twin" class="nav-link" data-section="twin">Twin</a>
+        <a href="/molecules" class="nav-link" data-section="molecules">Molecules</a>
+        <a href="/crispr" class="nav-link" data-section="crispr">CRISPR</a>
+        <a href="/aav" class="nav-link" data-section="aav">AAV</a>
+        <a href="/docking" class="nav-link" data-section="docking">Docking</a>
+        <a href="/prime" class="nav-link" data-section="prime">Prime Edit</a>
+        <a href="/mdsim" class="nav-link" data-section="mdsim">MD Sim</a>
+        <a href="/labos" class="nav-link" data-section="labos">Lab-OS</a>
+        <a href="/federated" class="nav-link" data-section="federated">Federated</a>
+        <a href="/translate" class="nav-link" data-section="translate">Translation</a>
+        <a href="/gpu-results" class="nav-link" data-section="gpu-results">GPU Results</a>
     </span>
     <span class="nav-sep">|</span>
-    <a href="#research" class="nav-link" data-section="research">About</a>
-    <a href="#links" class="nav-link" data-section="links">Links</a>
-    <a href="#write" class="nav-link" data-section="write">Write</a>
-    <a href="#repurposing" class="nav-link" data-section="repurposing">Repurposing</a>
-    <a href="#versions" class="nav-link" data-section="versions">Versions</a>
+    <a href="/research" class="nav-link" data-section="research">About</a>
+    <a href="/links" class="nav-link" data-section="links">Links</a>
+    <a href="/write" class="nav-link" data-section="write">Write</a>
+    <a href="/repurposing" class="nav-link" data-section="repurposing">Repurposing</a>
+    <a href="/versions" class="nav-link" data-section="versions">Versions</a>
 </div></div></nav>
 
 <main class="container">
@@ -832,6 +837,14 @@
             </div>
         </div>
     </div>
+
+    <div id="home-discoveries" style="margin-top:40px">
+        <h3 style="font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:20px;text-align:center">Latest Discoveries</h3>
+        <div id="home-news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px"></div>
+        <div style="text-align:center;margin-top:12px">
+            <a href="/news" class="badge badge-blue nav-link" data-section="news" style="font-size:13px;cursor:pointer;text-decoration:none">View All News &rarr;</a>
+        </div>
+    </div>
 </section>
 
 <section class="section" id="research">
@@ -851,12 +864,12 @@
                     <span class="research-badge">SMN1</span>
                     <span class="research-badge">STMN2</span>
                     <span class="research-badge">NMJ</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">NMJ-on-a-Chip</div><div class="research-card-sub">Retrograde muscle-to-nerve signaling</div></div>
                 </div>
                 <div class="research-card-desc">Microfluidic neuromuscular junction models to study retrograde signaling from muscle to nerve. Test whether muscle-derived factors can rescue motor neurons.</div>
@@ -864,36 +877,36 @@
                     <span class="research-badge">NMJ</span>
                     <span class="research-badge">PLS3</span>
                     <span class="research-badge">ECM</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">Bioelectric Reprogramming</div><div class="research-card-sub">Michael Levin, Vmem manipulation</div></div>
                 </div>
                 <div class="research-card-desc">Membrane voltage (Vmem) manipulation to reprogram cell fate. Levin Lab showed bioelectric patterns control regeneration and morphogenesis.</div>
                 <div class="research-card-meta">
                     <span class="research-badge">mTOR</span>
                     <span class="research-badge">CD44</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">Epigenetic Dimming</div><div class="research-card-sub">dCas9/CRISPRi without DNA cuts</div></div>
                 </div>
                 <div class="research-card-desc">Dead Cas9 (dCas9) fused to epigenetic modifiers to silence disease-promoting genes without making permanent DNA breaks. Reversible gene regulation.</div>
                 <div class="research-card-meta">
                     <span class="research-badge">DNMT3B</span>
                     <span class="research-badge">SMN2</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">DUBTACs</div><div class="research-card-sub">Protein stabilization via deubiquitination</div></div>
                 </div>
                 <div class="research-card-desc">Deubiquitinase-targeting chimeras to stabilize SMN protein by preventing its degradation. The inverse of PROTACs &mdash; protect instead of destroy.</div>
@@ -901,7 +914,7 @@
                     <span class="research-badge">SMN Protein</span>
                     <span class="research-badge">UBA1</span>
                     <span class="research-badge">NEDD4L</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#2563eb1a;color:#2563eb">Exploring</span>
                 </div>
             </div>
         </div>
@@ -920,36 +933,36 @@
                     <span class="research-badge">NEDD4L</span>
                     <span class="research-badge">mTOR</span>
                     <span class="research-badge">CAST</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#2563eb1a;color:#2563eb">Exploring</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">NDRG1 / Cell Dormancy</div><div class="research-card-sub">Zebrafish atrofish model</div></div>
                 </div>
                 <div class="research-card-desc">NDRG1 enables cells to enter protective dormancy. The zebrafish atrofish model shows muscle wasting similar to SMA &mdash; dormancy pathways may rescue dying motor neurons.</div>
                 <div class="research-card-meta">
                     <span class="research-badge">SPATA18</span>
                     <span class="research-badge">LDHA</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#2563eb1a;color:#2563eb">Exploring</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">Cross-Species Regeneration</div><div class="research-card-sub">c-Fos/JunB molecular switch</div></div>
                 </div>
                 <div class="research-card-desc">Axolotls and zebrafish regenerate motor neurons via a c-Fos/JunB transcriptional switch. Reactivating these pathways in human motor neurons could promote repair.</div>
                 <div class="research-card-meta">
                     <span class="research-badge">STMN2</span>
                     <span class="research-badge">ANK3</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">Naked Mole Rat</div><div class="research-card-sub">HMM-HA cytoprotection via CD44</div></div>
                 </div>
                 <div class="research-card-desc">Naked mole rats produce high-molecular-mass hyaluronic acid (HMM-HA) that signals through CD44 for extraordinary cytoprotection. Could this shield motor neurons?</div>
@@ -957,7 +970,7 @@
                     <span class="research-badge">CD44</span>
                     <span class="research-badge">SULF1</span>
                     <span class="research-badge">CTNNA1</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#2563eb1a;color:#2563eb">Exploring</span>
                 </div>
             </div>
         </div>
@@ -976,12 +989,12 @@
                     <span class="research-badge">LDHA</span>
                     <span class="research-badge">SMN Protein</span>
                     <span class="research-badge">mTOR</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">ECM Engineering</div><div class="research-card-sub">Fibrosis reversal, NMJ stability</div></div>
                 </div>
                 <div class="research-card-desc">Extracellular matrix remodeling drives fibrosis at the neuromuscular junction. Engineering the ECM microenvironment could restore NMJ stability and synaptic transmission.</div>
@@ -989,12 +1002,12 @@
                     <span class="research-badge">SULF1</span>
                     <span class="research-badge">GALNT6</span>
                     <span class="research-badge">NMJ</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">Cross-Disease Learning</div><div class="research-card-sub">ALS, DMD, SBMA shared pathways</div></div>
                 </div>
                 <div class="research-card-desc">ALS, DMD, and SBMA share motor neuron and muscle pathology with SMA. Breakthroughs in one disease may accelerate drug discovery in others through shared molecular targets.</div>
@@ -1002,7 +1015,7 @@
                     <span class="research-badge">STMN2</span>
                     <span class="research-badge">UBA1</span>
                     <span class="research-badge">NCALD</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#2563eb1a;color:#2563eb">Exploring</span>
                 </div>
             </div>
         </div>
@@ -1020,12 +1033,12 @@
                 <div class="research-card-meta">
                     <span class="research-badge">SMN2</span>
                     <span class="research-badge">SMN1</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">Mitochondrial Overdrive</div><div class="research-card-sub">PGC-1alpha bioenergetic rescue</div></div>
                 </div>
                 <div class="research-card-desc">PGC-1alpha activation to boost mitochondrial biogenesis and rescue the bioenergetic deficit in SMA motor neurons. Address the energy crisis driving cell death.</div>
@@ -1033,12 +1046,12 @@
                     <span class="research-badge">SPATA18</span>
                     <span class="research-badge">LDHA</span>
                     <span class="research-badge">mTOR</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#2563eb1a;color:#2563eb">Exploring</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">Engineered Probiotics</div><div class="research-card-sub">Gut-brain axis, butyrate HDAC</div></div>
                 </div>
                 <div class="research-card-desc">Engineered probiotic bacteria producing butyrate (HDAC inhibitor) to increase SMN2 expression via the gut-brain axis. Oral, non-invasive, continuous delivery.</div>
@@ -1046,12 +1059,12 @@
                     <span class="research-badge">SMN2</span>
                     <span class="research-badge">DNMT3B</span>
                     <span class="research-badge">LY96</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#2563eb1a;color:#2563eb">Exploring</span>
                 </div>
             </div>
             <div class="research-card">
                 <div class="research-card-header">
-                    
+
                     <div><div class="research-card-title">Mechanotransduction</div><div class="research-card-sub">Vibration-activated HSP</div></div>
                 </div>
                 <div class="research-card-desc">Low-frequency mechanical vibration activates heat shock proteins (HSPs) that stabilize misfolded proteins and protect cells. Non-pharmacological intervention for muscle preservation.</div>
@@ -1059,7 +1072,7 @@
                     <span class="research-badge">CORO1C</span>
                     <span class="research-badge">CTNNA1</span>
                     <span class="research-badge">PLS3</span>
-                    <span class="research-horizon">Starting soon</span>
+                    <span class="research-horizon" style="background:#2563eb1a;color:#2563eb">Exploring</span>
                 </div>
             </div>
         </div>
@@ -1078,7 +1091,7 @@
                     <span class="research-badge">SMN2</span>
                     <span class="research-badge">SpliceAI</span>
                     <span class="research-badge">ESM-2</span>
-                    <span class="research-horizon">Status: Building Now</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card" style="border-left: 3px solid var(--accent);">
@@ -1091,7 +1104,7 @@
                     <span class="research-badge">bioRxiv</span>
                     <span class="research-badge">ChEMBL</span>
                     <span class="research-badge">Claude</span>
-                    <span class="research-horizon">Status: Planned</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card" style="border-left: 3px solid var(--accent);">
@@ -1104,7 +1117,7 @@
                     <span class="research-badge">GEO</span>
                     <span class="research-badge">STRING</span>
                     <span class="research-badge">Proteomics</span>
-                    <span class="research-horizon">Status: Planned</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
             <div class="research-card" style="border-left: 3px solid var(--accent);">
@@ -1117,7 +1130,7 @@
                     <span class="research-badge">HuggingFace</span>
                     <span class="research-badge">RDKit</span>
                     <span class="research-badge">ProtT5</span>
-                    <span class="research-horizon">Status: Building Now</span>
+                    <span class="research-horizon" style="background:#16a34a1a;color:#16a34a">LIVE</span>
                 </div>
             </div>
         </div>
@@ -1215,6 +1228,13 @@
         <button class="tier-tab" data-tier="all" id="tier-tab-all">All</button>
     </div>
     <div id="hypotheses-body-wrap"><div class="loading">Loading hypotheses...</div></div>
+</section>
+
+<section class="section" id="predictions">
+    <div class="section-header"><h2 class="section-title">Prediction Cards</h2><span class="section-count" id="predictions-count"></span></div>
+    <p class="section-desc">Evidence-grounded, falsifiable predictions generated from convergence scoring across 5 dimensions: Volume, Lab Independence, Method Diversity, Temporal Trend, and Replication. All scoring weights are <a href="https://github.com/Bryzant-Labs/sma-platform/blob/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent)">open source on GitHub</a>. Each card links every claim to its source paper.</p>
+    <div id="predictions-filters" style="margin-bottom:16px;display:none"></div>
+    <div id="predictions-content"><div class="loading" style="padding:40px;text-align:center">Loading prediction cards...</div></div>
 </section>
 
 <section class="section" id="scores">
@@ -1794,6 +1814,31 @@
     <tbody id="trans-val-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
 </section>
 
+<section class="section" id="gpu-results">
+    <div class="section-header"><h2 class="section-title">GPU Computational Results</h2></div>
+    <p class="section-desc">Gold-standard computational predictions from SpliceAI, ESM-2, and Cas-OFFinder running on A100 GPUs. Every result is traceable to its tool version, parameters, and input data.</p>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">SpliceAI Splice Scores</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">SpliceAI v1.3.1 | Jaganathan et al. 2019, Cell</span></p>
+    <div id="gpu-splice-summary" class="screen-summary"><div class="loading">Loading splice scores...</div></div>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Chrom</th><th>Position</th><th>Ref</th><th>Alt</th><th>Max Delta</th><th>AG</th><th>AL</th><th>DG</th><th>DL</th><th>Impact</th>
+    </tr></thead>
+    <tbody id="gpu-splice-body"><tr><td colspan="11" class="loading">Loading...</td></tr></tbody></table></div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">ESM-2 Protein Embeddings</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">ESM-2 650M | Lin et al. 2023, Science</span></p>
+    <div id="gpu-esm2-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px"><div class="loading">Loading ESM-2 embeddings...</div></div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">CRISPR Off-Target Safety</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">Cas-OFFinder 3.0 | Bae et al. 2014 | hg38 genome</span></p>
+    <div id="gpu-offtarget-summary" class="screen-summary"><div class="loading">Loading off-target data...</div></div>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Mismatches</th><th>Count</th><th>Risk Level</th><th>Percentage</th>
+    </tr></thead>
+    <tbody id="gpu-offtarget-body"><tr><td colspan="4" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
 <section class="section" id="contact">
     <div class="section-header"><h2 class="section-title">Contact</h2></div>
     <p class="section-desc">Questions about the platform, data, or collaboration? Send us a message.</p>
@@ -1824,11 +1869,96 @@
         </div>
     </div>
 </section>
+
+<section class="section" id="news">
+    <div class="section-header">
+        <h2 class="section-title">News &amp; Discoveries</h2>
+        <span class="section-count" id="news-count"></span>
+        <a href="/api/v2/news/feed/rss" target="_blank" rel="noopener" title="RSS Feed" style="margin-left:12px;font-size:14px;color:var(--accent);text-decoration:none">&#128225; RSS</a>
+    </div>
+    <p class="section-desc">Research highlights, computational discoveries, and platform updates. Comment on findings and join the discussion.</p>
+    <div class="news-filters" style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="page-btn active" id="news-filter-all" data-cat="">All</button>
+        <button class="page-btn" data-cat="discovery">Discoveries</button>
+        <button class="page-btn" data-cat="gpu_result">GPU Results</button>
+        <button class="page-btn" data-cat="hypothesis">Hypotheses</button>
+        <button class="page-btn" data-cat="data_update">Data Updates</button>
+        <button class="page-btn" data-cat="announcement">Announcements</button>
+    </div>
+    <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px">
+        <div class="loading" style="grid-column:1/-1;text-align:center;padding:30px">Loading news...</div>
+    </div>
+    <div id="news-pagination" style="margin-top:16px;text-align:center"></div>
+
+    <!-- Single post detail view (hidden by default) -->
+    <div id="news-detail" style="display:none">
+        <button id="news-back-btn" class="page-btn" style="margin-bottom:16px">&larr; Back to News</button>
+        <article class="card" style="padding:24px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span class="badge badge-blue" id="news-detail-category"></span>
+                <span style="font-size:11px;color:var(--muted)" id="news-detail-date"></span>
+                <span style="font-size:11px;color:var(--muted)" id="news-detail-author"></span>
+            </div>
+            <h2 id="news-detail-title" style="font-size:22px;margin:0 0 16px;line-height:1.3"></h2>
+            <div id="news-detail-tags" style="margin-bottom:16px;display:flex;gap:6px;flex-wrap:wrap"></div>
+            <div id="news-detail-content" style="font-size:14px;line-height:1.8;white-space:pre-wrap"></div>
+        </article>
+
+        <div style="margin-top:24px">
+            <h3 style="font-size:15px;font-weight:600;margin-bottom:12px" id="news-comments-title">Comments</h3>
+            <div id="news-comments-list" style="margin-bottom:20px"></div>
+
+            <div class="card" style="padding:20px">
+                <h4 style="font-size:13px;font-weight:600;margin:0 0 12px">Leave a Comment</h4>
+                <form id="news-comment-form" style="display:flex;flex-direction:column;gap:10px">
+                    <input type="text" id="comment-name" placeholder="Your name *" required style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:13px">
+                    <input type="email" id="comment-email" placeholder="Email (optional, not displayed)" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:13px">
+                    <textarea id="comment-content" placeholder="Your comment *" required rows="4" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:13px;resize:vertical"></textarea>
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <button type="submit" class="page-btn" style="padding:8px 20px">Submit Comment</button>
+                        <span id="comment-status" style="font-size:12px"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="synthesis">
+    <div class="section-header"><h2 class="section-title">Cross-Paper Synthesis</h2><span class="section-count" id="synthesis-count"></span></div>
+    <p class="section-desc">Non-obvious connections across 25,000+ claims from different papers. Discover shared mechanisms and co-occurring targets that no single publication reveals.</p>
+    <div class="filter-tabs" id="synthesis-tabs">
+        <button class="filter-tab active" data-synth-tab="cooccurrences">Co-occurrences</button>
+        <button class="filter-tab" data-synth-tab="shared-mechanisms">Shared Mechanisms</button>
+        <button class="filter-tab" data-synth-tab="cards">Synthesis Cards</button>
+    </div>
+    <div id="synthesis-cooccurrences">
+        <div class="table-wrap"><table><thead><tr><th>Target A</th><th>Target B</th><th>Shared Papers</th><th>Avg Confidence</th><th>Score</th></tr></thead>
+        <tbody id="synthesis-cooc-body"><tr><td colspan="5" class="loading">Loading co-occurrences...</td></tr></tbody></table></div>
+    </div>
+    <div id="synthesis-shared-mechanisms" style="display:none">
+        <div class="table-wrap"><table><thead><tr><th>Mechanism</th><th>Targets</th><th>Claims</th><th>Avg Confidence</th></tr></thead>
+        <tbody id="synthesis-mech-body"><tr><td colspan="4" class="loading">Loading shared mechanisms...</td></tr></tbody></table></div>
+    </div>
+    <div id="synthesis-cards" style="display:none">
+        <div id="synthesis-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px"><div class="loading">Loading synthesis cards...</div></div>
+    </div>
+</section>
+
+<section class="section" id="nim-results">
+    <div class="section-header"><h2 class="section-title">NVIDIA NIM Docking (DiffDock v2.2)</h2><span class="section-count" id="nim-results-count"></span></div>
+    <p class="section-desc">700 compound-target docking predictions via NVIDIA NIM API. Structure-based virtual screening using DiffDock v2.2 generative docking model on NVIDIA cloud infrastructure.</p>
+    <div id="nim-status-bar" style="margin-bottom:16px"></div>
+    <div class="table-wrap"><table><thead><tr><th>#</th><th>Compound</th><th>Target</th><th>Confidence</th><th>Binding Energy</th><th>Pose Rank</th><th>Status</th></tr></thead>
+    <tbody id="nim-results-body"><tr><td colspan="7" class="loading">Loading NIM docking results...</td></tr></tbody></table></div>
+    <div id="nim-results-pagination"></div>
+</section>
+
 </main>
 
 <footer class="site-footer"><div class="container">
     <div class="footer-row">
-        <div class="footer-text">SMA Research Platform &mdash; Open source, MIT License. Evidence-first, no marketing.</div>
+        <div class="footer-text">SMA Research Platform &mdash; Open source, AGPL-3.0. Evidence-first, no marketing.</div>
         <div class="footer-text"><a href="/api/v2/stats">API</a> &middot; <a href="/api/v2/docs">Docs</a> &middot; <a href="/links/">Links</a> &middot; <a href="https://github.com/Bryzant-Labs/sma-platform" target="_blank" rel="noopener">GitHub</a> &middot; Data updated via automated daily pipeline</div>
     </div>
     <div class="footer-row" style="margin-top:12px;gap:24px">
@@ -1895,13 +2025,26 @@
         Claims and hypotheses are extracted and synthesized using large language models (LLMs).
         While we apply confidence scoring and evidence tracing, AI-generated content may contain
         inaccuracies. All assertions should be independently verified against primary sources.</p>
+        <p><strong>Computational Predictions (GPU Results)</strong><br>
+        Molecular docking scores (DiffDock), splice variant predictions (SpliceAI), protein structure
+        predictions (Boltz-2), and protein embeddings (ESM-2) are <strong>computational predictions only</strong>.
+        They predict binding poses and relative affinity, <strong>not biological activity</strong>.
+        No computational prediction on this platform has been experimentally validated.
+        Docking confidence scores indicate predicted binding strength, not therapeutic efficacy.
+        Experimental validation (in-vitro binding assays, cell-based assays, animal models) is required
+        before any compound can be considered a therapeutic candidate.</p>
+        <p><strong>Not a Medical Device</strong><br>
+        This platform is a <strong>research tool</strong>. It is not a medical device as defined by the EU Medical
+        Device Regulation (MDR 2017/745) or the US FDA. It does not diagnose, treat, prevent, or cure
+        any disease. It is not intended for clinical decision-making. No CE marking or FDA clearance
+        is claimed or implied. <strong>For Research Use Only.</strong></p>
         <p><strong>No Warranty</strong><br>
         This platform is provided &ldquo;as is&rdquo; without warranty of any kind, express or implied.
         The operators do not guarantee the accuracy, completeness, or fitness for any particular purpose
-        of the data presented.</p>
-        <p><strong>Open Data</strong><br>
-        All research data is freely accessible via the <a href="/api/v2/docs">REST API</a>.
-        Results and datasets can be reused for non-commercial research purposes.</p>
+        of the data presented. Use of this platform is at the user's own risk.</p>
+        <p><strong>Open Source</strong><br>
+        The platform code is licensed under AGPL-3.0. Research data is available under CC-BY-SA 4.0
+        via the <a href="/api/v2/docs">REST API</a>.</p>
     </div>
     <div id="legal-haftung" class="legal-content" style="display:none;font-size:13px;line-height:1.8;color:var(--text-secondary)">
         <h3 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px">Haftungsausschluss</h3>
@@ -1916,8 +2059,14 @@
         auf deren Inhalte wir keinen Einfluss haben. F&uuml;r die Inhalte der verlinkten Seiten ist stets
         der jeweilige Anbieter oder Betreiber verantwortlich. Eine permanente inhaltliche Kontrolle der
         verlinkten Seiten ist ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar.</p>
-        <p><strong>3. Urheberrecht</strong><br>
-        Der Quellcode der SMA Research Platform steht unter der MIT-Lizenz. Die auf dieser Plattform
+        <p><strong>3. Kein Medizinprodukt</strong><br>
+        Diese Plattform ist ein <strong>Forschungswerkzeug</strong> und kein Medizinprodukt im Sinne der
+        EU-Medizinprodukteverordnung (MDR 2017/745). Sie dient nicht der Diagnose, Behandlung oder
+        Vorbeugung von Krankheiten. Berechnete Vorhersagen (Docking-Scores, Splei&szlig;varianten,
+        Proteinstrukturen) sind <strong>ausschlie&szlig;lich computationale Vorhersagen</strong> ohne
+        experimentelle Validierung. <strong>Nur f&uuml;r Forschungszwecke.</strong></p>
+        <p><strong>4. Urheberrecht</strong><br>
+        Der Quellcode der SMA Research Platform steht unter der AGPL-3.0-Lizenz. Die auf dieser Plattform
         dargestellten wissenschaftlichen Daten stammen aus &ouml;ffentlich zug&auml;nglichen Quellen
         (PubMed/NCBI, ClinicalTrials.gov, GEO). Zitate und Metadaten werden im Rahmen des
         wissenschaftlichen Zitatrechts verwendet.</p>
@@ -1953,12 +2102,25 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         return k || '';
     }
 
+    // URL protocol validation — prevent javascript: XSS via DB-sourced URLs
+    function safeUrl(url, fallback) {
+        if (!url) return fallback || '#';
+        try {
+            var u = new URL(url, location.origin);
+            if (u.protocol === 'https:' || u.protocol === 'http:') return url;
+            return fallback || '#';
+        } catch(e) { return fallback || '#'; }
+    }
+
     // Safe DOM helpers
+    var SAFE_ATTRS = {className:1, text:1, style:1, colSpan:1, href:1, target:1, rel:1, title:1, type:1, value:1, disabled:1, id:1, htmlFor:1, src:1};
     function el(tag, attrs, children) {
         var e = document.createElement(tag);
         if (attrs) for (var k in attrs) {
+            if (!SAFE_ATTRS[k]) continue;
             if (k === 'className') e.className = attrs[k];
-            else if (k === 'href' || k === 'target' || k === 'rel') e.setAttribute(k, attrs[k]);
+            else if (k === 'href') e.setAttribute(k, safeUrl(attrs[k], '#'));
+            else if (k === 'target' || k === 'rel') e.setAttribute(k, attrs[k]);
             else if (k === 'text') e.textContent = attrs[k];
             else if (k === 'style') e.setAttribute('style', attrs[k]);
             else if (k === 'colSpan') e.colSpan = attrs[k];
@@ -1984,6 +2146,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         a.textContent = text; t.appendChild(a); return t;
     }
     function clearEl(id) { var e = document.getElementById(id); while(e.firstChild) e.removeChild(e.firstChild); return e; }
+    function setText(id, txt) { var e = document.getElementById(id); if (e) e.textContent = txt; }
+    function stripHtml(s) { if (!s) return ''; return s.replace(/<[^>]*>/g, ''); }
     function truncate(s, n) { return (!s) ? '' : s.length > n ? s.substring(0, n) + '...' : s; }
     function parseJ(s) { try { return typeof s === 'string' ? JSON.parse(s) : s; } catch(e) { return null; } }
     function typeCls(t) { return {gene:'badge-blue',protein:'badge-amber',pathway:'badge-green',cell_state:'badge-gray',phenotype:'badge-gray'}[t] || 'badge-gray'; }
@@ -2095,6 +2259,35 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         badge.appendChild(document.createTextNode('Data updated ' + freshText + ' \u00B7 Last: ' + (d.last_ingestion_type || '') + ' (' + (d.last_ingestion_items || 0) + ' items)'));
     }).catch(function() {});
 
+    // ============ Homepage News Highlights (always load) ============
+    fetch(API + '/news?featured=true&limit=3').then(function(r) { return r.json(); }).then(function(data) {
+        var grid = document.getElementById('home-news-grid');
+        if (!grid || !data.posts || !data.posts.length) return;
+        var posts = data.posts;
+        for (var i = 0; i < posts.length; i++) {
+            var p = posts[i];
+            var card = el('div', {className: 'research-card', style: 'cursor:pointer'});
+            card.dataset.slug = p.slug;
+
+            var headerRow = el('div', {style: 'display:flex;align-items:center;gap:6px;margin-bottom:8px'});
+            headerRow.appendChild(badgeEl(newsCatLabel(p.category), newsCatCls(p.category)));
+            var dateStr = p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'}) : '';
+            headerRow.appendChild(el('span', {text: dateStr, style: 'font-size:11px;color:var(--muted);margin-left:auto'}));
+            card.appendChild(headerRow);
+
+            card.appendChild(el('h4', {text: p.title, style: 'font-size:14px;font-weight:600;margin:0 0 8px;line-height:1.3'}));
+
+            var excerpt = truncate(stripHtml(p.content || p.excerpt || ''), 150);
+            card.appendChild(el('p', {text: excerpt, style: 'font-size:12px;color:var(--text-secondary);margin:0;line-height:1.5'}));
+
+            card.addEventListener('click', function() {
+                showSection('news');
+                setTimeout(function() { var slug = this.dataset.slug; fetchNewsPost(slug); }.bind(this), 100);
+            });
+            grid.appendChild(card);
+        }
+    }).catch(function() {});
+
     // Hero Ask AI
     (function() {
         var heroInput = document.getElementById('hero-ask-input');
@@ -2163,7 +2356,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var viewFull = document.createElement('div');
                     viewFull.style.cssText = 'margin-top:12px;font-size:11px';
                     var fullLink = document.createElement('a');
-                    fullLink.href = '#ask';
+                    fullLink.href = '/ask';
                     fullLink.style.cssText = 'color:var(--accent);cursor:pointer';
                     fullLink.textContent = 'Open in Research Assistant \u2192';
                     fullLink.addEventListener('click', function(e) {
@@ -2405,7 +2598,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             idCell.appendChild(sourceTypeBadge(s.source_type || 'pubmed'));
             body.appendChild(el('tr', null, [
                 idCell,
-                td(s.title || '', '', 'max-width:500px'),
+                td(stripHtml(s.title) || '', '', 'max-width:500px'),
                 td(s.source_type === 'patent' ? (parseJ(s.authors)||[]).join(', ') : (s.journal || ''), '', 'font-size:12px;color:var(--text-secondary)'),
                 td(s.pub_date || '', 'mono', 'font-size:11px;white-space:nowrap'),
                 td(cc > 0 ? String(cc) : '\u2014', 'mono', 'font-size:12px;text-align:center;' + (cc > 0 ? 'color:var(--green);font-weight:600' : 'color:var(--muted)')),
@@ -2415,7 +2608,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var expandRow = el('tr', {className: 'expand-row', id: expandId});
                 var expandCell = el('td', {colSpan: 6, className: 'expand-cell'});
                 var detail = el('div', {className: 'expand-abstract'});
-                detail.appendChild(el('strong', {text: s.title}));
+                detail.appendChild(el('strong', {text: stripHtml(s.title)}));
                 var authors = parseJ(s.authors);
                 if (authors && authors.length) {
                     detail.appendChild(el('p', {text: authors.join(', '), style: 'margin-top:4px;font-size:11px;color:var(--muted);font-style:italic'}));
@@ -2445,8 +2638,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function loadSources() {
         if (loaded.sources) return; loaded.sources = true;
         Promise.all([
-            fetch(API + '/sources?limit=50000').then(function(r) { return r.json(); }),
-            fetch(API + '/evidence?limit=50000').then(function(r) { return r.json(); })
+            fetch(API + '/sources?limit=10000').then(function(r) { return r.json(); }),
+            fetch(API + '/evidence?limit=10000').then(function(r) { return r.json(); })
         ]).then(function(results) {
             var data = results[0]; var evidence = results[1];
             // Count claims per source
@@ -2617,7 +2810,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     detailCell.appendChild(claimSec);
 
                     // Source paper section
-                    var fullTitle = c.source_title || meta.source_title || '';
+                    var fullTitle = stripHtml(c.source_title || meta.source_title || '');
                     var fullPmid = c.source_pmid || meta.source_pmid || '';
                     var fullAbstract = c.source_abstract || '';
                     var fullAuthors = c.source_authors || '';
@@ -2850,7 +3043,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             for (var i = 0; i < data.length; i++) {
                 var d = data[i];
                 body.appendChild(el('tr', null, [
-                    accLink(d.accession, d.url || '#'), td(d.title),
+                    accLink(d.accession, d.url || '#'), td(stripHtml(d.title)),
                     tdBadge(d.modality, 'badge-gray'),
                     td(d.organism, '', 'font-size:12px;font-style:italic'),
                     td(d.tissue, '', 'font-size:12px'),
@@ -2979,6 +3172,123 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }
     }
 
+    // === PREDICTIONS (Evidence Convergence Engine) ===
+    function loadPredictions() {
+        if (loaded.predictions) return; loaded.predictions = true;
+        fetch(API + '/predictions?limit=50').then(function(r) { return r.json(); }).then(function(data) {
+            var wrap = document.getElementById('predictions-content');
+            wrap.textContent = '';
+            if (!data || data.length === 0) {
+                wrap.appendChild(el('div', {className: 'empty-state'}, [
+                    el('h3', {text: 'No prediction cards yet'}),
+                    el('p', {text: 'Prediction cards are generated from evidence convergence scoring. Run /convergence/compute first.'})
+                ]));
+                document.getElementById('predictions-count').textContent = '0 predictions';
+                return;
+            }
+            document.getElementById('predictions-count').textContent = data.length + ' predictions';
+            var grid = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:16px'});
+            function confColor(level) {
+                if (level === 'very_high') return '#16a34a';
+                if (level === 'high') return '#2563eb';
+                if (level === 'medium') return '#d97706';
+                return '#6b7280';
+            }
+            function confBg(level) {
+                if (level === 'very_high') return '#16a34a1a';
+                if (level === 'high') return '#2563eb1a';
+                if (level === 'medium') return '#d976061a';
+                return '#6b72801a';
+            }
+            function statusIcon(s) {
+                if (s === 'strengthened') return ' ↗';
+                if (s === 'weakened') return ' ↘';
+                if (s === 'monitoring') return ' →';
+                return '';
+            }
+            for (var i = 0; i < data.length; i++) {
+                var p = data[i];
+                var score = parseFloat(p.convergence_score) || 0;
+                var clevel = p.confidence_level || 'low';
+                var color = confColor(clevel);
+
+                var card = el('div', {style: 'background:var(--panel);border:1px solid var(--line);padding:20px;position:relative;overflow:hidden'});
+
+                // Header: target + score
+                var hdr = el('div', {style: 'display:flex;justify-content:space-between;align-items:center;margin-bottom:12px'});
+                hdr.appendChild(el('span', {text: p.target_label || 'Unknown', style: 'font-weight:700;font-size:16px;color:var(--text)'}));
+                var scorePill = el('span', {text: (score * 100).toFixed(0) + '%' + statusIcon(p.status), style: 'font-weight:700;font-size:14px;padding:4px 10px;background:' + confBg(clevel) + ';color:' + color + ';text-transform:uppercase;font-size:11px;letter-spacing:0.5px'});
+                hdr.appendChild(scorePill);
+                card.appendChild(hdr);
+
+                // Confidence badge
+                var badges = el('div', {style: 'margin-bottom:10px'});
+                badges.appendChild(el('span', {text: clevel.replace('_', ' ').toUpperCase(), style: 'font-size:10px;padding:2px 6px;background:' + confBg(clevel) + ';color:' + color + ';font-weight:600;letter-spacing:0.5px'}));
+                badges.appendChild(el('span', {text: ' ' + (p.status || 'draft').toUpperCase(), style: 'font-size:10px;padding:2px 6px;background:#6b72801a;color:#6b7280;font-weight:600;letter-spacing:0.5px;margin-left:6px'}));
+                card.appendChild(badges);
+
+                // Prediction text
+                var predText = p.prediction_text || '';
+                card.appendChild(el('p', {text: predText.length > 200 ? predText.substring(0, 200) + '...' : predText, style: 'font-size:13px;line-height:1.6;color:var(--text-secondary);margin-bottom:12px'}));
+
+                // Convergence breakdown bar
+                var breakdown = p.convergence_breakdown || {};
+                if (typeof breakdown === 'string') { try { breakdown = JSON.parse(breakdown); } catch(e) { breakdown = {}; } }
+
+                var barWrap = el('div', {style: 'display:flex;gap:2px;height:6px;margin-bottom:8px;overflow:hidden'});
+                var dims = [
+                    {key: 'volume', w: 0.15, label: 'Vol', color: '#6366f1'},
+                    {key: 'lab_independence', w: 0.30, label: 'Lab', color: '#2563eb'},
+                    {key: 'method_diversity', w: 0.20, label: 'Method', color: '#0891b2'},
+                    {key: 'temporal_trend', w: 0.15, label: 'Time', color: '#16a34a'},
+                    {key: 'replication', w: 0.20, label: 'Repl', color: '#d97706'}
+                ];
+                for (var d = 0; d < dims.length; d++) {
+                    var dimVal = parseFloat(breakdown[dims[d].key]) || 0;
+                    var seg = el('div', {style: 'flex:' + dims[d].w + ';height:100%;background:' + dims[d].color + ';opacity:' + (0.3 + dimVal * 0.7).toFixed(2), title: dims[d].label + ': ' + (dimVal * 100).toFixed(0) + '%'});
+                    barWrap.appendChild(seg);
+                }
+                card.appendChild(barWrap);
+
+                // Dimension labels
+                var dimRow = el('div', {style: 'display:flex;gap:8px;font-size:10px;color:var(--muted);margin-bottom:12px'});
+                for (var d2 = 0; d2 < dims.length; d2++) {
+                    var dv = parseFloat(breakdown[dims[d2].key]) || 0;
+                    dimRow.appendChild(el('span', {text: dims[d2].label + ':' + (dv * 100).toFixed(0) + '%'}));
+                }
+                card.appendChild(dimRow);
+
+                // Evidence gaps
+                var gaps = p.evidence_gaps || [];
+                if (typeof gaps === 'string') { try { gaps = JSON.parse(gaps); } catch(e) { gaps = []; } }
+                if (gaps.length > 0) {
+                    var gapDiv = el('div', {style: 'font-size:11px;color:var(--text-secondary);border-top:1px solid var(--line);padding-top:8px'});
+                    gapDiv.appendChild(el('strong', {text: 'Evidence Gaps: ', style: 'color:var(--text)'}));
+                    gapDiv.appendChild(document.createTextNode(gaps.slice(0, 2).join(' | ')));
+                    card.appendChild(gapDiv);
+                }
+
+                // Export link
+                if (p.id) {
+                    var exportLink = el('a', {text: 'Export Markdown', style: 'display:inline-block;margin-top:8px;font-size:11px;color:var(--accent);text-decoration:none'});
+                    exportLink.href = API + '/predictions/' + p.id + '/export?format=markdown';
+                    exportLink.target = '_blank';
+                    card.appendChild(exportLink);
+                }
+
+                grid.appendChild(card);
+            }
+            wrap.appendChild(grid);
+        }).catch(function(err) {
+            var wrap = document.getElementById('predictions-content');
+            wrap.textContent = '';
+            wrap.appendChild(el('div', {className: 'empty-state'}, [
+                el('h3', {text: 'Predictions not available yet'}),
+                el('p', {text: 'The convergence engine needs to run first. This feature is being deployed.'})
+            ]));
+        });
+    }
+
     function loadScores() {
         if (loaded.scores) return; loaded.scores = true;
         fetch(API + '/scores').then(function(r) { return r.json(); }).then(function(data) {
@@ -3053,7 +3363,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var src = bySource[keys[k]];
                 var card = el('div', {style: 'background:var(--panel);border:1px solid var(--line);padding:16px;margin-bottom:12px'});
                 var header = el('div', {style: 'display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px'});
-                header.appendChild(el('span', {style: 'font-weight:600;font-size:13px', text: src.title || 'Unknown Source'}));
+                header.appendChild(el('span', {style: 'font-weight:600;font-size:13px', text: stripHtml(src.title) || 'Unknown Source'}));
                 var metaSpan = el('span', {style: 'font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px'});
                 if (src.pmid) metaSpan.appendChild(badgeEl('PMID:' + src.pmid, 'badge-blue'));
                 if (src.journal) metaSpan.appendChild(el('span', {text: src.journal}));
@@ -3969,10 +4279,10 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     // Title
                     var titleDiv = el('div', {className: 'sr-title'});
                     if (r.type === 'source' && r.source_pmid) {
-                        var titleLink = el('a', {href: 'https://pubmed.ncbi.nlm.nih.gov/' + r.source_pmid + '/', target: '_blank', rel: 'noopener', text: r.text || r.title || 'Untitled'});
+                        var titleLink = el('a', {href: 'https://pubmed.ncbi.nlm.nih.gov/' + r.source_pmid + '/', target: '_blank', rel: 'noopener', text: stripHtml(r.text || r.title || 'Untitled')});
                         titleDiv.appendChild(titleLink);
                     } else {
-                        titleDiv.textContent = r.text || r.title || 'Untitled';
+                        titleDiv.textContent = stripHtml(r.text || r.title || 'Untitled');
                     }
                     card.appendChild(titleDiv);
 
@@ -5256,12 +5566,558 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+    // ============ GPU Computational Results ============
+    function loadGpuResults() {
+        if (loaded.gpuResults) return; loaded.gpuResults = true;
+
+        // --- SpliceAI Splice Scores ---
+        fetch(API + '/gpu/splice-summary').then(function(r) { return r.json(); }).then(function(data) {
+            var summary = clearEl('gpu-splice-summary');
+            var stats = [
+                {val: data.total_scored || 0, label: 'Variants Scored', cls: ''},
+                {val: data.high_impact || 0, label: 'High Impact (>0.5)', cls: 'highlight'},
+                {val: data.medium_impact || 0, label: 'Medium (0.1-0.5)', cls: ''},
+                {val: data.low_impact || 0, label: 'Low (<0.1)', cls: ''}
+            ];
+            for (var s = 0; s < stats.length; s++) {
+                var card = el('div', {className: 'screen-stat'});
+                card.appendChild(el('div', {className: 'screen-stat-val' + (stats[s].cls ? ' ' + stats[s].cls : ''), text: String(stats[s].val)}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
+                summary.appendChild(card);
+            }
+            var body = clearEl('gpu-splice-body');
+            var top = data.top_variants || [];
+            for (var i = 0; i < top.length; i++) {
+                var v = top[i];
+                var maxD = v.max_delta || 0;
+                var impactLabel = maxD > 0.5 ? 'HIGH' : maxD > 0.1 ? 'MEDIUM' : maxD > 0.01 ? 'LOW' : 'BENIGN';
+                var impactCls = maxD > 0.5 ? 'badge-red' : maxD > 0.1 ? 'badge-amber' : maxD > 0.01 ? 'badge-amber' : 'badge-gray';
+                if (maxD > 0.01 && maxD <= 0.1) impactCls = 'badge-amber';
+                body.appendChild(el('tr', null, [
+                    td(String(i + 1), 'mono'),
+                    td(v.chrom || '', 'mono'),
+                    td(String(v.pos || ''), 'mono'),
+                    td(v.ref || '', 'mono'),
+                    td(v.alt || '', 'mono'),
+                    tdBadge(String(maxD.toFixed(4)), maxD > 0.5 ? 'badge-red' : maxD > 0.1 ? 'badge-amber' : 'badge-gray'),
+                    td(String((v.ds_ag || 0).toFixed(4)), 'mono', 'font-size:11px'),
+                    td(String((v.ds_al || 0).toFixed(4)), 'mono', 'font-size:11px'),
+                    td(String((v.ds_dg || 0).toFixed(4)), 'mono', 'font-size:11px'),
+                    td(String((v.ds_dl || 0).toFixed(4)), 'mono', 'font-size:11px'),
+                    tdBadge(impactLabel, impactCls)
+                ]));
+            }
+            if (top.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 11, className: 'loading', text: 'No splice score data available yet. Run SpliceAI GPU job to populate.'})]));
+            }
+        }).catch(function(e) {
+            clearEl('gpu-splice-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Splice scores not available: ' + e.message})]));
+            clearEl('gpu-splice-body').appendChild(el('tr', null, [el('td', {colSpan: 11, text: 'Error loading data'})]));
+        });
+
+        // --- ESM-2 Protein Embeddings ---
+        fetch(API + '/targets?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+            var container = clearEl('gpu-esm2-cards');
+            var count = 0;
+            for (var i = 0; i < data.length; i++) {
+                var t = data[i];
+                var meta = parseJ(t.metadata);
+                if (!meta || !meta.esm2) continue;
+                count++;
+                var esm = meta.esm2;
+                var card = el('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var nameRow = el('div', {text: t.symbol || t.name});
+                nameRow.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:700;margin-bottom:8px';
+                card.appendChild(nameRow);
+                var typeRow = el('div');
+                typeRow.appendChild(badgeEl(t.target_type || 'gene', typeCls(t.target_type)));
+                typeRow.style.cssText = 'margin-bottom:8px';
+                card.appendChild(typeRow);
+                var items = [
+                    {label: 'Sequence Length', val: esm.sequence_length ? String(esm.sequence_length) + ' aa' : 'N/A'},
+                    {label: 'Embedding Dim', val: esm.embedding_dim ? String(esm.embedding_dim) : '1280'},
+                    {label: 'Model', val: esm.model || 'ESM-2 650M'},
+                    {label: 'UniProt', val: esm.uniprot_id || 'N/A'}
+                ];
+                for (var j = 0; j < items.length; j++) {
+                    var row = el('div');
+                    row.style.cssText = 'display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid var(--line-light)';
+                    row.appendChild(el('span', {text: items[j].label, style: 'color:var(--muted)'}));
+                    row.appendChild(el('span', {text: items[j].val, style: 'font-family:"JetBrains Mono",monospace;font-weight:600'}));
+                    card.appendChild(row);
+                }
+                container.appendChild(card);
+            }
+            if (count === 0) {
+                container.appendChild(el('div', {className: 'empty-state'}, [
+                    el('h3', {text: 'No ESM-2 Embeddings Yet'}),
+                    el('p', {text: 'Run ESM-2 GPU job and ingest embeddings to populate this section.'})
+                ]));
+            }
+        }).catch(function(e) {
+            clearEl('gpu-esm2-cards').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'ESM-2 data not available: ' + e.message})]));
+        });
+
+        // --- CRISPR Off-Target Safety ---
+        fetch(API + '/gpu/offtarget-summary').then(function(r) { return r.json(); }).then(function(data) {
+            var summary = clearEl('gpu-offtarget-summary');
+            var stats = [
+                {val: data.total_guides || 0, label: 'Guides Scanned', cls: ''},
+                {val: data.total_offtargets || 0, label: 'Off-Targets Found', cls: ''},
+                {val: data.exact_matches || 0, label: 'Exact Matches (0mm)', cls: data.exact_matches > 0 ? 'highlight' : ''},
+                {val: data.unique_sites || 0, label: 'Unique Genomic Sites', cls: ''}
+            ];
+            for (var s = 0; s < stats.length; s++) {
+                var card = el('div', {className: 'screen-stat'});
+                var valCls = 'screen-stat-val';
+                if (stats[s].cls) valCls += ' ' + stats[s].cls;
+                card.appendChild(el('div', {className: valCls, text: String(stats[s].val)}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
+                summary.appendChild(card);
+            }
+            var body = clearEl('gpu-offtarget-body');
+            var breakdown = data.by_mismatch || [];
+            for (var i = 0; i < breakdown.length; i++) {
+                var b = breakdown[i];
+                var mm = b.mismatches;
+                var riskLabel = mm === 0 ? 'DANGEROUS' : mm <= 2 ? 'WARNING' : 'LOW RISK';
+                var riskCls = mm === 0 ? 'badge-red' : mm <= 2 ? 'badge-amber' : 'badge-gray';
+                var pct = data.total_offtargets > 0 ? ((b.count / data.total_offtargets) * 100).toFixed(1) + '%' : '0%';
+                body.appendChild(el('tr', null, [
+                    td(String(mm), 'mono', 'font-weight:700'),
+                    td(String(b.count), 'mono'),
+                    tdBadge(riskLabel, riskCls),
+                    td(pct, 'mono')
+                ]));
+            }
+            if (breakdown.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 4, className: 'loading', text: 'No off-target data available yet. Run Cas-OFFinder GPU job to populate.'})]));
+            }
+        }).catch(function(e) {
+            clearEl('gpu-offtarget-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Off-target data not available: ' + e.message})]));
+            clearEl('gpu-offtarget-body').appendChild(el('tr', null, [el('td', {colSpan: 4, text: 'Error loading data'})]));
+        });
+    }
+
+    // ============ Cross-Paper Synthesis ============
+    function loadSynthesis() {
+        if (loaded.synthesis) return; loaded.synthesis = true;
+
+        // Tab switching
+        var tabContainer = document.getElementById('synthesis-tabs');
+        var panels = {
+            'cooccurrences': document.getElementById('synthesis-cooccurrences'),
+            'shared-mechanisms': document.getElementById('synthesis-shared-mechanisms'),
+            'cards': document.getElementById('synthesis-cards')
+        };
+        tabContainer.addEventListener('click', function(e) {
+            if (!e.target.classList.contains('filter-tab')) return;
+            var tabs = tabContainer.querySelectorAll('.filter-tab');
+            for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+            e.target.classList.add('active');
+            var target = e.target.getAttribute('data-synth-tab');
+            for (var key in panels) {
+                if (panels.hasOwnProperty(key)) {
+                    panels[key].style.display = key === target ? '' : 'none';
+                }
+            }
+        });
+
+        // Co-occurrences
+        fetch(API + '/synthesis/cooccurrences?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+            var items = data.cooccurrences || data.results || data;
+            if (!Array.isArray(items)) items = [];
+            var body = clearEl('synthesis-cooc-body');
+            if (items.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 5, className: 'loading', text: 'No co-occurrence data available yet.'})]));
+                return;
+            }
+            setText('synthesis-count', items.length + ' co-occurrences');
+            for (var i = 0; i < items.length; i++) {
+                var c = items[i];
+                var conf = c.avg_confidence != null ? Number(c.avg_confidence).toFixed(2) : '-';
+                var score = c.score != null ? Number(c.score).toFixed(3) : '-';
+                body.appendChild(el('tr', null, [
+                    td(c.target_a || c.target_a_symbol || '', '', 'font-weight:600'),
+                    td(c.target_b || c.target_b_symbol || '', '', 'font-weight:600'),
+                    td(String(c.shared_papers || c.paper_count || 0), 'mono'),
+                    td(conf, 'mono'),
+                    tdBadge(score, Number(c.score) >= 0.7 ? 'badge-green' : Number(c.score) >= 0.4 ? 'badge-amber' : 'badge-gray')
+                ]));
+            }
+        }).catch(function(e) {
+            clearEl('synthesis-cooc-body').appendChild(el('tr', null, [el('td', {colSpan: 5, className: 'loading', text: 'Co-occurrence data not available: ' + e.message})]));
+        });
+
+        // Shared mechanisms
+        fetch(API + '/synthesis/shared-mechanisms?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+            var items = data.mechanisms || data.results || data;
+            if (!Array.isArray(items)) items = [];
+            var body = clearEl('synthesis-mech-body');
+            if (items.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 4, className: 'loading', text: 'No shared mechanism data available yet.'})]));
+                return;
+            }
+            for (var i = 0; i < items.length; i++) {
+                var m = items[i];
+                var targets = m.targets || m.target_symbols || [];
+                var targetsStr = Array.isArray(targets) ? targets.join(', ') : String(targets);
+                var conf = m.avg_confidence != null ? Number(m.avg_confidence).toFixed(2) : '-';
+                body.appendChild(el('tr', null, [
+                    td(m.mechanism || m.name || '', '', 'font-weight:600'),
+                    td(targetsStr, '', 'font-size:12px'),
+                    td(String(m.claims || m.claim_count || 0), 'mono'),
+                    td(conf, 'mono')
+                ]));
+            }
+        }).catch(function(e) {
+            clearEl('synthesis-mech-body').appendChild(el('tr', null, [el('td', {colSpan: 4, className: 'loading', text: 'Shared mechanism data not available: ' + e.message})]));
+        });
+
+        // Synthesis cards
+        fetch(API + '/synthesis/cards?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+            var items = data.cards || data.results || data;
+            if (!Array.isArray(items)) items = [];
+            var grid = clearEl('synthesis-cards-grid');
+            if (items.length === 0) {
+                var empty = el('div', {className: 'empty-state', style: 'grid-column:1/-1'});
+                empty.appendChild(el('h3', {text: 'No Synthesis Cards Yet'}));
+                empty.appendChild(el('p', {text: 'Cross-paper synthesis cards will appear here as the analysis engine identifies non-obvious connections across the evidence graph.'}));
+                grid.appendChild(empty);
+                return;
+            }
+            for (var i = 0; i < items.length; i++) {
+                var s = items[i];
+                var card = el('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
+                var title = el('div', {text: s.title || s.insight || 'Insight #' + (i + 1)});
+                title.style.cssText = 'font-size:14px;font-weight:600;margin-bottom:8px';
+                card.appendChild(title);
+                if (s.description || s.body) {
+                    var desc = el('p', {text: truncate(s.description || s.body, 200)});
+                    desc.style.cssText = 'font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:8px';
+                    card.appendChild(desc);
+                }
+                if (s.targets && Array.isArray(s.targets)) {
+                    var tagRow = el('div', {style: 'display:flex;gap:4px;flex-wrap:wrap'});
+                    for (var t = 0; t < Math.min(s.targets.length, 5); t++) {
+                        tagRow.appendChild(badgeEl(s.targets[t], 'badge-blue'));
+                    }
+                    card.appendChild(tagRow);
+                }
+                if (s.confidence != null) {
+                    var confRow = el('div', {style: 'margin-top:8px'});
+                    confRow.appendChild(badgeEl('Confidence: ' + Number(s.confidence).toFixed(2), Number(s.confidence) >= 0.7 ? 'badge-green' : Number(s.confidence) >= 0.4 ? 'badge-amber' : 'badge-gray'));
+                    card.appendChild(confRow);
+                }
+                grid.appendChild(card);
+            }
+        }).catch(function(e) {
+            var grid = clearEl('synthesis-cards-grid');
+            var empty = el('div', {className: 'empty-state', style: 'grid-column:1/-1'});
+            empty.appendChild(el('p', {text: 'Synthesis cards not available: ' + e.message}));
+            grid.appendChild(empty);
+        });
+    }
+
+    // ============ NIM Docking Results ============
+    var nimResultsData = []; var nimResultsPage = 1;
+    function renderNimResultsPage() {
+        var body = clearEl('nim-results-body');
+        if (nimResultsData.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No docking results available yet. Results will appear as NIM jobs complete.'})]));
+            renderPagination('nim-results-pagination', 0, 1, function() {});
+            return;
+        }
+        var start = (nimResultsPage - 1) * PER_PAGE;
+        var end = Math.min(start + PER_PAGE, nimResultsData.length);
+        for (var i = start; i < end; i++) {
+            var d = nimResultsData[i];
+            var conf = d.confidence != null ? Number(d.confidence).toFixed(3) : '-';
+            var energy = d.binding_energy != null ? Number(d.binding_energy).toFixed(2) : (d.score != null ? Number(d.score).toFixed(2) : '-');
+            var poseRank = d.pose_rank != null ? String(d.pose_rank) : (d.rank != null ? String(d.rank) : '-');
+            var status = d.status || 'completed';
+            var statusCls2 = status === 'completed' ? 'badge-green' : status === 'running' ? 'badge-amber' : status === 'failed' ? 'badge-red' : 'badge-gray';
+            body.appendChild(el('tr', null, [
+                td(String(i + 1), 'mono'),
+                td(d.compound || d.compound_name || d.ligand || '', '', 'font-weight:600'),
+                td(d.target || d.target_name || d.receptor || ''),
+                td(conf, 'mono'),
+                td(energy, 'mono'),
+                td(poseRank, 'mono'),
+                tdBadge(status.toUpperCase(), statusCls2)
+            ]));
+        }
+        renderPagination('nim-results-pagination', nimResultsData.length, nimResultsPage, function(p) { nimResultsPage = p; renderNimResultsPage(); });
+    }
+    function loadNimResults() {
+        if (loaded.nimResults) return; loaded.nimResults = true;
+
+        // Status bar
+        var statusBar = clearEl('nim-status-bar');
+        var statusBadge = el('span', {text: 'Running \u2014 700 compound-target docking campaign via NVIDIA NIM'});
+        statusBadge.style.cssText = 'display:inline-block;padding:6px 16px;font-size:12px;font-weight:600;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber)';
+        statusBar.appendChild(statusBadge);
+
+        // Try to load results from GPU jobs endpoint
+        fetch(API + '/gpu/jobs?job_type=diffdock_v2_nim&limit=50').then(function(r) { return r.json(); }).then(function(data) {
+            var jobs = data.jobs || data.results || data;
+            if (!Array.isArray(jobs)) jobs = [];
+
+            // Extract docking results from jobs
+            var results = [];
+            for (var i = 0; i < jobs.length; i++) {
+                var job = jobs[i];
+                if (job.results && Array.isArray(job.results)) {
+                    for (var j = 0; j < job.results.length; j++) {
+                        results.push(job.results[j]);
+                    }
+                } else if (job.compound || job.ligand) {
+                    results.push(job);
+                }
+            }
+
+            // Update status bar based on job state
+            statusBar = clearEl('nim-status-bar');
+            if (jobs.length > 0) {
+                var completedCount = 0; var runningCount = 0; var failedCount = 0;
+                for (var k = 0; k < jobs.length; k++) {
+                    var st = (jobs[k].status || '').toLowerCase();
+                    if (st === 'completed' || st === 'done') completedCount++;
+                    else if (st === 'failed' || st === 'error') failedCount++;
+                    else runningCount++;
+                }
+                var summaryText = completedCount + ' completed';
+                if (runningCount > 0) summaryText += ', ' + runningCount + ' running';
+                if (failedCount > 0) summaryText += ', ' + failedCount + ' failed';
+                var badgeColor = runningCount > 0 ? 'var(--amber)' : 'var(--green)';
+                var badgeBg = runningCount > 0 ? 'var(--amber-bg)' : 'var(--green-bg)';
+                var badge2 = el('span', {text: 'DiffDock v2.2 NIM \u2014 ' + summaryText});
+                badge2.style.cssText = 'display:inline-block;padding:6px 16px;font-size:12px;font-weight:600;background:' + badgeBg + ';color:' + badgeColor + ';border:1px solid ' + badgeColor;
+                statusBar.appendChild(badge2);
+                setText('nim-results-count', jobs.length + ' jobs');
+            } else {
+                var pendingBadge = el('span', {text: 'Running \u2014 700 compound-target docking campaign via NVIDIA NIM'});
+                pendingBadge.style.cssText = 'display:inline-block;padding:6px 16px;font-size:12px;font-weight:600;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber)';
+                statusBar.appendChild(pendingBadge);
+            }
+
+            nimResultsData = results;
+            nimResultsPage = 1;
+            renderNimResultsPage();
+        }).catch(function(e) {
+            // API not available yet - show placeholder
+            var body = clearEl('nim-results-body');
+            body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'NIM docking endpoint not available yet. Results will appear as the docking campaign completes.'})]));
+        });
+    }
+
+    // ============ News & Discoveries ============
+    var newsCurrentPage = 1;
+    var newsCurrentCategory = '';
+    var newsCurrentSlug = null;
+
+    function loadNews() {
+        if (loaded.news) return; loaded.news = true;
+        fetchNewsPosts(1, '');
+
+        // Category filter buttons
+        var filterBtns = document.querySelectorAll('.news-filters .page-btn');
+        for (var f = 0; f < filterBtns.length; f++) {
+            filterBtns[f].addEventListener('click', function() {
+                for (var b = 0; b < filterBtns.length; b++) filterBtns[b].classList.remove('active');
+                this.classList.add('active');
+                newsCurrentCategory = this.dataset.cat || '';
+                newsCurrentPage = 1;
+                fetchNewsPosts(1, newsCurrentCategory);
+            });
+        }
+
+        // Back button
+        document.getElementById('news-back-btn').addEventListener('click', function() {
+            document.getElementById('news-detail').style.display = 'none';
+            document.getElementById('news-grid').style.display = '';
+            document.getElementById('news-pagination').style.display = '';
+            document.querySelector('.news-filters').style.display = '';
+            document.querySelector('#news .section-desc').style.display = '';
+        });
+
+        // Comment form
+        document.getElementById('news-comment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!newsCurrentSlug) return;
+            var nameVal = document.getElementById('comment-name').value.trim();
+            var emailVal = document.getElementById('comment-email').value.trim();
+            var contentVal = document.getElementById('comment-content').value.trim();
+            if (!nameVal || !contentVal) return;
+
+            var statusEl = document.getElementById('comment-status');
+            statusEl.textContent = 'Submitting...';
+            statusEl.style.color = 'var(--muted)';
+
+            fetch(API + '/news/' + newsCurrentSlug + '/comments', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({author_name: nameVal, author_email: emailVal || null, content: contentVal})
+            }).then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'approved') {
+                    statusEl.textContent = 'Comment published!';
+                    statusEl.style.color = 'var(--green)';
+                    document.getElementById('news-comment-form').reset();
+                    // Reload comments
+                    fetchNewsPost(newsCurrentSlug);
+                } else {
+                    statusEl.textContent = data.message || 'Comment submitted for review.';
+                    statusEl.style.color = 'var(--amber)';
+                    document.getElementById('news-comment-form').reset();
+                }
+            }).catch(function(err) {
+                statusEl.textContent = 'Failed to submit: ' + err.message;
+                statusEl.style.color = 'var(--red)';
+            });
+        });
+    }
+
+    function newsCatCls(cat) {
+        return {discovery:'badge-green', gpu_result:'badge-blue', hypothesis:'badge-amber', data_update:'badge-purple', announcement:'badge-gray'}[cat] || 'badge-gray';
+    }
+
+    function newsCatLabel(cat) {
+        return {discovery:'Discovery', gpu_result:'GPU Result', hypothesis:'Hypothesis', data_update:'Data Update', announcement:'Announcement'}[cat] || cat;
+    }
+
+    function fetchNewsPosts(page, category) {
+        var url = API + '/news?page=' + page + '&per_page=12';
+        if (category) url += '&category=' + category;
+        fetch(url).then(function(r) { return r.json(); })
+        .then(function(data) {
+            setText('news-count', data.total + ' posts');
+            var grid = clearEl('news-grid');
+            var posts = data.posts || [];
+            if (posts.length === 0) {
+                grid.appendChild(el('div', {className: 'empty-state', style: 'grid-column:1/-1;text-align:center;padding:40px'}, [
+                    el('h3', {text: 'No Posts Yet'}),
+                    el('p', {text: 'Research highlights and discoveries will appear here.'})
+                ]));
+                return;
+            }
+            for (var i = 0; i < posts.length; i++) {
+                var p = posts[i];
+                var card = el('div', {className: 'card', style: 'padding:16px;cursor:pointer;transition:border-color 0.2s'});
+                card.dataset.slug = p.slug;
+
+                var headerRow = el('div', {style: 'display:flex;align-items:center;gap:6px;margin-bottom:8px'});
+                headerRow.appendChild(badgeEl(newsCatLabel(p.category), newsCatCls(p.category)));
+                if (p.featured) headerRow.appendChild(badgeEl('Featured', 'badge-amber'));
+                var dateStr = p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'}) : '';
+                headerRow.appendChild(el('span', {text: dateStr, style: 'font-size:11px;color:var(--muted);margin-left:auto'}));
+                card.appendChild(headerRow);
+
+                card.appendChild(el('h3', {text: p.title, style: 'font-size:15px;font-weight:600;margin:0 0 8px;line-height:1.3'}));
+                card.appendChild(el('p', {text: p.excerpt || '', style: 'font-size:12px;color:var(--text-secondary);margin:0 0 8px;line-height:1.5'}));
+
+                var footer = el('div', {style: 'display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)'});
+                footer.appendChild(el('span', {text: (p.comment_count || 0) + ' comments'}));
+                if (p.tags && p.tags.length > 0) {
+                    for (var t = 0; t < Math.min(3, p.tags.length); t++) {
+                        footer.appendChild(el('span', {text: '#' + p.tags[t], style: 'color:var(--accent)'}));
+                    }
+                }
+                card.appendChild(footer);
+
+                card.addEventListener('click', function() {
+                    fetchNewsPost(this.dataset.slug);
+                });
+                grid.appendChild(card);
+            }
+
+            // Pagination
+            var pagEl = clearEl('news-pagination');
+            if (data.total_pages > 1) {
+                for (var pg = 1; pg <= data.total_pages; pg++) {
+                    var btn = el('button', {className: 'page-btn' + (pg === page ? ' active' : ''), text: String(pg)});
+                    (function(pageNum) {
+                        btn.addEventListener('click', function() {
+                            newsCurrentPage = pageNum;
+                            fetchNewsPosts(pageNum, newsCurrentCategory);
+                            window.scrollTo({top: document.getElementById('news').offsetTop, behavior: 'smooth'});
+                        });
+                    })(pg);
+                    pagEl.appendChild(btn);
+                }
+            }
+        }).catch(function(err) {
+            clearEl('news-grid').appendChild(el('div', {className: 'empty-state', style: 'grid-column:1/-1'}, [
+                el('p', {text: 'Failed to load news: ' + err.message})
+            ]));
+        });
+    }
+
+    function fetchNewsPost(slug) {
+        newsCurrentSlug = slug;
+        fetch(API + '/news/' + slug).then(function(r) { return r.json(); })
+        .then(function(post) {
+            // Hide grid, show detail
+            document.getElementById('news-grid').style.display = 'none';
+            document.getElementById('news-pagination').style.display = 'none';
+            document.querySelector('.news-filters').style.display = 'none';
+            document.querySelector('#news .section-desc').style.display = 'none';
+            document.getElementById('news-detail').style.display = '';
+
+            setText('news-detail-category', newsCatLabel(post.category));
+            document.getElementById('news-detail-category').className = 'badge ' + newsCatCls(post.category);
+            var dateStr = post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'}) : '';
+            setText('news-detail-date', dateStr);
+            setText('news-detail-author', 'by ' + (post.author || 'SMA Research Platform'));
+            setText('news-detail-title', post.title);
+
+            // Tags
+            var tagsEl = clearEl('news-detail-tags');
+            var tags = post.tags || [];
+            for (var t = 0; t < tags.length; t++) {
+                tagsEl.appendChild(el('span', {className: 'badge badge-gray', text: '#' + tags[t], style: 'font-size:11px'}));
+            }
+
+            // Content (render as pre-wrapped text for now)
+            setText('news-detail-content', post.content || '');
+
+            // Comments
+            var comments = post.comments || [];
+            setText('news-comments-title', 'Comments (' + comments.length + ')');
+            var commList = clearEl('news-comments-list');
+            if (comments.length === 0) {
+                commList.appendChild(el('p', {text: 'No comments yet. Be the first to share your thoughts.', style: 'font-size:13px;color:var(--muted);padding:12px 0'}));
+            } else {
+                for (var c = 0; c < comments.length; c++) {
+                    var cm = comments[c];
+                    var commentCard = el('div', {className: 'card', style: 'padding:12px;margin-bottom:8px'});
+                    var cmHeader = el('div', {style: 'display:flex;align-items:center;gap:8px;margin-bottom:6px'});
+                    cmHeader.appendChild(el('strong', {text: cm.author_name, style: 'font-size:13px'}));
+                    var cmDate = cm.created_at ? new Date(cm.created_at).toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'}) : '';
+                    cmHeader.appendChild(el('span', {text: cmDate, style: 'font-size:11px;color:var(--muted)'}));
+                    commentCard.appendChild(cmHeader);
+                    commentCard.appendChild(el('p', {text: cm.content, style: 'font-size:13px;margin:0;line-height:1.5'}));
+                    commList.appendChild(commentCard);
+                }
+            }
+
+            // Clear form
+            document.getElementById('comment-status').textContent = '';
+            window.scrollTo({top: document.getElementById('news').offsetTop, behavior: 'smooth'});
+        }).catch(function(err) {
+            document.getElementById('news-detail').style.display = 'none';
+            document.getElementById('news-grid').style.display = '';
+        });
+    }
+
     // Section loader map
     var loaders = {
         mission: loadMission, research: loadResearch,
         targets: loadTargets, trials: loadTrials, drugs: loadDrugs,
         sources: loadSources, datasets: loadDatasets, claims: loadClaims,
-        hypotheses: loadHypotheses, scores: loadScores, evidence: loadEvidence,
+        hypotheses: loadHypotheses, predictions: loadPredictions, scores: loadScores, evidence: loadEvidence,
         screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
         outcomes: loadOutcomes, comparative: loadComparative,
         directions: loadDirections, links: loadLinks, contact: loadContact,
@@ -5272,11 +6128,84 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         multisystem: loadMultisystem, bioelectric: loadBioelectric,
         splicemap: loadSpliceMap, rnabind: loadRnaBinding,
         dualtarget: loadDualTarget, twin: loadDigitalTwin,
-        labos: loadLabOs, federated: loadFederated, translate: loadTranslation
+        labos: loadLabOs, federated: loadFederated, translate: loadTranslation,
+        'gpu-results': loadGpuResults,
+        synthesis: loadSynthesis,
+        'nim-results': loadNimResults,
+        news: loadNews
     };
 
+    // SEO meta data per section for dynamic <title> and <meta description>
+    var sectionMeta = {
+        mission:     {title: 'SMA Research Platform — Open Evidence Graph', desc: 'Open-source evidence-first research platform for Spinal Muscular Atrophy (SMA). 4,582 PubMed sources, 13,000+ extracted claims, 189 hypotheses, 449 clinical trials, 21 molecular targets.'},
+        search:      {title: 'Search — SMA Research Platform', desc: 'Search across all SMA research data: targets, trials, drugs, claims, hypotheses, and publications.'},
+        ask:         {title: 'Ask AI — SMA Research Platform', desc: 'Ask questions about SMA research using AI-powered evidence retrieval across 13,000+ structured claims.'},
+        targets:     {title: 'Molecular Targets — SMA Research Platform', desc: '21 prioritized molecular targets for SMA drug discovery, scored across 7 dimensions including druggability, evidence depth, and novelty.'},
+        trials:      {title: 'Clinical Trials — SMA Research Platform', desc: '449 SMA clinical trials from ClinicalTrials.gov. Track nusinersen, risdiplam, onasemnogene, and emerging gene therapies.'},
+        drugs:       {title: 'Drugs & Compounds — SMA Research Platform', desc: 'SMA drugs and investigational compounds including approved therapies and pipeline candidates.'},
+        sources:     {title: 'Literature — SMA Research Platform', desc: '4,582 PubMed sources powering the SMA evidence graph. Full abstract access with LLM-extracted claims.'},
+        claims:      {title: 'Evidence Claims — SMA Research Platform', desc: '13,000+ LLM-extracted claims from SMA literature, structured by type, confidence, and linked to molecular targets.'},
+        hypotheses:  {title: 'Hypotheses — SMA Research Platform', desc: '189 prioritized research hypotheses for SMA, scored by evidence depth, source convergence, and therapeutic clarity.'},
+        predictions: {title: 'Predictions — SMA Research Platform', desc: 'AI-generated predictions for SMA research outcomes based on evidence graph analysis.'},
+        graph:       {title: 'Evidence Graph — SMA Research Platform', desc: 'Interactive network visualization of SMA evidence relationships between targets, drugs, claims, and trials.'},
+        scores:      {title: 'Target Scores — SMA Research Platform', desc: '7-dimension composite scoring for SMA molecular targets: druggability, evidence, clinical relevance, and more.'},
+        outcomes:    {title: 'Drug Outcomes — SMA Research Platform', desc: 'Clinical trial outcome tracking for SMA therapeutics across all phases.'},
+        screening:   {title: 'Compound Screening — SMA Research Platform', desc: '188 compounds screened against SMA targets with predicted binding affinity and ADMET profiles.'},
+        candidates:  {title: 'Drug Candidates — SMA Research Platform', desc: 'Top drug candidates for SMA ranked by multi-target affinity and clinical feasibility.'},
+        comparative: {title: 'Comparative Biology — SMA Research Platform', desc: 'Cross-species analysis of SMN biology across human, mouse, zebrafish, Drosophila, and C. elegans.'},
+        directions:  {title: 'Research Directions — SMA Research Platform', desc: 'Emerging research directions for SMA therapy development identified by evidence convergence analysis.'},
+        spatial:     {title: 'Spatial Omics — SMA Research Platform', desc: 'Spatial transcriptomic analysis of SMA-affected tissues and cell populations.'},
+        regen:       {title: 'Regeneration — SMA Research Platform', desc: 'Motor neuron regeneration pathways and repair mechanisms relevant to SMA.'},
+        nmj:         {title: 'NMJ Signaling — SMA Research Platform', desc: 'Neuromuscular junction signaling pathways disrupted in SMA and potential therapeutic targets.'},
+        multisystem: {title: 'Multisystem — SMA Research Platform', desc: 'Multi-organ involvement in SMA beyond motor neurons: cardiac, hepatic, and metabolic manifestations.'},
+        bioelectric: {title: 'Bioelectric — SMA Research Platform', desc: 'Bioelectric signaling patterns in SMA motor neurons and potential electroceutical interventions.'},
+        splicemap:   {title: 'Splice Map — SMA Research Platform', desc: 'SMN2 splicing map and modifier analysis for SMA therapeutic splice correction.'},
+        rnabind:     {title: 'RNA Binding — SMA Research Platform', desc: 'RNA-binding protein interactions with SMN2 pre-mRNA relevant to SMA splicing therapy.'},
+        dualtarget:  {title: 'Dual Target — SMA Research Platform', desc: 'Dual-target therapeutic strategies combining SMN-dependent and SMN-independent pathways.'},
+        twin:        {title: 'Digital Twin — SMA Research Platform', desc: 'Digital twin simulation of SMA disease progression and therapeutic response modeling.'},
+        molecules:   {title: 'Molecules — SMA Research Platform', desc: 'Molecular structure analysis and virtual screening results for SMA drug candidates.'},
+        crispr:      {title: 'CRISPR — SMA Research Platform', desc: 'CRISPR-based gene editing strategies for SMN1 restoration and SMN2 exon 7 inclusion.'},
+        aav:         {title: 'AAV Vectors — SMA Research Platform', desc: 'Adeno-associated virus vector design and optimization for SMA gene therapy.'},
+        docking:     {title: 'Molecular Docking — SMA Research Platform', desc: 'Computational docking results for SMA drug candidates against prioritized targets.'},
+        prime:       {title: 'Prime Editing — SMA Research Platform', desc: 'Prime editing approaches for precise SMN1/SMN2 correction in SMA.'},
+        mdsim:       {title: 'MD Simulation — SMA Research Platform', desc: 'Molecular dynamics simulations of SMN protein complexes and drug-target interactions.'},
+        labos:       {title: 'Lab-OS — SMA Research Platform', desc: 'Laboratory operating system for SMA experiment tracking and protocol management.'},
+        federated:   {title: 'Federated Analysis — SMA Research Platform', desc: 'Federated learning and cross-institutional data analysis for SMA research.'},
+        translate:   {title: 'Translation — SMA Research Platform', desc: 'Translational research pipeline from bench to bedside for SMA therapeutics.'},
+        'gpu-results': {title: 'GPU Results — SMA Research Platform', desc: 'GPU-accelerated computation results for molecular docking, CRISPR off-target analysis, and MD simulations.'},
+        synthesis:     {title: 'Cross-Paper Synthesis — SMA Research Platform', desc: 'Non-obvious connections across 25,000+ SMA claims. Co-occurring targets, shared mechanisms, and AI-generated synthesis cards from cross-paper analysis.'},
+        'nim-results': {title: 'NIM Docking Results — SMA Research Platform', desc: '700 compound-target docking predictions via NVIDIA NIM DiffDock v2.2 API. Structure-based virtual screening for SMA drug candidates.'},
+        news:          {title: 'News & Discoveries — SMA Research Platform', desc: 'Research highlights, computational discoveries, and community discussion on the SMA Research Platform.'},
+        research:    {title: 'About — SMA Research Platform', desc: 'About the SMA Research Platform: mission, methodology, team, and open-source commitment.'},
+        links:       {title: 'Links — SMA Research Platform', desc: 'Curated links to SMA databases, clinical trial registries, protein interaction networks, and research tools.'},
+        write:       {title: 'Evidence Writer — SMA Research Platform', desc: 'AI-assisted evidence writing for SMA research summaries and grant applications.'},
+        repurposing: {title: 'Drug Repurposing — SMA Research Platform', desc: 'Drug repurposing candidates for SMA identified through computational screening and evidence analysis.'},
+        versions:    {title: 'Version History — SMA Research Platform', desc: 'Platform version history and changelog for the SMA Research Platform.'}
+    };
+
+    // Update document title and meta description for SEO
+    function updateSeoMeta(sectionId) {
+        var meta = sectionMeta[sectionId];
+        if (!meta) return;
+        document.title = meta.title;
+        var descTag = document.querySelector('meta[name="description"]');
+        if (descTag) descTag.setAttribute('content', meta.desc);
+        var ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) ogTitle.setAttribute('content', meta.title);
+        var ogDesc = document.querySelector('meta[property="og:description"]');
+        if (ogDesc) ogDesc.setAttribute('content', meta.desc);
+        var ogUrl = document.querySelector('meta[property="og:url"]');
+        if (ogUrl) ogUrl.setAttribute('content', 'https://sma-research.info' + (sectionId === 'mission' ? '/' : '/' + sectionId));
+        var canonical = document.querySelector('link[rel="canonical"]');
+        if (canonical) canonical.setAttribute('href', 'https://sma-research.info' + (sectionId === 'mission' ? '/' : '/' + sectionId));
+        var twTitle = document.querySelector('meta[name="twitter:title"]');
+        if (twTitle) twTitle.setAttribute('content', meta.title);
+        var twDesc = document.querySelector('meta[name="twitter:description"]');
+        if (twDesc) twDesc.setAttribute('content', meta.desc);
+    }
+
     // Show one section at a time (tab behavior)
-    function showSection(sectionId) {
+    function showSection(sectionId, skipPush) {
         // Hide all sections
         var sections = document.querySelectorAll('.section');
         for (var i = 0; i < sections.length; i++) sections[i].classList.remove('active');
@@ -5299,14 +6228,48 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }
         // Load data if not loaded
         if (loaders[sectionId]) loaders[sectionId]();
+        // Update URL via pushState (unless triggered by popstate or initial load)
+        if (!skipPush && window.history && window.history.pushState) {
+            var newPath = sectionId === 'mission' ? '/' : '/' + sectionId;
+            if (window.location.pathname !== newPath) {
+                window.history.pushState({section: sectionId}, '', newPath);
+            }
+        }
+        // Update SEO meta tags
+        updateSeoMeta(sectionId);
         // Scroll to top
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    // Default: show mission
-    showSection('mission');
+    // Determine initial section from URL path
+    var initialPath = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+    var initialSection = 'mission';
+    if (initialPath && document.getElementById(initialPath)) {
+        initialSection = initialPath;
+    } else if (window.location.hash) {
+        // Fallback: support legacy hash-based URLs
+        var hashSection = window.location.hash.replace(/^#/, '');
+        if (hashSection && document.getElementById(hashSection)) {
+            initialSection = hashSection;
+        }
+    }
+    showSection(initialSection, true);
 
-    // Nav click → switch tab
+    // Handle browser back/forward
+    window.addEventListener('popstate', function(e) {
+        var section = 'mission';
+        if (e.state && e.state.section) {
+            section = e.state.section;
+        } else {
+            var path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+            if (path && document.getElementById(path)) {
+                section = path;
+            }
+        }
+        showSection(section, true);
+    });
+
+    // Nav click → switch tab with clean URL
     var navLinks = document.querySelectorAll('.nav-link');
     for (var i = 0; i < navLinks.length; i++) {
         navLinks[i].addEventListener('click', function(e) {

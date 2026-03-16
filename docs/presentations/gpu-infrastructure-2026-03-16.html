@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMA Research Platform — GPU Infrastructure & AI Drug Discovery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES — BIOTECH DARK THEME
+           Inspired by molecular visualization software
+           =========================================== */
+        :root {
+            --bg-primary: #070b14;
+            --bg-secondary: #0d1424;
+            --bg-card: #111b2e;
+            --text-primary: #e8ecf4;
+            --text-secondary: #7b8ba8;
+            --accent-cyan: #00e5c3;
+            --accent-magenta: #ff3d8e;
+            --accent-blue: #3d7aff;
+            --accent-amber: #ffb830;
+            --accent-glow: rgba(0, 229, 195, 0.15);
+            --accent-glow-strong: rgba(0, 229, 195, 0.3);
+            --font-display: 'Instrument Serif', serif;
+            --font-body: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --title-size: clamp(2rem, 6vw, 5rem);
+            --h2-size: clamp(1.5rem, 4vw, 3rem);
+            --h3-size: clamp(1rem, 2.5vw, 1.5rem);
+            --body-size: clamp(0.75rem, 1.3vw, 1.05rem);
+            --small-size: clamp(0.6rem, 1vw, 0.8rem);
+            --slide-padding: clamp(1.5rem, 4vw, 4rem);
+            --content-gap: clamp(0.75rem, 2vw, 1.5rem);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.7s;
+        }
+
+        /* ===========================================
+           RESET & BASE
+           =========================================== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); }
+
+        /* ===========================================
+           VIEWPORT FITTING (from viewport-base.css)
+           =========================================== */
+        html, body { height: 100%; overflow-x: hidden; }
+        html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+        .slide {
+            width: 100vw; height: 100vh; height: 100dvh;
+            overflow: hidden; scroll-snap-align: start;
+            display: flex; flex-direction: column; position: relative;
+        }
+        .slide-content {
+            flex: 1; display: flex; flex-direction: column; justify-content: center;
+            max-height: 100%; overflow: hidden; padding: var(--slide-padding);
+        }
+        .card, .container, .content-box { max-width: min(90vw, 1100px); max-height: min(80vh, 700px); }
+        .feature-list, .bullet-list { gap: clamp(0.4rem, 1vh, 1rem); }
+        .feature-list li, .bullet-list li { font-size: var(--body-size); line-height: 1.4; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+            gap: clamp(0.5rem, 1.5vw, 1rem);
+        }
+        img, .image-container { max-width: 100%; max-height: min(50vh, 400px); object-fit: contain; }
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 3vw, 2rem);
+                --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+                --h2-size: clamp(1rem, 3vw, 1.75rem);
+            }
+        }
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+                --title-size: clamp(1.1rem, 4vw, 2rem);
+                --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            }
+            .nav-dots, .keyboard-hint, .decorative { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.4rem, 2vw, 1rem);
+                --title-size: clamp(1rem, 3.5vw, 1.5rem);
+                --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+            }
+        }
+        @media (max-width: 600px) {
+            :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); }
+            .grid { grid-template-columns: 1fr; }
+            .arch-flow { flex-direction: column !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        .reveal { opacity: 0; transform: translateY(25px); transition: opacity var(--duration-normal) var(--ease-out-expo), transform var(--duration-normal) var(--ease-out-expo); }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.12s; }
+        .reveal:nth-child(3) { transition-delay: 0.19s; }
+        .reveal:nth-child(4) { transition-delay: 0.26s; }
+        .reveal:nth-child(5) { transition-delay: 0.33s; }
+        .reveal:nth-child(6) { transition-delay: 0.40s; }
+        .reveal:nth-child(7) { transition-delay: 0.47s; }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+            50% { box-shadow: 0 0 40px var(--accent-glow-strong); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes helix-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===========================================
+           SLIDE BACKGROUNDS
+           =========================================== */
+        .slide { background: var(--bg-primary); }
+        .slide::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background:
+                radial-gradient(ellipse at 15% 85%, rgba(0, 229, 195, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 15%, rgba(61, 122, 255, 0.05) 0%, transparent 50%);
+        }
+        .slide-grid-bg::after {
+            content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.4;
+            background-image:
+                linear-gradient(rgba(0, 229, 195, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 195, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        h1 { font-family: var(--font-display); font-size: var(--title-size); font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; }
+        h2 { font-family: var(--font-display); font-size: var(--h2-size); font-weight: 400; line-height: 1.15; margin-bottom: var(--content-gap); }
+        h3 { font-family: var(--font-body); font-size: var(--h3-size); font-weight: 600; color: var(--accent-cyan); margin-bottom: clamp(0.3rem, 0.8vw, 0.6rem); }
+        p { font-size: var(--body-size); line-height: 1.5; color: var(--text-secondary); }
+        .mono { font-family: var(--font-mono); }
+        .accent { color: var(--accent-cyan); }
+        .accent-mag { color: var(--accent-magenta); }
+        .accent-amber { color: var(--accent-amber); }
+        .italic { font-style: italic; }
+
+        /* ===========================================
+           COMPONENTS
+           =========================================== */
+        .tag {
+            display: inline-block; padding: clamp(2px, 0.4vw, 4px) clamp(6px, 1vw, 12px);
+            border-radius: 4px; font-family: var(--font-mono); font-size: var(--small-size);
+            background: var(--accent-glow); color: var(--accent-cyan); border: 1px solid rgba(0,229,195,0.2);
+        }
+        .tag-mag { background: rgba(255,61,142,0.12); color: var(--accent-magenta); border-color: rgba(255,61,142,0.2); }
+        .tag-blue { background: rgba(61,122,255,0.12); color: var(--accent-blue); border-color: rgba(61,122,255,0.2); }
+        .tag-amber { background: rgba(255,184,48,0.12); color: var(--accent-amber); border-color: rgba(255,184,48,0.2); }
+
+        .stat-row {
+            display: flex; flex-wrap: wrap; gap: clamp(0.5rem, 2vw, 2rem);
+            justify-content: center; margin: var(--content-gap) 0;
+        }
+        .stat { text-align: center; }
+        .stat-num {
+            font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 3.5rem);
+            color: var(--accent-cyan); line-height: 1;
+        }
+        .stat-label { font-size: var(--small-size); color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        .tool-card {
+            background: var(--bg-card); border: 1px solid rgba(0,229,195,0.08);
+            border-radius: 8px; padding: clamp(0.6rem, 1.5vw, 1.2rem);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .tool-card:hover { border-color: rgba(0,229,195,0.25); box-shadow: 0 0 20px var(--accent-glow); }
+        .tool-card h4 { font-family: var(--font-body); font-size: clamp(0.8rem, 1.3vw, 1.05rem); font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .tool-card p { font-size: var(--small-size); line-height: 1.4; }
+        .tool-card .cost { font-family: var(--font-mono); font-size: var(--small-size); color: var(--accent-amber); margin-top: 4px; }
+
+        .phase-row {
+            display: flex; flex-wrap: wrap; gap: clamp(0.3rem, 1vw, 0.8rem);
+            align-items: stretch;
+        }
+        .phase-card {
+            flex: 1; min-width: clamp(80px, 12vw, 130px);
+            background: var(--bg-card); border: 1px solid rgba(0,229,195,0.08);
+            border-radius: 6px; padding: clamp(0.4rem, 1vw, 0.8rem);
+            text-align: center; position: relative;
+        }
+        .phase-card .phase-id { font-family: var(--font-mono); font-size: var(--small-size); color: var(--accent-cyan); font-weight: 600; }
+        .phase-card .phase-name { font-size: var(--small-size); font-weight: 600; margin: 2px 0; }
+        .phase-card .phase-cost { font-family: var(--font-mono); font-size: clamp(0.55rem, 0.9vw, 0.7rem); color: var(--accent-amber); }
+        .phase-card.active { border-color: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-glow); }
+
+        .arch-flow {
+            display: flex; align-items: center; justify-content: center;
+            gap: clamp(0.3rem, 1vw, 1rem); flex-wrap: wrap;
+        }
+        .arch-box {
+            background: var(--bg-card); border: 1px solid rgba(0,229,195,0.15);
+            border-radius: 6px; padding: clamp(0.4rem, 1vw, 0.8rem) clamp(0.6rem, 1.5vw, 1.2rem);
+            text-align: center; font-size: var(--small-size); font-weight: 500;
+        }
+        .arch-box.highlight { border-color: var(--accent-cyan); background: rgba(0,229,195,0.06); }
+        .arch-arrow { color: var(--accent-cyan); font-size: clamp(0.8rem, 1.5vw, 1.2rem); }
+
+        /* === TITLE SLIDE HELIX DECORATION === */
+        .helix-deco {
+            position: absolute; right: clamp(2rem, 8vw, 8rem); top: 50%; transform: translateY(-50%);
+            width: clamp(60px, 15vw, 200px); height: clamp(120px, 30vw, 400px);
+            opacity: 0.15;
+        }
+        .helix-strand {
+            position: absolute; width: 100%; height: 100%;
+            border: 2px solid var(--accent-cyan); border-radius: 50%;
+            animation: helix-spin 20s linear infinite;
+        }
+        .helix-strand:nth-child(2) { animation-delay: -5s; border-color: var(--accent-magenta); }
+        .helix-strand:nth-child(3) { animation-delay: -10s; border-color: var(--accent-blue); transform: scale(0.7); }
+
+        /* === PROGRESS BAR === */
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px; z-index: 1000;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            transition: width 0.3s ease;
+        }
+
+        /* === NAV DOTS === */
+        .nav-dots {
+            position: fixed; right: clamp(0.5rem, 1.5vw, 1.5rem); top: 50%; transform: translateY(-50%);
+            z-index: 100; display: flex; flex-direction: column; gap: 8px;
+        }
+        .nav-dot {
+            width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--text-secondary);
+            background: transparent; cursor: pointer; transition: all 0.3s;
+        }
+        .nav-dot.active { background: var(--accent-cyan); border-color: var(--accent-cyan); transform: scale(1.3); }
+
+        /* === SLIDE NUMBER === */
+        .slide-num {
+            position: absolute; bottom: var(--slide-padding); right: var(--slide-padding);
+            font-family: var(--font-mono); font-size: var(--small-size); color: var(--text-secondary); opacity: 0.5;
+        }
+
+        /* === CENTERED CONTENT === */
+        .centered { text-align: center; align-items: center; }
+        .max-w { max-width: min(90vw, 900px); margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <!-- === PROGRESS BAR === -->
+    <div class="progress-bar" id="progressBar"></div>
+    <!-- === NAV DOTS === -->
+    <nav class="nav-dots" id="navDots"></nav>
+
+    <!-- =========================================
+         SLIDE 1: TITLE
+         ========================================= -->
+    <section class="slide slide-grid-bg" id="s1">
+        <div class="helix-deco decorative">
+            <div class="helix-strand"></div>
+            <div class="helix-strand"></div>
+            <div class="helix-strand"></div>
+        </div>
+        <div class="slide-content centered">
+            <p class="reveal mono accent" style="font-size:var(--small-size);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:var(--content-gap);">SMA Research Platform</p>
+            <h1 class="reveal">GPU Infrastructure &<br><span class="italic">AI Drug Discovery</span></h1>
+            <p class="reveal" style="font-size:clamp(0.8rem,1.5vw,1.1rem);color:var(--text-secondary);margin-top:var(--content-gap);max-width:600px;">The first AI-driven virtual screening campaign<br>for Spinal Muscular Atrophy</p>
+            <p class="reveal" style="margin-top:clamp(1rem,3vw,2.5rem);">
+                <span class="tag">March 2026</span>
+                <span class="tag-mag tag" style="margin-left:8px;">Christian Fischer / Bryzant Labs</span>
+            </p>
+        </div>
+        <div class="slide-num">01 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 2: PLATFORM STATUS
+         ========================================= -->
+    <section class="slide" id="s2">
+        <div class="slide-content centered">
+            <h2 class="reveal">Platform <span class="accent italic">Today</span></h2>
+            <div class="stat-row reveal">
+                <div class="stat"><div class="stat-num">25,026</div><div class="stat-label">Claims</div></div>
+                <div class="stat"><div class="stat-num">5,216</div><div class="stat-label">Sources</div></div>
+                <div class="stat"><div class="stat-num">515</div><div class="stat-label">Hypotheses</div></div>
+                <div class="stat"><div class="stat-num">449</div><div class="stat-label">Trials</div></div>
+            </div>
+            <div class="stat-row reveal">
+                <div class="stat"><div class="stat-num" style="color:var(--accent-blue)">~190</div><div class="stat-label">API Endpoints</div></div>
+                <div class="stat"><div class="stat-num" style="color:var(--accent-magenta)">29</div><div class="stat-label">MCP Tools</div></div>
+                <div class="stat"><div class="stat-num" style="color:var(--accent-amber)">40</div><div class="stat-label">Reasoning Modules</div></div>
+                <div class="stat"><div class="stat-num" style="color:var(--accent-cyan)">21</div><div class="stat-label">Targets</div></div>
+            </div>
+            <p class="reveal" style="margin-top:var(--content-gap);max-width:600px;text-align:center;">Evidence-first. 25k LLM-extracted claims from 5,216 PubMed papers, 578 patents, 449 clinical trials. Every assertion traces to a source.</p>
+        </div>
+        <div class="slide-num">02 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 3: THE GAP
+         ========================================= -->
+    <section class="slide" id="s3">
+        <div class="slide-content centered">
+            <h2 class="reveal">The <span class="accent-mag italic">Gap</span></h2>
+            <p class="reveal" style="font-size:clamp(1rem,2.2vw,1.6rem);max-width:700px;color:var(--text-primary);margin-bottom:var(--content-gap);">No published large-scale computational screening exists for novel SMN2-targeting compounds.</p>
+            <p class="reveal" style="max-width:650px;">Risdiplam and Branaplam were discovered through traditional medicinal chemistry. No one has combined AI protein modeling, molecular docking, and generative drug design for SMA.</p>
+            <p class="reveal" style="margin-top:clamp(1rem,2.5vw,2rem);font-size:clamp(1rem,2vw,1.4rem);color:var(--accent-cyan);font-family:var(--font-display);font-style:italic;">We will be the first.</p>
+        </div>
+        <div class="slide-num">03 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 4: ARCHITECTURE
+         ========================================= -->
+    <section class="slide slide-grid-bg" id="s4">
+        <div class="slide-content centered">
+            <h2 class="reveal">Architecture</h2>
+            <div class="arch-flow reveal" style="margin:var(--content-gap) 0;">
+                <div class="arch-box highlight">SMA Platform<br><span class="mono" style="font-size:clamp(0.5rem,0.8vw,0.7rem);color:var(--accent-cyan)">sma-research.info</span></div>
+                <div class="arch-arrow">&rarr;</div>
+                <div class="arch-box">dstack<br><span class="mono" style="font-size:clamp(0.5rem,0.8vw,0.7rem);color:var(--accent-amber)">GPU Router</span></div>
+                <div class="arch-arrow">&rarr;</div>
+                <div class="arch-box">Vast.ai<br><span class="mono" style="font-size:clamp(0.5rem,0.8vw,0.7rem);color:var(--accent-amber)">$0.78/hr A100</span></div>
+                <div class="arch-arrow">&rarr;</div>
+                <div class="arch-box">Nextflow<br><span class="mono" style="font-size:clamp(0.5rem,0.8vw,0.7rem);color:var(--accent-amber)">Pipeline</span></div>
+            </div>
+            <div class="grid reveal" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));max-width:800px;margin:0 auto;">
+                <div class="tool-card" style="text-align:center;"><h4>SpliceAI</h4><p>Splice variants</p></div>
+                <div class="tool-card" style="text-align:center;"><h4>ESM-2</h4><p>Protein embeddings</p></div>
+                <div class="tool-card" style="text-align:center;"><h4>Boltz-1/2</h4><p>Structures + affinity</p></div>
+                <div class="tool-card" style="text-align:center;"><h4>DiffDock v2.2</h4><p>NIM docking</p></div>
+                <div class="tool-card" style="text-align:center;"><h4>OpenMM</h4><p>MD simulations</p></div>
+                <div class="tool-card" style="text-align:center;"><h4>Cas-OFFinder</h4><p>CRISPR off-targets</p></div>
+            </div>
+            <p class="reveal" style="margin-top:var(--content-gap);font-size:var(--small-size);">dstack scans <span class="accent">14+ GPU providers</span> in real-time &mdash; always picks the cheapest available A100. Results auto-POST back to platform.</p>
+        </div>
+        <div class="slide-num">04 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 5: KEY DECISIONS
+         ========================================= -->
+    <section class="slide" id="s5">
+        <div class="slide-content" style="align-items:center;">
+            <h2 class="reveal" style="text-align:center;">Key <span class="accent italic">Decisions</span></h2>
+            <div class="grid reveal" style="grid-template-columns:1fr 1fr;max-width:850px;gap:clamp(0.5rem,1.5vw,1rem);">
+                <div class="tool-card">
+                    <h4><span class="accent">Boltz-1/2</span> over AlphaFold3</h4>
+                    <p>MIT license. Open training code &mdash; fine-tune on SMA data. Predicts binding affinity jointly. 20 sec/structure.</p>
+                </div>
+                <div class="tool-card">
+                    <h4><span class="accent">dstack</span> over SkyPilot</h4>
+                    <p>Built-in GPUhunt price scanner. Lighter. 7.5k GitHub stars. Auto-provisions cheapest GPU across 14 providers.</p>
+                </div>
+                <div class="tool-card">
+                    <h4><span class="accent">Vast.ai</span> primary provider</h4>
+                    <p>Marketplace model = overcapacity pricing. $0.78&ndash;$1.50/hr A100. Per-second billing. Take cheap hours.</p>
+                </div>
+                <div class="tool-card">
+                    <h4><span class="accent">Nextflow</span> orchestration</h4>
+                    <p>Bioinformatics industry standard. 145+ nf-core pipelines. Checkpointing, retry, multi-executor.</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">05 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 6: TOOL STACK — SPLICING & STRUCTURE
+         ========================================= -->
+    <section class="slide" id="s6">
+        <div class="slide-content" style="align-items:center;">
+            <h2 class="reveal" style="text-align:center;">Tool Stack: <span class="accent italic">Splicing & Structure</span></h2>
+            <div class="grid reveal" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));max-width:900px;gap:clamp(0.5rem,1.2vw,0.8rem);">
+                <div class="tool-card">
+                    <h4>SpliceAI <span class="tag">GPU</span></h4>
+                    <p>Gold standard splice prediction. 762 SMN2 variants in 3 min.</p>
+                    <div class="cost">~$0.05</div>
+                </div>
+                <div class="tool-card">
+                    <h4>SpliceTransformer <span class="tag-mag tag">NEW</span></h4>
+                    <p>Tissue-specific splicing. Motor neuron effects. Nature Comms 2024.</p>
+                    <div class="cost">~$0.10</div>
+                </div>
+                <div class="tool-card">
+                    <h4>ESM-2 650M <span class="tag">GPU</span></h4>
+                    <p>Protein language model. 21 targets in 60 sec. Mutation effects.</p>
+                    <div class="cost">~$0.02</div>
+                </div>
+                <div class="tool-card">
+                    <h4>Boltz-1/2 <span class="tag-blue tag">MIT</span></h4>
+                    <p>AF3-level accuracy. Structure + binding affinity. Open training code.</p>
+                    <div class="cost">~$6 (21 targets)</div>
+                </div>
+                <div class="tool-card">
+                    <h4>Evo 2 <span class="tag-mag tag">9.3T nt</span></h4>
+                    <p>Largest DNA model. 1M bp context. Full SMN2 locus analysis.</p>
+                    <div class="cost">TBD</div>
+                </div>
+                <div class="tool-card">
+                    <h4>openASO <span class="tag-blue tag">NEW</span></h4>
+                    <p>ASO design tool. Next-gen nusinersen candidates.</p>
+                    <div class="cost">CPU only</div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">06 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 7: TOOL STACK — DOCKING & SCREENING
+         ========================================= -->
+    <section class="slide" id="s7">
+        <div class="slide-content" style="align-items:center;">
+            <h2 class="reveal" style="text-align:center;">Tool Stack: <span class="accent-mag italic">Docking & Screening</span></h2>
+            <div class="grid reveal" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));max-width:900px;gap:clamp(0.5rem,1.2vw,0.8rem);">
+                <div class="tool-card">
+                    <h4>DiffDock v2.2 <span class="tag">NIM</span></h4>
+                    <p>NVIDIA NIM API. 4-AP confirmed binding to SMN2 (confidence: &minus;0.280). 378 NIM dockings running.</p>
+                    <div class="cost">~$10 (700 dockings)</div>
+                </div>
+                <div class="tool-card">
+                    <h4>GNINA <span class="tag-mag tag">CNN</span></h4>
+                    <p>Neural network scoring. 73% top-1 redocking vs 58% Vina.</p>
+                    <div class="cost">~$5</div>
+                </div>
+                <div class="tool-card">
+                    <h4>OpenMM 8.0 <span class="tag">CUDA</span></h4>
+                    <p>Molecular dynamics. 250 ns/day on A100. Drug-protein validation.</p>
+                    <div class="cost">~$45 (6 sims)</div>
+                </div>
+                <div class="tool-card">
+                    <h4>REINVENT 4 <span class="tag-blue tag">RL</span></h4>
+                    <p>De novo drug design via reinforcement learning. Generate novel SMN2 molecules.</p>
+                    <div class="cost">~$50</div>
+                </div>
+                <div class="tool-card">
+                    <h4>Cas-OFFinder <span class="tag">OpenCL</span></h4>
+                    <p>Genome-wide CRISPR off-target scan. hg38 reference. &lt;1 min/guide.</p>
+                    <div class="cost">~$0.08</div>
+                </div>
+                <div class="tool-card">
+                    <h4>DrugPipe <span class="tag-mag tag">E2E</span></h4>
+                    <p>End-to-end virtual screening. Blind protein screening + repurposing.</p>
+                    <div class="cost">Variable</div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">07 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 8: 7-PHASE PLAN
+         ========================================= -->
+    <section class="slide slide-grid-bg" id="s8">
+        <div class="slide-content centered">
+            <h2 class="reveal">7-Phase <span class="accent italic">Plan</span></h2>
+            <div class="phase-row reveal" style="max-width:900px;margin:var(--content-gap) auto;">
+                <div class="phase-card active"><div class="phase-id">G1</div><div class="phase-name">Foundation</div><div class="phase-cost">~$1</div></div>
+                <div class="phase-card"><div class="phase-id">G2</div><div class="phase-name">Docking</div><div class="phase-cost">~$10</div></div>
+                <div class="phase-card"><div class="phase-id">G3</div><div class="phase-name">Structures</div><div class="phase-cost">~$6</div></div>
+                <div class="phase-card"><div class="phase-id">G4</div><div class="phase-name">Dynamics</div><div class="phase-cost">~$45</div></div>
+                <div class="phase-card"><div class="phase-id">G5</div><div class="phase-name">Scale</div><div class="phase-cost">$100-500</div></div>
+                <div class="phase-card"><div class="phase-id">G6</div><div class="phase-name">Generative</div><div class="phase-cost">~$50</div></div>
+                <div class="phase-card"><div class="phase-id">G7</div><div class="phase-name">Custom AI</div><div class="phase-cost">~$100</div></div>
+            </div>
+            <div class="grid reveal" style="grid-template-columns:1fr 1fr;max-width:800px;margin:0 auto;gap:clamp(0.3rem,1vw,0.6rem);">
+                <div style="font-size:var(--small-size);"><span class="accent">G1</span> SpliceAI + ESM-2 + Cas-OFFinder &mdash; validate in &lt;2 hours</div>
+                <div style="font-size:var(--small-size);"><span class="accent">G2</span> DiffDock: 100 compounds x 7 pockets = 700 dockings</div>
+                <div style="font-size:var(--small-size);"><span class="accent">G3</span> Boltz-1/2 variant structures (not just wild-type DB)</div>
+                <div style="font-size:var(--small-size);"><span class="accent">G4</span> 6 OpenMM simulations, 100ns each, binding modes</div>
+                <div style="font-size:var(--small-size);"><span class="accent">G5</span> Screen 10K-100K compounds against SMN2 targets</div>
+                <div style="font-size:var(--small-size);"><span class="accent">G6</span> REINVENT 4 + RFDiffusion3 molecule generation</div>
+            </div>
+            <p class="reveal" style="margin-top:var(--content-gap);font-size:var(--small-size);">Total Phase G1-G4: <span class="accent-amber" style="font-weight:600;">~$62</span> &mdash; Full validation of the entire pipeline for the price of dinner.</p>
+        </div>
+        <div class="slide-num">08 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 9: LIVE RESULTS — DiffDock & Cross-Paper
+         ========================================= -->
+    <section class="slide slide-grid-bg" id="s9">
+        <div class="slide-content centered">
+            <h2 class="reveal">Live <span class="accent italic">Results</span></h2>
+            <div class="grid reveal" style="grid-template-columns:1fr 1fr;max-width:850px;gap:clamp(0.5rem,1.5vw,1rem);">
+                <div class="tool-card">
+                    <h4><span class="accent">DiffDock v2.2</span> Re-docking</h4>
+                    <p>4-AP confirmed binding to SMN2 via NVIDIA NIM API. Best confidence: <strong style="color:var(--accent-cyan);">&minus;0.280</strong>. First AI-validated SMN2 splice modifier docking.</p>
+                </div>
+                <div class="tool-card">
+                    <h4><span class="accent">Cross-Paper Synthesis</span></h4>
+                    <p>Differentiator #1 now live. Co-occurrence analysis, transitive bridges, shared mechanisms across 25k claims. Finds connections no single researcher could see.</p>
+                </div>
+                <div class="tool-card">
+                    <h4><span class="accent">GPU Batch Campaign</span></h4>
+                    <p>378 NIM dockings (54 compounds &times; 7 targets) + 100ns MD simulation + Boltz-2 structures. First systematic AI screening for SMA.</p>
+                </div>
+                <div class="tool-card">
+                    <h4><span class="accent">Docker Image</span></h4>
+                    <p><span class="mono" style="color:var(--accent-cyan);">csiicf/sma-gpu-toolkit</span> (14.7 GB) on Docker Hub. Full reproducible GPU pipeline for drug discovery.</p>
+                </div>
+            </div>
+            <div class="stat-row reveal" style="margin-top:var(--content-gap);">
+                <div class="stat"><div class="stat-num" style="font-size:clamp(1rem,2.5vw,2rem);">29</div><div class="stat-label">MCP Tools</div></div>
+                <div class="stat"><div class="stat-num" style="font-size:clamp(1rem,2.5vw,2rem);color:var(--accent-blue)">~190</div><div class="stat-label">API Endpoints</div></div>
+                <div class="stat"><div class="stat-num" style="font-size:clamp(1rem,2.5vw,2rem);color:var(--accent-amber)">4</div><div class="stat-label">NVIDIA NIMs</div></div>
+                <div class="stat"><div class="stat-num" style="font-size:clamp(1rem,2.5vw,2rem);color:var(--accent-magenta)">378</div><div class="stat-label">NIM Dockings</div></div>
+            </div>
+        </div>
+        <div class="slide-num">09 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 10: NVIDIA NIMs INTEGRATION
+         ========================================= -->
+    <section class="slide" id="s10">
+        <div class="slide-content" style="align-items:center;">
+            <h2 class="reveal" style="text-align:center;">NVIDIA <span class="accent italic">NIMs</span> Integration</h2>
+            <p class="reveal" style="max-width:600px;text-align:center;margin-bottom:var(--content-gap);">Four NVIDIA NIM APIs integrated. Cloud-based inference &mdash; no local GPU required for initial screening.</p>
+            <div class="grid reveal" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));max-width:900px;gap:clamp(0.5rem,1.2vw,0.8rem);">
+                <div class="tool-card">
+                    <h4>DiffDock v2.2 <span class="tag">DOCKING</span></h4>
+                    <p>Molecular docking via NVIDIA NIM. 4-AP &rarr; SMN2 confirmed. 54 compounds queued.</p>
+                    <div class="cost">NIM API</div>
+                </div>
+                <div class="tool-card">
+                    <h4>OpenFold3 <span class="tag-mag tag">STRUCTURE</span></h4>
+                    <p>Protein structure prediction. AF3-level accuracy via cloud API.</p>
+                    <div class="cost">NIM API</div>
+                </div>
+                <div class="tool-card">
+                    <h4>GenMol <span class="tag-blue tag">DESIGN</span></h4>
+                    <p>De novo molecule generation. Design novel SMN2-targeting compounds.</p>
+                    <div class="cost">NIM API</div>
+                </div>
+                <div class="tool-card">
+                    <h4>RNAPro <span class="tag-amber tag">RNA</span></h4>
+                    <p>RNA-protein interaction prediction. Critical for splice modifier design.</p>
+                    <div class="cost">NIM API</div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-num">10 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 11: COST BREAKDOWN
+         ========================================= -->
+    <section class="slide" id="s11">
+        <div class="slide-content centered">
+            <h2 class="reveal">Cost <span class="accent italic">Reality</span></h2>
+            <p class="reveal" style="max-width:600px;margin-bottom:var(--content-gap);">GPU compute is no longer a barrier. The entire initial validation costs less than a lab reagent kit.</p>
+            <div class="grid reveal" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));max-width:800px;gap:clamp(0.4rem,1vw,0.6rem);">
+                <div class="tool-card" style="text-align:center;">
+                    <h4 style="color:var(--accent-cyan)">Testing</h4>
+                    <div style="font-family:var(--font-display);font-size:clamp(1.2rem,3vw,2.2rem);color:var(--accent-amber);">~$15</div>
+                    <p>G1-G2: Validated pipeline, splice scores, docking results</p>
+                </div>
+                <div class="tool-card" style="text-align:center;">
+                    <h4 style="color:var(--accent-cyan)">Active Research</h4>
+                    <div style="font-family:var(--font-display);font-size:clamp(1.2rem,3vw,2.2rem);color:var(--accent-amber);">~$100</div>
+                    <p>G3-G4: Protein structures, MD simulations, binding analysis</p>
+                </div>
+                <div class="tool-card" style="text-align:center;">
+                    <h4 style="color:var(--accent-cyan)">Discovery</h4>
+                    <div style="font-family:var(--font-display);font-size:clamp(1.2rem,3vw,2.2rem);color:var(--accent-amber);">~$500</div>
+                    <p>G5-G7: Large-scale screening, generative design, custom models</p>
+                </div>
+                <div class="tool-card" style="text-align:center;">
+                    <h4 style="color:var(--accent-cyan)">Scaled</h4>
+                    <div style="font-family:var(--font-display);font-size:clamp(1.2rem,3vw,2.2rem);color:var(--accent-amber);">$2K/mo</div>
+                    <p>1M compounds/night, continuous model training, autonomous</p>
+                </div>
+            </div>
+            <p class="reveal mono" style="margin-top:var(--content-gap);font-size:var(--small-size);color:var(--text-secondary);">Vast.ai A100 80GB: $0.78/hr &bull; RunPod backup: $1.19/hr &bull; Per-second billing &bull; No commitment</p>
+        </div>
+        <div class="slide-num">11 / 12</div>
+    </section>
+
+    <!-- =========================================
+         SLIDE 12: CLOSING
+         ========================================= -->
+    <section class="slide slide-grid-bg" id="s12">
+        <div class="helix-deco decorative" style="left:clamp(2rem,8vw,8rem);right:auto;">
+            <div class="helix-strand"></div>
+            <div class="helix-strand"></div>
+            <div class="helix-strand"></div>
+        </div>
+        <div class="slide-content centered">
+            <p class="reveal mono accent" style="font-size:var(--small-size);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:var(--content-gap);">The Mission</p>
+            <h1 class="reveal" style="font-size:clamp(1.5rem,5vw,4rem);">We don't replace researchers.<br><span class="italic" style="color:var(--accent-cyan);">We put them on steroids.</span></h1>
+            <p class="reveal" style="max-width:650px;margin-top:var(--content-gap);font-size:clamp(0.85rem,1.5vw,1.1rem);">25,026 claims. 29 MCP tools. 40+ GPU tools. $0.78/hour. Open source.<br>The infrastructure to find what no single researcher could see.</p>
+            <div class="reveal" style="margin-top:clamp(1.5rem,3vw,3rem);display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <span class="tag">sma-research.info</span>
+                <span class="tag-blue tag">github.com/Bryzant-Labs/sma-platform</span>
+                <span class="tag-amber tag">MIT License</span>
+            </div>
+        </div>
+        <div class="slide-num">12 / 12</div>
+    </section>
+
+    <!-- ===========================================
+         JAVASCRIPT: SLIDE CONTROLLER
+         =========================================== -->
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupProgressBar();
+                this.setupNavDots();
+            }
+
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const idx = Array.from(this.slides).indexOf(entry.target);
+                            this.currentSlide = idx;
+                            this.updateNavDots();
+                            this.updateProgressBar();
+                        }
+                    });
+                }, { threshold: 0.4 });
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                        e.preventDefault();
+                        this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1));
+                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                        e.preventDefault();
+                        this.goTo(Math.max(this.currentSlide - 1, 0));
+                    } else if (e.key === 'Home') {
+                        e.preventDefault(); this.goTo(0);
+                    } else if (e.key === 'End') {
+                        e.preventDefault(); this.goTo(this.slides.length - 1);
+                    }
+                });
+            }
+
+            setupTouchNav() {
+                let startY = 0;
+                document.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
+                document.addEventListener('touchend', (e) => {
+                    const diff = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0) this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1));
+                        else this.goTo(Math.max(this.currentSlide - 1, 0));
+                    }
+                });
+            }
+
+            setupProgressBar() {
+                this.progressBar = document.getElementById('progressBar');
+                this.updateProgressBar();
+            }
+
+            updateProgressBar() {
+                if (this.progressBar) {
+                    const pct = ((this.currentSlide + 1) / this.slides.length) * 100;
+                    this.progressBar.style.width = pct + '%';
+                }
+            }
+
+            setupNavDots() {
+                const nav = document.getElementById('navDots');
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('div');
+                    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+                    dot.addEventListener('click', () => this.goTo(i));
+                    nav.appendChild(dot);
+                });
+                this.dots = nav.querySelectorAll('.nav-dot');
+            }
+
+            updateNavDots() {
+                if (this.dots) this.dots.forEach((d, i) => d.classList.toggle('active', i === this.currentSlide));
+            }
+
+            goTo(idx) {
+                this.slides[idx].scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        new SlidePresentation();
+    </script>
+</body>
+</html>
