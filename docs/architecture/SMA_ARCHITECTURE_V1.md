@@ -29,7 +29,7 @@ The SMA Research Platform is an open-source, evidence-first drug research system
 
 - It is not a drug company. There is no marketing, no hype, no fundraising pitch.
 - It does not replace wet-lab validation. Every hypothesis is flagged with its evidence gaps.
-- It does not run molecular simulations (yet). GPU compute is Phase C.
+- GPU compute infrastructure is being built (Phase G — see `docs/plans/2026-03-16-gpu-infrastructure-design.md`).
 - It does not store patient data. There is no PII anywhere in the system.
 
 ---

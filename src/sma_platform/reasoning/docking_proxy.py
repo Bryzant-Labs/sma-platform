@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 # Paths — resolved relative to project root (gpu/results/)
 # ---------------------------------------------------------------------------
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[4]  # sma-platform/
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]  # sma-platform/
 _RESULTS_DIR = _PROJECT_ROOT / "gpu" / "results"
 
 _V1_RESULTS = _RESULTS_DIR / "diffdock_results.json"
