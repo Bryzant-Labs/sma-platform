@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, assistant, blackboard, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, evidence, evidence_writer, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, md_simulation, molecule_screen, news, nvidia_nims, predictions, preprints, prime_edit, research, rna_binding, scoring, screening, search, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials
+from .routes import aav, advanced_analytics, assistant, blackboard, calibration, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, enrichment, evidence, evidence_writer, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, molecule_screen, news, nvidia_nims, predictions, preprints, prime_edit, research, rna_binding, scoring, screening, search, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials
 
 
 @asynccontextmanager
@@ -127,6 +127,9 @@ def create_app() -> FastAPI:
     app.include_router(nvidia_nims.router, prefix="/api/v2", tags=["nvidia-nims"])
     app.include_router(synergy.router, prefix="/api/v2", tags=["synergy"])
     app.include_router(synthesis.router, prefix="/api/v2", tags=["cross-paper-synthesis"])
+    app.include_router(calibration.router, prefix="/api/v2", tags=["calibration"])
+    app.include_router(enrichment.router, prefix="/api/v2", tags=["enrichment"])
+    app.include_router(literature_review.router, prefix="/api/v2", tags=["literature-review"])
 
     @app.get("/health")
     @app.get("/api/v2/health")
