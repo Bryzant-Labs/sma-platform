@@ -142,7 +142,7 @@ See [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) for full details on methods, va
 
 ## Technology
 
-- **Backend**: Python / FastAPI / SQLite
+- **Backend**: Python / FastAPI / PostgreSQL (asyncpg)
 - **NLP**: Claude 3 Haiku (structured claim extraction)
 - **Data**: httpx (REST APIs), Biopython (NCBI)
 - **Frontend**: Vanilla JS (no framework dependencies)

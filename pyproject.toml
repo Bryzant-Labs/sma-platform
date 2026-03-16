@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Open SMA Research Platform — biology-first target discovery and evidence graph for Spinal Muscular Atrophy"
 readme = "README.md"
 requires-python = ">=3.11"
-license = "MIT"
+license = "AGPL-3.0-or-later"
 authors = [
     { name = "Christian Fischer", email = "christian@bryzant.com" },
 ]
