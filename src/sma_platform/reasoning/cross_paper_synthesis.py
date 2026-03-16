@@ -101,8 +101,7 @@ async def build_cooccurrence_matrix() -> dict[tuple[str, str], list[dict]]:
         JOIN sources s ON s.id = e.source_id
         LEFT JOIN targets t_subj ON t_subj.id = c.subject_id
         LEFT JOIN targets t_obj ON t_obj.id = c.object_id
-        WHERE c.confidence >= 0.5
-          AND (c.subject_id IS NOT NULL OR c.object_id IS NOT NULL)
+        WHERE (c.subject_id IS NOT NULL OR c.object_id IS NOT NULL)
         ORDER BY s.pub_date DESC NULLS LAST
     """)
 
@@ -176,7 +175,6 @@ async def find_transitive_bridges() -> list[dict]:
         LEFT JOIN targets t_obj ON t_obj.id = c.object_id
         WHERE c.subject_id IS NOT NULL
           AND c.object_id IS NOT NULL
-          AND c.confidence >= 0.5
     """)
 
     # Build adjacency: subject → [objects]
@@ -263,7 +261,7 @@ async def find_shared_mechanisms() -> list[dict]:
         JOIN evidence e ON e.claim_id = c.id
         LEFT JOIN targets t_subj ON t_subj.id = c.subject_id
         WHERE c.subject_id IS NOT NULL
-          AND c.confidence >= 0.6
+          AND c.confidence >= 0.1
     """)
 
     # Group by predicate keywords
