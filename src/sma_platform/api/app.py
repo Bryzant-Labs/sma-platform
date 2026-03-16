@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, assistant, blackboard, calibration, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, enrichment, evidence, evidence_writer, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, molecule_screen, news, nvidia_nims, predictions, preprints, prime_edit, research, rna_binding, scoring, screening, search, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials
+from .routes import aav, advanced_analytics, assistant, bayesian, benchmark, biomarker, blackboard, calibration, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, patent_landscape, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty
 
 
 @asynccontextmanager
@@ -130,6 +130,16 @@ def create_app() -> FastAPI:
     app.include_router(calibration.router, prefix="/api/v2", tags=["calibration"])
     app.include_router(enrichment.router, prefix="/api/v2", tags=["enrichment"])
     app.include_router(literature_review.router, prefix="/api/v2", tags=["literature-review"])
+    app.include_router(source_quality.router, prefix="/api/v2", tags=["source-quality"])
+    app.include_router(uncertainty.router, prefix="/api/v2", tags=["uncertainty"])
+    app.include_router(benchmark.router, prefix="/api/v2", tags=["benchmark"])
+    app.include_router(biomarker.router, prefix="/api/v2", tags=["biomarker"])
+    app.include_router(bayesian.router, prefix="/api/v2", tags=["bayesian"])
+    app.include_router(prioritization.router, prefix="/api/v2", tags=["prioritization"])
+    app.include_router(experiment_value.router, prefix="/api/v2", tags=["experiment-value"])
+    app.include_router(patent_landscape.router, prefix="/api/v2", tags=["patents"])
+    app.include_router(modifier.router, prefix="/api/v2", tags=["modifier"])
+    app.include_router(experiment_design.router, prefix="/api/v2", tags=["experiment-design"])
 
     @app.get("/health")
     @app.get("/api/v2/health")
