@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, biomarker, blackboard, calibration, cascade, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty
+from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, biomarker, blackboard, calibration, cascade, comparative, contact, crispr, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty
 
 
 @asynccontextmanager
@@ -109,6 +109,7 @@ def create_app() -> FastAPI:
     app.include_router(aav.router, prefix="/api/v2", tags=["aav"])
     app.include_router(gene_versioning.router, prefix="/api/v2", tags=["gene_versioning"])
     app.include_router(docking.router, prefix="/api/v2", tags=["docking"])
+    app.include_router(diffdock_local.router, prefix="/api/v2", tags=["diffdock-local"])
     app.include_router(prime_edit.router, prefix="/api/v2", tags=["prime_editing"])
     app.include_router(md_simulation.router, prefix="/api/v2", tags=["md_simulation"])
     app.include_router(spatial_omics.router, prefix="/api/v2", tags=["spatial_omics"])
@@ -144,6 +145,9 @@ def create_app() -> FastAPI:
     app.include_router(aso.router, prefix="/api/v2", tags=["aso"])
     app.include_router(personal_twin.router, prefix="/api/v2", tags=["personal-twin"])
     app.include_router(cascade.router, prefix="/api/v2", tags=["cascade"])
+    app.include_router(funnel.router, prefix="/api/v2", tags=["funnel"])
+    app.include_router(fair.router, prefix="/api/v2", tags=["fair"])
+    app.include_router(docking_proxy.router, prefix="/api/v2", tags=["docking-proxy"])
 
     @app.get("/health")
     @app.get("/api/v2/health")
