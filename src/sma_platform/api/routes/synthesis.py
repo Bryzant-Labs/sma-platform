@@ -127,6 +127,18 @@ async def get_contradictions(limit: int = Query(20, ge=1, le=100)):
     return {"contradictions": results[:limit], "total": len(results)}
 
 
+@router.get("/surprise")
+async def get_surprise_scores(limit: int = Query(30, ge=1, le=100)):
+    """Rank target connections by how NON-OBVIOUS they are.
+
+    Low paper overlap + high claim diversity + independent sources + recent
+    = high surprise score. Pure math, no LLM calls.
+    """
+    from ...reasoning.cross_paper_synthesis import score_evidence_surprise
+    results = await score_evidence_surprise()
+    return {"surprises": results[:limit], "total": len(results)}
+
+
 @router.post("/run", dependencies=[Depends(require_admin_key)])
 async def run_synthesis(
     max_cards: int = Query(50, ge=1, le=200),

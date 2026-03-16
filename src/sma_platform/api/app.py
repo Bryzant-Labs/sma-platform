@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, assistant, blackboard, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, evidence, evidence_writer, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, md_simulation, molecule_screen, news, nvidia_nims, predictions, preprints, prime_edit, research, rna_binding, scoring, screening, search, spatial_omics, splice, splice_predictor, splicing_map, stats, synthesis, targets, translation, trials
+from .routes import aav, advanced_analytics, assistant, blackboard, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, evidence, evidence_writer, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, md_simulation, molecule_screen, news, nvidia_nims, predictions, preprints, prime_edit, research, rna_binding, scoring, screening, search, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials
 
 
 @asynccontextmanager
@@ -125,6 +125,7 @@ def create_app() -> FastAPI:
     app.include_router(gpu.router, prefix="/api/v2", tags=["gpu"])
     app.include_router(news.router, prefix="/api/v2", tags=["news"])
     app.include_router(nvidia_nims.router, prefix="/api/v2", tags=["nvidia-nims"])
+    app.include_router(synergy.router, prefix="/api/v2", tags=["synergy"])
     app.include_router(synthesis.router, prefix="/api/v2", tags=["cross-paper-synthesis"])
 
     @app.get("/health")

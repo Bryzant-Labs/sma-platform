@@ -26,6 +26,7 @@ import logging
 import os
 from collections import Counter, defaultdict
 from datetime import date, datetime, timezone
+from math import log
 from statistics import median
 from typing import Any, Optional
 
@@ -757,6 +758,167 @@ async def find_contradictions() -> list[dict]:
     contradictions.sort(key=lambda x: x["contradiction_score"], reverse=True)
     logger.info(f"Found {len(contradictions)} potential contradictions")
     return contradictions
+
+
+# =============================================================================
+# Step 8: Evidence Surprise Scoring (pure math, no LLM)
+# =============================================================================
+
+async def score_evidence_surprise() -> list[dict]:
+    """Rank target connections by how NON-OBVIOUS they are.
+
+    If two targets are commonly discussed together in many papers, that's NOT
+    surprising.  But if they're rarely mentioned together yet share a strong
+    mechanistic link (diverse claim types, independent sources, recent),
+    that IS surprising.
+
+    Formula:
+        surprise = (claim_diversity * source_independence * recency)
+                   / (1 + log(paper_overlap))
+
+    Returns top 30 pairs sorted by surprise score descending.
+    """
+    cooccurrences = await build_cooccurrence_matrix()
+
+    # We also need per-pair claim-level detail from the DB for richer scoring
+    rows = await fetch("""
+        SELECT
+            c.id AS claim_id,
+            c.claim_type,
+            c.predicate,
+            e.source_id,
+            s.title AS source_title,
+            s.pub_date,
+            t_subj.symbol AS subject_symbol,
+            t_obj.symbol AS object_symbol
+        FROM claims c
+        JOIN evidence e ON e.claim_id = c.id
+        JOIN sources s ON s.id = e.source_id
+        LEFT JOIN targets t_subj ON t_subj.id = c.subject_id
+        LEFT JOIN targets t_obj ON t_obj.id = c.object_id
+        WHERE c.subject_id IS NOT NULL OR c.object_id IS NOT NULL
+    """)
+
+    # Build lookup: for each sorted target pair -> list of claim rows
+    pair_claims: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    for row in rows:
+        subj = row["subject_symbol"]
+        obj = row["object_symbol"]
+        if not subj or not obj or subj == obj:
+            continue
+        pair_key = tuple(sorted([subj, obj]))
+        pair_claims[pair_key].append({
+            "claim_id": str(row["claim_id"]),
+            "claim_type": row["claim_type"],
+            "predicate": row["predicate"],
+            "source_id": str(row["source_id"]),
+            "source_title": row["source_title"],
+            "pub_date": row["pub_date"],
+        })
+
+    # Cutoff for "recent" = last 2 years
+    two_years_ago = date.today().replace(year=date.today().year - 2)
+
+    results: list[dict] = []
+
+    for pair_key, sources in cooccurrences.items():
+        target_a, target_b = pair_key
+
+        # --- paper_overlap: number of shared papers (from cooccurrence matrix)
+        paper_overlap = len(sources)
+
+        # --- Get all claims that directly link this pair
+        claims = pair_claims.get(pair_key, [])
+        # Also include claims from the cooccurrence sources
+        cooc_claims = [c for s in sources for c in s["claims"]]
+        # Merge by claim_id to avoid duplicates
+        seen_ids: set[str] = set()
+        merged: list[dict] = []
+        for c in claims + cooc_claims:
+            cid = c.get("claim_id", "")
+            if cid and cid not in seen_ids:
+                seen_ids.add(cid)
+                merged.append(c)
+
+        if not merged:
+            continue
+
+        # --- claim_diversity: number of distinct claim_types
+        claim_types = set(c.get("claim_type") for c in merged if c.get("claim_type"))
+        claim_diversity = len(claim_types)
+        if claim_diversity == 0:
+            continue
+
+        # --- source_independence: unique source titles (proxy for journals/institutions)
+        source_titles = set(
+            c.get("source_title", "") for c in merged if c.get("source_title")
+        )
+        source_independence = len(source_titles)
+        if source_independence == 0:
+            continue
+
+        # --- recency: fraction of claims from last 2 years
+        total_with_date = 0
+        recent_count = 0
+        for c in merged:
+            pd = c.get("pub_date")
+            if pd is None:
+                continue
+            if isinstance(pd, datetime):
+                pd = pd.date()
+            elif isinstance(pd, str):
+                try:
+                    pd = datetime.fromisoformat(pd).date()
+                except (ValueError, TypeError):
+                    continue
+            total_with_date += 1
+            if pd >= two_years_ago:
+                recent_count += 1
+
+        recency = recent_count / total_with_date if total_with_date > 0 else 0.0
+
+        # --- surprise score
+        surprise = (claim_diversity * source_independence * recency) / (
+            1 + log(max(paper_overlap, 1))
+        )
+
+        if surprise <= 0:
+            continue
+
+        # Collect example predicates per target
+        predicates_a = [
+            c.get("predicate") for c in merged
+            if c.get("predicate") and (
+                c.get("subject") == target_a or c.get("subject_symbol") == target_a
+            )
+        ]
+        predicates_b = [
+            c.get("predicate") for c in merged
+            if c.get("predicate") and (
+                c.get("subject") == target_b or c.get("subject_symbol") == target_b
+                or c.get("object") == target_b or c.get("object_symbol") == target_b
+            )
+        ]
+        # Deduplicate and limit
+        predicates_a = list(dict.fromkeys(predicates_a))[:3]
+        predicates_b = list(dict.fromkeys(predicates_b))[:3]
+
+        results.append({
+            "target_a": target_a,
+            "target_b": target_b,
+            "paper_overlap": paper_overlap,
+            "claim_diversity": claim_diversity,
+            "source_independence": source_independence,
+            "recency": round(recency, 4),
+            "surprise_score": round(surprise, 4),
+            "example_predicates_a": predicates_a,
+            "example_predicates_b": predicates_b,
+        })
+
+    results.sort(key=lambda x: x["surprise_score"], reverse=True)
+    logger.info(f"Scored {len(results)} pairs for evidence surprise, "
+                f"top score: {results[0]['surprise_score'] if results else 0}")
+    return results[:30]
 
 
 # =============================================================================
