@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMA Research Platform &mdash; AI-Driven Drug Discovery for Spinal Muscular Atrophy</title>
+
+    <!-- Fonts: Syne (bold science display) + IBM Plex Sans (clean body) + JetBrains Mono (data) -->
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES — SCIENCE DARK THEME
+           =========================================== */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-card: #161616;
+            --bg-card-hover: #1c1c1c;
+            --text-primary: #e8e8e8;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --accent: #00d4aa;
+            --accent-glow: rgba(0, 212, 170, 0.15);
+            --accent-blue: #4a9eff;
+            --accent-blue-glow: rgba(74, 158, 255, 0.15);
+            --accent-gold: #ffd700;
+            --accent-gold-glow: rgba(255, 215, 0, 0.1);
+            --accent-red: #ff4757;
+            --accent-purple: #a78bfa;
+            --line: #222222;
+            --line-light: #1a1a1a;
+
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'IBM Plex Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            --title-size: clamp(2rem, 5.5vw, 4.5rem);
+            --h2-size: clamp(1.4rem, 3.5vw, 2.8rem);
+            --h3-size: clamp(1rem, 2.2vw, 1.6rem);
+            --body-size: clamp(0.75rem, 1.4vw, 1.05rem);
+            --small-size: clamp(0.65rem, 1vw, 0.85rem);
+            --label-size: clamp(0.6rem, 0.9vw, 0.75rem);
+
+            --slide-padding: clamp(1.5rem, 5vw, 5rem);
+            --content-gap: clamp(0.75rem, 2vw, 2rem);
+            --element-gap: clamp(0.25rem, 1vw, 1rem);
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --duration-normal: 0.7s;
+        }
+
+        /* ===========================================
+           RESET & BASE
+           =========================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* --- VIEWPORT BASE (mandatory) --- */
+        html, body { height: 100%; overflow-x: hidden; }
+        html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+            padding: var(--slide-padding);
+        }
+
+        img { max-width: 100%; max-height: min(50vh, 400px); object-fit: contain; }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-blue));
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        /* ===========================================
+           NAV DOTS
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(12px, 2vw, 24px);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 999;
+        }
+        .nav-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .nav-dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+            transform: scale(1.4);
+        }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        h1 {
+            font-family: var(--font-display);
+            font-size: var(--title-size);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        h2 {
+            font-family: var(--font-display);
+            font-size: var(--h2-size);
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+        h3 {
+            font-family: var(--font-display);
+            font-size: var(--h3-size);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        p, li {
+            font-size: var(--body-size);
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           SLIDE NUMBER
+           =========================================== */
+        .slide-number {
+            position: absolute;
+            top: clamp(16px, 3vh, 32px);
+            left: var(--slide-padding);
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+        }
+
+        /* ===========================================
+           ACCENT ELEMENTS
+           =========================================== */
+        .accent { color: var(--accent); }
+        .accent-blue { color: var(--accent-blue); }
+        .accent-gold { color: var(--accent-gold); }
+        .accent-red { color: var(--accent-red); }
+        .accent-purple { color: var(--accent-purple); }
+
+        .tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            padding: clamp(2px, 0.4vh, 4px) clamp(6px, 1vw, 12px);
+            border: 1px solid var(--line);
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .tag.accent { border-color: var(--accent); color: var(--accent); }
+        .tag.blue { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .tag.gold { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .tag.red { border-color: var(--accent-red); color: var(--accent-red); }
+
+        /* ===========================================
+           CARDS & GRIDS
+           =========================================== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            padding: clamp(10px, 1.5vh, 20px) clamp(12px, 2vw, 24px);
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+        .card:hover {
+            border-color: var(--accent);
+            background: var(--bg-card-hover);
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+            gap: clamp(8px, 1.5vw, 16px);
+        }
+
+        /* ===========================================
+           STAT GRID
+           =========================================== */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+            gap: clamp(8px, 1.5vw, 16px);
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            padding: clamp(8px, 1.5vh, 20px) clamp(8px, 1vw, 16px);
+            text-align: center;
+        }
+        .stat-number {
+            font-family: var(--font-mono);
+            font-size: clamp(1.5rem, 3.5vw, 3rem);
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1.1;
+        }
+        .stat-label {
+            font-size: var(--label-size);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: clamp(2px, 0.5vh, 6px);
+        }
+
+        /* ===========================================
+           DATA TABLE
+           =========================================== */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--small-size);
+        }
+        .data-table th {
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--line);
+            padding: clamp(4px, 0.8vh, 8px) clamp(6px, 1vw, 12px);
+            text-align: left;
+        }
+        .data-table td {
+            padding: clamp(3px, 0.6vh, 6px) clamp(6px, 1vw, 12px);
+            border-bottom: 1px solid var(--line-light);
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           DIMENSION BARS (Scoring)
+           =========================================== */
+        .dim-bars { display: flex; flex-direction: column; gap: clamp(4px, 0.8vh, 8px); }
+        .dim-row { display: flex; align-items: center; gap: clamp(6px, 1vw, 12px); }
+        .dim-label {
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            color: var(--text-secondary);
+            min-width: clamp(100px, 14vw, 160px);
+            text-align: right;
+        }
+        .dim-track {
+            flex: 1;
+            height: clamp(4px, 0.8vh, 8px);
+            background: var(--line);
+            overflow: hidden;
+        }
+        .dim-fill {
+            height: 100%;
+            transition: width 1.2s var(--ease-out-expo);
+        }
+        .dim-fill.green { background: var(--accent); }
+        .dim-fill.blue { background: var(--accent-blue); }
+        .dim-fill.gold { background: var(--accent-gold); }
+        .dim-fill.purple { background: var(--accent-purple); }
+        .dim-fill.red { background: var(--accent-red); }
+        .dim-value {
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            color: var(--text-muted);
+            min-width: 36px;
+        }
+
+        /* ===========================================
+           TIMELINE
+           =========================================== */
+        .timeline { display: flex; flex-direction: column; gap: clamp(2px, 0.5vh, 6px); padding-left: clamp(12px, 2vw, 24px); border-left: 2px solid var(--line); }
+        .timeline-item { display: flex; align-items: flex-start; gap: clamp(8px, 1.5vw, 16px); position: relative; padding: clamp(2px, 0.4vh, 4px) 0; }
+        .timeline-item::before { content: ''; position: absolute; left: calc(-1 * clamp(12px, 2vw, 24px) - 5px); top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+        .timeline-item.done::before { background: var(--accent); box-shadow: 0 0 6px var(--accent-glow); }
+        .timeline-item.active::before { background: var(--accent-gold); box-shadow: 0 0 8px var(--accent-gold-glow); }
+        .timeline-date { font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent); min-width: clamp(50px, 8vw, 70px); }
+        .timeline-text { font-size: var(--small-size); color: var(--text-secondary); }
+
+        /* ===========================================
+           SECTION LABELS & DIVIDERS
+           =========================================== */
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: var(--label-size);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            margin-bottom: clamp(4px, 1vh, 12px);
+        }
+        .section-divider {
+            width: clamp(40px, 6vw, 60px);
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            margin-top: clamp(4px, 0.8vh, 8px);
+        }
+
+        /* ===========================================
+           GRID BACKGROUND EFFECT
+           =========================================== */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* ===========================================
+           TITLE SLIDE SPECIAL
+           =========================================== */
+        .title-slide .slide-content { justify-content: center; }
+        .title-subtitle {
+            font-size: clamp(0.8rem, 1.6vw, 1.15rem);
+            color: var(--text-secondary);
+            max-width: min(85%, 700px);
+            margin-top: var(--element-gap);
+            line-height: 1.5;
+        }
+        .title-meta {
+            display: flex;
+            gap: clamp(6px, 1vw, 12px);
+            margin-top: var(--content-gap);
+            flex-wrap: wrap;
+        }
+
+        /* ===========================================
+           CLOSING SLIDE
+           =========================================== */
+        .closing-slide .slide-content { justify-content: center; align-items: center; text-align: center; }
+
+        /* ===========================================
+           DNA HELIX DECORATION
+           =========================================== */
+        .dna-helix {
+            position: absolute;
+            right: clamp(20px, 8vw, 120px);
+            top: 50%;
+            transform: translateY(-50%);
+            width: clamp(40px, 6vw, 80px);
+            height: clamp(200px, 40vh, 400px);
+            opacity: 0.08;
+            background: repeating-linear-gradient(
+                0deg,
+                var(--accent) 0px, var(--accent) 2px,
+                transparent 2px, transparent 20px
+            );
+        }
+
+        /* ===========================================
+           PIPELINE FLOW ARROWS
+           =========================================== */
+        .pipeline-arrow {
+            text-align: center;
+            font-size: var(--small-size);
+            color: var(--text-muted);
+            padding: clamp(2px, 0.3vh, 4px) 0;
+        }
+
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity var(--duration-normal) var(--ease-out-expo),
+                        transform var(--duration-normal) var(--ease-out-expo);
+        }
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
+        .slide.visible .reveal:nth-child(3) { transition-delay: 0.2s; }
+        .slide.visible .reveal:nth-child(4) { transition-delay: 0.3s; }
+        .slide.visible .reveal:nth-child(5) { transition-delay: 0.4s; }
+
+        /* ===========================================
+           RESPONSIVE BREAKPOINTS
+           =========================================== */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 3vw, 2rem);
+                --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+                --h2-size: clamp(1rem, 3vw, 1.75rem);
+            }
+        }
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+                --content-gap: clamp(0.3rem, 1vw, 0.75rem);
+                --title-size: clamp(1.1rem, 4vw, 2rem);
+                --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            }
+            .nav-dots, .decorative { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.4rem, 2vw, 1rem);
+                --title-size: clamp(1rem, 3.5vw, 1.5rem);
+                --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
+                --body-size: clamp(0.65rem, 1vw, 0.85rem);
+            }
+        }
+        @media (max-width: 600px) {
+            :root { --title-size: clamp(1.25rem, 7vw, 2.5rem); }
+            .card-grid { grid-template-columns: 1fr; }
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.2s !important;
+            }
+            html { scroll-behavior: auto; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation Dots -->
+    <nav class="nav-dots" id="navDots"></nav>
+
+    <!-- ===========================================
+         SLIDE 1: TITLE
+         =========================================== -->
+    <section class="slide title-slide">
+        <div class="slide-content">
+            <div class="section-label reveal">Open-Source Research Platform</div>
+            <h1 class="reveal">SMA Research<br><span class="accent">Platform</span></h1>
+            <p class="title-subtitle reveal">AI-driven drug discovery for Spinal Muscular Atrophy &mdash; from automated literature analysis and splice-variant prediction to breakthrough signal detection and molecular docking</p>
+            <div class="title-meta reveal">
+                <span class="tag accent">Evidence-First</span>
+                <span class="tag blue">5,216 Sources</span>
+                <span class="tag gold">515 Hypotheses</span>
+                <span class="tag">21 Targets</span>
+                <span class="tag red">25,054 Claims</span>
+            </div>
+        </div>
+        <div class="dna-helix decorative"></div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 2: THE PROBLEM
+         =========================================== -->
+    <section class="slide section-slide grid-bg">
+        <div class="slide-number">01</div>
+        <div class="slide-content">
+            <div class="section-label reveal">The Problem</div>
+            <h2 class="reveal">Spinal Muscular Atrophy:<br><span class="accent">Unmet Need</span></h2>
+            <div class="section-divider reveal"></div>
+            <div class="card-grid reveal" style="margin-top: var(--content-gap);">
+                <div class="card">
+                    <h3 style="color: var(--accent-red);">Fragmented Knowledge</h3>
+                    <p>SMA research data is scattered across hundreds of databases, papers, and registries. No single researcher can survey the entire evidence landscape. Promising therapeutic angles are missed.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--accent-gold);">Three Therapies, No Cure</h3>
+                    <p>Nusinersen (2016), Onasemnogene (2019), and Risdiplam (2020) address SMN protein levels. None fully restore motor function in later-treated patients. Peripheral pathology persists.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--accent-blue);">Beyond SMN</h3>
+                    <p>Growing evidence for SMN-independent disease modifiers: NMJ maturation, cytoskeletal regulation, ubiquitin homeostasis, calcium signaling. These remain largely unexplored as drug targets.</p>
+                </div>
+            </div>
+            <p class="reveal" style="max-width: min(85%, 700px); margin-top: var(--element-gap); font-size: var(--small-size); color: var(--text-muted); font-style: italic;">
+                Built by a person living with SMA. Biology-first. No marketing promises. Every statement traceable to its primary source.
+            </p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 3: SMA DISEASE OVERVIEW
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">02</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Disease Overview</div>
+            <h2 class="reveal">Spinal Muscular Atrophy <span class="accent">(SMA)</span></h2>
+            <div class="card-grid reveal" style="margin-top: var(--content-gap);">
+                <div class="card">
+                    <h3 style="color: var(--accent-red);">Cause</h3>
+                    <p>Homozygous deletion or mutation of the <strong style="color: var(--text-primary);">SMN1</strong> gene on chromosome 5q13. Loss of SMN protein leads to motor neuron degeneration.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--accent-gold);">Modifier</h3>
+                    <p><strong style="color: var(--text-primary);">SMN2</strong> copy number determines disease severity. A C-to-T change in Exon 7 causes ~90% exon skipping &rarr; only ~10% functional SMN protein.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--accent-blue);">Prevalence</h3>
+                    <p>~1:10,000 births. Leading genetic cause of infant mortality. Carrier frequency: 1:35&ndash;1:50 in the general population.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--accent-purple);">Approved Therapies</h3>
+                    <p>3 approved: <strong style="color: var(--text-primary);">Nusinersen</strong> (ASO), <strong style="color: var(--text-primary);">Risdiplam</strong> (oral), <strong style="color: var(--text-primary);">Onasemnogene</strong> (gene therapy). There is no cure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 4: OUR APPROACH
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">03</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Our Approach</div>
+            <h2 class="reveal">Evidence-First, <span class="accent">AI-Driven</span>, Open-Source</h2>
+            <div class="section-divider reveal"></div>
+            <p class="reveal" style="max-width: min(85%, 700px); margin-top: var(--content-gap); font-size: clamp(0.85rem, 1.5vw, 1.1rem); color: var(--text-secondary); line-height: 1.7;">
+                This platform aggregates, structures, and prioritizes global SMA evidence automatically &mdash; so that no promising therapeutic angle is overlooked. Every claim is extracted from peer-reviewed literature. Every hypothesis is traceable to its supporting sources. Every prediction is falsifiable.
+            </p>
+            <div class="card-grid reveal" style="margin-top: var(--content-gap);">
+                <div class="card" style="border-top: 2px solid var(--accent);">
+                    <h3 style="color: var(--accent); font-size: var(--body-size);">Evidence-First</h3>
+                    <p>25,054 structured claims extracted from 5,216 PubMed sources. No speculation without citation. SMA-relevance scoring distinguishes SMA from alpha-SMA/Smooth Muscle Actin.</p>
+                </div>
+                <div class="card" style="border-top: 2px solid var(--accent-blue);">
+                    <h3 style="color: var(--accent-blue); font-size: var(--body-size);">AI-Driven</h3>
+                    <p>Claude Haiku for claim extraction. Claude Sonnet for hypothesis generation. ESM-2 for protein variant analysis. DiffDock for molecular docking. GenMol for molecule generation.</p>
+                </div>
+                <div class="card" style="border-top: 2px solid var(--accent-gold);">
+                    <h3 style="color: var(--accent-gold); font-size: var(--body-size);">Open-Source</h3>
+                    <p>AGPL-3.0 licensed. Full dataset on HuggingFace. ~190 REST API endpoints. 29 MCP tools for AI-native access. Reproducible GPU pipeline on Docker Hub.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 5: PLATFORM ARCHITECTURE
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">04</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Architecture</div>
+            <h2 class="reveal">Evidence-First <span class="accent-blue">Pipeline</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap); align-items: flex-start;">
+                <div class="reveal" style="flex: 1.2; min-width: min(100%, 300px);">
+                    <div style="display: flex; flex-direction: column; gap: clamp(6px, 1vh, 12px);">
+                        <div class="card" style="border-left: 2px solid var(--accent);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent);">1. Ingestion</h3>
+                            <p>PubMed, ClinicalTrials.gov, bioRxiv/medRxiv, STRING, KEGG, ChEMBL, UniProt &rarr; 5,216 sources, 449 trials</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-blue);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-blue);">2. LLM Claim Extraction</h3>
+                            <p>Claude Haiku extracts structured statements from abstracts &rarr; 25,054 claims in 12 types, SMA-relevance scoring</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-gold);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-gold);">3. Hypothesis Generation</h3>
+                            <p>Claude Sonnet generates mechanistic hypothesis cards &rarr; 515 hypotheses in 3 tiers with experimental proposals</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-purple);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-purple);">4. Auto-Discovery</h3>
+                            <p>Claim spike detection, hypothesis confirmation, novel target identification &rarr; breakthrough signals</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal" style="flex: 0.8; min-width: min(100%, 200px);">
+                    <div class="card" style="border-color: var(--accent); text-align: center;">
+                        <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent); margin-bottom: 8px;">TECH STACK</div>
+                        <p><strong style="color: var(--text-primary);">Backend:</strong> Python / FastAPI</p>
+                        <p><strong style="color: var(--text-primary);">Database:</strong> PostgreSQL (asyncpg)</p>
+                        <p><strong style="color: var(--text-primary);">LLM:</strong> Claude Sonnet + Haiku</p>
+                        <p><strong style="color: var(--text-primary);">ML:</strong> ESM-2 (HuggingFace)</p>
+                        <p><strong style="color: var(--text-primary);">APIs:</strong> NCBI, STRING, KEGG, ChEMBL</p>
+                        <p><strong style="color: var(--text-primary);">Frontend:</strong> Vanilla JS SPA</p>
+                        <p><strong style="color: var(--text-primary);">API:</strong> ~190 REST Endpoints</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 6: DATA SCALE
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">05</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Platform Scale</div>
+            <h2 class="reveal">The Numbers <span class="accent">Speak</span></h2>
+            <div class="stat-grid reveal" style="margin-top: var(--content-gap);">
+                <div class="stat-card">
+                    <div class="stat-number" data-count="5216">5,216</div>
+                    <div class="stat-label">PubMed Sources</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--accent-blue);" data-count="25054">25,054</div>
+                    <div class="stat-label">Extracted Claims</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--accent-gold);" data-count="515">515</div>
+                    <div class="stat-label">Hypotheses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--accent-purple);" data-count="449">449</div>
+                    <div class="stat-label">Clinical Trials</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--accent-red);" data-count="21">21</div>
+                    <div class="stat-label">Mol. Targets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--text-secondary);" data-count="16">16</div>
+                    <div class="stat-label">Drugs Tracked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--accent-gold);" data-count="29">29</div>
+                    <div class="stat-label">MCP Tools</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="color: var(--accent-blue);" data-count="190">~190</div>
+                    <div class="stat-label">API Endpoints</div>
+                </div>
+            </div>
+            <p class="reveal" style="margin-top: var(--content-gap); font-size: var(--small-size); color: var(--text-muted);">
+                As of March 2026 &mdash; automated daily updates via cron at 06:00 UTC. All data publicly available on HuggingFace: SMAResearch/sma-evidence-graph
+            </p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 7: EVIDENCE PIPELINE
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">06</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Core Mechanism</div>
+            <h2 class="reveal">LLM-Based <span class="accent">Claim Extraction</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap);">
+                <div class="reveal" style="flex: 1; min-width: min(100%, 280px);">
+                    <p style="margin-bottom: var(--element-gap); color: var(--text-secondary); line-height: 1.7;">
+                        Every paper abstract is analyzed by <strong style="color: var(--text-primary);">Claude Haiku</strong>. The LLM extracts structured claims &mdash; factual statements about genes, proteins, compounds, and mechanisms &mdash; and assigns each claim one of <strong style="color: var(--accent);">12 types</strong> and a <strong style="color: var(--accent-gold);">confidence score</strong>.
+                    </p>
+                    <p style="color: var(--text-secondary); line-height: 1.7;">
+                        Subsequently, all 25,054 claims are re-scored for SMA relevance (distinguishing e.g. SMA/Spinal Muscular Atrophy from &alpha;-SMA/Smooth Muscle Actin). Claims are automatically linked to targets and drugs.
+                    </p>
+                </div>
+                <div class="reveal" style="flex: 0.8; min-width: min(100%, 200px);">
+                    <div class="card" style="border-color: var(--accent-blue);">
+                        <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-blue); margin-bottom: 8px;">12 CLAIM TYPES</div>
+                        <p style="font-family: var(--font-mono); font-size: var(--label-size); line-height: 1.8;">
+                            gene_expression<br>protein_interaction<br>pathway_membership<br>drug_target<br>drug_efficacy<br>biomarker<br>splicing_event<br>neuroprotection<br>motor_function<br>survival<br>safety<br>other
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 8: KEY TARGETS
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">07</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Targets</div>
+            <h2 class="reveal">21 Molecular <span class="accent">Targets</span></h2>
+            <div style="overflow: hidden; margin-top: var(--content-gap);">
+                <table class="data-table reveal">
+                    <thead>
+                        <tr><th>Symbol</th><th>Name</th><th>Type</th><th>Role in SMA</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="color: var(--accent); font-family: var(--font-mono); font-weight: 600;">SMN1</td><td>Survival Motor Neuron 1</td><td>Gene</td><td>Primary gene &mdash; absent in SMA patients</td></tr>
+                        <tr><td style="color: var(--accent); font-family: var(--font-mono); font-weight: 600;">SMN2</td><td>Survival Motor Neuron 2</td><td>Gene</td><td>Copy number = severity modifier, therapy target</td></tr>
+                        <tr><td style="color: var(--accent-blue); font-family: var(--font-mono); font-weight: 600;">STMN2</td><td>Stathmin-2</td><td>Gene</td><td>Axonal growth, downregulated in SMA motor neurons</td></tr>
+                        <tr><td style="font-family: var(--font-mono); font-weight: 600;">PLS3</td><td>Plastin 3</td><td>Gene</td><td>Actin-bundling, natural severity modifier</td></tr>
+                        <tr><td style="font-family: var(--font-mono); font-weight: 600;">NCALD</td><td>Neurocalcin Delta</td><td>Gene</td><td>Calcium sensor, knockdown rescues SMA phenotype</td></tr>
+                        <tr><td style="font-family: var(--font-mono); font-weight: 600;">UBA1</td><td>Ubiquitin-Activating Enzyme E1</td><td>Gene</td><td>Ubiquitin homeostasis, dysregulated in SMA</td></tr>
+                        <tr><td style="color: var(--accent-purple); font-family: var(--font-mono); font-weight: 600;">CORO1C</td><td>Coronin-1C</td><td>Gene</td><td>Cytoskeletal regulation at the NMJ</td></tr>
+                        <tr><td style="color: var(--text-muted); font-family: var(--font-mono);" colspan="4">+ 14 more: SMN_PROTEIN, MTOR_PATHWAY, NMJ_MATURATION, ANK3, CAST, CD44, GALNT6...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 9: GPU INFRASTRUCTURE
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">08</div>
+        <div class="slide-content">
+            <div class="section-label reveal">GPU Infrastructure</div>
+            <h2 class="reveal">Reproducible <span class="accent-blue">Compute Pipeline</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap);">
+                <div class="reveal" style="flex: 1.2; min-width: min(100%, 280px);">
+                    <div style="display: flex; flex-direction: column; gap: clamp(6px, 1vh, 12px);">
+                        <div class="card" style="border-left: 2px solid var(--accent);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent);">Docker Image</h3>
+                            <p><span style="font-family: var(--font-mono); color: var(--text-primary);">csiicf/sma-gpu-toolkit</span> (14.7 GB) on Docker Hub. Fully reproducible GPU pipeline for drug discovery. Includes DiffDock, Boltz-2, ESM-2, OpenMM, REINVENT 4.</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-blue);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-blue);">Vast.ai + dstack</h3>
+                            <p>On-demand GPU compute via Vast.ai marketplace. dstack orchestration for job scheduling. RTX 4090 / A100 instances at ~$0.20&ndash;$0.50/hr.</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-gold);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-gold);">Total GPU Cost</h3>
+                            <p>Entire screening campaign: <strong style="color: var(--accent);">~$0.78 total</strong>. 378 NIM dockings + structure predictions + molecule generation. Proof that meaningful computational drug discovery does not require institutional budgets.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal" style="flex: 0.8; min-width: min(100%, 200px);">
+                    <div class="card" style="border-color: var(--accent-purple);">
+                        <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-purple); margin-bottom: 8px;">TOOLS IN IMAGE</div>
+                        <p style="font-size: var(--small-size); line-height: 1.8;">
+                            <strong style="color: var(--accent);">DiffDock v2.2</strong><br>Molecular Docking<br><br>
+                            <strong style="color: var(--accent-blue);">Boltz-2</strong><br>Protein Structure Prediction<br><br>
+                            <strong style="color: var(--accent-gold);">ESM-2</strong><br>Protein Language Model<br><br>
+                            <strong style="color: var(--accent-purple);">OpenMM</strong><br>MD Simulation<br><br>
+                            <strong style="color: var(--accent-red);">REINVENT 4</strong><br>Generative Chemistry
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 10: 4-AP MULTI-TARGET BINDING
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">09</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Key Discovery</div>
+            <h2 class="reveal">4-AP Multi-Target <span class="accent-gold">Binding</span></h2>
+            <p class="reveal" style="color: var(--text-secondary); max-width: min(90%, 700px); margin-top: var(--element-gap); line-height: 1.7;">
+                4-Aminopyridine (4-AP), a potassium channel blocker already used in MS, shows predicted binding to <strong style="color: var(--text-primary);">4 SMA targets simultaneously</strong> &mdash; the only compound in our database with multi-target coverage of this breadth.
+            </p>
+            <div class="card-grid reveal" style="margin-top: var(--content-gap); grid-template-columns: repeat(4, 1fr);">
+                <div class="card" style="border-top: 2px solid var(--accent-gold); text-align: center;">
+                    <h3 style="color: var(--accent-gold); font-size: var(--body-size);">CORO1C</h3>
+                    <p style="font-family: var(--font-mono); font-size: clamp(1.2rem, 2.5vw, 2rem); color: var(--accent-gold); margin-top: 4px;">+0.251</p>
+                    <p style="font-size: var(--label-size); margin-top: 4px;">Confidence score<br>Cytoskeletal NMJ regulator</p>
+                </div>
+                <div class="card" style="border-top: 2px solid var(--accent); text-align: center;">
+                    <h3 style="color: var(--accent); font-size: var(--body-size);">SMN2</h3>
+                    <p style="font-family: var(--font-mono); font-size: clamp(1.2rem, 2.5vw, 2rem); color: var(--accent); margin-top: 4px;">Confirmed</p>
+                    <p style="font-size: var(--label-size); margin-top: 4px;">DiffDock validated<br>Splice modifier target</p>
+                </div>
+                <div class="card" style="border-top: 2px solid var(--accent-blue); text-align: center;">
+                    <h3 style="color: var(--accent-blue); font-size: var(--body-size);">NCALD</h3>
+                    <p style="font-family: var(--font-mono); font-size: clamp(1.2rem, 2.5vw, 2rem); color: var(--accent-blue); margin-top: 4px;">Predicted</p>
+                    <p style="font-size: var(--label-size); margin-top: 4px;">Calcium sensor<br>Knockdown rescues SMA</p>
+                </div>
+                <div class="card" style="border-top: 2px solid var(--accent-purple); text-align: center;">
+                    <h3 style="color: var(--accent-purple); font-size: var(--body-size);">SMN1</h3>
+                    <p style="font-family: var(--font-mono); font-size: clamp(1.2rem, 2.5vw, 2rem); color: var(--accent-purple); margin-top: 4px;">Predicted</p>
+                    <p style="font-size: var(--label-size); margin-top: 4px;">Primary gene<br>Protein stabilization</p>
+                </div>
+            </div>
+            <p class="reveal" style="margin-top: var(--element-gap); font-size: var(--small-size); color: var(--text-muted);">
+                Limitation: These are computational predictions requiring experimental validation. DiffDock confidence scores are not binding affinities. The multi-target hypothesis remains to be tested in vitro and in vivo.
+            </p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 11: DIFFDOCK v2.2 CAMPAIGN
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">10</div>
+        <div class="slide-content">
+            <div class="section-label reveal">NIM Campaign</div>
+            <h2 class="reveal">DiffDock v2.2 <span class="accent">Docking Results</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap);">
+                <div class="reveal" style="flex: 1.2; min-width: min(100%, 280px);">
+                    <div style="display: flex; flex-direction: column; gap: clamp(6px, 1vh, 12px);">
+                        <div class="card" style="border-left: 2px solid var(--accent);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent);">378 NIM Dockings</h3>
+                            <p>54 compounds &times; 7 SMA targets. Systematic screening via NVIDIA NIM DiffDock v2.2 API. First AI-driven virtual screening campaign specifically designed for SMA drug discovery.</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-blue);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-blue);">3 Positive Hits</h3>
+                            <p>Compounds showing predicted binding across multiple targets. Top hit per target identified and ranked by DiffDock confidence. Results stored in platform database for cross-referencing with claim evidence.</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-gold);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-gold);">$0 NIM API Cost</h3>
+                            <p>NVIDIA NIM API free tier used for all 378 dockings. Combined with ~$0.78 GPU compute for Boltz-2 structure predictions. Total campaign budget: <strong style="color: var(--accent);">~$12</strong> including all API costs.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal" style="flex: 0.8; min-width: min(100%, 200px);">
+                    <div class="stat-grid" style="grid-template-columns: 1fr;">
+                        <div class="stat-card">
+                            <div class="stat-number" style="font-size: clamp(1.8rem, 4vw, 3.5rem);">378</div>
+                            <div class="stat-label">NIM Dockings</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="font-size: clamp(1.8rem, 4vw, 3.5rem); color: var(--accent-blue);">54</div>
+                            <div class="stat-label">Compounds</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="font-size: clamp(1.8rem, 4vw, 3.5rem); color: var(--accent-gold);">7</div>
+                            <div class="stat-label">Targets</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 12: CROSS-PAPER SYNTHESIS
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">11</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Differentiator #1</div>
+            <h2 class="reveal">Cross-Paper <span class="accent-gold">Synthesis</span></h2>
+            <p class="reveal" style="color: var(--text-secondary); max-width: min(90%, 700px); margin-top: var(--element-gap); line-height: 1.7;">
+                The platform finds connections across 25,054 claims that no single researcher could identify manually. Co-occurrence analysis, transitive bridges, and shared mechanisms across thousands of papers surface hidden therapeutic opportunities.
+            </p>
+            <div class="stat-grid reveal" style="margin-top: var(--content-gap); grid-template-columns: repeat(3, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size: clamp(1.5rem, 3vw, 2.5rem);">30</div>
+                    <div class="stat-label">Co-occurrences</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size: clamp(1.5rem, 3vw, 2.5rem); color: var(--accent-blue);">53</div>
+                    <div class="stat-label">Transitive Bridges</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size: clamp(1.5rem, 3vw, 2.5rem); color: var(--accent-gold);">6</div>
+                    <div class="stat-label">Claude Synthesis Cards</div>
+                </div>
+            </div>
+            <div class="card-grid reveal" style="margin-top: var(--content-gap); grid-template-columns: 1fr 1fr;">
+                <div class="card" style="border-top: 2px solid var(--accent-gold);">
+                    <h3 style="color: var(--accent-gold); font-size: var(--body-size);">How It Works</h3>
+                    <p style="margin-top: 4px;">Claims from different papers are cross-referenced by target, mechanism, and pathway. When Paper A mentions NCALD in calcium signaling and Paper B links calcium to SMN1 stability &mdash; the platform surfaces this bridge automatically.</p>
+                </div>
+                <div class="card" style="border-top: 2px solid var(--accent);">
+                    <h3 style="color: var(--accent); font-size: var(--body-size);">Claude Synthesis Cards</h3>
+                    <p style="margin-top: 4px;">6 detailed synthesis reports generated by Claude, each explaining the mechanistic logic behind a cross-paper connection. These represent hypotheses that emerge from the intersection of independent research lines.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 13: NVIDIA NIMs INTEGRATION
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">12</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Computational Biology</div>
+            <h2 class="reveal">NVIDIA NIMs <span class="accent">Integration</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap);">
+                <div class="reveal" style="flex: 1.2; min-width: min(100%, 280px);">
+                    <div style="display: flex; flex-direction: column; gap: clamp(6px, 1vh, 12px);">
+                        <div class="card" style="border-left: 2px solid var(--accent);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent);">DiffDock v2.2</h3>
+                            <p>State-of-the-art diffusion-based molecular docking. Used for all 378 dockings in our screening campaign. Predicts ligand binding poses without requiring pre-defined binding sites.</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-blue);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-blue);">OpenFold3</h3>
+                            <p>Protein structure prediction for targets without experimental crystal structures. Enables docking against computationally predicted conformations of SMA-relevant proteins.</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-gold);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-gold);">GenMol</h3>
+                            <p>Generative molecule design. Used to create 20 4-AP analogs optimized for SMA targets. Result: original 4-AP scaffold proved optimal &mdash; a meaningful negative result confirming the parent compound.</p>
+                        </div>
+                        <div class="card" style="border-left: 2px solid var(--accent-purple);">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-purple);">RNAPro</h3>
+                            <p>RNA-protein interaction prediction. Relevant for understanding SMN2 pre-mRNA splicing regulation and ASO binding dynamics.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal" style="flex: 0.8; min-width: min(100%, 200px);">
+                    <div class="card" style="border-color: var(--accent); text-align: center;">
+                        <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent); margin-bottom: 8px;">NIM API COST</div>
+                        <p style="font-family: var(--font-mono); font-size: clamp(2rem, 5vw, 4rem); color: var(--accent); line-height: 1.2;">$0</p>
+                        <p style="font-size: var(--label-size); color: var(--text-muted); margin-top: 8px;">Free tier covers all 378 dockings + structure predictions + molecule generation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 14: GENMOL RESULTS
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">13</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Generative Chemistry</div>
+            <h2 class="reveal">GenMol: <span class="accent-purple">20 Analogs Generated</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap);">
+                <div class="reveal" style="flex: 1; min-width: min(100%, 280px);">
+                    <p style="color: var(--text-secondary); margin-bottom: var(--content-gap); line-height: 1.7;">
+                        NVIDIA GenMol NIM was used to generate 20 structural analogs of 4-Aminopyridine, optimized for binding to SMA target proteins. The analogs were then re-docked against all 7 targets to assess improvement over the parent compound.
+                    </p>
+                    <div class="card" style="border-left: 2px solid var(--accent-gold);">
+                        <h3 style="font-size: var(--small-size); color: var(--accent-gold);">Key Finding</h3>
+                        <p style="margin-top: 4px;">The original 4-AP scaffold was optimal. None of the 20 analogs showed improved binding across the multi-target profile. This is a meaningful result: it suggests 4-AP's multi-target activity may depend on its minimal molecular footprint &mdash; larger analogs lose selectivity.</p>
+                    </div>
+                    <p style="margin-top: var(--element-gap); font-size: var(--small-size); color: var(--text-muted);">
+                        This does not preclude better analogs existing &mdash; the search space is vast. But it provides initial computational evidence that 4-AP itself warrants direct experimental testing.
+                    </p>
+                </div>
+                <div class="reveal" style="flex: 0.7; min-width: min(100%, 200px);">
+                    <div class="stat-grid" style="grid-template-columns: 1fr;">
+                        <div class="stat-card">
+                            <div class="stat-number" style="font-size: clamp(1.8rem, 4vw, 3.5rem); color: var(--accent-purple);">20</div>
+                            <div class="stat-label">Analogs Generated</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" style="font-size: clamp(1.8rem, 4vw, 3.5rem); color: var(--accent-gold);">0</div>
+                            <div class="stat-label">Improved Over Parent</div>
+                        </div>
+                        <div class="stat-card" style="border-color: var(--accent);">
+                            <div class="stat-number" style="font-size: clamp(1rem, 2vw, 1.5rem); color: var(--accent);">4-AP</div>
+                            <div class="stat-label">Original Scaffold Optimal</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 15: UBA1 DRUGGABILITY
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">14</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Target Highlight</div>
+            <h2 class="reveal">UBA1 <span class="accent-red">Druggability</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap);">
+                <div class="reveal" style="flex: 1; min-width: min(100%, 280px);">
+                    <p style="color: var(--text-secondary); margin-bottom: var(--content-gap); line-height: 1.7;">
+                        <strong style="color: var(--text-primary);">UBA1</strong> (Ubiquitin-Activating Enzyme E1) is dysregulated in SMA, disrupting ubiquitin homeostasis and contributing to motor neuron vulnerability. Our screening identified <strong style="color: var(--accent-red);">5 compounds in the top 25</strong> with predicted UBA1 binding.
+                    </p>
+                    <div class="card" style="border-left: 2px solid var(--accent-red);">
+                        <h3 style="font-size: var(--small-size); color: var(--accent-red);">Why UBA1 Matters</h3>
+                        <p style="margin-top: 4px;">UBA1 reduction is an early event in SMA pathogenesis, preceding motor neuron loss. It represents a potential SMN-independent therapeutic axis. Restoring ubiquitin pathway function could complement existing SMN-enhancing therapies.</p>
+                    </div>
+                    <div class="card" style="border-left: 2px solid var(--accent-blue); margin-top: clamp(4px, 0.8vh, 8px);">
+                        <h3 style="font-size: var(--small-size); color: var(--accent-blue);">Screening Result</h3>
+                        <p style="margin-top: 4px;">5 of our top 25 ranked compounds show predicted UBA1 binding via DiffDock. These include both known ubiquitin pathway modulators and repurposing candidates from other indications.</p>
+                    </div>
+                </div>
+                <div class="reveal" style="flex: 0.7; min-width: min(100%, 200px);">
+                    <div class="card" style="border-color: var(--accent-red);">
+                        <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-red); margin-bottom: 8px;">UBA1 IN SMA</div>
+                        <p style="font-size: var(--small-size); line-height: 1.8;">
+                            <strong style="color: var(--accent-red);">Reduced early</strong><br>Before motor neuron loss<br><br>
+                            <strong style="color: var(--accent-gold);">SMN-independent</strong><br>Separate therapeutic axis<br><br>
+                            <strong style="color: var(--accent);">Combination target</strong><br>Complements SMN therapies<br><br>
+                            <strong style="color: var(--accent-blue);">5 compounds</strong><br>In top 25 screening hits
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 16: SMN1-NCALD BRIDGE
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">15</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Cross-Paper Discovery</div>
+            <h2 class="reveal">SMN1&ndash;NCALD <span class="accent-blue">Bridge</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap);">
+                <div class="reveal" style="flex: 1; min-width: min(100%, 280px);">
+                    <p style="color: var(--text-secondary); margin-bottom: var(--content-gap); line-height: 1.7;">
+                        A concrete example of cross-paper synthesis: <strong style="color: var(--text-primary);">Paper A</strong> describes NCALD as a calcium-sensing modifier whose knockdown rescues SMA phenotype in zebrafish. <strong style="color: var(--text-primary);">Paper B</strong> independently identifies calcium signaling disruption as an early consequence of SMN1 loss.
+                    </p>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--content-gap); line-height: 1.7;">
+                        The platform bridges these findings automatically: <strong style="color: var(--accent);">SMN1 loss &rarr; calcium dysregulation &rarr; NCALD becomes actionable target</strong>. This mechanistic chain was not explicitly stated in either paper but emerges from their intersection.
+                    </p>
+                    <div class="card" style="border-left: 2px solid var(--accent-blue);">
+                        <h3 style="font-size: var(--small-size); color: var(--accent-blue);">Therapeutic Implication</h3>
+                        <p style="margin-top: 4px;">NCALD modulation could restore calcium homeostasis downstream of SMN loss, providing benefit even when SMN-enhancing therapies achieve incomplete rescue. 4-AP's predicted NCALD binding makes this a testable hypothesis.</p>
+                    </div>
+                </div>
+                <div class="reveal" style="flex: 0.7; min-width: min(100%, 200px);">
+                    <div class="card" style="border-color: var(--accent-gold); text-align: center;">
+                        <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-gold); margin-bottom: 12px;">MECHANISTIC CHAIN</div>
+                        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                            <span class="tag red" style="width: 100%;">SMN1 Loss</span>
+                            <span style="color: var(--text-muted);">&darr;</span>
+                            <span class="tag gold" style="width: 100%;">Ca2+ Dysregulation</span>
+                            <span style="color: var(--text-muted);">&darr;</span>
+                            <span class="tag blue" style="width: 100%;">NCALD Overactivity</span>
+                            <span style="color: var(--text-muted);">&darr;</span>
+                            <span class="tag accent" style="width: 100%;">NMJ Dysfunction</span>
+                            <span style="color: var(--text-muted);">&darr;</span>
+                            <span class="tag" style="width: 100%; border-color: var(--accent-purple); color: var(--accent-purple);">4-AP Intervention?</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 17: MCP SERVER
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">16</div>
+        <div class="slide-content">
+            <div class="section-label reveal">AI-Native Access</div>
+            <h2 class="reveal"><span class="accent">29 MCP Tools</span> &mdash; Natural Language Access</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--content-gap); margin-top: var(--content-gap);">
+                <div class="reveal" style="flex: 1; min-width: min(100%, 280px);">
+                    <p style="color: var(--text-secondary); margin-bottom: var(--content-gap); line-height: 1.7;">
+                        The entire knowledge base is accessible via <strong style="color: var(--text-primary);">Model Context Protocol (MCP)</strong>. Claude or any MCP-compatible AI can query targets, claims, hypotheses, docking results, drug combinations, digital twin simulations, and spatial analysis &mdash; using natural language.
+                    </p>
+                    <div class="card-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="card">
+                            <h3 style="font-size: var(--small-size); color: var(--accent);">Research Tools</h3>
+                            <p style="font-size: var(--label-size);">search_sma_targets, search_sma_claims, search_sma_trials, search_sma_drugs, search_sma_sources</p>
+                        </div>
+                        <div class="card">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-blue);">Analysis Tools</h3>
+                            <p style="font-size: var(--label-size);">get_sma_hypotheses, get_sma_scores, get_sma_spatial_analysis, simulate_sma_digital_twin</p>
+                        </div>
+                        <div class="card">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-gold);">Discovery Tools</h3>
+                            <p style="font-size: var(--label-size);">get_sma_research_directions, validate_sma_hypothesis, predict_sma_rna_binding</p>
+                        </div>
+                        <div class="card">
+                            <h3 style="font-size: var(--small-size); color: var(--accent-purple);">Biology Tools</h3>
+                            <p style="font-size: var(--label-size);">get_sma_nmj_signaling, get_sma_bioelectric, get_sma_regeneration, get_sma_multisystem</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal" style="flex: 0.7; min-width: min(100%, 200px);">
+                    <div class="card" style="border-color: var(--accent);">
+                        <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent); margin-bottom: 8px;">EXAMPLE QUERIES</div>
+                        <p style="font-size: var(--small-size); line-height: 1.8; color: var(--text-secondary); font-style: italic;">
+                            &ldquo;What targets have the highest evidence convergence?&rdquo;<br><br>
+                            &ldquo;Show me all claims linking NCALD to calcium signaling&rdquo;<br><br>
+                            &ldquo;Run a digital twin simulation with Risdiplam + 4-AP&rdquo;<br><br>
+                            &ldquo;What are the latest breakthrough signals?&rdquo;
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 18: OPEN SOURCE
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">17</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Open Science</div>
+            <h2 class="reveal">AGPL-3.0 &mdash; <span class="accent-blue">Fully Open Source</span></h2>
+            <div style="display: flex; flex-direction: column; gap: clamp(10px, 1.5vh, 16px); margin-top: var(--content-gap); max-width: min(90%, 700px);">
+                <div class="card reveal" style="border-left: 2px solid var(--accent);">
+                    <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent); margin-bottom: 4px;">LIVE PLATFORM</div>
+                    <p style="color: var(--text-primary); font-size: var(--body-size);">https://sma-research.info</p>
+                    <p>Interactive dashboard with all targets, claims, hypotheses, screening, splice predictor, discovery signals, docking results</p>
+                </div>
+                <div class="card reveal" style="border-left: 2px solid var(--accent-blue);">
+                    <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-blue); margin-bottom: 4px;">GITHUB</div>
+                    <p style="color: var(--text-primary); font-size: var(--body-size);">github.com/Bryzant-Labs/sma-platform</p>
+                    <p>AGPL-3.0 license. Full source code. Contributions welcome.</p>
+                </div>
+                <div class="card reveal" style="border-left: 2px solid var(--accent-gold);">
+                    <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-gold); margin-bottom: 4px;">HUGGINGFACE DATASET</div>
+                    <p style="color: var(--text-primary); font-size: var(--body-size);">huggingface.co/datasets/SMAResearch/sma-evidence-graph</p>
+                    <p>11 tables as Parquet &mdash; 73,000+ rows including claims, targets, hypotheses, scoring, edges. Regularly updated.</p>
+                </div>
+                <div class="card reveal" style="border-left: 2px solid var(--accent-purple);">
+                    <div style="font-family: var(--font-mono); font-size: var(--label-size); color: var(--accent-purple); margin-bottom: 4px;">DOCKER HUB</div>
+                    <p style="color: var(--text-primary); font-size: var(--body-size);">csiicf/sma-gpu-toolkit (14.7 GB)</p>
+                    <p>Fully reproducible GPU pipeline. DiffDock, Boltz-2, ESM-2, OpenMM, REINVENT 4.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 19: COST EFFICIENCY
+         =========================================== -->
+    <section class="slide">
+        <div class="slide-number">18</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Budget Transparency</div>
+            <h2 class="reveal">What This <span class="accent-gold">Actually Cost</span></h2>
+            <p class="reveal" style="color: var(--text-secondary); max-width: min(90%, 700px); margin-top: var(--element-gap); line-height: 1.7;">
+                Computational drug discovery does not require institutional budgets. This entire platform &mdash; including all GPU compute, API calls, and infrastructure &mdash; was built for under $12 in direct compute costs.
+            </p>
+            <div class="stat-grid reveal" style="margin-top: var(--content-gap); grid-template-columns: repeat(4, 1fr);">
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size: clamp(1.5rem, 3vw, 2.5rem); color: var(--accent);">$0.78</div>
+                    <div class="stat-label">GPU Compute</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size: clamp(1.5rem, 3vw, 2.5rem); color: var(--accent-blue);">$0</div>
+                    <div class="stat-label">NIM API</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size: clamp(1.5rem, 3vw, 2.5rem); color: var(--accent-gold);">~$12</div>
+                    <div class="stat-label">Total Budget</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" style="font-size: clamp(1.5rem, 3vw, 2.5rem); color: var(--accent-purple);">378</div>
+                    <div class="stat-label">Dockings Run</div>
+                </div>
+            </div>
+            <div class="card-grid reveal" style="margin-top: var(--content-gap); grid-template-columns: 1fr 1fr;">
+                <div class="card">
+                    <h3 style="font-size: var(--small-size); color: var(--accent);">What This Proves</h3>
+                    <p style="font-size: var(--small-size);">Free-tier NIM APIs, spot-priced GPU instances, and open-source tools make computational drug discovery accessible to independent researchers, patient advocates, and small labs.</p>
+                </div>
+                <div class="card">
+                    <h3 style="font-size: var(--small-size); color: var(--accent-red);">Honest Limitations</h3>
+                    <p style="font-size: var(--small-size);">Computational predictions are not experimental validation. DiffDock confidence &ne; binding affinity. MD simulations are short. In vitro and in vivo testing remain necessary and expensive.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 20: NEXT STEPS
+         =========================================== -->
+    <section class="slide grid-bg">
+        <div class="slide-number">19</div>
+        <div class="slide-content">
+            <div class="section-label reveal">Roadmap</div>
+            <h2 class="reveal">Next <span class="accent">Steps</span></h2>
+            <div style="display: flex; flex-direction: column; gap: clamp(6px, 1vh, 10px); margin-top: var(--content-gap);">
+                <div class="card reveal" style="border-left: 2px solid var(--accent);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div><span class="tag accent" style="margin-right: 8px;">Compute</span><span class="tag">In Progress</span></div>
+                    </div>
+                    <p style="margin-top: 4px;">Extended MD simulations (100ns+) for top 4-AP binding poses. Free energy perturbation (FEP) calculations to estimate binding affinities. MM-PBSA analysis for ranking.</p>
+                </div>
+                <div class="card reveal" style="border-left: 2px solid var(--accent-blue);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div><span class="tag blue" style="margin-right: 8px;">Validation</span><span class="tag">Planned</span></div>
+                    </div>
+                    <p style="margin-top: 4px;">Seek academic collaboration for in vitro binding assays. SPR or ITC for 4-AP/CORO1C and 4-AP/SMN2 interactions. Cell-based assays in SMA patient-derived motor neurons.</p>
+                </div>
+                <div class="card reveal" style="border-left: 2px solid var(--accent-gold);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div><span class="tag gold" style="margin-right: 8px;">Publication</span><span class="tag">Planned</span></div>
+                    </div>
+                    <p style="margin-top: 4px;">Preprint on bioRxiv documenting the platform, methodology, and 4-AP multi-target hypothesis. Full dataset release with reproducibility instructions.</p>
+                </div>
+                <div class="card reveal" style="border-left: 2px solid var(--accent-purple);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div><span class="tag" style="margin-right: 8px; border-color: var(--accent-purple); color: var(--accent-purple);">Outreach</span><span class="tag">Ongoing</span></div>
+                    </div>
+                    <p style="margin-top: 4px;">Connect with SMA researchers, patient organizations, and the computational biology community. The platform is designed to be useful to others &mdash; feedback drives development.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 21: THANK YOU / CONTACT
+         =========================================== -->
+    <section class="slide closing-slide">
+        <div class="slide-content">
+            <div class="section-label reveal" style="text-align: center;">Thank You</div>
+            <h2 class="reveal" style="text-align: center;">What would <span class="accent">you</span> need?</h2>
+            <p class="reveal" style="text-align: center; max-width: min(85%, 600px); margin: var(--content-gap) auto 0; font-size: clamp(0.85rem, 1.5vw, 1.1rem); color: var(--text-secondary); line-height: 1.7;">
+                5,216 sources. 25,054 extracted claims. 515 mechanistic hypotheses. 29 MCP tools. ~190 API endpoints. 378 dockings across 7 targets.<br>
+                The evidence base is in place &mdash; and growing automatically every day.<br><br>
+                <strong style="color: var(--text-primary);">What data, analyses, or integrations would make this platform useful for your research?</strong>
+            </p>
+            <div class="reveal" style="margin-top: var(--content-gap); display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <span class="tag accent">sma-research.info</span>
+                <span class="tag">Christian Fischer</span>
+                <span class="tag blue">Open Source &mdash; AGPL-3.0</span>
+            </div>
+            <p class="reveal" style="margin-top: var(--content-gap); font-size: var(--small-size); color: var(--text-muted); text-align: center;">
+                christian@bryzant.com &mdash; Bryzant Labs &mdash; github.com/Bryzant-Labs/sma-platform
+            </p>
+        </div>
+    </section>
+
+    <!-- ===========================================
+       SLIDE PRESENTATION CONTROLLER
+       =========================================== -->
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.isScrolling = false;
+                this.setupIntersectionObserver();
+                this.setupKeyboardNav();
+                this.setupTouchNav();
+                this.setupProgressBar();
+                this.setupNavDots();
+                this.setupWheelNav();
+            }
+
+            setupIntersectionObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            const index = Array.from(this.slides).indexOf(entry.target);
+                            if (index !== -1) {
+                                this.currentSlide = index;
+                                this.updateProgress();
+                                this.updateNavDots();
+                            }
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                this.slides.forEach(slide => observer.observe(slide));
+            }
+
+            setupKeyboardNav() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide + 1);
+                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                        e.preventDefault();
+                        this.goToSlide(this.currentSlide - 1);
+                    } else if (e.key === 'Home') {
+                        e.preventDefault();
+                        this.goToSlide(0);
+                    } else if (e.key === 'End') {
+                        e.preventDefault();
+                        this.goToSlide(this.slides.length - 1);
+                    }
+                });
+            }
+
+            setupTouchNav() {
+                let touchStartY = 0;
+                document.addEventListener('touchstart', (e) => {
+                    touchStartY = e.touches[0].clientY;
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    const diff = touchStartY - e.changedTouches[0].clientY;
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0) this.goToSlide(this.currentSlide + 1);
+                        else this.goToSlide(this.currentSlide - 1);
+                    }
+                }, { passive: true });
+            }
+
+            setupWheelNav() {
+                let lastScroll = 0;
+                document.addEventListener('wheel', (e) => {
+                    const now = Date.now();
+                    if (now - lastScroll < 800) return;
+                    lastScroll = now;
+                    if (e.deltaY > 0) this.goToSlide(this.currentSlide + 1);
+                    else if (e.deltaY < 0) this.goToSlide(this.currentSlide - 1);
+                }, { passive: true });
+            }
+
+            setupProgressBar() {
+                this.progressBar = document.getElementById('progressBar');
+                this.updateProgress();
+            }
+
+            setupNavDots() {
+                const nav = document.getElementById('navDots');
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+                    dot.addEventListener('click', () => this.goToSlide(i));
+                    nav.appendChild(dot);
+                });
+                this.dots = nav.querySelectorAll('.nav-dot');
+            }
+
+            goToSlide(index) {
+                if (index < 0 || index >= this.slides.length) return;
+                this.currentSlide = index;
+                this.slides[index].scrollIntoView({ behavior: 'smooth' });
+                this.updateProgress();
+                this.updateNavDots();
+            }
+
+            updateProgress() {
+                if (this.progressBar) {
+                    const pct = ((this.currentSlide) / (this.slides.length - 1)) * 100;
+                    this.progressBar.style.width = pct + '%';
+                }
+            }
+
+            updateNavDots() {
+                if (this.dots) {
+                    this.dots.forEach((dot, i) => {
+                        dot.classList.toggle('active', i === this.currentSlide);
+                    });
+                }
+            }
+        }
+
+        new SlidePresentation();
+    </script>
+</body>
+</html>
