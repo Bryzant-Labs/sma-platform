@@ -1,0 +1,86 @@
+{
+  "scaffold": "4-aminopyridine",
+  "smiles": "Nc1ccncc1",
+  "analogs": [
+    {
+      "smiles": "Nc1ccnc([CH][S+](=O)=O)c1",
+      "score": 0.655
+    },
+    {
+      "smiles": "Nc1ccnc(S[S](=O)(O)O)c1",
+      "score": 0.623
+    },
+    {
+      "smiles": "Nc1ccnc(C#CC2C=CO2)c1",
+      "score": 0.592
+    },
+    {
+      "smiles": "Nc1ccnc(C#CCC2[CH-][CH-]OCCC2)c1",
+      "score": 0.592
+    },
+    {
+      "smiles": "Nc1ccnc([C]=P)c1",
+      "score": 0.582
+    },
+    {
+      "smiles": "Nc1ccnc([N+](=O)[SiH2]C[O-])c1",
+      "score": 0.577
+    },
+    {
+      "smiles": "Nc1ccnc([SH](=O)=O)c1",
+      "score": 0.547
+    },
+    {
+      "smiles": "N=[N+]c1cc(N)ccn1",
+      "score": 0.537
+    },
+    {
+      "smiles": "Nc1ccnc([PH](=O)[O-])c1",
+      "score": 0.537
+    },
+    {
+      "smiles": "C=[B-]([N-])c1cc(N)ccn1",
+      "score": 0.533
+    },
+    {
+      "smiles": "Nc1ccnc([Cu+2])c1",
+      "score": 0.53
+    },
+    {
+      "smiles": "Nc1ccnc(N=C(O)OCl)c1",
+      "score": 0.514
+    },
+    {
+      "smiles": "Nc1ccnc([Ti+8])c1",
+      "score": 0.509
+    },
+    {
+      "smiles": "[CH2-][Se-]c1cc(N)ccn1",
+      "score": 0.486
+    },
+    {
+      "smiles": "Nc1ccnc([CH+][B]I)c1",
+      "score": 0.482
+    },
+    {
+      "smiles": "Nc1ccnc(P2OBO2)c1",
+      "score": 0.47
+    },
+    {
+      "smiles": "Nc1ccnc(N=[N+]=O)c1",
+      "score": 0.454
+    },
+    {
+      "smiles": "Nc1ccnc([C][Na+])c1",
+      "score": 0.428
+    },
+    {
+      "smiles": "Nc1ccnc([S+](O)=[Si-]PCO)c1",
+      "score": 0.398
+    },
+    {
+      "smiles": "N=CNC=C(O)c1cc(N)ccn1",
+      "score": 0.311
+    }
+  ]
+}
