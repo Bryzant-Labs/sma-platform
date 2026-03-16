@@ -1,7 +1,7 @@
 # SMA Research Platform — Milestones Roadmap
 
 > Living document tracking research directions and implementation milestones.
-> Last updated: 2026-03-15
+> Last updated: 2026-03-16
 
 ---
 
@@ -13,8 +13,9 @@
 - [x] LLM claim extraction (Claude Haiku) from abstracts
 - [x] Evidence scoring (method weights, tier multipliers)
 - [x] Knowledge graph: nodes, edges, evidence linking
-- [x] Hypothesis generation from evidence convergence
+- [x] Hypothesis generation from evidence convergence (515 hypotheses, Sonnet 4.6)
 - [x] Target identification: 10 established + 11 discovery targets
+- [x] 25,054 LLM-extracted claims (growing daily)
 
 ## Phase 2: Multi-Criteria Scoring & Prioritization (COMPLETE)
 
@@ -29,7 +30,7 @@
 - [x] UniProt protein annotations (18 proteins, GO terms, pathways)
 - [x] STRING-DB protein-protein interactions (10 PPI edges)
 - [x] KEGG pathway membership (41 pathway genes)
-- [x] SMA MCP Server (12 tools for AI agent integration)
+- [x] SMA MCP Server (29 tools for AI agent integration, including synthesis + NIMs)
 
 ## Phase 4: Cross-Species Comparative Biology (IN PROGRESS)
 
@@ -117,7 +118,7 @@
 - [x] On-target scoring (Doench 2016-inspired) and specificity scoring (sequence complexity)
 - [x] CRISPR API endpoints (`GET/POST /crispr/guides`, `GET /crispr/motifs`)
 - [x] Frontend CRISPR tab with strategies, motifs, and guide table
-- [ ] Off-target prediction (whole-genome alignment with Cas-OFFinder)
+- [x] Off-target prediction (Cas-OFFinder on A100: 2,631 off-targets for 19 guides, 75 exact matches)
 - [x] Prime editing feasibility assessment (PE2/PE3/PEmax for C6T correction, ISS-N1 disruption, ESE strengthening)
 - [x] Comparison with approved therapies (nusinersen, risdiplam, Zolgensma, CRISPRi)
 - [x] Frontend Prime Editing tab with design cards and therapy comparison table
@@ -221,7 +222,7 @@
 - [x] Knowledge-based splice impact scoring (4 dimensions: splice site proximity, motif disruption, conservation, therapeutic relevance)
 - [x] Known motif annotation: ISS-N1 (nusinersen target), ESE, ESS, Tra2-beta, branch point
 - [x] Splice benchmark API: `GET /splice/benchmark`, position/region queries
-- [ ] Run through SpliceAI for delta splice scores (requires GPU)
+- [x] Run through SpliceAI for delta splice scores (252 variants scored on A100, 21 high-impact)
 - [x] Publish as HuggingFace dataset (splice_variants added to HF export script)
 
 ### 9.3 Cross-Species Splicing Map (COMPLETE)
@@ -332,22 +333,42 @@ These emerged from Querdenker and Harvard-level thinking:
 
 ---
 
-## Current Platform Stats (2026-03-15)
+## Current Platform Stats (2026-03-16)
 
 | Metric | Count |
 |--------|-------|
-| PubMed Sources | 4,582 |
-| LLM-Extracted Claims | 22,607 (complete) |
-| Prioritized Hypotheses | 189 (A/B/C tiers) |
-| Knowledge Graph Edges | 397 |
+| Sources (PubMed + Patents + Trial Results) | 5,216 |
+| LLM-Extracted Claims | 25,054 (growing daily) |
+| Prioritized Hypotheses | 515 (A/B/C tiers, Sonnet 4.6) |
+| Knowledge Graph Edges | 428 (34 relation types) |
+| Cross-Paper Synthesis Cards | 6 (Claude-generated) |
+| Co-occurrence Pairs | 30 target pairs |
+| Transitive Bridges | 53 cross-paper connections |
 | Drug Outcomes | 226 |
-| Molecule Screenings (ChEMBL/PubChem) | 40,000+ (21 targets) |
+| Molecule Screenings (ChEMBL/PubChem) | 21,228 compounds |
+| DiffDock Dockings | 518 (140 v1 + 378 v2.2 NIM) |
+| Boltz-2 Protein Structures | 5 (A100 GPU) |
+| ESM-2 Protein Embeddings | 6 (1280-dim) |
+| GenMol Novel Molecules | 20 (4-AP analogs) |
 | Drug Repurposing Candidates | 57 |
 | Clinical Trials | 449 |
+| SMA Patents | 578 |
 | Molecular Targets | 21 (10 established + 11 discovery) |
 | Drugs Tracked | 16 (3 approved + 13 pipeline) |
-| PubMed Search Queries | 250+ across 14 categories |
-| Data Sources | PubMed, ClinicalTrials.gov, GEO, ChEMBL, UniProt, STRING-DB, KEGG |
-| Model Organisms | 5 (axolotl, zebrafish, naked mole rat, C. elegans, Drosophila) |
-| Cutting-Edge Research Directions | 16 |
-| Warp-Speed Phases | 5 (Gene Versioning, Agentic Swarm, Digital Twin, Lab-OS, Zero-Knowledge) |
+| API Endpoints | ~190 |
+| MCP Tools | 29 |
+| PubMed Search Queries | 301 across 14 categories |
+| Data Sources | PubMed, ClinicalTrials.gov, GEO, ChEMBL, UniProt, STRING-DB, KEGG, Google Patents, AlphaFold, bioRxiv |
+| NVIDIA NIMs | DiffDock v2.2, OpenFold3, GenMol |
+| Docker Image | csiicf/sma-gpu-toolkit (14.7GB) |
+| Total GPU Cost | $0.78 |
+| Total NIM Cost | $0 |
+
+## Key Discoveries (2026-03-16)
+
+1. **4-AP → CORO1C (+0.251)** — strongest predicted binding of ALL 378 compound-target pairs
+2. **4-AP multi-target profile** — binds CORO1C, NCALD, SMN2, SMN1 (4 SMA targets)
+3. **SMN1-NCALD calcium signaling bridge** — cross-paper synthesis discovery
+4. **4-AP scaffold is optimal** — GenMol analogs don't improve CORO1C binding
+5. **UBA1 is highly druggable** — 5 compounds in top 25 docking hits
+6. **CHEMBL1381595 → NCALD (+0.076)** — novel calcium sensor binder
