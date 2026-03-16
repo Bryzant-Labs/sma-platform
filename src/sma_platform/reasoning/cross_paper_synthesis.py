@@ -83,7 +83,7 @@ async def build_cooccurrence_matrix() -> dict[tuple[str, str], list[dict]]:
     Find target pairs that co-occur in the same source paper.
     Returns: {(target_a, target_b): [list of shared source_ids with claim details]}
     """
-    # Get all claims with their source and target info
+    # Get claims linked to actual targets (not generic types)
     rows = await fetch("""
         SELECT
             c.id as claim_id,
@@ -94,14 +94,15 @@ async def build_cooccurrence_matrix() -> dict[tuple[str, str], list[dict]]:
             e.source_id,
             s.title as source_title,
             s.pub_date,
-            COALESCE(t_subj.symbol, c.subject_type) as subject_symbol,
-            COALESCE(t_obj.symbol, c.object_type) as object_symbol
+            t_subj.symbol as subject_symbol,
+            t_obj.symbol as object_symbol
         FROM claims c
         JOIN evidence e ON e.claim_id = c.id
         JOIN sources s ON s.id = e.source_id
         LEFT JOIN targets t_subj ON t_subj.id = c.subject_id
         LEFT JOIN targets t_obj ON t_obj.id = c.object_id
         WHERE c.confidence >= 0.5
+          AND (c.subject_id IS NOT NULL OR c.object_id IS NOT NULL)
         ORDER BY s.pub_date DESC NULLS LAST
     """)
 
@@ -124,12 +125,14 @@ async def build_cooccurrence_matrix() -> dict[tuple[str, str], list[dict]]:
     cooccurrences: dict[tuple[str, str], list[dict]] = defaultdict(list)
 
     for source_id, claims in source_claims.items():
-        # Get unique targets mentioned in this paper
+        # Get unique targets mentioned in this paper (filter out generic types)
+        generic_types = {"gene", "drug", "disease", "other", "pathway", "cell_type",
+                        "protein", "organism", "tissue", "biomarker"}
         targets_in_paper = set()
         for c in claims:
-            if c["subject"]:
+            if c["subject"] and c["subject"].lower() not in generic_types:
                 targets_in_paper.add(c["subject"])
-            if c["object"]:
+            if c["object"] and c["object"].lower() not in generic_types:
                 targets_in_paper.add(c["object"])
 
         # Generate all pairs (sorted to avoid duplicates)
