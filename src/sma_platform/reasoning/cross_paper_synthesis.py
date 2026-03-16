@@ -25,7 +25,8 @@ import json
 import logging
 import os
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
+from statistics import median
 from typing import Any, Optional
 
 import anthropic
@@ -546,6 +547,216 @@ async def run_synthesis_pipeline(
                 f"{len(scored_cooccurrences)} co-occurrences, "
                 f"{len(bridges)} bridges")
     return result
+
+
+# =============================================================================
+# Step 6: Temporal Evidence Analysis
+# =============================================================================
+
+async def find_temporal_reinforcements() -> list[dict]:
+    """Find when NEW evidence (recent papers) retroactively strengthens OLD findings.
+
+    For each target, splits claims into "old" (before median pub_date) and
+    "new" (after median pub_date), then counts how many new claims share the
+    same claim_type as old claims — "temporal reinforcement".
+
+    Returns top 20 target-claimtype pairs ranked by reinforcement_ratio.
+    Pure SQL + Python, no LLM calls.
+    """
+    rows = await fetch("""
+        SELECT c.id, c.predicate, c.claim_type, c.confidence,
+               t.symbol AS target, s.pub_date, s.title AS source_title, e.source_id
+        FROM claims c
+        JOIN evidence e ON e.claim_id = c.id
+        JOIN sources s ON s.id = e.source_id
+        JOIN targets t ON t.id = c.subject_id
+        WHERE c.subject_id IS NOT NULL AND s.pub_date IS NOT NULL
+        ORDER BY t.symbol, s.pub_date
+    """)
+
+    if not rows:
+        return []
+
+    # Group by target
+    target_claims: dict[str, list[dict]] = defaultdict(list)
+    for row in rows:
+        pub = row["pub_date"]
+        # Normalise pub_date to date for comparison
+        if isinstance(pub, datetime):
+            pub_date = pub.date()
+        elif isinstance(pub, date):
+            pub_date = pub
+        else:
+            pub_date = datetime.fromisoformat(str(pub)).date()
+
+        target_claims[row["target"]].append({
+            "claim_id": str(row["id"]),
+            "predicate": row["predicate"],
+            "claim_type": row["claim_type"],
+            "confidence": float(row["confidence"]) if row["confidence"] else 0.5,
+            "pub_date": pub_date,
+            "source_title": row["source_title"],
+            "source_id": str(row["source_id"]),
+        })
+
+    results: list[dict] = []
+
+    for target, claims in target_claims.items():
+        if len(claims) < 2:
+            continue
+
+        # Compute median date for this target's claims
+        dates = sorted(c["pub_date"] for c in claims)
+        median_ordinal = median(d.toordinal() for d in dates)
+        median_date = date.fromordinal(int(median_ordinal))
+
+        old_claims = [c for c in claims if c["pub_date"] <= median_date]
+        new_claims = [c for c in claims if c["pub_date"] > median_date]
+
+        if not old_claims or not new_claims:
+            continue
+
+        # Get claim_types present in old claims
+        old_types = set(c["claim_type"] for c in old_claims if c["claim_type"])
+
+        # Group new claims by claim_type and check reinforcement
+        for ct in old_types:
+            old_of_type = [c for c in old_claims if c["claim_type"] == ct]
+            new_of_type = [c for c in new_claims if c["claim_type"] == ct]
+
+            if not new_of_type:
+                continue
+
+            reinforcement_ratio = len(new_of_type) / len(new_claims)
+
+            # Pick example claims (oldest and newest)
+            oldest = min(old_of_type, key=lambda c: c["pub_date"])
+            newest = max(new_of_type, key=lambda c: c["pub_date"])
+
+            results.append({
+                "target": target,
+                "claim_type": ct,
+                "old_count": len(old_of_type),
+                "new_count": len(new_of_type),
+                "reinforcement_ratio": round(reinforcement_ratio, 4),
+                "oldest_paper_title": oldest["source_title"],
+                "oldest_paper_date": str(oldest["pub_date"]),
+                "newest_paper_title": newest["source_title"],
+                "newest_paper_date": str(newest["pub_date"]),
+                "example_old_predicate": oldest["predicate"],
+                "example_new_predicate": newest["predicate"],
+            })
+
+    # Sort by reinforcement_ratio descending, then by new_count descending as tiebreak
+    results.sort(key=lambda x: (x["reinforcement_ratio"], x["new_count"]), reverse=True)
+    logger.info(f"Found {len(results)} temporal reinforcement pairs")
+    return results[:20]
+
+
+# =============================================================================
+# Step 7: Contradiction Detection (keyword-based, no LLM)
+# =============================================================================
+
+POSITIVE_KEYWORDS = [
+    "increases", "upregulates", "improves", "rescues",
+    "enhances", "activates", "promotes",
+]
+NEGATIVE_KEYWORDS = [
+    "decreases", "downregulates", "impairs", "inhibits",
+    "reduces", "suppresses", "worsens",
+]
+
+
+def _classify_direction(predicate: str) -> Optional[str]:
+    """Classify a predicate as 'positive', 'negative', or None."""
+    pred_lower = (predicate or "").lower()
+    for kw in POSITIVE_KEYWORDS:
+        if kw in pred_lower:
+            return "positive"
+    for kw in NEGATIVE_KEYWORDS:
+        if kw in pred_lower:
+            return "negative"
+    return None
+
+
+async def find_contradictions() -> list[dict]:
+    """Find claims about the same target that may contradict each other.
+
+    Groups claims by target + claim_type, then looks for opposing signals
+    (positive vs negative effect keywords) from DIFFERENT sources.
+    Keyword matching only, no LLM calls.
+
+    Returns contradictions sorted by contradiction_score descending.
+    Higher score = more balanced contradiction (both sides have evidence).
+    """
+    rows = await fetch("""
+        SELECT c.id, c.predicate, c.claim_type, c.value, c.confidence,
+               t.symbol as target, e.source_id, s.title as source_title, s.pub_date
+        FROM claims c
+        JOIN evidence e ON e.claim_id = c.id
+        JOIN sources s ON s.id = e.source_id
+        JOIN targets t ON t.id = c.subject_id
+        WHERE c.subject_id IS NOT NULL
+    """)
+
+    # Group by (target, claim_type)
+    groups: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    for row in rows:
+        key = (row["target"], row["claim_type"] or "other")
+        groups[key].append({
+            "claim_id": str(row["id"]),
+            "predicate": row["predicate"],
+            "value": row["value"],
+            "confidence": float(row["confidence"]) if row["confidence"] else 0.5,
+            "source_id": str(row["source_id"]),
+            "source_title": row["source_title"],
+            "pub_date": str(row["pub_date"]) if row["pub_date"] else None,
+        })
+
+    contradictions = []
+    for (target, claim_type), claims in groups.items():
+        positive_claims: list[dict] = []
+        negative_claims: list[dict] = []
+
+        for claim in claims:
+            direction = _classify_direction(claim["predicate"])
+            if direction == "positive":
+                positive_claims.append(claim)
+            elif direction == "negative":
+                negative_claims.append(claim)
+
+        if not positive_claims or not negative_claims:
+            continue
+
+        # Only flag as contradiction if positive and negative come from DIFFERENT sources
+        pos_sources = set(c["source_id"] for c in positive_claims)
+        neg_sources = set(c["source_id"] for c in negative_claims)
+        if not (pos_sources - neg_sources) and not (neg_sources - pos_sources):
+            continue
+
+        pos_count = len(positive_claims)
+        neg_count = len(negative_claims)
+        score = min(pos_count, neg_count) / max(pos_count, neg_count)
+
+        contradictions.append({
+            "target": target,
+            "claim_type": claim_type,
+            "positive_claims": {
+                "count": pos_count,
+                "example_predicate": positive_claims[0]["predicate"],
+                "example_source": positive_claims[0]["source_title"],
+            },
+            "negative_claims": {
+                "count": neg_count,
+                "example_predicate": negative_claims[0]["predicate"],
+                "example_source": negative_claims[0]["source_title"],
+            },
+            "contradiction_score": round(score, 3),
+        })
+
+    contradictions.sort(key=lambda x: x["contradiction_score"], reverse=True)
+    logger.info(f"Found {len(contradictions)} potential contradictions")
+    return contradictions
 
 
 # =============================================================================

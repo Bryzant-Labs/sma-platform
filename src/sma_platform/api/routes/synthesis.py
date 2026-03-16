@@ -102,6 +102,31 @@ async def get_shared_mechanisms(limit: int = Query(20, ge=1, le=100)):
     }
 
 
+@router.get("/temporal")
+async def get_temporal_reinforcements(limit: int = Query(20, ge=1, le=100)):
+    """Find when new evidence retroactively strengthens old findings.
+
+    For each target, splits claims into old/new by median publication date,
+    then identifies claim_types where new papers reinforce earlier discoveries.
+    """
+    from ...reasoning.cross_paper_synthesis import find_temporal_reinforcements
+    results = await find_temporal_reinforcements()
+    return {"reinforcements": results[:limit], "total": len(results)}
+
+
+@router.get("/contradictions")
+async def get_contradictions(limit: int = Query(20, ge=1, le=100)):
+    """Find claims about the same target that may contradict each other.
+
+    Groups claims by target + claim_type, then detects opposing signals
+    (positive vs negative effect keywords) from different sources.
+    Higher contradiction_score = more balanced contradiction.
+    """
+    from ...reasoning.cross_paper_synthesis import find_contradictions
+    results = await find_contradictions()
+    return {"contradictions": results[:limit], "total": len(results)}
+
+
 @router.post("/run", dependencies=[Depends(require_admin_key)])
 async def run_synthesis(
     max_cards: int = Query(50, ge=1, le=200),
