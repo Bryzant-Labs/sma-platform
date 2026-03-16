@@ -10,7 +10,7 @@ from ...core.database import fetch, fetchrow
 
 router = APIRouter()
 
-MAX_LIMIT = 5000
+MAX_LIMIT = 10000
 
 VALID_CLAIM_TYPES = {
     "gene_expression", "protein_interaction", "pathway_membership",

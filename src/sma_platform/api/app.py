@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, biomarker, blackboard, calibration, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty
+from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, biomarker, blackboard, calibration, cascade, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty
 
 
 @asynccontextmanager
@@ -142,6 +142,8 @@ def create_app() -> FastAPI:
     app.include_router(experiment_design.router, prefix="/api/v2", tags=["experiment-design"])
     app.include_router(omics.router, prefix="/api/v2", tags=["omics"])
     app.include_router(aso.router, prefix="/api/v2", tags=["aso"])
+    app.include_router(personal_twin.router, prefix="/api/v2", tags=["personal-twin"])
+    app.include_router(cascade.router, prefix="/api/v2", tags=["cascade"])
 
     @app.get("/health")
     @app.get("/api/v2/health")

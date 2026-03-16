@@ -36,6 +36,6 @@ async def ask_question(
         result = await ask(question=q, max_context=max_context)
     except Exception as e:
         logger.error("Research assistant error: %s", e, exc_info=True)
-        raise HTTPException(500, detail=f"Research assistant error: {e}")
+        raise HTTPException(500, detail="Research assistant temporarily unavailable")
 
     return result

@@ -30,19 +30,35 @@ def _pg_to_sqlite_query(query: str, args: tuple) -> tuple[str, tuple]:
     """Convert PostgreSQL $N params to SQLite ? params.
 
     Also strips PostgreSQL-specific casts like ::jsonb, ::int[], ::date, ::text.
+    Handles reused $N references (e.g. WHERE col1 = $1 OR col2 = $1) by
+    duplicating the corresponding argument for each occurrence.
+    Translates NOW() to datetime('now') and ILIKE to LIKE.
     """
     # Remove PostgreSQL type casts
     query = re.sub(r'::\w+\[\]', '', query)
     query = re.sub(r'::\w+', '', query)
 
-    # Replace $N with ?
-    # We need to handle them in order since $1, $2 etc map to sequential ?
-    i = 1
-    while f'${i}' in query:
-        query = query.replace(f'${i}', '?', 1)
-        i += 1
+    # Translate PostgreSQL functions to SQLite equivalents
+    query = re.sub(r'\bNOW\(\)', "datetime('now')", query, flags=re.IGNORECASE)
+    query = re.sub(r'\bILIKE\b', 'LIKE', query, flags=re.IGNORECASE)
 
-    return query, args
+    # Replace $N with ? — handle reused params by duplicating args
+    # Find all $N references in order of appearance
+    param_refs = re.findall(r'\$(\d+)', query)
+    if not param_refs:
+        return query, args
+
+    # Build new args tuple in order of appearance
+    new_args = []
+    for ref in param_refs:
+        idx = int(ref) - 1  # $1 → index 0
+        if idx < len(args):
+            new_args.append(args[idx])
+
+    # Replace all $N with ? (all occurrences)
+    query = re.sub(r'\$\d+', '?', query)
+
+    return query, tuple(new_args)
 
 
 # ---------- Init / Close ----------

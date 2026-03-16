@@ -153,7 +153,7 @@ async def get_full_graph():
     targets = await fetch("SELECT id, symbol, name, target_type FROM targets ORDER BY symbol")
     edges = await fetch(
         """SELECT src_id, dst_id, relation, confidence, metadata
-           FROM graph_edges ORDER BY confidence DESC"""
+           FROM graph_edges ORDER BY confidence DESC LIMIT 5000"""
     )
 
     nodes = []

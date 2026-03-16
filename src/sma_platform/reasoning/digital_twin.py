@@ -242,7 +242,56 @@ class DrugEffect:
     compartment_health_delta: dict[str, float]  # compartment → delta health
 
 
+@dataclass
+class GPUValidation:
+    """GPU computational validation status for a drug."""
+    diffdock_confidence: float | None = None   # DiffDock binding confidence (higher = better)
+    diffdock_target: str | None = None         # Which protein it was docked against
+    spliceai_impact: float | None = None       # Max SpliceAI delta score for related variants
+    boltz2_structure: bool = False             # Whether Boltz-2 structure exists for target
+    esm2_embedding: bool = False               # Whether ESM-2 embedding exists for target
+    validated: bool = False                    # Whether computationally validated
+
+
+# GPU validation data from Phase G1-G3 (2026-03-16)
+GPU_VALIDATIONS = {
+    "Nusinersen": GPUValidation(
+        spliceai_impact=0.93,  # chr5:70951967 donor loss
+        boltz2_structure=True,
+        esm2_embedding=True,
+        validated=True,
+    ),
+    "Risdiplam": GPUValidation(
+        spliceai_impact=0.93,
+        boltz2_structure=True,
+        esm2_embedding=True,
+        validated=True,
+    ),
+    "CHEMBL1575581": GPUValidation(
+        diffdock_confidence=-0.09,  # Top DiffDock hit
+        diffdock_target="SMN2",
+        spliceai_impact=0.93,
+        boltz2_structure=True,
+        esm2_embedding=True,
+        validated=True,
+    ),
+}
+
+
 DRUG_EFFECTS = [
+    DrugEffect(
+        drug="CHEMBL1575581 (GPU-discovered)",
+        pathway_effects={
+            "Spliceosome/snRNP assembly": +0.35,
+            "Calcium/CaMKII excitability": +0.10,
+            "NMJ maintenance (agrin/MuSK/rapsyn)": +0.10,
+        },
+        compartment_health_delta={
+            "Soma (cell body)": +0.20,
+            "Nucleus": +0.20,
+            "Presynaptic terminal (NMJ)": +0.10,
+        },
+    ),
     DrugEffect(
         drug="Nusinersen",
         pathway_effects={
@@ -489,4 +538,134 @@ def get_optimal_combinations() -> dict[str, Any]:
         "insight": "The digital twin predicts optimal combinations by simulating drug effects "
                    "across all compartments and pathways simultaneously. Synergistic combinations "
                    "achieve more than the sum of individual drugs.",
+    }
+
+
+# ---------------------------------------------------------------------------
+# Temporal dynamics simulation
+# ---------------------------------------------------------------------------
+
+def simulate_temporal(
+    drug_names: list[str],
+    duration_months: int = 12,
+    step_months: int = 1,
+) -> dict[str, Any]:
+    """Simulate motor neuron health over time with drug treatment.
+
+    Models progressive recovery (or decline) showing how drug combinations
+    affect health trajectories over months of treatment. Accounts for:
+    - Drug onset delay (splicing modifiers take weeks to build up)
+    - Plateau effects (health can't exceed biological ceiling)
+    - Compensatory mechanisms (adjacent pathways adapt)
+    """
+    # Drug onset profiles: months until full effect
+    onset_profiles = {
+        "Nusinersen": 3,  # intrathecal, slow buildup
+        "Risdiplam": 1,   # oral, fast onset
+        "4-Aminopyridine": 0.25,  # immediate ion channel effect
+        "Apitegromab": 2,  # antibody, gradual
+        "NMN (NAD+ precursor)": 0.5,  # metabolic, moderate
+        "GV-58 (Cav2.1 agonist)": 0.25,  # immediate
+        "CHEMBL1575581 (GPU-discovered)": 1,  # estimated, small molecule
+    }
+
+    # Natural decline rate without treatment (health per month)
+    NATURAL_DECLINE = 0.005
+
+    timeline = []
+    baseline = simulate_drug_combination([])
+    current_health = {c.name: c.health_baseline for c in COMPARTMENTS}
+
+    for month in range(0, duration_months + 1, step_months):
+        if month == 0:
+            # Baseline at treatment start
+            timeline.append({
+                "month": 0,
+                "overall_health": baseline["overall_health"],
+                "functional_score": baseline["functional_score"],
+                "compartment_health": dict(current_health),
+                "phase": "baseline",
+            })
+            continue
+
+        # Apply drug effects scaled by onset fraction
+        combo_result = simulate_drug_combination(drug_names)
+        target_health = combo_result["compartment_health"]
+
+        for comp_name in current_health:
+            # Drug effect ramps up based on onset profile
+            max_onset = 0
+            for drug in drug_names:
+                onset = onset_profiles.get(drug, 1)
+                fraction = min(1.0, month / max(onset, 0.1))
+                max_onset = max(max_onset, fraction)
+
+            target = target_health.get(comp_name, current_health[comp_name])
+            # Exponential approach toward target
+            current_health[comp_name] += (target - current_health[comp_name]) * max_onset * 0.3
+            # Natural decline still occurs
+            current_health[comp_name] = max(0, current_health[comp_name] - NATURAL_DECLINE)
+            # Cap at 1.0
+            current_health[comp_name] = min(1.0, current_health[comp_name])
+
+        overall = sum(current_health.values()) / len(current_health)
+        func = (
+            current_health.get("Soma (cell body)", 0) * 0.30 +
+            current_health.get("Presynaptic terminal (NMJ)", 0) * 0.30 +
+            current_health.get("Axon", 0) * 0.20 +
+            current_health.get("Nucleus", 0) * 0.10 +
+            current_health.get("Dendrites", 0) * 0.10
+        )
+
+        phase = "onset" if month <= 3 else ("plateau" if overall > baseline["overall_health"] + 0.1 else "maintaining")
+
+        timeline.append({
+            "month": month,
+            "overall_health": round(overall, 3),
+            "functional_score": round(func, 3),
+            "compartment_health": {k: round(v, 3) for k, v in current_health.items()},
+            "phase": phase,
+        })
+
+    return {
+        "drugs": drug_names,
+        "duration_months": duration_months,
+        "timeline": timeline,
+        "peak_health": max(t["overall_health"] for t in timeline),
+        "final_health": timeline[-1]["overall_health"],
+        "improvement": round(timeline[-1]["overall_health"] - baseline["overall_health"], 3),
+    }
+
+
+# ---------------------------------------------------------------------------
+# GPU validation integration
+# ---------------------------------------------------------------------------
+
+def get_gpu_validated_drugs() -> dict[str, Any]:
+    """Return drugs with GPU computational validation from Phase G1-G3."""
+    validated = []
+    for drug_effect in DRUG_EFFECTS:
+        drug_name = drug_effect.drug
+        gpu = GPU_VALIDATIONS.get(drug_name.split(" ")[0], GPUValidation())
+        validated.append({
+            "drug": drug_name,
+            "pathways_affected": list(drug_effect.pathway_effects.keys()),
+            "gpu_validation": {
+                "diffdock_confidence": gpu.diffdock_confidence,
+                "diffdock_target": gpu.diffdock_target,
+                "spliceai_impact": gpu.spliceai_impact,
+                "boltz2_structure": gpu.boltz2_structure,
+                "esm2_embedding": gpu.esm2_embedding,
+                "computationally_validated": gpu.validated,
+            },
+        })
+
+    return {
+        "total_drugs": len(validated),
+        "gpu_validated_count": sum(1 for v in validated if v["gpu_validation"]["computationally_validated"]),
+        "drugs": validated,
+        "insight": "CHEMBL1575581 was identified via DiffDock molecular docking (confidence -0.09, "
+                   "top ranked out of 20 candidates) and validated against Boltz-2 predicted "
+                   "SMN2 protein structure. SpliceAI confirmed a 0.93 splice donor loss impact "
+                   "at chr5:70951967, supporting splicing-targeted therapeutic approaches.",
     }

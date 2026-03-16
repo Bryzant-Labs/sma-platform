@@ -54,16 +54,22 @@ async def list_signals(
     params.append(limit)
     where_clause = " WHERE " + " AND ".join(wheres)
 
-    rows = await fetch(
-        f"""SELECT id, signal_type, title, description, target_symbol,
-                   composite_score, novelty_score, convergence_score, impact_score,
-                   status, created_at
-            FROM breakthrough_signals
-            {where_clause}
-            ORDER BY composite_score DESC
-            LIMIT ${idx}""",
-        *params,
-    )
+    try:
+        rows = await fetch(
+            f"""SELECT id, signal_type, title, description, target_symbol,
+                       composite_score, novelty_score, convergence_score, impact_score,
+                       status, created_at
+                FROM breakthrough_signals
+                {where_clause}
+                ORDER BY composite_score DESC
+                LIMIT ${idx}""",
+            *params,
+        )
+    except Exception as exc:
+        if "does not exist" in str(exc):
+            logger.warning("breakthrough_signals table not yet created — returning empty")
+            return {"total": 0, "signals": [], "note": "Discovery pipeline has not been run yet. Use POST /discovery/run to generate signals."}
+        raise
 
     return {
         "total": len(rows),

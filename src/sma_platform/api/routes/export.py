@@ -26,7 +26,7 @@ EXPORTABLE_TABLES = frozenset({
 async def export_table(
     table_name: str,
     fmt: str = Query(default="json", description="Format: json or csv"),
-    limit: int = Query(default=1000, ge=1, le=50000),
+    limit: int = Query(default=1000, ge=1, le=5000),
 ):
     """Export a table as JSON or CSV for research use.
 
@@ -77,7 +77,7 @@ async def export_table(
 async def export_target_evidence(
     symbol: str,
     fmt: str = Query(default="json", description="Format: json, csv, or bibtex"),
-    limit: int = Query(default=5000, ge=1, le=50000),
+    limit: int = Query(default=5000, ge=1, le=10000),
 ):
     """Export all evidence for a specific target: claims, sources, evidence links.
 

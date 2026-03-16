@@ -95,7 +95,7 @@ async def write_summary(
         logger.error("Evidence writer error for '%s': %s", subject, e, exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail=f"Evidence writer error: {e}",
+            detail="Evidence writer temporarily unavailable",
         )
 
     if result.get("error"):

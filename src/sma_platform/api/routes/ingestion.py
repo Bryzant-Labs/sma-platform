@@ -315,12 +315,15 @@ async def trigger_patent_ingestion(
     start = datetime.now(timezone.utc)
 
     if json_path:
-        # Import from pre-fetched JSON file
-        p = pathlib.Path(json_path)
+        # Import from pre-fetched JSON file — restrict to data/ directory
+        p = pathlib.Path(json_path).resolve()
+        allowed_dir = pathlib.Path(__file__).resolve().parents[4] / "data"
+        if not str(p).startswith(str(allowed_dir)):
+            return {"error": "json_path must be within the data/ directory"}
         if not p.exists():
-            return {"error": f"File not found: {json_path}"}, 404
+            return {"error": "File not found"}
         all_patents = json.loads(p.read_text())
-        logger.info("Importing %d patents from %s", len(all_patents), json_path)
+        logger.info("Importing %d patents from %s", len(all_patents), p)
     else:
         # Try live fetch (may fail from server IPs)
         all_patents = await patents.fetch_all_sma_patents()
