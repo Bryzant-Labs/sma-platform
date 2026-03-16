@@ -1,6 +1,10 @@
 # Preprint Outline: Computational Prediction of 4-Aminopyridine Direct Binding to SMN2 Protein
 
-**Working Title:** "Computational Prediction of 4-Aminopyridine Direct Binding to SMN2 Protein: A Drug Repurposing Lead for Spinal Muscular Atrophy"
+**Working Title:** "4-Aminopyridine Shows Multi-Target Binding Across SMA Proteins: Computational Evidence for a Drug Repurposing Lead in Spinal Muscular Atrophy"
+
+**Previous title (narrower scope):** "Computational Prediction of 4-Aminopyridine Direct Binding to SMN2 Protein: A Drug Repurposing Lead for Spinal Muscular Atrophy"
+
+**Title update rationale:** The DiffDock v2.2 NIM campaign (378 dockings, 54 compounds x 7 targets) revealed 4-AP binds CORO1C (+0.251) even more strongly than SMN2. The paper should cover the multi-target profile, not just SMN2.
 
 **Target Journal:** bioRxiv (Bioinformatics / Pharmacology and Toxicology)
 
