@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     sma_admin_key: str = ""
     enable_docs: bool = True
 
+    # NVIDIA NIMs (DiffDock v2.2, OpenFold3, GenMol)
+    nvidia_api_key: str = ""
+
     # Server
     host: str = "0.0.0.0"
     port: int = 8100

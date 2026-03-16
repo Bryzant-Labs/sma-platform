@@ -1,0 +1,37 @@
+[
+  {
+    "symbol": "CORO1C",
+    "uniprot_id": "Q9ULV4",
+    "plddt": null
+  },
+  {
+    "symbol": "NCALD",
+    "uniprot_id": "P61601",
+    "plddt": null
+  },
+  {
+    "symbol": "PLS3",
+    "uniprot_id": "P13797",
+    "plddt": null
+  },
+  {
+    "symbol": "SMN1",
+    "uniprot_id": "P62316",
+    "plddt": null
+  },
+  {
+    "symbol": "SMN2",
+    "uniprot_id": "Q16637",
+    "plddt": null
+  },
+  {
+    "symbol": "STMN2",
+    "uniprot_id": "Q93045",
+    "plddt": null
+  },
+  {
+    "symbol": "UBA1",
+    "uniprot_id": "P22314",
+    "plddt": null
+  }
+]

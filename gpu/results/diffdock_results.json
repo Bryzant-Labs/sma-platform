@@ -1,0 +1,102 @@
+[
+  {
+    "complex": "SMN2_CHEMBL1575581",
+    "confidence": -0.09,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1328375",
+    "confidence": -0.62,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1301789",
+    "confidence": -0.67,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1399783",
+    "confidence": -0.93,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1320775",
+    "confidence": -1.08,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1604526",
+    "confidence": -1.11,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1399869",
+    "confidence": -1.34,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1409019",
+    "confidence": -1.36,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1420277",
+    "confidence": -1.36,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1329887",
+    "confidence": -1.46,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1301787",
+    "confidence": -1.55,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1411446",
+    "confidence": -1.79,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1408926",
+    "confidence": -1.85,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1301860",
+    "confidence": -2.02,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1410628",
+    "confidence": -2.16,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1527043",
+    "confidence": -2.24,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1421168",
+    "confidence": -2.37,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1411716",
+    "confidence": -2.52,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1339798",
+    "confidence": -3.1,
+    "poses": 11
+  },
+  {
+    "complex": "SMN2_CHEMBL1409365",
+    "confidence": -3.38,
+    "poses": 11
+  }
+]

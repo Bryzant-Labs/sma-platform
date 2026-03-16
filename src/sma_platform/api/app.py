@@ -7,13 +7,13 @@ from typing import AsyncGenerator
 
 from pathlib import Path
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse, Response as RawResponse
+from fastapi.responses import FileResponse, PlainTextResponse, Response as RawResponse
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, assistant, blackboard, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, evidence, evidence_writer, export, federated, gene_versioning, graph, hypothesis_gen, ingestion, lab_os, md_simulation, molecule_screen, preprints, prime_edit, research, rna_binding, scoring, screening, search, spatial_omics, splice, splice_predictor, splicing_map, stats, targets, translation, trials
+from .routes import aav, advanced_analytics, assistant, blackboard, comparative, contact, crispr, datasets, digital_twin, discovery, docking, drugs, dual_target, evidence, evidence_writer, export, federated, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, md_simulation, molecule_screen, news, nvidia_nims, predictions, preprints, prime_edit, research, rna_binding, scoring, screening, search, spatial_omics, splice, splice_predictor, splicing_map, stats, synthesis, targets, translation, trials
 
 
 @asynccontextmanager
@@ -44,7 +44,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["https://sma-research.info"],
-        allow_methods=["GET", "POST"],
+        allow_methods=["GET", "POST", "PATCH", "PUT"],
         allow_headers=["Content-Type", "X-Admin-Key"],
     )
 
@@ -121,6 +121,11 @@ def create_app() -> FastAPI:
     app.include_router(federated.router, prefix="/api/v2", tags=["federated"])
     app.include_router(translation.router, prefix="/api/v2", tags=["translation"])
     app.include_router(discovery.router, prefix="/api/v2", tags=["discovery"])
+    app.include_router(predictions.router, prefix="/api/v2", tags=["predictions"])
+    app.include_router(gpu.router, prefix="/api/v2", tags=["gpu"])
+    app.include_router(news.router, prefix="/api/v2", tags=["news"])
+    app.include_router(nvidia_nims.router, prefix="/api/v2", tags=["nvidia-nims"])
+    app.include_router(synthesis.router, prefix="/api/v2", tags=["cross-paper-synthesis"])
 
     @app.get("/health")
     @app.get("/api/v2/health")
@@ -146,9 +151,10 @@ def create_app() -> FastAPI:
 
     @app.get("/links")
     async def links_page():
-        f = _static_dir / "links.html"
+        """Serve index.html for /links — SPA handles the section routing."""
+        f = _static_dir / "index.html"
         if f.exists():
-            return RawResponse(content=f.read_bytes(), media_type="text/html")
+            return FileResponse(str(f), media_type="text/html")
         return PlainTextResponse("Not found", status_code=404)
 
     @app.get("/llms.txt", response_class=PlainTextResponse)
@@ -157,5 +163,31 @@ def create_app() -> FastAPI:
         if f.exists():
             return PlainTextResponse(f.read_text())
         return PlainTextResponse("", status_code=404)
+
+    # --- Clean URL routing for SPA sections ---
+    # Serves index.html for known section slugs so that URLs like
+    # /gpu-results or /targets are shareable and SEO-friendly.
+    # Registered AFTER all /api/v2 routes to avoid conflicts.
+    SECTION_SLUGS = {
+        "mission", "search", "ask",
+        "targets", "trials", "drugs", "sources", "claims",
+        "hypotheses", "predictions", "graph",
+        "scores", "outcomes", "screening", "candidates",
+        "comparative", "directions",
+        "spatial", "regen", "nmj", "multisystem", "bioelectric",
+        "splicemap", "rnabind", "dualtarget", "twin",
+        "molecules", "crispr", "aav", "docking", "prime", "mdsim",
+        "labos", "federated", "translate", "gpu-results",
+        "research", "write", "repurposing", "versions", "news",
+    }
+
+    @app.get("/{section}")
+    async def serve_section(section: str):
+        if section in SECTION_SLUGS:
+            index = _static_dir / "index.html"
+            if index.exists():
+                return FileResponse(str(index), media_type="text/html")
+            raise HTTPException(status_code=500, detail="index.html not found")
+        raise HTTPException(status_code=404, detail="Not found")
 
     return app

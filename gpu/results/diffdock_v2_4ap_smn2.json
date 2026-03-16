@@ -1,0 +1,22 @@
+{
+  "tool": "DiffDock v2.2 NIM (NVIDIA)",
+  "compound": "4-aminopyridine",
+  "smiles": "Nc1ccncc1",
+  "target": "SMN2 (Q16637)",
+  "structure": "AlphaFold v6",
+  "num_poses": 5,
+  "position_confidence": [
+    -0.2799,
+    -1.2696,
+    -1.3278,
+    -1.7234,
+    -2.9847
+  ],
+  "best_confidence": -0.2799,
+  "status": "success",
+  "comparison": {
+    "diffdock_v1_confidence": 0.1,
+    "diffdock_v2_confidence": -0.28,
+    "note": "v2.2 uses different scoring model (PLINDER-trained). Absolute values not directly comparable. 4-AP remains a notable binder in both versions."
+  }
+}

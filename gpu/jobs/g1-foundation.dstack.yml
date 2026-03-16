@@ -1,0 +1,23 @@
+type: task
+name: sma-g1-foundation
+
+image: bryzantlabs/sma-gpu-toolkit:g1
+
+env:
+  SMA_API: https://sma-research.info/api/v2
+  SMA_ADMIN_KEY: ${SMA_ADMIN_KEY}
+  DATA_DIR: /data
+
+commands:
+  - python3 scripts/run_g1.py
+
+resources:
+  gpu:
+    name: A100
+    count: 1
+  memory: 40GB..
+  disk: 50GB..
+
+volumes:
+  - name: sma-data
+    path: /data

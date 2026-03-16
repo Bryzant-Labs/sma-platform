@@ -1,0 +1,37 @@
+{
+  "CORO1C": {
+    "embedding_dim": 1280,
+    "embedding_norm": 5.258725166320801,
+    "sequence_length": 474
+  },
+  "NCALD": {
+    "embedding_dim": 1280,
+    "embedding_norm": 6.3808441162109375,
+    "sequence_length": 193
+  },
+  "PLS3": {
+    "embedding_dim": 1280,
+    "embedding_norm": 7.231613636016846,
+    "sequence_length": 630
+  },
+  "SMN1": {
+    "embedding_dim": 1280,
+    "embedding_norm": 7.639711856842041,
+    "sequence_length": 294
+  },
+  "SMN2": {
+    "embedding_dim": 1280,
+    "embedding_norm": 7.639711856842041,
+    "sequence_length": 294
+  },
+  "STMN2": {
+    "embedding_dim": 1280,
+    "embedding_norm": 7.177529811859131,
+    "sequence_length": 179
+  },
+  "UBA1": {
+    "embedding_dim": 1280,
+    "embedding_norm": 6.343029975891113,
+    "sequence_length": 1058
+  }
+}
