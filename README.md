@@ -4,7 +4,7 @@
 
 [![Live](https://img.shields.io/badge/Live-sma--research.info-blue)](https://sma-research.info)
 [![API](https://img.shields.io/badge/API-REST%20v2-green)](https://sma-research.info/api/v2/docs)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+[![License](https://img.shields.io/badge/License-AGPL--3.0-blue)](LICENSE)
 
 ## What This Does
 
@@ -151,8 +151,8 @@ See [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) for full details on methods, va
 ## Contact
 
 **Christian Fischer** — christian@bryzant.com
-Bryzant Labs — https://bryzant.com
+SMA Research Platform — https://sma-research.info
 
 ## License
 
-MIT — All research data is open source.
+AGPL-3.0 — Platform code is open source. Research data under CC-BY-SA 4.0.
