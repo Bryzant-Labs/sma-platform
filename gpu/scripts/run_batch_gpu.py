@@ -147,6 +147,235 @@ def upload_results(payload: dict, endpoint: str = "/gpu/jobs") -> bool:
 # Phase 1: OpenMM Molecular Dynamics — 4-AP + SMN2
 # ============================================================================
 
+# Helper script that runs under /opt/conda/bin/python3 when OpenMM
+# cannot be imported into the system Python.  It performs the full MD
+# simulation and writes md_results.json, which the main process reads back.
+_MD_HELPER_SCRIPT = r'''#!/usr/bin/env python3
+"""OpenMM MD helper — runs under conda Python."""
+import argparse, json, os, sys, time, urllib.request, logging
+import numpy as np
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s [md-helper] %(message)s")
+logger = logging.getLogger("md-helper")
+
+import openmm as mm
+import openmm.app as app
+import openmm.unit as unit
+from pdbfixer import PDBFixer
+
+# mdtraj may not be in conda — try importing, fall back gracefully
+try:
+    import mdtraj as md
+    HAS_MDTRAJ = True
+except ImportError:
+    HAS_MDTRAJ = False
+    logger.warning("mdtraj not available in conda python — trajectory analysis will be skipped")
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--md-dir", required=True)
+    parser.add_argument("--duration-ns", type=float, required=True)
+    parser.add_argument("--alphafold-url", required=True)
+    args = parser.parse_args()
+
+    md_dir = args.md_dir
+    duration_ns = args.duration_ns
+    t_start = time.time()
+
+    os.makedirs(md_dir, exist_ok=True)
+
+    # Download PDB
+    pdb_path = os.path.join(md_dir, "smn2_alphafold.pdb")
+    if not os.path.exists(pdb_path):
+        urllib.request.urlretrieve(args.alphafold_url, pdb_path)
+        logger.info("Downloaded AlphaFold structure to %s", pdb_path)
+
+    # PDBFixer
+    fixer = PDBFixer(filename=pdb_path)
+    fixer.findMissingResidues()
+    fixer.findMissingAtoms()
+    fixer.addMissingAtoms()
+    fixer.addMissingHydrogens(pH=7.4)
+
+    fixed_path = os.path.join(md_dir, "smn2_fixed.pdb")
+    with open(fixed_path, "w") as f:
+        app.PDBFile.writeFile(fixer.topology, fixer.positions, f)
+    logger.info("Fixed structure: %s", fixed_path)
+
+    # System setup
+    pdb = app.PDBFile(fixed_path)
+    forcefield = app.ForceField("amber14-all.xml", "amber14/tip3pfb.xml")
+    modeller = app.Modeller(pdb.topology, pdb.positions)
+    modeller.addSolvent(forcefield, model="tip3p", padding=1.2*unit.nanometers,
+                        ionicStrength=0.15*unit.molar, positiveIon="Na+", negativeIon="Cl-")
+    logger.info("System: %d atoms, %d residues", modeller.topology.getNumAtoms(), modeller.topology.getNumResidues())
+
+    system = forcefield.createSystem(modeller.topology, nonbondedMethod=app.PME,
+                                     nonbondedCutoff=1.0*unit.nanometers,
+                                     constraints=app.HBonds, hydrogenMass=1.5*unit.amu)
+    system.addForce(mm.MonteCarloBarostat(1.0*unit.atmospheres, 300.0*unit.kelvin, 25))
+    integrator = mm.LangevinMiddleIntegrator(300.0*unit.kelvin, 1.0/unit.picoseconds, 2.0*unit.femtoseconds)
+
+    try:
+        platform = mm.Platform.getPlatformByName("CUDA")
+        properties = {"Precision": "mixed"}
+        logger.info("Using CUDA platform")
+    except Exception:
+        platform = mm.Platform.getPlatformByName("CPU")
+        properties = {}
+        logger.warning("Falling back to CPU")
+
+    simulation = app.Simulation(modeller.topology, system, integrator, platform, properties)
+    simulation.context.setPositions(modeller.positions)
+
+    # Minimization
+    state = simulation.context.getState(getEnergy=True)
+    e_before = state.getPotentialEnergy().value_in_unit(unit.kilojoules_per_mole)
+    simulation.minimizeEnergy(maxIterations=5000)
+    state = simulation.context.getState(getEnergy=True)
+    e_after = state.getPotentialEnergy().value_in_unit(unit.kilojoules_per_mole)
+    logger.info("Minimization: %.1f -> %.1f kJ/mol", e_before, e_after)
+
+    # Equilibration
+    eq_steps = 500_000
+    simulation.context.setVelocitiesToTemperature(300.0*unit.kelvin)
+    simulation.step(eq_steps)
+    state = simulation.context.getState(getEnergy=True)
+    e_eq = state.getPotentialEnergy().value_in_unit(unit.kilojoules_per_mole)
+    logger.info("Post-equilibration energy: %.1f kJ/mol", e_eq)
+
+    # Production
+    prod_steps = int(duration_ns * 1e6 / 2.0)
+    report_steps = int(100 * 1000 / 2.0)
+
+    traj_path = os.path.join(md_dir, "trajectory.dcd")
+    log_path = os.path.join(md_dir, "production.log")
+    topo_path = os.path.join(md_dir, "topology.pdb")
+
+    simulation.reporters.append(app.DCDReporter(traj_path, report_steps))
+    simulation.reporters.append(app.StateDataReporter(log_path, report_steps,
+        step=True, time=True, potentialEnergy=True, kineticEnergy=True,
+        temperature=True, volume=True, speed=True))
+    simulation.reporters.append(app.StateDataReporter(sys.stdout, report_steps*10,
+        step=True, time=True, temperature=True, speed=True,
+        remainingTime=True, totalSteps=prod_steps))
+
+    state = simulation.context.getState(getPositions=True)
+    with open(topo_path, "w") as f:
+        app.PDBFile.writeFile(simulation.topology, state.getPositions(), f)
+
+    t_prod_start = time.time()
+    simulation.step(prod_steps)
+    prod_wall = time.time() - t_prod_start
+
+    state = simulation.context.getState(getEnergy=True, getPositions=True)
+    final_energy = state.getPotentialEnergy().value_in_unit(unit.kilojoules_per_mole)
+    final_path = os.path.join(md_dir, "final_frame.pdb")
+    with open(final_path, "w") as f:
+        app.PDBFile.writeFile(simulation.topology, state.getPositions(), f)
+
+    ns_per_day = duration_ns / (prod_wall / 86400) if prod_wall > 0 else 0
+    logger.info("Production complete: %.1f hours, %.1f ns/day", prod_wall/3600, ns_per_day)
+
+    # Analysis
+    analysis = {}
+    if HAS_MDTRAJ:
+        traj = md.load(traj_path, top=topo_path)
+        backbone = traj.topology.select("backbone")
+        rmsd = md.rmsd(traj, traj, frame=0, atom_indices=backbone)
+        rmsf = md.rmsf(traj, traj, frame=0, atom_indices=backbone)
+        rg = md.compute_rg(traj, masses=None)
+        analysis = {
+            "n_frames": int(traj.n_frames),
+            "n_atoms": int(traj.n_atoms),
+            "backbone_rmsd_nm": {"mean": round(float(np.mean(rmsd)),4), "std": round(float(np.std(rmsd)),4),
+                                  "max": round(float(np.max(rmsd)),4), "final": round(float(rmsd[-1]),4)},
+            "backbone_rmsf_nm": {"mean": round(float(np.mean(rmsf)),4), "max": round(float(np.max(rmsf)),4)},
+            "radius_of_gyration_nm": {"mean": round(float(np.mean(rg)),4), "std": round(float(np.std(rg)),4)},
+            "binding_stable": float(np.mean(rmsd[-10:])) < 0.5,
+        }
+    else:
+        analysis = {"note": "mdtraj not available in conda python — analysis skipped"}
+
+    total_time = time.time() - t_start
+    md_results = {
+        "duration_ns": duration_ns,
+        "total_steps": prod_steps,
+        "wall_time_seconds": round(prod_wall, 1),
+        "ns_per_day": round(ns_per_day, 1),
+        "final_energy_kj_mol": round(final_energy, 1),
+        "minimization": {"before": round(e_before, 1), "after": round(e_after, 1)},
+        "equilibration_energy": round(e_eq, 1),
+        "analysis": analysis,
+        "files": {"trajectory": traj_path, "topology": topo_path, "final_frame": final_path, "log": log_path},
+        "status": "ok",
+        "wall_time_total_secs": round(total_time, 1),
+    }
+
+    results_path = os.path.join(md_dir, "md_results.json")
+    with open(results_path, "w") as f:
+        json.dump(md_results, f, indent=2)
+    logger.info("Results saved to %s", results_path)
+
+if __name__ == "__main__":
+    main()
+'''
+
+
+def _run_md_via_conda_subprocess(
+    conda_python: str, output_dir: Path, md_dir: Path, duration_ns: float, t_start: float,
+) -> dict:
+    """Run the MD phase as a subprocess under conda Python (has OpenMM)."""
+    # Write the helper script to a temp file
+    helper_path = md_dir / "_md_helper.py"
+    md_dir.mkdir(parents=True, exist_ok=True)
+    with open(helper_path, "w") as f:
+        f.write(_MD_HELPER_SCRIPT)
+    logger.info("Wrote MD helper script: %s", helper_path)
+
+    cmd = [
+        conda_python, str(helper_path),
+        "--md-dir", str(md_dir),
+        "--duration-ns", str(duration_ns),
+        "--alphafold-url", SMN2_ALPHAFOLD_URL,
+    ]
+    logger.info("Running MD via conda subprocess: %s", " ".join(cmd))
+
+    proc = subprocess.run(cmd, capture_output=False, timeout=86400)  # 24h max
+
+    # Read back results
+    results_path = md_dir / "md_results.json"
+    if proc.returncode != 0:
+        return {
+            "status": "error",
+            "error": f"Conda MD subprocess exited with code {proc.returncode}",
+            "duration_secs": round(time.time() - t_start, 1),
+        }
+
+    if results_path.exists():
+        with open(results_path) as f:
+            md_results = json.load(f)
+        total_time = time.time() - t_start
+        analysis = md_results.get("analysis", {})
+        return {
+            "status": md_results.get("status", "ok"),
+            "duration_ns": duration_ns,
+            "ns_per_day": md_results.get("ns_per_day", 0),
+            "wall_time_hours": round(total_time / 3600, 2),
+            "rmsd_mean_nm": analysis.get("backbone_rmsd_nm", {}).get("mean"),
+            "binding_stable": analysis.get("binding_stable"),
+            "duration_secs": round(total_time, 1),
+            "output_dir": str(md_dir),
+            "note": "Ran via conda subprocess (/opt/conda/bin/python3)",
+        }
+    else:
+        return {
+            "status": "error",
+            "error": "Conda MD subprocess completed but md_results.json not found",
+            "duration_secs": round(time.time() - t_start, 1),
+        }
+
+
 def run_phase_md(output_dir: Path, duration_ns: float) -> dict:
     """Run OpenMM MD simulation of SMN2 protein with 4-AP context."""
     logger.info("=" * 70)
@@ -159,6 +388,8 @@ def run_phase_md(output_dir: Path, duration_ns: float) -> dict:
 
     # --- Import OpenMM (try system python first, fall back to conda) ---
     openmm_imported = False
+
+    # Strategy 1: Normal import (works if symlinked or pip-installed)
     try:
         import openmm as mm
         import openmm.app as app
@@ -167,42 +398,41 @@ def run_phase_md(output_dir: Path, duration_ns: float) -> dict:
         openmm_imported = True
         logger.info("OpenMM imported from system Python")
     except ImportError:
-        logger.info("OpenMM not on system Python, trying conda path...")
-        conda_site = "/opt/conda/lib/python3.12/site-packages"
-        if os.path.isdir(conda_site):
-            sys.path.insert(0, conda_site)
-            try:
-                import openmm as mm
-                import openmm.app as app
-                import openmm.unit as unit
-                from pdbfixer import PDBFixer
-                openmm_imported = True
-                logger.info("OpenMM imported from conda: %s", conda_site)
-            except ImportError as e:
-                logger.error("OpenMM import from conda failed: %s", e)
-        else:
-            # Try to discover the conda python version dynamically
-            for pyver in ("3.13", "3.12", "3.11", "3.10"):
-                alt_path = f"/opt/conda/lib/python{pyver}/site-packages"
-                if os.path.isdir(alt_path):
-                    sys.path.insert(0, alt_path)
-                    try:
-                        import openmm as mm
-                        import openmm.app as app
-                        import openmm.unit as unit
-                        from pdbfixer import PDBFixer
-                        openmm_imported = True
-                        logger.info("OpenMM imported from conda: %s", alt_path)
-                        break
-                    except ImportError:
-                        sys.path.pop(0)
+        pass
 
+    # Strategy 2: Add conda site-packages to sys.path (auto-detect Python version)
     if not openmm_imported:
-        return {
-            "status": "error",
-            "error": "OpenMM not available — install via conda or check Docker image",
-            "duration_secs": round(time.time() - t_start, 1),
-        }
+        logger.info("OpenMM not on system Python, trying conda site-packages...")
+        import glob as _glob
+        conda_site_matches = sorted(_glob.glob("/opt/conda/lib/python3.*/site-packages/"))
+        for conda_site in conda_site_matches:
+            if os.path.isdir(conda_site):
+                sys.path.insert(0, conda_site)
+                try:
+                    import openmm as mm
+                    import openmm.app as app
+                    import openmm.unit as unit
+                    from pdbfixer import PDBFixer
+                    openmm_imported = True
+                    logger.info("OpenMM imported from conda: %s", conda_site)
+                    break
+                except ImportError:
+                    sys.path.pop(0)
+
+    # Strategy 3: Run entire MD phase as subprocess under conda python
+    if not openmm_imported:
+        logger.info("OpenMM sys.path import failed — falling back to conda subprocess")
+        conda_python = "/opt/conda/bin/python3"
+        if os.path.isfile(conda_python):
+            return _run_md_via_conda_subprocess(
+                conda_python, output_dir, md_dir, duration_ns, t_start
+            )
+        else:
+            return {
+                "status": "error",
+                "error": "OpenMM not available — conda python not found at /opt/conda/bin/python3",
+                "duration_secs": round(time.time() - t_start, 1),
+            }
 
     try:
         import mdtraj as md

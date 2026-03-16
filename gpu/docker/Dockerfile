@@ -102,6 +102,11 @@ RUN ${CONDA_DIR}/bin/conda install -y -c conda-forge openmm pdbfixer \
 # Keep system Python 3.10 as default (conda PATH NOT prepended)
 # OpenMM available via: /opt/conda/bin/python3 -c "import openmm"
 
+# Symlink openmm + pdbfixer from conda into system Python so both pythons can import them
+RUN ln -sf /opt/conda/lib/python3.*/site-packages/openmm* /usr/local/lib/python3.10/dist-packages/ || true
+RUN ln -sf /opt/conda/lib/python3.*/site-packages/pdbfixer* /usr/local/lib/python3.10/dist-packages/ || true
+RUN ln -sf /opt/conda/lib/python3.*/site-packages/OpenMM* /usr/local/lib/python3.10/dist-packages/ || true
+
 # ---------------------------------------------------------------------------
 # 8. Application code
 # ---------------------------------------------------------------------------
