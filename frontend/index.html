@@ -5948,7 +5948,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function loadSynergy() {
         if (loaded.synergy) return; loaded.synergy = true;
 
-        fetch(API + '/synergy/predictions?limit=30').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/nim-batch/synergy?limit=30').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.predictions || data.results || data;
             if (!Array.isArray(items)) items = [];
             var body = clearEl('synergy-body');
@@ -6021,22 +6021,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         statusBar.appendChild(statusBadge);
 
         // Try to load results from GPU jobs endpoint
-        fetch(API + '/gpu/jobs?job_type=diffdock_v2_nim&limit=50').then(function(r) { return r.json(); }).then(function(data) {
-            var jobs = data.jobs || data.results || data;
-            if (!Array.isArray(jobs)) jobs = [];
-
-            // Extract docking results from jobs
-            var results = [];
-            for (var i = 0; i < jobs.length; i++) {
-                var job = jobs[i];
-                if (job.results && Array.isArray(job.results)) {
-                    for (var j = 0; j < job.results.length; j++) {
-                        results.push(job.results[j]);
-                    }
-                } else if (job.compound || job.ligand) {
-                    results.push(job);
-                }
-            }
+        fetch(API + '/nim-batch/results?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+            var results = data.results || [];
 
             // Update status bar based on job state
             statusBar = clearEl('nim-status-bar');
