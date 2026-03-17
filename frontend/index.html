@@ -6024,27 +6024,16 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         fetch(API + '/nim-batch/results?limit=200').then(function(r) { return r.json(); }).then(function(data) {
             var results = data.results || [];
 
-            // Update status bar based on job state
+            // Update status bar
             statusBar = clearEl('nim-status-bar');
-            if (jobs.length > 0) {
-                var completedCount = 0; var runningCount = 0; var failedCount = 0;
-                for (var k = 0; k < jobs.length; k++) {
-                    var st = (jobs[k].status || '').toLowerCase();
-                    if (st === 'completed' || st === 'done') completedCount++;
-                    else if (st === 'failed' || st === 'error') failedCount++;
-                    else runningCount++;
-                }
-                var summaryText = completedCount + ' completed';
-                if (runningCount > 0) summaryText += ', ' + runningCount + ' running';
-                if (failedCount > 0) summaryText += ', ' + failedCount + ' failed';
-                var badgeColor = runningCount > 0 ? 'var(--amber)' : 'var(--green)';
-                var badgeBg = runningCount > 0 ? 'var(--amber-bg)' : 'var(--green-bg)';
-                var badge2 = el('span', {text: 'DiffDock v2.2 NIM \u2014 ' + summaryText});
-                badge2.style.cssText = 'display:inline-block;padding:6px 16px;font-size:12px;font-weight:600;background:' + badgeBg + ';color:' + badgeColor + ';border:1px solid ' + badgeColor;
+            if (results.length > 0) {
+                var completedCount = results.filter(function(r) { return r.status === 'success' || r.status === 'completed'; }).length;
+                var badge2 = el('span', {text: 'DiffDock v2.2 NIM \u2014 ' + data.total + ' dockings, ' + completedCount + ' completed'});
+                badge2.style.cssText = 'display:inline-block;padding:6px 16px;font-size:12px;font-weight:600;background:var(--green-bg);color:var(--green);border:1px solid var(--green)';
                 statusBar.appendChild(badge2);
-                setText('nim-results-count', jobs.length + ' jobs');
+                setText('nim-results-count', data.total + ' dockings');
             } else {
-                var pendingBadge = el('span', {text: 'Running \u2014 700 compound-target docking campaign via NVIDIA NIM'});
+                var pendingBadge = el('span', {text: 'No docking results yet'});
                 pendingBadge.style.cssText = 'display:inline-block;padding:6px 16px;font-size:12px;font-weight:600;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber)';
                 statusBar.appendChild(pendingBadge);
             }
