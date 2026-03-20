@@ -1653,7 +1653,6 @@
     <p class="section-desc">Positive binding predictions from AI-driven virtual screening. Each hit goes through a 6-stage validation pipeline: computational validation, structural analysis, analog search, ADMET prediction, literature review, and experimental design.</p>
     <div id="hits-content">
         <div id="hits-table-wrap" class="table-wrap"></div>
-        <h3 style="margin-top:24px">Validation Pipeline</h3>
         <div id="hits-milestones"></div>
     </div>
 </section>
@@ -4617,6 +4616,216 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }).catch(function() {
             var wrap = clearEl('scores-body');
             wrap.appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Scoring endpoint not available.'})]));
+        });
+    }
+
+
+    // ===== Priority v2 section (M5 Target Prioritization Engine) =====
+    var priorityAllTargets = [];
+    var prioritySearchTimer = null;
+
+    function prioTierClass(tier) {
+        if (tier === 'tier_1_actionable') return 'prio-tier-1';
+        if (tier === 'tier_2_promising') return 'prio-tier-2';
+        if (tier === 'tier_3_exploratory') return 'prio-tier-3';
+        return 'prio-tier-4';
+    }
+
+    function prioTierLabel(tier) {
+        if (tier === 'tier_1_actionable') return 'Actionable';
+        if (tier === 'tier_2_promising') return 'Promising';
+        if (tier === 'tier_3_exploratory') return 'Exploratory';
+        return 'Insufficient';
+    }
+
+    function prioDimColor(v) {
+        if (v >= 0.6) return 'var(--green)';
+        if (v >= 0.3) return 'var(--amber)';
+        return 'var(--muted)';
+    }
+
+    function drawRadarSvg(dims, weights) {
+        var labels = Object.keys(dims);
+        var n = labels.length;
+        if (n < 3) return null;
+        var cx = 80, cy = 80, r = 65;
+        var svgNS = 'http://www.w3.org/2000/svg';
+        var svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('viewBox', '0 0 160 160');
+        svg.setAttribute('class', 'prio-radar');
+
+        // Background grid (3 levels)
+        for (var lvl = 1; lvl <= 3; lvl++) {
+            var rr = r * lvl / 3;
+            var pts = [];
+            for (var i = 0; i < n; i++) {
+                var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+                pts.push((cx + rr * Math.cos(angle)).toFixed(1) + ',' + (cy + rr * Math.sin(angle)).toFixed(1));
+            }
+            var poly = document.createElementNS(svgNS, 'polygon');
+            poly.setAttribute('points', pts.join(' '));
+            poly.setAttribute('fill', 'none');
+            poly.setAttribute('stroke', '#e0e0e0');
+            poly.setAttribute('stroke-width', '0.5');
+            svg.appendChild(poly);
+        }
+
+        // Axis lines
+        for (var i = 0; i < n; i++) {
+            var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+            var line = document.createElementNS(svgNS, 'line');
+            line.setAttribute('x1', cx);
+            line.setAttribute('y1', cy);
+            line.setAttribute('x2', (cx + r * Math.cos(angle)).toFixed(1));
+            line.setAttribute('y2', (cy + r * Math.sin(angle)).toFixed(1));
+            line.setAttribute('stroke', '#e0e0e0');
+            line.setAttribute('stroke-width', '0.5');
+            svg.appendChild(line);
+        }
+
+        // Data polygon
+        var dataPts = [];
+        for (var i = 0; i < n; i++) {
+            var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+            var val = dims[labels[i]] || 0;
+            dataPts.push((cx + r * val * Math.cos(angle)).toFixed(1) + ',' + (cy + r * val * Math.sin(angle)).toFixed(1));
+        }
+        var dataPoly = document.createElementNS(svgNS, 'polygon');
+        dataPoly.setAttribute('points', dataPts.join(' '));
+        dataPoly.setAttribute('fill', 'rgba(26,86,219,0.15)');
+        dataPoly.setAttribute('stroke', 'var(--accent)');
+        dataPoly.setAttribute('stroke-width', '1.5');
+        svg.appendChild(dataPoly);
+
+        // Data points
+        for (var i = 0; i < n; i++) {
+            var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+            var val = dims[labels[i]] || 0;
+            var dot = document.createElementNS(svgNS, 'circle');
+            dot.setAttribute('cx', (cx + r * val * Math.cos(angle)).toFixed(1));
+            dot.setAttribute('cy', (cy + r * val * Math.sin(angle)).toFixed(1));
+            dot.setAttribute('r', '3');
+            dot.setAttribute('fill', 'var(--accent)');
+            svg.appendChild(dot);
+        }
+
+        // Labels
+        var shortLabels = {evidence: 'Evid', druggability: 'Drug', uniqueness: 'Uniq', clinical: 'Clin', conservation: 'Cons', novelty: 'Nov'};
+        for (var i = 0; i < n; i++) {
+            var angle = (Math.PI * 2 * i / n) - Math.PI / 2;
+            var lx = cx + (r + 14) * Math.cos(angle);
+            var ly = cy + (r + 14) * Math.sin(angle);
+            var txt = document.createElementNS(svgNS, 'text');
+            txt.setAttribute('x', lx.toFixed(1));
+            txt.setAttribute('y', ly.toFixed(1));
+            txt.setAttribute('text-anchor', 'middle');
+            txt.setAttribute('dominant-baseline', 'middle');
+            txt.setAttribute('font-size', '8');
+            txt.setAttribute('fill', '#888');
+            txt.setAttribute('font-family', 'Inter, sans-serif');
+            txt.textContent = shortLabels[labels[i]] || labels[i];
+            svg.appendChild(txt);
+        }
+
+        return svg;
+    }
+
+    function renderPriorityCards(filtered) {
+        var wrap = clearEl('priority-body');
+        if (filtered.length === 0) {
+            wrap.appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'No targets match this search.'})]));
+            return;
+        }
+
+        var dimLabels = {evidence: 'Evidence', druggability: 'Druggability', uniqueness: 'Uniqueness', clinical: 'Clinical', conservation: 'Conservation', novelty: 'Novelty'};
+
+        for (var i = 0; i < filtered.length; i++) {
+            var t = filtered[i];
+            var card = el('div', {className: 'prio-card'});
+
+            // Header: rank + symbol + name + composite + tier
+            var header = el('div', {className: 'prio-header'});
+            var left = el('div', {style: 'display:flex;align-items:center;gap:8px;flex-wrap:wrap'});
+            left.appendChild(el('span', {className: 'prio-rank', text: '#' + (t.rank || (i + 1))}));
+            left.appendChild(badgeEl(t.symbol, 'badge-blue'));
+            if (t.name) left.appendChild(el('span', {text: t.name, style: 'font-size:13px;color:var(--text-secondary)'}));
+            var tierBadge = el('span', {className: 'prio-tier ' + prioTierClass(t.tier), text: prioTierLabel(t.tier)});
+            left.appendChild(tierBadge);
+            header.appendChild(left);
+            var compColor = t.composite_score >= 0.6 ? 'var(--green)' : t.composite_score >= 0.4 ? 'var(--amber)' : 'var(--muted)';
+            header.appendChild(el('span', {className: 'prio-composite', text: (t.composite_score * 100).toFixed(1) + '%', style: 'color:' + compColor}));
+            card.appendChild(header);
+
+            // Body: radar chart + dimension bars
+            var body = el('div', {className: 'prio-card-body'});
+
+            // Radar chart
+            var dims = t.dimensions || {};
+            var radar = drawRadarSvg(dims, t.weights || {});
+            if (radar) body.appendChild(radar);
+
+            // Dimension bars
+            var dimsWrap = el('div', {className: 'prio-card-dims'});
+            var dimsGrid = el('div', {className: 'prio-dims'});
+            for (var dk in dimLabels) {
+                if (!dimLabels.hasOwnProperty(dk)) continue;
+                var val = dims[dk] || 0;
+                var row = el('div', {className: 'prio-dim'});
+                row.appendChild(el('span', {className: 'prio-dim-label', text: dimLabels[dk]}));
+                var bar = el('div', {className: 'prio-dim-bar'});
+                bar.appendChild(el('div', {className: 'prio-dim-fill', style: 'width:' + (val * 100) + '%;background:' + prioDimColor(val)}));
+                row.appendChild(bar);
+                row.appendChild(el('span', {className: 'prio-dim-val', text: (val * 100).toFixed(0) + '%'}));
+                dimsGrid.appendChild(row);
+            }
+            dimsWrap.appendChild(dimsGrid);
+
+            // Strengths / weaknesses
+            if (t.strengths && t.strengths.length > 0) {
+                var strs = t.strengths.map(function(s) { return dimLabels[s.dimension] || s.dimension; }).join(', ');
+                dimsWrap.appendChild(el('div', {className: 'prio-strengths', text: 'Strengths: ' + strs}));
+            }
+            if (t.weaknesses && t.weaknesses.length > 0) {
+                var wks = t.weaknesses.map(function(w) { return dimLabels[w.dimension] || w.dimension; }).join(', ');
+                dimsWrap.appendChild(el('div', {className: 'prio-weaknesses', text: 'Gaps: ' + wks}));
+            }
+
+            body.appendChild(dimsWrap);
+            card.appendChild(body);
+            wrap.appendChild(card);
+        }
+    }
+
+    function filterPriority() {
+        var q = (document.getElementById('priority-search').value || '').trim().toLowerCase();
+        if (!q) { renderPriorityCards(priorityAllTargets); return; }
+        var filtered = priorityAllTargets.filter(function(t) {
+            return (t.symbol || '').toLowerCase().indexOf(q) !== -1 ||
+                   (t.name || '').toLowerCase().indexOf(q) !== -1;
+        });
+        renderPriorityCards(filtered);
+    }
+
+    function loadPriority() {
+        if (loaded.priority) return; loaded.priority = true;
+        fetch(API + '/prioritize/v2/targets').then(function(r) { return r.json(); }).then(function(data) {
+            var targets = data.targets || [];
+            document.getElementById('priority-count').textContent = targets.length + ' targets ranked';
+            if (targets.length === 0) {
+                var wrap = clearEl('priority-body');
+                wrap.appendChild(el('div', {className: 'empty-state'}, [el('h3', {text: 'No v2 priority data yet'}), el('p', {text: 'The v2 priority engine integrates convergence scores, DiffDock, ESM-2, drug outcomes, and cross-species data.'})]));
+                return;
+            }
+            priorityAllTargets = targets;
+            document.getElementById('priority-filter-bar').style.display = 'block';
+            renderPriorityCards(targets);
+            document.getElementById('priority-search').addEventListener('keyup', function() {
+                if (prioritySearchTimer) clearTimeout(prioritySearchTimer);
+                prioritySearchTimer = setTimeout(function() { filterPriority(); }, 250);
+            });
+        }).catch(function() {
+            var wrap = clearEl('priority-body');
+            wrap.appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Priority v2 endpoint not available.'})]));
         });
     }
 
@@ -9630,7 +9839,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         mission: loadMission, research: loadResearch,
         targets: loadTargets, trials: loadTrials, drugs: loadDrugs,
         sources: loadSources, datasets: loadDatasets, claims: loadClaims,
-        hypotheses: loadHypotheses, predictions: loadPredictions, convergence: loadConvergence, calibration: loadCalibration, scores: loadScores, evidence: loadEvidence,
+        hypotheses: loadHypotheses, predictions: loadPredictions, convergence: loadConvergence, calibration: loadCalibration, scores: loadScores, priority: loadPriority, evidence: loadEvidence,
         screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
         outcomes: loadOutcomes, hits: loadHits, comparative: loadComparative,
         directions: loadDirections, links: loadLinks, contact: loadContact,
@@ -9665,6 +9874,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         convergence: {title: 'Evidence Convergence — SMA Research Platform', desc: 'Multi-dimensional evidence convergence scoring for SMA targets. 5 dimensions: claim volume, lab independence, method diversity, temporal trend, and replication. Generates falsifiable predictions from 30,000+ claims.'},
         graph:       {title: 'Evidence Graph — SMA Research Platform', desc: 'Interactive network visualization of SMA evidence relationships between targets, drugs, claims, and trials.'},
         scores:      {title: 'Target Scores — SMA Research Platform', desc: '7-dimension composite scoring for SMA molecular targets: druggability, evidence, clinical relevance, and more.'},
+        priority:    {title: 'Target Priority Engine v2 — SMA Research Platform', desc: '6-dimension multi-criteria target prioritization integrating evidence convergence, DiffDock druggability, ESM-2 structural uniqueness, clinical validation, cross-species conservation, and novelty.'},
         outcomes:    {title: 'Drug Outcomes — SMA Research Platform', desc: 'Clinical trial outcome tracking for SMA therapeutics across all phases.'},
         screening:   {title: 'Compound Screening — SMA Research Platform', desc: '188 compounds screened against SMA targets with predicted binding affinity and ADMET profiles.'},
         candidates:  {title: 'Drug Candidates — SMA Research Platform', desc: 'Top drug candidates for SMA ranked by multi-target affinity and clinical feasibility.'},
