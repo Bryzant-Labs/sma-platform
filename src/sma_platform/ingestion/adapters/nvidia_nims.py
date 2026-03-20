@@ -196,29 +196,43 @@ async def openfold3_protein_rna_complex(
 async def genmol_generate(
     scaffold_smiles: str,
     num_molecules: int = 50,
-    mode: str = "scaffold_decoration",
+    temperature: float = 1.0,
+    noise: float = 0.5,
+    step_size: int = 1,
+    scoring: str = "QED",
+    unique: bool = True,
 ) -> dict:
     """
-    Generate novel molecules using GenMol v1.0 NIM.
+    Generate novel molecules using GenMol NIM.
+
+    Uses SAFE (Sequential Attachment-based Fragment Embedding) format.
+    The input SMILES is used as a molecular template for generation.
 
     Args:
         scaffold_smiles: SMILES of the scaffold/seed molecule
-        num_molecules: Number of molecules to generate
-        mode: Generation mode — "de_novo", "scaffold_decoration",
-              "linker_design", "motif_extension", "lead_optimization"
+        num_molecules: Number of molecules to generate (1-1000)
+        temperature: Sampling temperature (0.01-10.0, higher = more diverse)
+        noise: Randomness factor (0.0-2.0)
+        step_size: Diffusion step size (1-10)
+        scoring: Scoring method — "QED" or "LogP"
+        unique: Return only distinct molecules
 
     Returns:
-        dict with generated SMILES and properties
+        dict with generated SMILES and scores
     """
     payload = {
         "smiles": scaffold_smiles,
-        "num_molecules": num_molecules,
-        "mode": mode,
+        "num_molecules": str(num_molecules),
+        "temperature": str(temperature),
+        "noise": str(noise),
+        "step_size": str(step_size),
+        "scoring": scoring,
+        "unique": unique,
     }
 
     async with httpx.AsyncClient(timeout=TIMEOUT) as client:
-        logger.info(f"GenMol v1.0: Generating {num_molecules} molecules "
-                     f"from {scaffold_smiles[:30]}... (mode={mode})")
+        logger.info(f"GenMol: Generating {num_molecules} molecules "
+                     f"from {scaffold_smiles[:30]}... (scoring={scoring})")
         resp = await client.post(
             f"{GENMOL_URL}/generate",
             json=payload,
@@ -237,10 +251,14 @@ async def genmol_from_4ap(num_molecules: int = 100) -> dict:
     Returns:
         dict with generated SMILES
     """
+    # 4-AP is too small for scaffold decoration — use fragment + mask
     return await genmol_generate(
-        scaffold_smiles="Nc1ccncc1",  # 4-Aminopyridine
+        scaffold_smiles="c1cc(N)ncc1.[*{10-25}]",  # 4-AP fragment + size mask
         num_molecules=num_molecules,
-        mode="scaffold_decoration",
+        temperature=2.5,
+        noise=1.5,
+        scoring="QED",
+        unique=True,
     )
 
 

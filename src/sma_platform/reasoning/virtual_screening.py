@@ -114,9 +114,22 @@ async def _generate_molecules(scaffold: str, n: int) -> list[ScreeningResult]:
 
     results = []
     try:
+        # GenMol uses SAFE format with [*{N-N}] size masks
+        # Simple scaffolds (< 10 heavy atoms) work better as de novo with size constraint
+        if "[*" in scaffold:
+            safe_input = scaffold  # Already in SAFE format
+        elif len(scaffold) < 15:
+            # Small scaffold: use de novo generation for diversity
+            safe_input = "[*{15-30}]"
+            logger.info("Small scaffold — switching to de novo generation with size mask")
+        else:
+            safe_input = f"{scaffold}.[*{{10-25}}]"
         gen_result = await genmol_generate(
-            scaffold_smiles=scaffold,
+            scaffold_smiles=safe_input,
             num_molecules=n,
+            temperature=2.0,
+            noise=1.5,
+            unique=True,
         )
         molecules = gen_result.get("molecules", gen_result.get("generated_molecules", []))
         for i, mol in enumerate(molecules):
