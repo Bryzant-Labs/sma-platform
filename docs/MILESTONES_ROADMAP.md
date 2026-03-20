@@ -17,11 +17,11 @@ Before building more features, calibrate what we have.
 | Gold-standard claim extraction evaluation set | PLANNED | Inter-annotator agreement benchmark |
 | Claim confidence calibration curves | PARTIAL | confidence_calibrator.py built, grade B |
 | Contradiction detection benchmark | DONE | find_contradictions() live |
-| Source quality weighting | PLANNED | Not all PubMed papers are equal |
+| Source quality weighting | DONE | Not all PubMed papers are equal |
 | Retrospective validation against known outcomes | DONE | Calibration report with approved drugs |
 | Extraction precision/recall benchmark | PLANNED | How many claims are wrong? |
-| Score reproducibility testing | PLANNED | Same input → same scores? |
-| Evidence uncertainty intervals | PLANNED | Every prediction needs error bars |
+| Score reproducibility testing | DONE | Same input → same scores? |
+| Evidence uncertainty intervals | DONE | Every prediction needs error bars |
 
 ### Track 2: SMA Mechanism Engine (CORE SCIENCE)
 Go deeper on SMA-specific biology, not broader.
@@ -32,7 +32,7 @@ Go deeper on SMA-specific biology, not broader.
 | SMN2 splicing regulatory grammar model | PLANNED | Fine-tune Evo/ESM-2 on SMA splice data (~$100 GPU) |
 | Modifier-aware phenotype prediction | DONE | modifier_predictor.py — SMN2 copies + PLS3/NCALD/NAIP |
 | Off-target splice impact prediction | PLANNED | ASO safety beyond primary target |
-| Cross-disease transfer (mechanistically grounded only) | PARTIAL | ALS/DMD overlap where biologically justified |
+| Cross-disease transfer (mechanistically grounded only) | DONE | ALS/DMD overlap where biologically justified |
 | Spatial/single-cell integration | PLANNED | When Slide-seq/MERFISH data available |
 | RNA structure-informed ligand ranking | PLANNED | Via OpenFold3/RNAPro NIMs |
 | **RNAPro SMN2 pre-mRNA 3D structure** | IN PROGRESS | GTC 2026 — RNA structure at ISS-N1 nusinersen binding site |
@@ -49,11 +49,11 @@ Prioritize experiments, not just ideas.
 | Deliverable | Status | Why It Matters |
 |------------|--------|----------------|
 | Organoid/NMJ validation scorecard | PLANNED | Which predictions are testable in organoids? |
-| Expected Value of Experiment score | PLANNED | Cost/time/likelihood ranking per hypothesis |
-| Assay-ready output format | PLANNED | 3 hypotheses with assay + model + readouts + go/no-go |
+| Expected Value of Experiment score | DONE | Cost/time/likelihood ranking per hypothesis |
+| Assay-ready output format | DONE | 3 hypotheses with assay + model + readouts + go/no-go |
 | Biomarker atlas (molecular/imaging/fluid) | PLANNED | Treatment response stratification |
 | Compound/ASO/CRISPR comparison engine | PARTIAL | Dual-target + CRISPR + AAV modules exist |
-| Therapy combination ranking | PARTIAL | Digital twin has basic combo scoring |
+| Therapy combination ranking | DONE | Digital twin has basic combo scoring |
 | **Generative Virtual Screening Blueprint** | IN PROGRESS | GTC 2026 — NVIDIA open-source pipeline: GenMol → Filter → DiffDock → Rank |
 | **nvMolKit GPU cheminformatics** | PLANNED | GTC 2026 — faster Lipinski/BBB/PAINS filtering |
 | **AlphaFold DB protein complexes** | IN PROGRESS | GTC 2026 — 1.7M new complexes for SMA structural biology |
@@ -67,7 +67,7 @@ Make the platform usable AND credible.
 |------------|--------|----------------|
 | MCP Server (29 tools) | DONE | Natural language query access |
 | Reproducible benchmarks | PLANNED | Others can verify our claims |
-| Scientific Advisory Pack (5 pages) | PLANNED | What it does, where reliable, where uncertain |
+| Scientific Advisory Pack (5 pages) | DONE | What it does, where reliable, where uncertain |
 | Grant-ready hypothesis exports | PARTIAL | Translation module has grant templates |
 | Citation-grade evidence summaries | PARTIAL | Literature review module built |
 | External lab collaboration hooks | PLANNED | API for result sharing |
