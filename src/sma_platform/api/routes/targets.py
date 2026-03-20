@@ -77,7 +77,7 @@ async def get_target_deep_dive(target_id: str):
     # Claims mentioning this target (via subject_id / object_id foreign keys)
     claims = await fetch(
         """SELECT * FROM (
-               SELECT DISTINCT ON (c.id) c.id, c.claim_type, c.predicate, c.confidence,
+               SELECT DISTINCT ON (c.id) c.id, c.claim_number, c.claim_type, c.predicate, c.confidence,
                       c.metadata, s.title AS source_title, s.external_id AS pmid
                FROM claims c
                LEFT JOIN evidence e ON e.claim_id = c.id

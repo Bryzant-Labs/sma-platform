@@ -163,12 +163,12 @@ async def ingest_biorxiv(days_back: int = 7):
 async def main():
     logger.info("=== Daily SMA ingestion started ===")
     await init_pool(settings.database_url)
-
-    await ingest_trials()
-    await ingest_pubmed(days_back=7)
-    await ingest_biorxiv(days_back=7)
-
-    await close_pool()
+    try:
+        await ingest_trials()
+        await ingest_pubmed(days_back=7)
+        await ingest_biorxiv(days_back=7)
+    finally:
+        await close_pool()
     logger.info("=== Daily ingestion complete ===")
 
 

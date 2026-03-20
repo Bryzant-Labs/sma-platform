@@ -205,3 +205,53 @@ CREATE TABLE IF NOT EXISTS cross_species_targets (
     notes TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
+
+-- CONVERGENCE SCORES
+CREATE TABLE IF NOT EXISTS convergence_scores (
+    id              TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    target_key      TEXT NOT NULL,
+    target_label    TEXT,
+    target_type     TEXT,
+    target_id       TEXT,
+    volume          REAL NOT NULL,
+    lab_independence REAL NOT NULL,
+    method_diversity REAL NOT NULL,
+    temporal_trend  REAL NOT NULL,
+    replication     REAL NOT NULL,
+    composite_score REAL NOT NULL,
+    confidence_level TEXT NOT NULL CHECK (confidence_level IN ('low', 'medium', 'high', 'very_high')),
+    claim_count     INTEGER NOT NULL,
+    source_count    INTEGER NOT NULL,
+    claim_ids       TEXT DEFAULT '[]',
+    computed_at     TEXT DEFAULT (datetime('now')),
+    weights_version TEXT DEFAULT 'v1',
+    UNIQUE (target_key, weights_version)
+);
+
+-- PREDICTION CARDS
+CREATE TABLE IF NOT EXISTS prediction_cards (
+    id                  TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+    hypothesis_id       TEXT REFERENCES hypotheses(id),
+    convergence_score_id TEXT REFERENCES convergence_scores(id),
+    prediction_text     TEXT NOT NULL,
+    target_label        TEXT NOT NULL,
+    target_id           TEXT,
+    convergence_score   REAL NOT NULL,
+    convergence_breakdown TEXT NOT NULL,
+    confidence_level    TEXT NOT NULL,
+    supporting_claims   TEXT DEFAULT '[]',
+    contradicting_claims TEXT DEFAULT '[]',
+    neutral_claims      TEXT DEFAULT '[]',
+    evidence_summary    TEXT DEFAULT '{}',
+    suggested_experiments TEXT DEFAULT '[]',
+    evidence_gaps       TEXT DEFAULT '[]',
+    linked_patents      TEXT DEFAULT '[]',
+    status              TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'validated', 'monitoring', 'strengthened', 'weakened', 'confirmed', 'refuted')),
+    score_history       TEXT DEFAULT '[]',
+    last_validated_at   TEXT,
+    validation_notes    TEXT DEFAULT '[]',
+    generated_by        TEXT DEFAULT 'convergence-prediction-agent',
+    weights_version     TEXT DEFAULT 'v1',
+    created_at          TEXT DEFAULT (datetime('now')),
+    updated_at          TEXT DEFAULT (datetime('now'))
+);

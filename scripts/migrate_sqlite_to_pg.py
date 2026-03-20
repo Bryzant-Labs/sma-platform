@@ -28,7 +28,10 @@ PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 SQLITE_PATH = os.environ.get("SQLITE_PATH", str(PROJECT_ROOT / "sma_platform.db"))
-PG_DSN = os.environ.get("PG_DSN", "postgresql://sma:sma-research-2026@localhost:5432/sma_platform")
+PG_DSN = os.environ.get("PG_DSN", "")
+if not PG_DSN:
+    print("ERROR: PG_DSN environment variable is required (e.g. postgresql://user:pass@localhost:5432/sma_platform)")
+    sys.exit(1)
 SCHEMA_PATH = PROJECT_ROOT / "db" / "schema.sql"
 
 # Tables in dependency order (parents first)

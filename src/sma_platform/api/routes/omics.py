@@ -2,6 +2,10 @@
 
 Exposes endpoints for searching, cataloging, and recommending public
 Nanopore direct RNA and standard RNA-seq datasets relevant to SMA.
+
+Note: The curated static catalog endpoints (/datasets/rnaseq and
+/datasets/rnaseq/nanopore) live in the datasets route module to keep
+them in the /datasets namespace alongside the DB-backed dataset routes.
 """
 
 from __future__ import annotations

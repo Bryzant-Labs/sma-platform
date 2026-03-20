@@ -674,6 +674,20 @@
         .dd-item { padding: 6px 0; border-bottom: 1px solid var(--line-light); font-size: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; word-wrap: break-word; overflow-wrap: break-word; }
         .dd-item:last-child { border-bottom: none; }
         .dd-claim-source { font-size: 10px; color: var(--muted); width: 100%; padding-left: 4px; }
+        .dd-claim-item { padding: 8px 0; border-bottom: 1px solid var(--line-light); cursor: pointer; transition: background 0.15s; }
+        .dd-claim-item:last-child { border-bottom: none; }
+        .dd-claim-item:hover { background: var(--blue-bg); }
+        .dd-claim-header { display: flex; gap: 8px; align-items: center; font-size: 12px; flex-wrap: nowrap; }
+        .dd-claim-toggle { font-size: 10px; color: var(--muted); transition: transform 0.2s; display: inline-block; flex-shrink: 0; }
+        .dd-claim-toggle.open { transform: rotate(90deg); }
+        .dd-claim-num { font-size: 10px; font-family: monospace; color: var(--muted); flex-shrink: 0; }
+        .dd-claim-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dd-claim-detail { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; font-size: 11px; color: var(--text-secondary); line-height: 1.6; padding: 0 4px 0 22px; }
+        .dd-claim-detail.open { max-height: 400px; padding-top: 8px; }
+        .dd-claim-detail p { margin: 0 0 6px 0; color: var(--text); white-space: normal; word-wrap: break-word; }
+        .dd-claim-detail .dd-claim-meta { font-size: 10px; color: var(--muted); margin-top: 4px; }
+        .dd-claim-detail .dd-claim-meta a { color: var(--accent); text-decoration: none; }
+        .dd-claim-detail .dd-claim-meta a:hover { text-decoration: underline; }
         .dd-hyp-item { padding: 8px 0; border-bottom: 1px solid var(--line-light); cursor: pointer; transition: background 0.15s; }
         .dd-hyp-item:last-child { border-bottom: none; }
         .dd-hyp-item:hover { background: var(--blue-bg); }
@@ -4521,21 +4535,78 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
             var grid = el('div', {className: 'dd-grid'});
 
-            // Claims section
+            // Claims section (expandable cards)
             var claimsSec = el('div', {className: 'dd-section'});
             claimsSec.appendChild(el('div', {className: 'dd-section-title', text: 'Claims (' + data.claims_count + ')'}));
             var claimList = data.claims.slice(0, 8);
             for (var c = 0; c < claimList.length; c++) {
                 var cl = claimList[c];
-                var item = el('div', {className: 'dd-item'});
-                item.appendChild(badgeEl(cl.claim_type || '?', 'badge-blue'));
-                item.appendChild(el('span', {text: truncate(cl.predicate || '', 100)}));
-                if (cl.confidence) item.appendChild(badgeEl((cl.confidence * 100).toFixed(0) + '%', cl.confidence >= 0.7 ? 'badge-green' : 'badge-amber'));
-                if (cl.source_title) {
-                    var srcEl = el('div', {className: 'dd-claim-source', text: cl.source_title + (cl.pmid ? ' (PMID: ' + cl.pmid + ')' : '')});
-                    item.appendChild(srcEl);
+                var claimWrap = el('div', {className: 'dd-claim-item'});
+
+                // Header row (always visible)
+                var clHeader = el('div', {className: 'dd-claim-header'});
+                var clToggle = el('span', {className: 'dd-claim-toggle', text: '\u25B6'});
+                clHeader.appendChild(clToggle);
+
+                // Claim number
+                if (cl.claim_number) {
+                    clHeader.appendChild(el('code', {className: 'dd-claim-num', text: 'CLAIM-' + String(cl.claim_number).padStart(5, '0')}));
                 }
-                claimsSec.appendChild(item);
+
+                // Type badge
+                clHeader.appendChild(badgeEl(cl.claim_type ? cl.claim_type.replace(/_/g, ' ') : '?', 'badge-blue'));
+
+                // Truncated text
+                clHeader.appendChild(el('span', {className: 'dd-claim-text', text: truncate(cl.predicate || '', 80)}));
+
+                // Confidence badge
+                if (cl.confidence) clHeader.appendChild(badgeEl((cl.confidence * 100).toFixed(0) + '%', cl.confidence >= 0.7 ? 'badge-green' : 'badge-amber'));
+
+                claimWrap.appendChild(clHeader);
+
+                // Detail panel (hidden by default)
+                var clDetail = el('div', {className: 'dd-claim-detail'});
+
+                // Full predicate text
+                var fullText = document.createElement('p');
+                fullText.textContent = cl.predicate || '';
+                clDetail.appendChild(fullText);
+
+                // Source + PMID
+                if (cl.source_title || cl.pmid) {
+                    var srcMeta = el('div', {className: 'dd-claim-meta'});
+                    if (cl.source_title) {
+                        srcMeta.appendChild(document.createTextNode('Source: ' + cl.source_title + ' '));
+                    }
+                    if (cl.pmid) {
+                        var pmidLink = document.createElement('a');
+                        pmidLink.href = 'https://pubmed.ncbi.nlm.nih.gov/' + cl.pmid + '/';
+                        pmidLink.target = '_blank';
+                        pmidLink.rel = 'noopener';
+                        pmidLink.textContent = 'PMID: ' + cl.pmid;
+                        srcMeta.appendChild(pmidLink);
+                    }
+                    clDetail.appendChild(srcMeta);
+                }
+
+                // Confidence detail
+                if (cl.confidence != null) {
+                    var confMeta = el('div', {className: 'dd-claim-meta'});
+                    confMeta.textContent = 'Confidence: ' + (cl.confidence * 100).toFixed(0) + '%';
+                    clDetail.appendChild(confMeta);
+                }
+
+                claimWrap.appendChild(clDetail);
+
+                // Click to toggle
+                (function(toggle, detail) {
+                    claimWrap.addEventListener('click', function() {
+                        toggle.classList.toggle('open');
+                        detail.classList.toggle('open');
+                    });
+                })(clToggle, clDetail);
+
+                claimsSec.appendChild(claimWrap);
             }
             if (data.claims_count === 0) claimsSec.appendChild(el('div', {style: 'font-size:12px;color:var(--muted)', text: 'No claims linked yet'}));
             if (data.claims_count > 8) claimsSec.appendChild(el('div', {style: 'font-size:11px;color:var(--muted);margin-top:6px', text: '+ ' + (data.claims_count - 8) + ' more claims'}));
