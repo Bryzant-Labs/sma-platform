@@ -688,6 +688,36 @@
         .dd-claim-detail .dd-claim-meta { font-size: 10px; color: var(--muted); margin-top: 4px; }
         .dd-claim-detail .dd-claim-meta a { color: var(--accent); text-decoration: none; }
         .dd-claim-detail .dd-claim-meta a:hover { text-decoration: underline; }
+
+        /* Prediction card expandable styles */
+        .pred-card { cursor: pointer; transition: border-color 0.2s; background: var(--panel); border: 1px solid var(--line); padding: 16px; margin-bottom: 12px; position: relative; }
+        .pred-card:hover { border-color: var(--accent); }
+        .pred-card .pred-detail { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .pred-card.open .pred-detail { max-height: 3000px; }
+        .pred-card .pred-toggle { transition: transform 0.2s; display: inline-block; font-size: 10px; color: var(--muted); margin-right: 6px; }
+        .pred-card.open .pred-toggle { transform: rotate(90deg); }
+        .pred-card .pred-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .pred-card .pred-target-link { color: var(--accent); text-decoration: none; font-weight: 700; font-size: 15px; }
+        .pred-card .pred-target-link:hover { text-decoration: underline; }
+        .pred-card .pred-badges { margin-bottom: 10px; }
+        .pred-card .pred-text-preview { font-size: 13px; line-height: 1.6; color: var(--text-secondary); margin: 0 0 12px 0; }
+        .pred-card .pred-dim-row { display: flex; gap: 12px; font-size: 10px; color: var(--muted); margin-bottom: 8px; }
+        .pred-card .pred-full-text { font-size: 13px; line-height: 1.6; color: var(--text-secondary); margin: 0 0 12px 0; white-space: pre-wrap; word-wrap: break-word; }
+        .pred-card .pred-evidence-stats { font-size: 12px; color: var(--text); margin-bottom: 12px; padding: 8px 12px; background: var(--bg); border: 1px solid var(--line); }
+        .pred-card .pred-gaps-list { font-size: 12px; color: var(--text-secondary); margin: 0 0 12px 0; padding-left: 20px; line-height: 1.8; }
+        .pred-card .pred-gaps-list li { margin-bottom: 4px; }
+        .pred-card .pred-exp-card { background: var(--bg); border: 1px solid var(--line); padding: 12px; margin-bottom: 8px; font-size: 12px; }
+        .pred-card .pred-exp-card:last-child { margin-bottom: 0; }
+        .pred-card .pred-exp-title { font-weight: 600; color: var(--text); margin-bottom: 6px; line-height: 1.4; }
+        .pred-card .pred-exp-priority { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 6px; margin-right: 6px; letter-spacing: 0.5px; }
+        .pred-card .pred-exp-meta { font-size: 11px; color: var(--text-secondary); line-height: 1.6; margin-top: 4px; }
+        .pred-card .pred-exp-meta strong { color: var(--text); }
+        .pred-card .pred-exp-expandable { cursor: pointer; color: var(--accent); font-size: 11px; margin-top: 4px; }
+        .pred-card .pred-exp-expandable:hover { text-decoration: underline; }
+        .pred-card .pred-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+        .pred-card .pred-export-link { display: inline-block; margin-top: 8px; font-size: 11px; color: var(--accent); text-decoration: none; }
+        .pred-card .pred-export-link:hover { text-decoration: underline; }
+
         .dd-hyp-item { padding: 8px 0; border-bottom: 1px solid var(--line-light); cursor: pointer; transition: background 0.15s; }
         .dd-hyp-item:last-child { border-bottom: none; }
         .dd-hyp-item:hover { background: var(--blue-bg); }
@@ -3843,6 +3873,329 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }
     }
 
+    // === Shared prediction card builder ===
+    function predConfColor(level) {
+        if (level === 'very_high') return '#16a34a';
+        if (level === 'high') return '#2563eb';
+        if (level === 'medium') return '#d97706';
+        return '#6b7280';
+    }
+    function predConfBg(level) {
+        if (level === 'very_high') return '#16a34a1a';
+        if (level === 'high') return '#2563eb1a';
+        if (level === 'medium') return '#d976061a';
+        return '#6b72801a';
+    }
+    function predStatusIcon(s) {
+        if (s === 'strengthened') return ' \u2197';
+        if (s === 'weakened') return ' \u2198';
+        if (s === 'monitoring') return ' \u2192';
+        return '';
+    }
+    function predPriorityColor(pri) {
+        if (pri === 'high' || pri === 'HIGH') return '#dc2626';
+        if (pri === 'medium' || pri === 'MEDIUM') return '#d97706';
+        return '#6b7280';
+    }
+    function predPriorityBg(pri) {
+        if (pri === 'high' || pri === 'HIGH') return '#dc26261a';
+        if (pri === 'medium' || pri === 'MEDIUM') return '#d976061a';
+        return '#6b72801a';
+    }
+
+    function buildPredictionCard(p) {
+        var score = parseFloat(p.convergence_score) || 0;
+        var clevel = p.confidence_level || 'low';
+        var color = predConfColor(clevel);
+        var predText = p.prediction_text || '';
+
+        var card = document.createElement('div');
+        card.className = 'pred-card';
+
+        // === ALWAYS-VISIBLE SECTION ===
+
+        // Header: toggle + target link + score badge + confidence badge + status badge
+        var hdr = document.createElement('div');
+        hdr.className = 'pred-header';
+
+        var hdrLeft = document.createElement('div');
+        hdrLeft.style.cssText = 'display:flex;align-items:center;gap:4px;flex:1;min-width:0';
+
+        var toggle = document.createElement('span');
+        toggle.className = 'pred-toggle';
+        toggle.textContent = '\u25B6';
+        hdrLeft.appendChild(toggle);
+
+        var targetLink = document.createElement('a');
+        targetLink.className = 'pred-target-link';
+        targetLink.textContent = p.target_label || 'Unknown';
+        targetLink.href = '/targets';
+        targetLink.addEventListener('click', function(e) { e.stopPropagation(); });
+        hdrLeft.appendChild(targetLink);
+
+        hdr.appendChild(hdrLeft);
+
+        var hdrRight = document.createElement('div');
+        hdrRight.style.cssText = 'display:flex;align-items:center;gap:6px;flex-shrink:0';
+
+        var scorePill = document.createElement('span');
+        scorePill.textContent = (score * 100).toFixed(0) + '%' + predStatusIcon(p.status);
+        scorePill.style.cssText = 'font-weight:700;padding:4px 10px;background:' + predConfBg(clevel) + ';color:' + color + ';font-size:11px;letter-spacing:0.5px';
+        hdrRight.appendChild(scorePill);
+
+        hdr.appendChild(hdrRight);
+        card.appendChild(hdr);
+
+        // Badges row
+        var badges = document.createElement('div');
+        badges.className = 'pred-badges';
+        var confBadge = document.createElement('span');
+        confBadge.textContent = clevel.replace('_', ' ').toUpperCase();
+        confBadge.style.cssText = 'font-size:10px;padding:2px 6px;background:' + predConfBg(clevel) + ';color:' + color + ';font-weight:600;letter-spacing:0.5px';
+        badges.appendChild(confBadge);
+        var statusBadge = document.createElement('span');
+        statusBadge.textContent = ' ' + (p.status || 'draft').toUpperCase();
+        statusBadge.style.cssText = 'font-size:10px;padding:2px 6px;background:#6b72801a;color:#6b7280;font-weight:600;letter-spacing:0.5px;margin-left:6px';
+        badges.appendChild(statusBadge);
+        card.appendChild(badges);
+
+        // Truncated prediction text (always visible)
+        var previewText = document.createElement('p');
+        previewText.className = 'pred-text-preview';
+        previewText.textContent = predText.length > 200 ? predText.substring(0, 200) + '...' : predText;
+        card.appendChild(previewText);
+
+        // Dimension mini-bar (always visible)
+        var breakdown = p.convergence_breakdown || {};
+        if (typeof breakdown === 'string') { try { breakdown = JSON.parse(breakdown); } catch(e) { breakdown = {}; } }
+
+        var barWrap = document.createElement('div');
+        barWrap.style.cssText = 'display:flex;gap:2px;height:6px;margin-bottom:8px;overflow:hidden';
+        var dims = [
+            {key: 'volume', w: 0.15, label: 'Vol', color: '#6366f1'},
+            {key: 'lab_independence', w: 0.30, label: 'Lab', color: '#2563eb'},
+            {key: 'method_diversity', w: 0.20, label: 'Method', color: '#0891b2'},
+            {key: 'temporal_trend', w: 0.15, label: 'Time', color: '#16a34a'},
+            {key: 'replication', w: 0.20, label: 'Repl', color: '#d97706'}
+        ];
+        for (var d = 0; d < dims.length; d++) {
+            var dimVal = parseFloat(breakdown[dims[d].key]) || parseFloat(p[dims[d].key]) || 0;
+            var seg = document.createElement('div');
+            seg.style.cssText = 'flex:' + dims[d].w + ';height:100%;background:' + dims[d].color + ';opacity:' + (0.3 + dimVal * 0.7).toFixed(2);
+            seg.title = dims[d].label + ': ' + (dimVal * 100).toFixed(0) + '%';
+            barWrap.appendChild(seg);
+        }
+        card.appendChild(barWrap);
+
+        // Dimension labels (always visible)
+        var dimRow = document.createElement('div');
+        dimRow.className = 'pred-dim-row';
+        for (var d2 = 0; d2 < dims.length; d2++) {
+            var dv = parseFloat(breakdown[dims[d2].key]) || parseFloat(p[dims[d2].key]) || 0;
+            var dimSpan = document.createElement('span');
+            dimSpan.textContent = dims[d2].label + ':' + (dv * 100).toFixed(0) + '%';
+            dimRow.appendChild(dimSpan);
+        }
+        card.appendChild(dimRow);
+
+        // === EXPANDABLE DETAIL SECTION ===
+        var detail = document.createElement('div');
+        detail.className = 'pred-detail';
+
+        // 1. Full prediction text
+        if (predText.length > 200) {
+            var fullTextTitle = document.createElement('div');
+            fullTextTitle.className = 'pred-section-title';
+            fullTextTitle.textContent = 'Full Prediction';
+            detail.appendChild(fullTextTitle);
+
+            var fullText = document.createElement('p');
+            fullText.className = 'pred-full-text';
+            fullText.textContent = predText;
+            detail.appendChild(fullText);
+        }
+
+        // 2. Evidence stats
+        var claimCount = p.claim_count || 0;
+        var sourceCount = p.source_count || 0;
+        if (claimCount > 0 || sourceCount > 0) {
+            var statsDiv = document.createElement('div');
+            statsDiv.className = 'pred-evidence-stats';
+            statsDiv.textContent = 'Based on ' + claimCount + ' claims from ' + sourceCount + ' independent sources';
+            detail.appendChild(statsDiv);
+        }
+
+        // 3. Evidence gaps
+        var gaps = p.evidence_gaps || [];
+        if (typeof gaps === 'string') { try { gaps = JSON.parse(gaps); } catch(e) { gaps = []; } }
+        if (gaps.length > 0) {
+            var gapsTitle = document.createElement('div');
+            gapsTitle.className = 'pred-section-title';
+            gapsTitle.textContent = 'Evidence Gaps';
+            detail.appendChild(gapsTitle);
+
+            var gapsList = document.createElement('ul');
+            gapsList.className = 'pred-gaps-list';
+            for (var g = 0; g < gaps.length; g++) {
+                var gapItem = document.createElement('li');
+                gapItem.textContent = gaps[g];
+                gapsList.appendChild(gapItem);
+            }
+            detail.appendChild(gapsList);
+        }
+
+        // 4. Suggested experiments
+        var experiments = p.suggested_experiments || [];
+        if (typeof experiments === 'string') { try { experiments = JSON.parse(experiments); } catch(e) { experiments = []; } }
+        if (experiments.length > 0) {
+            var expTitle = document.createElement('div');
+            expTitle.className = 'pred-section-title';
+            expTitle.textContent = 'Suggested Experiments';
+            detail.appendChild(expTitle);
+
+            for (var ei = 0; ei < experiments.length; ei++) {
+                (function(exp) {
+                    var expCard = document.createElement('div');
+                    expCard.className = 'pred-exp-card';
+
+                    // Title row with priority badge
+                    var expTitleDiv = document.createElement('div');
+                    expTitleDiv.className = 'pred-exp-title';
+
+                    if (exp.priority) {
+                        var priBadge = document.createElement('span');
+                        priBadge.className = 'pred-exp-priority';
+                        var priStr = (typeof exp.priority === 'string') ? exp.priority.toUpperCase() : String(exp.priority);
+                        priBadge.textContent = priStr;
+                        priBadge.style.cssText = 'display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;margin-right:6px;letter-spacing:0.5px;background:' + predPriorityBg(exp.priority) + ';color:' + predPriorityColor(exp.priority);
+                        expTitleDiv.appendChild(priBadge);
+                    }
+
+                    var titleText = document.createTextNode(exp.title || 'Experiment');
+                    expTitleDiv.appendChild(titleText);
+                    expCard.appendChild(expTitleDiv);
+
+                    // Timeline
+                    if (exp.timeline) {
+                        var timeDiv = document.createElement('div');
+                        timeDiv.className = 'pred-exp-meta';
+                        var timeLabel = document.createElement('strong');
+                        timeLabel.textContent = 'Timeline: ';
+                        timeDiv.appendChild(timeLabel);
+                        timeDiv.appendChild(document.createTextNode(exp.timeline));
+                        expCard.appendChild(timeDiv);
+                    }
+
+                    // Readout (truncated, expandable)
+                    if (exp.readout) {
+                        var readoutDiv = document.createElement('div');
+                        readoutDiv.className = 'pred-exp-meta';
+                        var readoutLabel = document.createElement('strong');
+                        readoutLabel.textContent = 'Readout: ';
+                        readoutDiv.appendChild(readoutLabel);
+
+                        var readoutText = String(exp.readout);
+                        if (readoutText.length > 150) {
+                            var readoutShort = document.createTextNode(readoutText.substring(0, 150) + '...');
+                            readoutDiv.appendChild(readoutShort);
+                            var readoutMore = document.createElement('span');
+                            readoutMore.className = 'pred-exp-expandable';
+                            readoutMore.textContent = ' [show more]';
+                            (function(rdDiv, rdShort, rdMore, rdFull) {
+                                rdMore.addEventListener('click', function(e) {
+                                    e.stopPropagation();
+                                    if (rdMore.textContent.indexOf('show more') !== -1) {
+                                        rdDiv.removeChild(rdShort);
+                                        rdDiv.insertBefore(document.createTextNode(rdFull), rdMore);
+                                        rdMore.textContent = ' [show less]';
+                                    } else {
+                                        var textNodes = [];
+                                        for (var c = 0; c < rdDiv.childNodes.length; c++) {
+                                            if (rdDiv.childNodes[c].nodeType === 3 && rdDiv.childNodes[c] !== rdShort) textNodes.push(rdDiv.childNodes[c]);
+                                        }
+                                        for (var c2 = 0; c2 < textNodes.length; c2++) {
+                                            if (textNodes[c2].textContent === rdFull) rdDiv.removeChild(textNodes[c2]);
+                                        }
+                                        rdDiv.insertBefore(document.createTextNode(rdFull.substring(0, 150) + '...'), rdMore);
+                                        rdMore.textContent = ' [show more]';
+                                    }
+                                });
+                            })(readoutDiv, readoutShort, readoutMore, readoutText);
+                            readoutDiv.appendChild(readoutMore);
+                        } else {
+                            readoutDiv.appendChild(document.createTextNode(readoutText));
+                        }
+                        expCard.appendChild(readoutDiv);
+                    }
+
+                    // Protocol (truncated, expandable)
+                    if (exp.protocol) {
+                        var protoDiv = document.createElement('div');
+                        protoDiv.className = 'pred-exp-meta';
+                        var protoLabel = document.createElement('strong');
+                        protoLabel.textContent = 'Protocol: ';
+                        protoDiv.appendChild(protoLabel);
+
+                        var protoText = String(exp.protocol);
+                        if (protoText.length > 150) {
+                            var protoShort = document.createTextNode(protoText.substring(0, 150) + '...');
+                            protoDiv.appendChild(protoShort);
+                            var protoMore = document.createElement('span');
+                            protoMore.className = 'pred-exp-expandable';
+                            protoMore.textContent = ' [show more]';
+                            (function(pDiv, pShort, pMore, pFull) {
+                                pMore.addEventListener('click', function(e) {
+                                    e.stopPropagation();
+                                    if (pMore.textContent.indexOf('show more') !== -1) {
+                                        pDiv.removeChild(pShort);
+                                        pDiv.insertBefore(document.createTextNode(pFull), pMore);
+                                        pMore.textContent = ' [show less]';
+                                    } else {
+                                        var textNodes = [];
+                                        for (var c = 0; c < pDiv.childNodes.length; c++) {
+                                            if (pDiv.childNodes[c].nodeType === 3 && pDiv.childNodes[c] !== pShort) textNodes.push(pDiv.childNodes[c]);
+                                        }
+                                        for (var c2 = 0; c2 < textNodes.length; c2++) {
+                                            if (textNodes[c2].textContent === pFull) pDiv.removeChild(textNodes[c2]);
+                                        }
+                                        pDiv.insertBefore(document.createTextNode(pFull.substring(0, 150) + '...'), pMore);
+                                        pMore.textContent = ' [show more]';
+                                    }
+                                });
+                            })(protoDiv, protoShort, protoMore, protoText);
+                            protoDiv.appendChild(protoMore);
+                        } else {
+                            protoDiv.appendChild(document.createTextNode(protoText));
+                        }
+                        expCard.appendChild(protoDiv);
+                    }
+
+                    detail.appendChild(expCard);
+                })(experiments[ei]);
+            }
+        }
+
+        // 5. Export Markdown link
+        if (p.id) {
+            var exportLink = document.createElement('a');
+            exportLink.className = 'pred-export-link';
+            exportLink.textContent = 'Export Markdown';
+            exportLink.href = API + '/predictions/' + p.id + '/export?format=markdown';
+            exportLink.target = '_blank';
+            exportLink.addEventListener('click', function(e) { e.stopPropagation(); });
+            detail.appendChild(exportLink);
+        }
+
+        card.appendChild(detail);
+
+        // Click handler to toggle expand
+        card.addEventListener('click', function() {
+            card.classList.toggle('open');
+        });
+
+        return card;
+    }
+
     // === PREDICTIONS (Evidence Convergence Engine) ===
     function loadPredictions() {
         if (loaded.predictions) return; loaded.predictions = true;
@@ -3859,95 +4212,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             }
             document.getElementById('predictions-count').textContent = data.length + ' predictions';
             var grid = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:16px'});
-            function confColor(level) {
-                if (level === 'very_high') return '#16a34a';
-                if (level === 'high') return '#2563eb';
-                if (level === 'medium') return '#d97706';
-                return '#6b7280';
-            }
-            function confBg(level) {
-                if (level === 'very_high') return '#16a34a1a';
-                if (level === 'high') return '#2563eb1a';
-                if (level === 'medium') return '#d976061a';
-                return '#6b72801a';
-            }
-            function statusIcon(s) {
-                if (s === 'strengthened') return ' ↗';
-                if (s === 'weakened') return ' ↘';
-                if (s === 'monitoring') return ' →';
-                return '';
-            }
             for (var i = 0; i < data.length; i++) {
-                var p = data[i];
-                var score = parseFloat(p.convergence_score) || 0;
-                var clevel = p.confidence_level || 'low';
-                var color = confColor(clevel);
-
-                var card = el('div', {style: 'background:var(--panel);border:1px solid var(--line);padding:20px;position:relative;overflow:hidden'});
-
-                // Header: target + score
-                var hdr = el('div', {style: 'display:flex;justify-content:space-between;align-items:center;margin-bottom:12px'});
-                hdr.appendChild(el('span', {text: p.target_label || 'Unknown', style: 'font-weight:700;font-size:16px;color:var(--text)'}));
-                var scorePill = el('span', {text: (score * 100).toFixed(0) + '%' + statusIcon(p.status), style: 'font-weight:700;font-size:14px;padding:4px 10px;background:' + confBg(clevel) + ';color:' + color + ';text-transform:uppercase;font-size:11px;letter-spacing:0.5px'});
-                hdr.appendChild(scorePill);
-                card.appendChild(hdr);
-
-                // Confidence badge
-                var badges = el('div', {style: 'margin-bottom:10px'});
-                badges.appendChild(el('span', {text: clevel.replace('_', ' ').toUpperCase(), style: 'font-size:10px;padding:2px 6px;background:' + confBg(clevel) + ';color:' + color + ';font-weight:600;letter-spacing:0.5px'}));
-                badges.appendChild(el('span', {text: ' ' + (p.status || 'draft').toUpperCase(), style: 'font-size:10px;padding:2px 6px;background:#6b72801a;color:#6b7280;font-weight:600;letter-spacing:0.5px;margin-left:6px'}));
-                card.appendChild(badges);
-
-                // Prediction text
-                var predText = p.prediction_text || '';
-                card.appendChild(el('p', {text: predText.length > 200 ? predText.substring(0, 200) + '...' : predText, style: 'font-size:13px;line-height:1.6;color:var(--text-secondary);margin-bottom:12px'}));
-
-                // Convergence breakdown bar
-                var breakdown = p.convergence_breakdown || {};
-                if (typeof breakdown === 'string') { try { breakdown = JSON.parse(breakdown); } catch(e) { breakdown = {}; } }
-
-                var barWrap = el('div', {style: 'display:flex;gap:2px;height:6px;margin-bottom:8px;overflow:hidden'});
-                var dims = [
-                    {key: 'volume', w: 0.15, label: 'Vol', color: '#6366f1'},
-                    {key: 'lab_independence', w: 0.30, label: 'Lab', color: '#2563eb'},
-                    {key: 'method_diversity', w: 0.20, label: 'Method', color: '#0891b2'},
-                    {key: 'temporal_trend', w: 0.15, label: 'Time', color: '#16a34a'},
-                    {key: 'replication', w: 0.20, label: 'Repl', color: '#d97706'}
-                ];
-                for (var d = 0; d < dims.length; d++) {
-                    var dimVal = parseFloat(breakdown[dims[d].key]) || 0;
-                    var seg = el('div', {style: 'flex:' + dims[d].w + ';height:100%;background:' + dims[d].color + ';opacity:' + (0.3 + dimVal * 0.7).toFixed(2), title: dims[d].label + ': ' + (dimVal * 100).toFixed(0) + '%'});
-                    barWrap.appendChild(seg);
-                }
-                card.appendChild(barWrap);
-
-                // Dimension labels
-                var dimRow = el('div', {style: 'display:flex;gap:8px;font-size:10px;color:var(--muted);margin-bottom:12px'});
-                for (var d2 = 0; d2 < dims.length; d2++) {
-                    var dv = parseFloat(breakdown[dims[d2].key]) || 0;
-                    dimRow.appendChild(el('span', {text: dims[d2].label + ':' + (dv * 100).toFixed(0) + '%'}));
-                }
-                card.appendChild(dimRow);
-
-                // Evidence gaps
-                var gaps = p.evidence_gaps || [];
-                if (typeof gaps === 'string') { try { gaps = JSON.parse(gaps); } catch(e) { gaps = []; } }
-                if (gaps.length > 0) {
-                    var gapDiv = el('div', {style: 'font-size:11px;color:var(--text-secondary);border-top:1px solid var(--line);padding-top:8px'});
-                    gapDiv.appendChild(el('strong', {text: 'Evidence Gaps: ', style: 'color:var(--text)'}));
-                    gapDiv.appendChild(document.createTextNode(gaps.slice(0, 2).join(' | ')));
-                    card.appendChild(gapDiv);
-                }
-
-                // Export link
-                if (p.id) {
-                    var exportLink = el('a', {text: 'Export Markdown', style: 'display:inline-block;margin-top:8px;font-size:11px;color:var(--accent);text-decoration:none'});
-                    exportLink.href = API + '/predictions/' + p.id + '/export?format=markdown';
-                    exportLink.target = '_blank';
-                    card.appendChild(exportLink);
-                }
-
-                grid.appendChild(card);
+                grid.appendChild(buildPredictionCard(data[i]));
             }
             wrap.appendChild(grid);
         }).catch(function(err) {
@@ -4069,75 +4335,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 return;
             }
 
-            function confColor(level) {
-                if (level === 'very_high') return '#16a34a';
-                if (level === 'high') return '#2563eb';
-                if (level === 'medium') return '#d97706';
-                return '#6b7280';
+            for (var ci = 0; ci < predictions.length; ci++) {
+                cardsDiv.appendChild(buildPredictionCard(predictions[ci]));
             }
-
-            predictions.forEach(function(p) {
-                var card = document.createElement('div');
-                card.style.cssText = 'border:1px solid var(--line);border-radius:4px;padding:16px;margin-bottom:12px;background:var(--panel)';
-
-                var header = document.createElement('div');
-                header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:8px';
-                var title = document.createElement('strong');
-                title.textContent = p.target_label || 'Unknown';
-                title.style.fontSize = '15px';
-                header.appendChild(title);
-                var scoreVal = parseFloat(p.convergence_score) || 0;
-                var badge = document.createElement('span');
-                badge.textContent = (scoreVal * 100).toFixed(0) + '% convergence';
-                badge.style.cssText = 'font-size:11px;padding:2px 8px;border-radius:10px;background:var(--panel);color:' + confColor(p.confidence_level || 'low') + ';border:1px solid var(--line);font-weight:600';
-                header.appendChild(badge);
-                card.appendChild(header);
-
-                // Prediction text
-                var predText = p.prediction_text || '';
-                var pred = document.createElement('p');
-                pred.textContent = predText.length > 250 ? predText.substring(0, 250) + '...' : predText;
-                pred.style.cssText = 'font-size:13px;line-height:1.5;margin:0 0 8px 0;color:var(--text-secondary)';
-                card.appendChild(pred);
-
-                // Dimension mini-bars
-                var dims = [
-                    {key: 'volume', label: 'Vol'},
-                    {key: 'lab_independence', label: 'Lab'},
-                    {key: 'method_diversity', label: 'Meth'},
-                    {key: 'temporal_trend', label: 'Time'},
-                    {key: 'replication', label: 'Repl'}
-                ];
-                var dimRow = document.createElement('div');
-                dimRow.style.cssText = 'display:flex;gap:12px;font-size:10px;color:var(--muted);margin-bottom:8px';
-                dims.forEach(function(d) {
-                    var dv = parseFloat(p[d.key]) || 0;
-                    var span = document.createElement('span');
-                    span.textContent = d.label + ':' + (dv * 100).toFixed(0) + '%';
-                    dimRow.appendChild(span);
-                });
-                card.appendChild(dimRow);
-
-                // Suggested experiments
-                var experiments = p.suggested_experiments || [];
-                if (typeof experiments === 'string') { try { experiments = JSON.parse(experiments); } catch(e) { experiments = []; } }
-                if (experiments.length > 0) {
-                    var expDiv = document.createElement('div');
-                    expDiv.style.cssText = 'font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px';
-                    var expItems = [];
-                    for (var i = 0; i < Math.min(experiments.length, 3); i++) {
-                        var exp = experiments[i];
-                        if (typeof exp === 'object' && exp.title) expItems.push(exp.title);
-                        else if (typeof exp === 'string') expItems.push(exp);
-                    }
-                    if (expItems.length > 0) {
-                        expDiv.textContent = 'Suggested: ' + expItems.join(' | ');
-                        card.appendChild(expDiv);
-                    }
-                }
-
-                cardsDiv.appendChild(card);
-            });
         }).catch(function() {
             var cardsDiv = document.getElementById('convergence-prediction-cards');
             cardsDiv.textContent = '';
