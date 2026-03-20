@@ -98,12 +98,12 @@ async def _get_outcome_convergence_pairs() -> list[dict]:
     """
     # Fetch all drug outcomes with a non-null target
     outcomes = await fetch(
-        """SELECT do.id, do.compound_name, do.target, do.mechanism,
-                  do.outcome, do.failure_reason, do.trial_phase,
-                  do.confidence AS outcome_confidence, do.key_finding
+        """SELECT d_o.id, d_o.compound_name, d_o.target, d_o.mechanism,
+                  d_o.outcome, d_o.failure_reason, d_o.trial_phase,
+                  d_o.confidence AS outcome_confidence, d_o.key_finding
            FROM drug_outcomes do
-           WHERE do.target IS NOT NULL AND do.target != ''
-           ORDER BY do.compound_name"""
+           WHERE d_o.target IS NOT NULL AND d_o.target != ''
+           ORDER BY d_o.compound_name"""
     )
 
     if not outcomes:
