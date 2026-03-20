@@ -2,26 +2,28 @@
 
 ## Validating the SMA Research Platform's Top Computational Discoveries
 
-**Version:** 1.0 | **Date:** March 2026
+**Version:** 2.0 | **Date:** March 21, 2026
 **Author:** Christian Fischer, SMA Research Platform (https://sma-research.info)
-**Purpose:** Concrete plan for wet-lab and computational validation of our top 5 findings. Designed for discussion with Prof. Christian Simon (Leipzig), Prof. Brunhilde Wirth (Cologne), and other potential collaborators.
+**Purpose:** Concrete plan for wet-lab and computational validation of our top findings. Designed for discussion with a collaborating SMA mouse model laboratory, a collaborating SMA genetics laboratory, Prof. Adrian an RNA splicing laboratory (e.g. CSHL), and other potential collaborators.
 **Status:** All findings are computational predictions only. No experimental data exists yet.
 
 ---
 
 ## Executive Summary
 
-The SMA Research Platform's virtual screening campaign (378 compound-target dockings via DiffDock v2.2) produced five experimentally testable predictions. This document specifies, for each prediction, the minimum viable experiment required to validate or refute it, followed by a phased plan for functional and in vivo studies. Total estimated cost for Phase 1 (biophysical binding confirmation): EUR 15,000-25,000. Total estimated timeline: 12 months to complete all three validation phases.
+The SMA Research Platform's virtual screening campaigns have produced multiple experimentally testable predictions. The initial campaign (378 compound-target dockings via DiffDock v2.2) was expanded to a full 4,116-compound screen across 7 SMA protein targets on March 21, 2026. This expanded campaign confirmed earlier findings and revealed new discoveries, most notably riluzole (an FDA-approved ALS drug) binding to SMN2 protein via a mechanism distinct from its known glutamate inhibition. This document specifies, for each prediction, the minimum viable experiment required to validate or refute it, followed by a phased plan for functional and in vivo studies. Total estimated cost for Phase 1 (biophysical binding confirmation): EUR 18,000-30,000. Total estimated timeline: 12-18 months to complete all validation phases.
 
 The discoveries, ranked by priority:
 
 | # | Discovery | Key Metric | Validation Status |
 |---|-----------|-----------|-------------------|
-| 1 | 4-AP binds CORO1C protein | DiffDock confidence +0.251 (rank 1 of 378) | No experimental data |
-| 2 | NEDD4L-TP53 protein similarity | ESM-2 cosine similarity 0.973 | No experimental data |
-| 3 | SMN1 residues 289-294 interaction hotspot | Contact map overlap for p53 + CORO1C | No experimental data |
-| 4 | UBA1 multi-compound druggability | 5 compounds with confidence > -0.35 | No experimental data |
-| 5 | CORO1C structural uniqueness | ESM-2 embedding norm 5.259 (lowest of 7 targets) | Computational only |
+| 1 | 4-AP binds CORO1C protein | DiffDock confidence +0.251 (rank 1 of 378 initial; confirmed in 4,116 screen) | No experimental data |
+| 2 | Riluzole binds SMN2 protein | DiffDock confidence +0.201 (4,116-compound screen) | No experimental data |
+| 3 | NEDD4L-TP53 protein similarity | ESM-2 cosine similarity 0.973 | No experimental data |
+| 4 | SMN1 residues 289-294 interaction hotspot | Contact map overlap for p53 + CORO1C | No experimental data |
+| 5 | UBA1 multi-compound druggability | 4-5 positive hits from 1,000+ dockings (most of any target) | No experimental data |
+| 6 | CORO1C structural uniqueness | ESM-2 embedding norm 5.259 (lowest of 7 targets) | Computational only |
+| 7 | Riluzole multi-target profile | Binds SMN2 (+0.201) AND UBA1 (+0.182) | No experimental data |
 
 ---
 
@@ -53,7 +55,7 @@ The discoveries, ranked by priority:
   - Isothermal Titration Calorimetry (ITC): Gold standard for thermodynamic binding parameters (Kd, deltaH, deltaS). Requires more protein (~500 micrograms for full titration) but yields complete thermodynamic profile.
 - **Estimated cost:** EUR 3,000-5,000 (protein expression + purification + SPR instrument time)
 - **Timeline:** 4-6 weeks (2 weeks protein prep, 2-4 weeks SPR runs + optimization)
-- **Collaborator:** Prof. Thorsten Schoeneberg (Leipzig University, bioinformatics/biochemistry, 200m from Simon's office) or any core facility with SPR capability. Leipzig Biochemistry Institute has Biacore instrumentation. Alternatively, commercial CRO (e.g., Proteros, NovAliX) can run SPR for approximately EUR 5,000-8,000 per target.
+- **Collaborator:** a biochemistry core facility with SPR capability (e.g. Leipzig University) or any core facility with SPR capability. Leipzig Biochemistry Institute has Biacore instrumentation. Alternatively, commercial CRO (e.g., Proteros, NovAliX) can run SPR for approximately EUR 5,000-8,000 per target.
 
 #### Experiment 1B: Binding Site Mapping (If 1A positive)
 
@@ -83,7 +85,7 @@ The discoveries, ranked by priority:
   - **Critical negative control:** 4-AP does NOT alter SMN2 exon 7 splicing (run RT-PCR for SMN2 full-length vs. delta7 transcript ratio). If splicing changes, the mechanism is confounded.
 - **Estimated cost:** EUR 15,000-25,000 (iPSC differentiation is labor-intensive)
 - **Timeline:** 3-5 months (1 month differentiation, 2-4 months treatment + imaging + analysis)
-- **Collaborator:** Prof. Mina Gouti (MDC Berlin, organoid/NMJ models, W3 professor since 2026) for iPSC-MN expertise. Alternatively, Prof. Brunhilde Wirth (University of Cologne, Institute of Human Genetics) has iPSC-MN protocols and deep SMA modifier biology expertise.
+- **Collaborator:** an organoid/NMJ modeling laboratory for iPSC-MN expertise. Alternatively, a collaborating SMA genetics laboratory with iPSC-MN capability has iPSC-MN protocols and deep SMA modifier biology expertise.
 
 #### Experiment 1D: Co-Immunoprecipitation and Proximity Ligation (If 1A positive)
 
@@ -102,14 +104,14 @@ The discoveries, ranked by priority:
 
 ### Discovery 2: NEDD4L-TP53 Protein Similarity (Cosine 0.973)
 
-**Why this matters:** NEDD4L (an E3 ubiquitin ligase) and TP53 (tumor suppressor) share unexpectedly high sequence-level similarity in ESM-2 embedding space. Both are implicated in motor neuron death in SMA. If NEDD4L functionally compensates for or antagonizes p53 in motor neurons, this could explain the selective vulnerability puzzle (why some motor neurons die while others survive). Simon specifically highlighted p53 + motor neuron death as a critical gap on our platform.
+**Why this matters:** NEDD4L (an E3 ubiquitin ligase) and TP53 (tumor suppressor) share unexpectedly high sequence-level similarity in ESM-2 embedding space. Both are implicated in motor neuron death in SMA. If NEDD4L functionally compensates for or antagonizes p53 in motor neurons, this could explain the selective vulnerability puzzle (why some motor neurons die while others survive). a collaborating SMA researcher specifically highlighted p53 + motor neuron death as a critical gap on our platform.
 
 #### Experiment 2A: Expression Correlation in SMA Tissue
 
 - **Assay:** Quantitative RT-PCR (qRT-PCR) and Western blot
 - **Protocol:**
   1. Obtain spinal cord sections from SMA mouse model (SMN-delta-7, Jackson Lab stock #005025) at P5, P8, and P11 (pre-symptomatic, early symptomatic, late symptomatic).
-  2. Laser-capture microdissect ventral horn motor neurons (L1 vs. L5 segments separately — per Simon's emphasis on segment-specific analysis).
+  2. Laser-capture microdissect ventral horn motor neurons (L1 vs. L5 segments separately — per a collaborating SMA researcher's emphasis on segment-specific analysis).
   3. Measure NEDD4L and TP53 mRNA by qRT-PCR (TaqMan probes). Measure protein by Western blot from pooled microdissected tissue.
   4. Compare expression ratios (NEDD4L/TP53) in L1 (vulnerable) vs. L5 (resistant) motor neurons across timepoints.
   5. Include wild-type littermate controls at each timepoint.
@@ -118,7 +120,7 @@ The discoveries, ranked by priority:
   - **Negative:** No correlation between NEDD4L and TP53 expression across segments or timepoints. The ESM-2 similarity is structural, not functional.
 - **Estimated cost:** EUR 8,000-12,000 (mouse colony, LCM, qRT-PCR, Western)
 - **Timeline:** 3-4 months
-- **Collaborator:** Prof. Christian Simon (Leipzig, Carl-Ludwig-Institute for Physiology). Simon works directly with SMA mouse models and has published on L1 vs. L5 selective vulnerability. He would be the ideal collaborator for segment-specific dissection. His team also has the methodological expertise for proper motor neuron counting that he considers essential for any SMA study.
+- **Collaborator:** a collaborating SMA mouse model laboratory (e.g. Leipzig University). a collaborating SMA researcher works directly with SMA mouse models and has published on L1 vs. L5 selective vulnerability. He would be the ideal collaborator for segment-specific dissection. His team also has the methodological expertise for proper motor neuron counting that he considers essential for any SMA study.
 
 #### Experiment 2B: Functional Interaction (If 2A shows correlation)
 
@@ -134,7 +136,7 @@ The discoveries, ranked by priority:
   - **Note:** MDM2 is the canonical p53 E3 ligase. If NEDD4L also ubiquitinates p53 in motor neurons, this would be a novel mechanism relevant to SMA-specific cell death.
 - **Estimated cost:** EUR 10,000-15,000
 - **Timeline:** 4-6 months
-- **Collaborator:** Simon (Leipzig) for mouse MNs, Wirth (Cologne) for iPSC-MNs, or any lab with SMA motor neuron culture capability.
+- **Collaborator:** a collaborating SMA laboratory (Leipzig) for mouse MNs, a collaborating SMA genetics laboratory for iPSC-MNs, or any lab with SMA motor neuron culture capability.
 
 ---
 
@@ -191,7 +193,7 @@ The discoveries, ranked by priority:
   - **Negative:** No effect on UBA1 activity at concentrations up to 100 micromolar for any compound.
 - **Estimated cost:** EUR 3,000-6,000 (recombinant enzyme + compounds + Western)
 - **Timeline:** 4-6 weeks
-- **Collaborator:** Prof. Brunhilde Wirth (Cologne) — has published on UBA1 in SMA (Wishart et al. 2014 was a Wirth collaboration). Or any enzymology/biochemistry lab.
+- **Collaborator:** a collaborating SMA genetics laboratory — has published on UBA1 in SMA (Wishart et al. 2014). Or any enzymology/biochemistry lab.
 
 #### Experiment 4B: UBA1 Cell-Based Validation (If 4A positive)
 
@@ -202,7 +204,7 @@ The discoveries, ranked by priority:
   3. Compare to nusinersen-treated and untreated SMA iPSC-MNs.
 - **Estimated cost:** EUR 10,000-15,000
 - **Timeline:** 3-4 months
-- **Collaborator:** Wirth (Cologne) or Gouti (Berlin)
+- **Collaborator:** a collaborating SMA genetics laboratory or an organoid modeling laboratory (Berlin)
 
 ---
 
@@ -221,11 +223,11 @@ The discoveries, ranked by priority:
   5. If accessible: query existing SMA single-cell RNA-seq datasets (GEO, e.g., GSE138120 mouse SMA, GSE161240 human iPSC-MN) for CORO1C expression levels compared to other actin regulators.
 - **Expected result:**
   - **Informative:** CORO1C is expressed in motor neurons and its expression changes during SMA disease progression (either up- or down-regulated). Changes would suggest functional relevance.
-  - **Critical finding:** If CORO1C is differentially expressed in L1 (vulnerable) vs. L5 (resistant) motor neurons, this connects structural uniqueness to selective vulnerability — Simon's core research question.
+  - **Critical finding:** If CORO1C is differentially expressed in L1 (vulnerable) vs. L5 (resistant) motor neurons, this connects structural uniqueness to selective vulnerability — a collaborating SMA researcher's core research question.
   - **Negative:** CORO1C is not expressed in motor neurons, or expression does not change in SMA. This would reduce (but not eliminate) the relevance of the 4-AP/CORO1C binding prediction, as 4-AP might act on CORO1C in other cell types.
 - **Estimated cost:** EUR 4,000-8,000
 - **Timeline:** 2-3 months
-- **Collaborator:** Simon (Leipzig) — has SMA mouse tissue, motor neuron expertise, and segment-specific dissection methodology.
+- **Collaborator:** a collaborating SMA laboratory (Leipzig) — has SMA mouse tissue, motor neuron expertise, and segment-specific dissection methodology.
 
 ---
 
@@ -377,7 +379,7 @@ Before any new clinical trial, pharmacokinetic considerations must be addressed:
 | **Amount** | $275,000 over 2 years (direct costs) |
 | **Mechanism** | R21 — explicitly for "exploratory and developmental research" |
 | **Fit** | Good. Computational prediction + biophysical validation is classic R21 scope. Novel target (CORO1C) for existing disease (SMA) with existing drug (4-AP). |
-| **PI requirement** | US institution or foreign institution with NIH-eligible status. Krainer (CSHL) or a US collaborator needed. |
+| **PI requirement** | US institution or foreign institution with NIH-eligible status. an RNA splicing laboratory (e.g. CSHL) or a US collaborator needed. |
 | **Relevant FOA** | PAR-XX-XXX "Novel Approaches to Drug Repurposing for Neurological Disorders" (check current NINDS FOAs) |
 | **Advantage** | Preliminary data = DiffDock screen + evidence graph. No need for extensive prior results for R21. |
 
@@ -389,7 +391,7 @@ Before any new clinical trial, pharmacokinetic considerations must be addressed:
 | **Amount** | Variable (typically EUR 150,000-400,000 for individual grants, Sachbeihilfe) |
 | **Mechanism** | Sachbeihilfe (research grant) or SPP (Priority Programme) if relevant call exists |
 | **Fit** | Excellent for Leipzig collaboration. DFG favors German-institution PIs with defined projects. |
-| **PI requirement** | German institution (Leipzig University qualifies). Simon or Schoeneberg as PI, Fischer as project partner. |
+| **PI requirement** | German institution (Leipzig University qualifies). a collaborating laboratory as PI, Fischer as project partner. |
 | **Advantage** | No strict deadlines for Sachbeihilfe (submit anytime). Peer review within 6 months. |
 | **Note** | DFG increasingly values open science and reproducibility — our open-source platform and data availability align well. |
 
@@ -415,11 +417,11 @@ Before any new clinical trial, pharmacokinetic considerations must be addressed:
 
 ### 4.6 Suggested Grant Strategy
 
-**Phase 1 (immediate):** Apply for Cure SMA Research Grant (highest probability of success, fastest timeline, $100-250K covers all Phase 1 experiments). Simon/Schoeneberg as Leipzig PI, Fischer as co-PI or consultant.
+**Phase 1 (immediate):** Apply for Cure SMA Research Grant (highest probability of success, fastest timeline, $100-250K covers all Phase 1 experiments). a collaborating SMA researcher/a biochemistry collaborator as Leipzig PI, Fischer as co-PI or consultant.
 
 **Phase 2 (if Phase 1 experiments positive):** DFG Sachbeihilfe for expanded mechanistic studies (EUR 200-300K, 3-year project). Leipzig-based, leveraging Phase 1 results as preliminary data.
 
-**Phase 3 (if mouse model positive):** NIH R21 via US collaborator (Krainer at CSHL) for translational studies + IND-enabling work.
+**Phase 3 (if mouse model positive):** NIH R21 via US collaborator (an RNA splicing laboratory (US)) for translational studies + IND-enabling work.
 
 ---
 
@@ -447,11 +449,11 @@ Before any new clinical trial, pharmacokinetic considerations must be addressed:
 | Month | Activity | Responsible | Cost |
 |-------|----------|-------------|------|
 | 3-4 | HDX-MS binding site mapping on CORO1C | CRO or core facility | EUR 5,000-8,000 |
-| 3-5 | iPSC-MN differentiation (SMA + isogenic control) | Gouti (Berlin) or Wirth (Cologne) | EUR 10,000-15,000 |
+| 3-5 | iPSC-MN differentiation (SMA + isogenic control) | an organoid modeling laboratory (Berlin) or a collaborating SMA genetics laboratory | EUR 10,000-15,000 |
 | 4-6 | Actin dynamics imaging: 4-AP effect on F-actin in iPSC-MNs | Same lab | Included above |
 | 4-5 | Co-IP: 4-AP effect on CORO1C-Arp2/3 interaction | Leipzig or Cologne | EUR 3,000-5,000 |
-| 4-5 | NEDD4L-TP53 expression correlation in SMA mouse (L1 vs. L5) | Simon (Leipzig) | EUR 8,000-12,000 |
-| 4-6 | UBA1 enzyme activity assay with top 5 compounds | Wirth (Cologne) | EUR 3,000-6,000 |
+| 4-5 | NEDD4L-TP53 expression correlation in SMA mouse (L1 vs. L5) | a collaborating SMA laboratory (Leipzig) | EUR 8,000-12,000 |
+| 4-6 | UBA1 enzyme activity assay with top 5 compounds | a collaborating SMA genetics laboratory | EUR 3,000-6,000 |
 | 5-6 | SMN1(289-294) peptide competition assay | Leipzig biochemistry | EUR 2,000-4,000 |
 | 6 | **GO/NO-GO DECISION** based on functional results | All | — |
 
@@ -463,10 +465,10 @@ Before any new clinical trial, pharmacokinetic considerations must be addressed:
 
 | Month | Activity | Responsible | Cost |
 |-------|----------|-------------|------|
-| 6-7 | Design mouse study: SMA-delta-7 model, 4-AP dosing, CORO1C-specific endpoints | Simon + Fischer | EUR 0 |
-| 7-10 | Mouse treatment study: 4-AP (5 mg/kg daily IP, based on Bhatt et al.) from P1-P11 | Simon (Leipzig) | EUR 15,000-25,000 |
-| 7-10 | Endpoints: CORO1C expression (IHC + Western), actin dynamics (phalloidin), motor neuron counts (L1 vs. L5), NMJ morphology, grip strength, righting reflex, survival | Simon | Included |
-| 10-11 | Spinal cord histology: CORO1C + ChAT co-staining across segments | Simon | EUR 3,000-5,000 |
+| 6-7 | Design mouse study: SMA-delta-7 model, 4-AP dosing, CORO1C-specific endpoints | Platform team + collaborating laboratory | EUR 0 |
+| 7-10 | Mouse treatment study: 4-AP (5 mg/kg daily IP, based on Bhatt et al.) from P1-P11 | a collaborating SMA laboratory (Leipzig) | EUR 15,000-25,000 |
+| 7-10 | Endpoints: CORO1C expression (IHC + Western), actin dynamics (phalloidin), motor neuron counts (L1 vs. L5), NMJ morphology, grip strength, righting reflex, survival | a collaborating SMA researcher | Included |
+| 10-11 | Spinal cord histology: CORO1C + ChAT co-staining across segments | a collaborating SMA researcher | EUR 3,000-5,000 |
 | 10-11 | Ubiquitin pathway markers: UBA1 activity, beta-catenin levels | Leipzig/Cologne | EUR 2,000-4,000 |
 | 11-12 | Data analysis + manuscript preparation | All | EUR 0 |
 | 12 | **PUBLICATION DECISION** | All | — |
@@ -506,15 +508,15 @@ However, the investment required to test this hypothesis is modest (EUR 4,000-6,
 
 ---
 
-## Part 7: Deliverables for Simon Meeting (Week of March 30)
+## Part 7: Deliverables for a collaborating SMA researcher Meeting (Week of March 30)
 
-To prepare for the meeting with Prof. Christian Simon, the following should be completed:
+To prepare for the meeting with Prof. a collaborating SMA researcher, the following should be completed:
 
 1. **Computational validation results** (Part 2 items 2.1-2.5): Database queries, GEO expression data, orthogonal docking results. These are zero-cost and can be done this week.
 2. **One-page summary** of Discovery 1 (4-AP/CORO1C) with honest probability assessment.
-3. **Specific ask for Simon:** SMA mouse tissue for CORO1C IHC (L1 vs. L5 segments). This directly aligns with his expertise and his emphasis on segment-specific analysis.
+3. **Specific ask for a collaborating SMA researcher:** SMA mouse tissue for CORO1C IHC (L1 vs. L5 segments). This directly aligns with his expertise and his emphasis on segment-specific analysis.
 4. **Discussion of NEDD4L-TP53:** This connects to his p53 + motor neuron death research focus. Frame as: "Our ESM-2 analysis found unexpectedly high similarity between NEDD4L and TP53. Is there published evidence for NEDD4L involvement in SMA motor neuron death?"
-5. **Grant opportunity brief:** Cure SMA annual grant + DFG Sachbeihilfe options. Simon/Schoeneberg as PI, Fischer as computational partner.
+5. **Grant opportunity brief:** Cure SMA annual grant + DFG Sachbeihilfe options. a collaborating SMA researcher/a biochemistry collaborator as PI, Fischer as computational partner.
 
 ---
 
@@ -538,16 +540,16 @@ To prepare for the meeting with Prof. Christian Simon, the following should be c
 
 | Collaborator | Institution | Expertise | Relevance |
 |-------------|-------------|-----------|-----------|
-| Prof. Christian Simon | Leipzig, Carl-Ludwig-Institute | SMA mouse models, selective vulnerability, proprioception | Discoveries 2, 3, 5; mouse tissue access |
-| Prof. Thorsten Schoeneberg | Leipzig University | Bioinformatics, biochemistry | SPR facility, computational cross-validation |
+| Prof. a collaborating SMA researcher | Leipzig, Carl-Ludwig-Institute | SMA mouse models, selective vulnerability, proprioception | Discoveries 2, 3, 5; mouse tissue access |
+| Prof. Thorsten a biochemistry collaborator | Leipzig University | Bioinformatics, biochemistry | SPR facility, computational cross-validation |
 | Prof. Stefan Hallermann | Leipzig, Carl-Ludwig-Institute | Neurophysiology, institute director | Institute resources, funding support |
-| Prof. Brunhilde Wirth | Cologne, Institute of Human Genetics | SMA genetics, modifier biology, UBA1 | Discoveries 2, 4; iPSC-MN expertise |
-| Prof. Mina Gouti | MDC Berlin | Organoid/NMJ models, iPSC differentiation | Discovery 1C (functional validation) |
-| Prof. Adrian Krainer | CSHL, New York | RNA splicing, ASO therapeutics | US grant partner (NIH R21) |
+| Prof. a collaborating SMA genetics group | Cologne, Institute of Human Genetics | SMA genetics, modifier biology, UBA1 | Discoveries 2, 4; iPSC-MN expertise |
+| an organoid/NMJ modeling laboratory | MDC Berlin | Organoid/NMJ models, iPSC differentiation | Discovery 1C (functional validation) |
+| Prof. an RNA splicing expert | CSHL, New York | RNA splicing, ASO therapeutics | US grant partner (NIH R21) |
 | Dr. Ewout Groen | Netherlands SMA Center | Translational SMA, biomarkers | Clinical endpoint design |
 
 ---
 
-*This document is version 1.0. It will be updated as computational validation results (Part 2) become available and after the meeting with Prof. Simon (week of March 30, 2026).*
+*This document is version 1.0. It will be updated as computational validation results (Part 2) become available and after the meeting with Prof. a collaborating SMA researcher (week of March 30, 2026).*
 
 *All computational predictions described herein are hypotheses, not conclusions. No therapeutic claims are made. The author has SMA and discloses this positionality transparently.*
