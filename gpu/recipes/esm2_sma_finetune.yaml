@@ -1,0 +1,52 @@
+# BioNeMo Recipe: ESM-2 Fine-Tuning on SMA Protein Data
+# ======================================================
+# Fine-tune ESM-2 650M on SMA-specific protein sequences
+# to improve protein embeddings for SMA target analysis.
+#
+# Source: NVIDIA BioNeMo Recipes (GTC 2026)
+# Docs: https://docs.nvidia.com/bionemo/recipes/
+#
+# Usage:
+#   pip install bionemo-recipes
+#   bionemo-train --recipe gpu/recipes/esm2_sma_finetune.yaml
+#
+# Or on Vast.ai:
+#   ./gpu/scripts/launch_finetune_vastai.sh
+
+model:
+  name: esm2_650m
+  checkpoint: facebook/esm2_t33_650M_UR50D
+
+task: protein_property_prediction
+
+dataset:
+  path: data/sma_proteins.fasta
+  format: fasta
+  # 21 SMA target proteins + known interactors
+  # Source: UniProt sequences for SMN1, SMN2, STMN2, PLS3, NCALD, UBA1, etc.
+
+training:
+  epochs: 10
+  batch_size: 4
+  learning_rate: 1.0e-5
+  weight_decay: 0.01
+  warmup_steps: 100
+  gradient_accumulation_steps: 4
+  fp16: true
+
+evaluation:
+  metric: cosine_similarity
+  # Compare SMA-specific embeddings vs generic ESM-2
+  # Success: SMA target clusters tighter in embedding space
+
+output:
+  dir: models/esm2_sma_finetuned
+  save_every_n_epochs: 2
+
+hardware:
+  # Minimum: 1x A100 40GB
+  # Recommended: 1x A100 80GB or 1x H100
+  gpus: 1
+  precision: bf16
+
+# Estimated cost on Vast.ai: ~$5-10 (1 A100 for ~2 hours)
