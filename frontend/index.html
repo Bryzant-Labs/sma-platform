@@ -713,6 +713,7 @@
     <a href="/outcomes" class="nav-link" data-section="outcomes">Drug Outcomes</a>
     <a href="/screening" class="nav-link" data-section="screening">Screening</a>
     <a href="/candidates" class="nav-link" data-section="candidates">Candidates</a>
+    <a href="/hits" class="nav-link" data-section="hits">Hits</a>
     <a href="/comparative" class="nav-link" data-section="comparative">Species</a>
     <a href="/directions" class="nav-link" data-section="directions">Directions</a>
     <a href="/synthesis" class="nav-link" data-section="synthesis">Synthesis</a>
@@ -1326,6 +1327,16 @@
         <th>#</th><th>ChEMBL ID</th><th>Target</th><th>Score</th><th>Tier</th><th>QED</th><th>BBB</th><th>ADMET</th><th>pChEMBL</th><th>Flags</th>
     </tr></thead>
     <tbody id="candidates-body"><tr><td colspan="10" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="hits">
+    <div class="section-header"><h2 class="section-title">Screening Hits</h2><span class="section-count" id="hits-count"></span></div>
+    <p class="section-desc">Positive binding predictions from AI-driven virtual screening. Each hit goes through a 6-stage validation pipeline: computational validation, structural analysis, analog search, ADMET prediction, literature review, and experimental design.</p>
+    <div id="hits-content">
+        <div id="hits-table-wrap"></div>
+        <h3 style="margin-top:24px">Validation Pipeline</h3>
+        <div id="hits-milestones"></div>
+    </div>
 </section>
 
 <section class="section" id="graph">
@@ -6462,6 +6473,98 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+    function loadHits() {
+        // Fetch milestone data
+        fetch(API + '/hits/milestones').then(function(r) { return r.json(); }).then(function(data) {
+            var countEl = document.getElementById('hits-count');
+            countEl.textContent = data.total_milestones + ' milestones across ' + (data.hits || []).length + ' hits';
+
+            // Hits table
+            var tableWrap = document.getElementById('hits-table-wrap');
+            tableWrap.textContent = '';
+            var table = document.createElement('table');
+            table.className = 'data-table';
+
+            // Header
+            var thead = document.createElement('thead');
+            var headerRow = document.createElement('tr');
+            ['Target', 'Compound', 'DiffDock Score', 'Progress', 'Status'].forEach(function(h) {
+                var th = document.createElement('th');
+                th.textContent = h;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Body
+            var tbody = document.createElement('tbody');
+            var hits = data.hits || [];
+            hits.sort(function(a, b) { return b.confidence - a.confidence; });
+
+            for (var i = 0; i < hits.length; i++) {
+                var hit = hits[i];
+                var row = document.createElement('tr');
+
+                var tdTarget = document.createElement('td');
+                tdTarget.textContent = hit.target;
+                row.appendChild(tdTarget);
+
+                var tdSmiles = document.createElement('td');
+                var code = document.createElement('code');
+                code.textContent = hit.smiles;
+                code.style.fontSize = '11px';
+                tdSmiles.appendChild(code);
+                row.appendChild(tdSmiles);
+
+                var tdConf = document.createElement('td');
+                var confStr = hit.confidence > 0 ? '+' + hit.confidence.toFixed(3) : hit.confidence.toFixed(3);
+                tdConf.textContent = confStr;
+                if (hit.confidence > 0.5) tdConf.style.color = 'var(--accent)';
+                tdConf.style.fontWeight = '600';
+                row.appendChild(tdConf);
+
+                var tdProgress = document.createElement('td');
+                var stages = hit.stages || {};
+                var total = Object.keys(stages).length;
+                var done = 0;
+                for (var s in stages) { if (stages[s] === 'completed') done++; }
+                tdProgress.textContent = done + '/' + total;
+                row.appendChild(tdProgress);
+
+                var tdStatus = document.createElement('td');
+                var stageNames = ['computational_validation', 'structural_analysis', 'analog_search', 'admet_prediction', 'literature_review', 'experimental_suggestion'];
+                var statusDots = document.createElement('span');
+                for (var si = 0; si < stageNames.length; si++) {
+                    var dot = document.createElement('span');
+                    var st = stages[stageNames[si]] || 'pending';
+                    dot.style.display = 'inline-block';
+                    dot.style.width = '10px';
+                    dot.style.height = '10px';
+                    dot.style.borderRadius = '50%';
+                    dot.style.marginRight = '3px';
+                    dot.style.backgroundColor = st === 'completed' ? '#22c55e' : st === 'in_progress' ? '#eab308' : '#94a3b8';
+                    dot.title = stageNames[si].replace(/_/g, ' ') + ': ' + st;
+                    statusDots.appendChild(dot);
+                }
+                tdStatus.appendChild(statusDots);
+                row.appendChild(tdStatus);
+
+                tbody.appendChild(row);
+            }
+            table.appendChild(tbody);
+            tableWrap.appendChild(table);
+
+            // Legend
+            var legend = document.createElement('div');
+            legend.style.cssText = 'margin-top:8px;font-size:11px;color:var(--muted)';
+            legend.textContent = 'Pipeline stages: Computational validation \u2022 Structural analysis \u2022 Analog search \u2022 ADMET prediction \u2022 Literature review \u2022 Experimental design';
+            tableWrap.appendChild(legend);
+
+        }).catch(function(err) {
+            document.getElementById('hits-table-wrap').textContent = 'Failed to load hits: ' + err.message;
+        });
+    }
+
     // Section loader map
     var loaders = {
         mission: loadMission, research: loadResearch,
@@ -6469,7 +6572,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         sources: loadSources, datasets: loadDatasets, claims: loadClaims,
         hypotheses: loadHypotheses, predictions: loadPredictions, scores: loadScores, evidence: loadEvidence,
         screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
-        outcomes: loadOutcomes, comparative: loadComparative,
+        outcomes: loadOutcomes, hits: loadHits, comparative: loadComparative,
         directions: loadDirections, links: loadLinks, contact: loadContact,
         search: loadChat, write: loadWrite,
         molecules: loadMolecules, crispr: loadCrispr, aav: loadAav, versions: loadVersions,
@@ -6502,6 +6605,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         outcomes:    {title: 'Drug Outcomes — SMA Research Platform', desc: 'Clinical trial outcome tracking for SMA therapeutics across all phases.'},
         screening:   {title: 'Compound Screening — SMA Research Platform', desc: '188 compounds screened against SMA targets with predicted binding affinity and ADMET profiles.'},
         candidates:  {title: 'Drug Candidates — SMA Research Platform', desc: 'Top drug candidates for SMA ranked by multi-target affinity and clinical feasibility.'},
+        hits:        {title: 'Screening Hits — SMA Research Platform', desc: 'Positive binding predictions from AI virtual screening with 6-stage validation pipeline.'},
         comparative: {title: 'Comparative Biology — SMA Research Platform', desc: 'Cross-species analysis of SMN biology across human, mouse, zebrafish, Drosophila, and C. elegans.'},
         directions:  {title: 'Research Directions — SMA Research Platform', desc: 'Emerging research directions for SMA therapy development identified by evidence convergence analysis.'},
         spatial:     {title: 'Spatial Omics — SMA Research Platform', desc: 'Spatial transcriptomic analysis of SMA-affected tissues and cell populations.'},

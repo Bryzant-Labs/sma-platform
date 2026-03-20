@@ -353,3 +353,223 @@ async def get_assay_ready_top3() -> list[dict[str, Any]]:
     )
 
     return results
+
+
+# ---------------------------------------------------------------------------
+# SMA-specific assay templates by target gene
+# ---------------------------------------------------------------------------
+
+TARGET_ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
+    "SMN2": {
+        "assay": "SMN2 splicing reporter assay (luciferase-based)",
+        "model": "SMA patient fibroblasts or iPSC-derived motor neurons",
+        "readout": "Full-length SMN2 mRNA (RT-qPCR) + SMN protein (Western blot)",
+        "go_criteria": ">20% increase in full-length SMN2 mRNA vs DMSO control",
+        "cost": "$5,000-10,000",
+        "timeline": "4-6 weeks",
+    },
+    "STMN2": {
+        "assay": "STMN2 protein stabilization assay",
+        "model": "iPSC-derived motor neurons (SMA patient)",
+        "readout": "STMN2 protein levels (Western), axon length measurement",
+        "go_criteria": ">15% increase in STMN2 protein or >10% increase in axon length",
+        "cost": "$8,000-15,000",
+        "timeline": "6-8 weeks",
+    },
+    "UBA1": {
+        "assay": "Ubiquitin pathway rescue assay",
+        "model": "SMA patient fibroblasts + motor neuron differentiation",
+        "readout": "Ubiquitin conjugate levels, UBA1 activity assay",
+        "go_criteria": "Normalization of ubiquitin homeostasis markers",
+        "cost": "$5,000-8,000",
+        "timeline": "4-6 weeks",
+    },
+    "CORO1C": {
+        "assay": "Actin dynamics / cell migration assay",
+        "model": "Motor neuron-like NSC-34 cells or iPSC-MNs",
+        "readout": "Actin polymerization (phalloidin staining), growth cone morphology",
+        "go_criteria": ">15% improvement in growth cone area or neurite outgrowth",
+        "cost": "$5,000-10,000",
+        "timeline": "4-6 weeks",
+    },
+    "TP53": {
+        "assay": "p53-dependent apoptosis assay",
+        "model": "SMA mouse motor neuron primary cultures",
+        "readout": "Caspase-3 activity, TUNEL staining, cell viability (MTT)",
+        "go_criteria": ">25% reduction in apoptosis markers vs vehicle",
+        "cost": "$8,000-12,000",
+        "timeline": "6-8 weeks",
+    },
+    "PLS3": {
+        "assay": "PLS3 functional enhancement assay",
+        "model": "SMA patient fibroblasts or iPSC-MNs",
+        "readout": "F-actin bundling (in vitro), NMJ formation (co-culture)",
+        "go_criteria": "Enhanced actin bundling or improved NMJ morphology",
+        "cost": "$10,000-15,000",
+        "timeline": "8-10 weeks",
+    },
+    "NCALD": {
+        "assay": "Calcium signaling + endocytosis assay",
+        "model": "iPSC-derived motor neurons (SMA patient)",
+        "readout": "Calcium imaging (Fura-2), FM1-43 endocytosis assay",
+        "go_criteria": "Restored endocytic rate comparable to NCALD-knockdown control",
+        "cost": "$8,000-12,000",
+        "timeline": "6-8 weeks",
+    },
+}
+
+# Default template for targets not in the map
+_DEFAULT_ASSAY_TEMPLATE: dict[str, str] = {
+    "assay": "Target-specific functional assay (phenotypic or biochemical)",
+    "model": "SMA patient fibroblasts or iPSC-derived motor neurons",
+    "readout": "Target protein level (Western), motor neuron viability",
+    "go_criteria": ">15% improvement over vehicle control (p < 0.05)",
+    "cost": "$5,000-10,000",
+    "timeline": "4-8 weeks",
+}
+
+
+def generate_assay_card(
+    smiles: str,
+    target: str,
+    docking_confidence: float = 0.0,
+) -> dict[str, Any]:
+    """Generate a wet-lab validation assay card for a single screening hit.
+
+    Returns an assay card with: hypothesis, assay, model system, readout,
+    go/no-go criteria, estimated cost and timeline, and docking context.
+    """
+    target_upper = target.upper().strip()
+    template = TARGET_ASSAY_TEMPLATES.get(
+        target_upper, _DEFAULT_ASSAY_TEMPLATE
+    )
+
+    # Build hypothesis text
+    if docking_confidence >= 0.7:
+        confidence_label = "high"
+    elif docking_confidence >= 0.4:
+        confidence_label = "moderate"
+    else:
+        confidence_label = "low"
+
+    hypothesis = (
+        f"Compound ({smiles[:60]}{'...' if len(smiles) > 60 else ''}) "
+        f"binds {target_upper} with {confidence_label} docking confidence "
+        f"({docking_confidence:.2f}) and modulates its activity in SMA-relevant "
+        f"cellular context."
+    )
+
+    return {
+        "smiles": smiles,
+        "target": target_upper,
+        "docking_confidence": docking_confidence,
+        "hypothesis": hypothesis,
+        "assay": template["assay"],
+        "model_system": template["model"],
+        "readout": template["readout"],
+        "go_nogo_criteria": template["go_criteria"],
+        "estimated_cost": template["cost"],
+        "estimated_timeline": template["timeline"],
+        "priority": (
+            "high" if docking_confidence >= 0.7
+            else "medium" if docking_confidence >= 0.4
+            else "low"
+        ),
+    }
+
+
+def generate_assay_cards_batch(
+    hits: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Generate assay cards for multiple screening hits.
+
+    Each hit should have keys: smiles, target, docking_confidence (optional).
+    Returns cards sorted by docking confidence descending.
+    """
+    cards = []
+    for hit in hits:
+        card = generate_assay_card(
+            smiles=hit.get("smiles", ""),
+            target=hit.get("target", ""),
+            docking_confidence=float(hit.get("docking_confidence", 0.0)),
+        )
+        cards.append(card)
+
+    # Sort by docking confidence descending
+    cards.sort(key=lambda c: c["docking_confidence"], reverse=True)
+    return cards
+
+
+async def get_assay_cards_for_positive_hits() -> dict[str, Any]:
+    """Generate assay-ready validation cards for all positive screening hits.
+
+    Queries the molecule_screenings table for top drug-like hits, then
+    generates target-specific assay cards with go/no-go criteria.
+    """
+    # Fetch positive screening hits — drug-like with good pChEMBL
+    rows = await fetch(
+        """SELECT smiles, target_symbol, pchembl_value, compound_name,
+                  chembl_id, molecular_weight, alogp, drug_likeness_pass
+           FROM molecule_screenings
+           WHERE drug_likeness_pass = TRUE
+             AND pchembl_value >= 5.0
+           ORDER BY pchembl_value DESC
+           LIMIT 20"""
+    )
+
+    if not rows:
+        # Fallback: try any hits with target symbol
+        rows = await fetch(
+            """SELECT smiles, target_symbol, pchembl_value, compound_name,
+                      chembl_id, molecular_weight, alogp, drug_likeness_pass
+               FROM molecule_screenings
+               WHERE target_symbol IS NOT NULL
+               ORDER BY pchembl_value DESC NULLS LAST
+               LIMIT 20"""
+        )
+
+    if not rows:
+        return {
+            "total_hits": 0,
+            "assay_cards": [],
+            "insight": "No positive screening hits found. Run drug screening first.",
+        }
+
+    cards = []
+    for row in rows:
+        row = dict(row)
+        # Use pChEMBL as a proxy for docking confidence (normalized to 0-1)
+        pchembl = float(row.get("pchembl_value") or 0)
+        confidence = min(1.0, pchembl / 10.0)  # pChEMBL 10 = perfect
+
+        card = generate_assay_card(
+            smiles=row.get("smiles", ""),
+            target=row.get("target_symbol", ""),
+            docking_confidence=round(confidence, 3),
+        )
+        # Enrich with screening metadata
+        card["compound_name"] = row.get("compound_name")
+        card["chembl_id"] = row.get("chembl_id")
+        card["molecular_weight"] = row.get("molecular_weight")
+        card["alogp"] = row.get("alogp")
+        card["pchembl_value"] = pchembl
+        cards.append(card)
+
+    # Sort by confidence
+    cards.sort(key=lambda c: c["docking_confidence"], reverse=True)
+
+    # Summary stats
+    targets_covered = set(c["target"] for c in cards)
+    high_priority = sum(1 for c in cards if c["priority"] == "high")
+
+    return {
+        "total_hits": len(cards),
+        "high_priority": high_priority,
+        "targets_covered": sorted(targets_covered),
+        "assay_cards": cards,
+        "insight": (
+            f"{len(cards)} screening hits with assay-ready validation plans "
+            f"covering {len(targets_covered)} targets. "
+            f"{high_priority} are high-priority (docking confidence >= 0.7)."
+        ),
+    }

@@ -55,6 +55,44 @@ async def get_milestones():
     return await get_milestone_summary()
 
 
+@router.get("/assay-cards")
+async def get_assay_cards():
+    """Generate assay-ready validation cards for all positive screening hits.
+
+    For each drug-like hit (pChEMBL >= 5.0, Lipinski pass), returns a
+    target-specific wet-lab validation plan with:
+    - Hypothesis: what we predict
+    - Assay: how to test it (SMA-specific protocol)
+    - Model system: cell line, organoid, or mouse model
+    - Readout: what to measure
+    - Go/No-Go criteria: what constitutes success
+    - Estimated cost and timeline
+
+    Cards are sorted by docking confidence / pChEMBL value descending.
+    """
+    from ...reasoning.assay_ready import get_assay_cards_for_positive_hits
+    return await get_assay_cards_for_positive_hits()
+
+
+@router.post("/assay-cards/custom")
+async def generate_custom_assay_cards(body: HitListInput):
+    """Generate assay cards for custom screening hits (not from the database).
+
+    Accepts a list of hits with smiles, target, and docking_confidence.
+    Returns target-specific wet-lab validation plans.
+    """
+    from ...reasoning.assay_ready import generate_assay_cards_batch
+    cards = generate_assay_cards_batch([h.model_dump() for h in body.hits])
+    targets_covered = set(c["target"] for c in cards)
+    high_priority = sum(1 for c in cards if c["priority"] == "high")
+    return {
+        "total_hits": len(cards),
+        "high_priority": high_priority,
+        "targets_covered": sorted(targets_covered),
+        "assay_cards": cards,
+    }
+
+
 @router.get("/validate/single", dependencies=[Depends(require_admin_key)])
 async def validate_single_hit(
     smiles: str,

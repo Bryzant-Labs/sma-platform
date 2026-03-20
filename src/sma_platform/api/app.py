@@ -198,7 +198,7 @@ def create_app() -> FastAPI:
         "mission", "search", "ask", "chat",
         "targets", "trials", "drugs", "sources", "claims",
         "hypotheses", "predictions", "graph",
-        "scores", "outcomes", "screening", "candidates",
+        "scores", "outcomes", "screening", "candidates", "hits",
         "comparative", "directions",
         "spatial", "regen", "nmj", "multisystem", "bioelectric",
         "splicemap", "rnabind", "dualtarget", "twin",
