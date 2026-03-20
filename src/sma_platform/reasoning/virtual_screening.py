@@ -257,11 +257,16 @@ async def _dock_molecules(
             confidence = batch_result.get("position_confidence", batch_result.get("confidence"))
             if isinstance(confidence, list) and len(confidence) >= len(valid_molecules):
                 for i, mol_result in enumerate(valid_molecules):
-                    mol_result.docking_confidence = float(confidence[i])
+                    c = confidence[i]
+                    # Handle nested lists: [[0.5, 0.3], [0.2, -0.1], ...]
+                    if isinstance(c, list):
+                        c = max(c) if c else -1.0
+                    mol_result.docking_confidence = float(c)
                     mol_result.docking_target = target
                     mol_result.stage = "docked"
+                logger.info("Batch docking succeeded (flat confidence list): %d molecules", len(valid_molecules))
                 return valid_molecules
-            logger.warning("Batch result format unexpected, falling back to individual docking")
+            logger.warning("Batch result format unexpected (keys: %s), falling back", list(batch_result.keys()))
 
     except Exception as e:
         logger.warning("Batch docking failed (%s), falling back to individual docking", e)
