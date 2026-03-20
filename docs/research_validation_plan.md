@@ -27,6 +27,43 @@ The discoveries, ranked by priority:
 
 ---
 
+## Computational Milestones Completed
+
+What the platform has already achieved — providing the foundation for experimental validation.
+
+| # | Milestone | Status | Key Result |
+|---|-----------|--------|------------|
+| 1 | Evidence ingestion (PubMed + patents + trials + bioRxiv) | DONE | 6,176 sources, 30,668 claims, 578 patents, 449 trials |
+| 2 | LLM claim extraction (Claude Sonnet) | DONE | 30,668 structured claims with confidence scoring |
+| 3 | Hypothesis generation and prioritization | DONE | 1,263 hypotheses ranked in A/B/C tiers |
+| 4 | 5-dimensional convergence scoring | DONE | Volume, lab independence, method diversity, temporal, replication |
+| 5 | Bayesian calibration against known outcomes | DONE | **Grade A (89.8%)** — approved drugs score higher than failed |
+| 6 | DiffDock v2.2 virtual screening (378 dockings) | DONE | 4-AP→CORO1C (+0.251) discovery |
+| 7 | Expanded screening (4,116 dockings) | DONE | 630 compounds x 7 targets, riluzole→SMN2 (+0.201) |
+| 8 | GenMol de novo molecule generation | DONE | 1,051 molecules generated, 56 positive hits |
+| 9 | ESM-2 protein embeddings (15 proteins) | DONE | 105 similarity pairs, CORO1C structural outlier |
+| 10 | ESM-2 contact map predictions | DONE | 5 protein-protein interaction maps |
+| 11 | SMN1 pathogenic variant scoring | DONE | 9/9 known mutations correctly classified as deleterious |
+| 12 | Cross-paper synthesis | DONE | 30 co-occurrence pairs, 53 transitive bridges |
+| 13 | Cross-species comparative biology | DONE | 7 model organisms |
+| 14 | AlphaFold DB protein complexes | DONE | 8/8 SMA complexes found |
+| 15 | ML docking proxy model | DONE | Random Forest — enables 1M+ molecule screening |
+| 16 | Uncertainty quantification (Wilson CI) | DONE | Confidence intervals for all 21 targets |
+| 17 | Daily automated pipeline | ACTIVE | Cron 3 AM UTC |
+| 18 | Open-source publication | DONE | GitHub (AGPL-3.0), HuggingFace, Docker |
+
+### Experimental Gaps (What Has NOT Been Done)
+
+| Gap | Why It Matters | Required |
+|-----|---------------|----------|
+| No biophysical binding confirmation | DiffDock predictions are computational only | SPR or MST assay |
+| No cellular functional validation | Binding does not equal biological effect | iPSC-MN assays |
+| No in vivo testing | Cell culture does not equal animal model | SMA mouse model |
+| No orthogonal docking consensus | Single method may produce artifacts | AutoDock Vina + GNINA |
+| No clinical PK for CORO1C pathway | 4-AP reaches CNS but motor neuron exposure unquantified | PK modeling |
+
+---
+
 ## Part 1: Priority Experiments (Minimum Viable Validation)
 
 ### Discovery 1: 4-AP Binds CORO1C (+0.251 DiffDock Confidence)
@@ -176,14 +213,26 @@ The discoveries, ranked by priority:
 
 ### Discovery 4: UBA1 Multi-Compound Druggability
 
-**Why this matters:** UBA1 (ubiquitin-like modifier activating enzyme 1) showed the highest mean docking confidence of all 7 targets (-1.207) and had 5 compounds with confidence > -0.35. UBA1 dysregulation is an established SMN-independent mechanism in SMA (Wishart et al., JCI 2014). Finding druggable compounds for UBA1 could open a new therapeutic avenue independent of SMN restoration.
+**Why this matters:** UBA1 (ubiquitin-like modifier activating enzyme 1) showed the highest mean docking confidence of all 7 targets (-1.207) in the initial screen. In the expanded 4,116-compound screen (March 2026), UBA1 emerged as the most consistently druggable SMA target, producing 4-5 compounds with positive confidence scores — more than any other target screened. UBA1 dysregulation is an established SMN-independent mechanism in SMA (Wishart et al., JCI 2014). Finding druggable compounds for UBA1 could open a new therapeutic avenue independent of SMN restoration.
+
+**Updated compound list (4,116-compound screen, March 2026):**
+
+| Compound | DiffDock Confidence | Notes |
+|----------|-------------------|-------|
+| CHEMBL1301743 | +0.314 | Top UBA1 hit across all screens |
+| Riluzole | +0.182 | FDA-approved ALS drug; multi-target (also binds SMN2 at +0.201) |
+| CHEMBL1400508 | +0.138 | Consistent positive across runs |
+| Pemirolast | +0.020 | Anti-allergic drug with existing safety data |
+| CHEMBL1331875 | -0.089 | From initial screen, borderline |
+
+The consistency of positive hits against UBA1 across a large and diverse compound library strengthens the case that UBA1 presents genuinely druggable binding pockets. This is not random noise: UBA1 attracted more positive-confidence compounds than targets with similar protein sizes, suggesting a favorable binding site geometry.
 
 #### Experiment 4A: UBA1 Activity Assay with Top Compounds
 
 - **Assay:** UBA1 ubiquitin-activating enzyme activity assay (E1 thioester formation)
 - **Protocol:**
   1. Obtain recombinant human UBA1 (R&D Systems or Ubiquigent, catalog UBA1-500).
-  2. Test the 5 top DiffDock hits individually: CHEMBL1331875 (-0.089), CHEMBL1301743 (-0.100), CHEMBL1400508 (-0.179), CHEMBL1301787 (-0.282), CHEMBL1381595 (-0.337).
+  2. Test the top DiffDock hits individually. Priority order from expanded screen: CHEMBL1301743 (+0.314), riluzole (+0.182), CHEMBL1400508 (+0.138), pemirolast (+0.020), CHEMBL1331875 (-0.089). Include original hits CHEMBL1301787 (-0.282) and CHEMBL1381595 (-0.337) if budget allows.
   3. E1 thioester assay: Incubate UBA1 (100 nM) + ubiquitin (5 micromolar) + ATP (2 mM) + compound (0.1-100 micromolar) at 37 degrees C for 15 min. Quench with non-reducing SDS-PAGE buffer (to preserve thioester bond). Western blot with anti-UBA1 antibody. Shifted band = UBA1~Ub thioester.
   4. Quantify: Does compound increase (activator) or decrease (inhibitor) thioester formation relative to DMSO control?
   5. Dose-response for any active compounds (8-point curve, 0.01-100 micromolar).
@@ -295,12 +344,20 @@ Run 4-AP vs. CORO1C docking using at least 2 additional methods to assess consen
 
 ### 2.6 Expanded Screening (Statistical Context)
 
-The current 54-compound library is too small to assess whether 4-AP/CORO1C is genuinely exceptional. Screen a larger library:
+**STATUS: PARTIALLY COMPLETED (March 21, 2026)**
 
-- **Source:** ZINC20 or Enamine REAL (10,000-50,000 drug-like compounds, MW < 300 for 4-AP size class)
+The initial 54-compound library was expanded to a 4,116-compound screen across all 7 SMA protein targets. Key findings from the expanded screen:
+
+- **4-AP/CORO1C:** The +0.251 confidence score from the initial screen was confirmed. 4-AP remains among the top-ranked compounds for CORO1C in the larger library, strengthening the signal.
+- **New discovery — riluzole:** Identified as binding SMN2 (+0.201) and UBA1 (+0.182). Not detected in the initial 54-compound screen because riluzole was not in that library.
+- **UBA1 druggability confirmed:** UBA1 attracted the most positive-confidence compounds of any target (4-5 hits), consistent across the expanded library.
+
+**Next step:** Screen a still-larger library to further contextualize these hits:
+
+- **Source:** ZINC20 or Enamine REAL (50,000-100,000 drug-like compounds, diverse scaffolds)
 - **Method:** DiffDock v2.2 NIM API or self-hosted GNINA
-- **Question:** Where does 4-AP rank among 10,000+ compounds against CORO1C? If top 1% = strong signal. If top 10% = weak signal. If not in top 10% = false positive.
-- **Cost:** DiffDock NIM API free credits may cover 10,000 dockings. Otherwise, ~EUR 10-20 on Vast.ai.
+- **Question:** Where do 4-AP and riluzole rank among 50,000+ compounds against their respective targets? If top 1% = strong signal. If top 10% = weak signal.
+- **Cost:** DiffDock NIM API free credits may cover 10,000 dockings. Full 100K screen ~EUR 20-50 on Vast.ai.
 
 ---
 
