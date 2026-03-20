@@ -5,6 +5,7 @@ Endpoints for running NVIDIA BioNeMo NIM jobs:
 - DiffDock v2.2 re-docking
 - OpenFold3 structure prediction
 - GenMol molecule generation
+- RNAPro RNA 3D structure prediction
 """
 
 import logging
@@ -35,6 +36,11 @@ class StructureRequest(BaseModel):
     protein_sequence: Optional[str] = None
     rna_sequence: Optional[str] = None
     ligand_smiles: Optional[str] = None
+
+class RNAStructureRequest(BaseModel):
+    rna_sequence: str
+    name: str = "SMN2_ISS_N1"
+
 
 
 # ---- Health check ----
@@ -218,3 +224,52 @@ async def predict_smn2_rna():
     except Exception as e:
         logger.error(f"SMN2 RNA structure prediction failed: {e}", exc_info=True)
         raise HTTPException(500, f"RNA structure prediction failed: {str(e)}")
+
+# ---- RNAPro ----
+
+@router.post("/rna-structure", dependencies=[Depends(require_admin_key)])
+async def predict_rna_structure(req: RNAStructureRequest):
+    """Predict RNA 3D structure using RNAPro NIM (GTC 2026).
+
+    Use this to predict the 3D fold of SMN2 pre-mRNA regions,
+    particularly around ASO binding sites (ISS-N1, ISS-N2, ESS).
+    """
+    from ...ingestion.adapters.nvidia_nims import rnapro_predict, check_api_key
+
+    if not check_api_key():
+        raise HTTPException(400, "NVIDIA_API_KEY not configured")
+
+    try:
+        result = await rnapro_predict(
+            rna_sequence=req.rna_sequence,
+            name=req.name,
+        )
+    except Exception as e:
+        logger.error("RNAPro prediction failed: %s", e)
+        raise HTTPException(500, detail=f"RNAPro prediction failed: {e}")
+
+    return {
+        "status": "ok",
+        "prediction": result,
+        "model": "RNAPro",
+        "sequence_length": len(req.rna_sequence),
+        "name": req.name,
+    }
+
+
+
+# ---- AlphaFold Complex Check (GTC 2026) ----
+
+@router.get("/alphafold/complexes", dependencies=[Depends(require_admin_key)])
+async def check_alphafold_complexes():
+    """Check AlphaFold DB for SMA protein complex predictions (GTC 2026 expansion)."""
+    from ...ingestion.adapters.alphafold import check_complex_predictions
+
+    results = await check_complex_predictions()
+    found = [r for r in results if r["predicted"]]
+
+    return {
+        "total_checked": len(results),
+        "found": len(found),
+        "complexes": results,
+    }

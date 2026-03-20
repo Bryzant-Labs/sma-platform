@@ -28,6 +28,7 @@ NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "")
 DIFFDOCK_URL = "https://health.api.nvidia.com/v1/biology/mit/diffdock"
 OPENFOLD3_URL = "https://health.api.nvidia.com/v1/biology/openfold/openfold3"
 GENMOL_URL = "https://health.api.nvidia.com/v1/biology/nvidia/genmol"
+RNAPRO_URL = "https://health.api.nvidia.com/v1/biology/nvidia/rnapro"
 
 TIMEOUT = 120  # seconds — structure prediction can be slow
 
@@ -244,6 +245,35 @@ async def genmol_from_4ap(num_molecules: int = 100) -> dict:
 
 
 # =============================================================================
+# RNAPro — RNA 3D Structure Prediction (GTC 2026)
+# =============================================================================
+
+async def rnapro_predict(
+    rna_sequence: str,
+    name: str = "SMN2_ISS_N1",
+) -> dict:
+    """Predict RNA 3D structure using NVIDIA RNAPro NIM.
+
+    Args:
+        rna_sequence: RNA sequence (A/U/G/C)
+        name: Identifier for the prediction
+
+    Returns:
+        dict with predicted 3D coordinates and confidence scores
+    """
+    logger.info("RNAPro prediction for %s (%d nt)", name, len(rna_sequence))
+    async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+        resp = await client.post(
+            RNAPRO_URL,
+            headers=_headers(),
+            json={"sequence": rna_sequence, "name": name},
+        )
+        resp.raise_for_status()
+        result = resp.json()
+        logger.info("RNAPro prediction complete for %s", name)
+        return result
+
+# =============================================================================
 # Batch Operations — SMA-specific workflows
 # =============================================================================
 
@@ -334,6 +364,7 @@ async def check_nim_health() -> dict:
         "diffdock": DIFFDOCK_URL,
         "openfold3": OPENFOLD3_URL,
         "genmol": GENMOL_URL,
+        "rnapro": RNAPRO_URL,
     }
 
     async with httpx.AsyncClient(timeout=10) as client:

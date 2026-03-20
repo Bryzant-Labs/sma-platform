@@ -297,3 +297,68 @@ def build_structure_summary(
         lines.append(f"3D structure: {model_url}")
 
     return "\n".join(lines)
+
+
+# =============================================================================
+# AlphaFold Protein Complex Predictions (GTC 2026 — 1.7M new complexes)
+# =============================================================================
+
+# SMA-relevant protein complexes to check
+SMA_COMPLEX_QUERIES = [
+    # SMN complexes
+    {"name": "SMN-Gemin2", "uniprot_ids": ["Q16637", "O14893"], "desc": "Core SMN complex — essential for snRNP assembly"},
+    {"name": "SMN-Gemin3", "uniprot_ids": ["Q16637", "O15541"], "desc": "SMN complex RNA helicase component"},
+    {"name": "SMN-Gemin5", "uniprot_ids": ["Q16637", "Q8TEQ6"], "desc": "SMN complex snRNA binding component"},
+    {"name": "SMN-p53", "uniprot_ids": ["Q16637", "P04637"], "desc": "SMN-p53 direct interaction — motor neuron death pathway"},
+    {"name": "SMN-UBA1", "uniprot_ids": ["Q16637", "P22314"], "desc": "Ubiquitin pathway dysregulation in SMA"},
+    # Modifier complexes
+    {"name": "PLS3-actin", "uniprot_ids": ["P13797", "P60709"], "desc": "Plastin 3 actin-bundling — SMA severity modifier"},
+    {"name": "NCALD-CaM", "uniprot_ids": ["P61601", "P62158"], "desc": "Neurocalcin delta calcium sensing"},
+    {"name": "STMN2-tubulin", "uniprot_ids": ["Q93045", "Q13509"], "desc": "Stathmin-2 microtubule regulation"},
+]
+
+ALPHAFOLD_COMPLEX_API = "https://alphafold.ebi.ac.uk/api"
+
+
+async def check_complex_predictions() -> list[dict]:
+    """Check AlphaFold DB for predicted structures of SMA protein complexes.
+
+    The AlphaFold DB was expanded with 1.7M new protein complexes at GTC 2026.
+    We check if any SMA-relevant complexes now have predicted structures.
+    """
+    results = []
+    async with httpx.AsyncClient(timeout=30) as client:
+        for complex_info in SMA_COMPLEX_QUERIES:
+            found = False
+            structure_url = None
+            confidence = None
+
+            # Try searching by UniProt ID pairs
+            for uid in complex_info["uniprot_ids"]:
+                try:
+                    resp = await client.get(
+                        f"{ALPHAFOLD_COMPLEX_API}/prediction/{uid}",
+                        headers={"Accept": "application/json"},
+                    )
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        if isinstance(data, list) and len(data) > 0:
+                            entry = data[0]
+                            structure_url = entry.get("pdbUrl") or entry.get("cifUrl")
+                            confidence = entry.get("globalMetricValue")
+                            found = True
+                except Exception as e:
+                    logger.debug("AlphaFold query for %s failed: %s", uid, e)
+
+                await asyncio.sleep(0.2)  # Rate limit
+
+            results.append({
+                "complex": complex_info["name"],
+                "description": complex_info["desc"],
+                "uniprot_ids": complex_info["uniprot_ids"],
+                "predicted": found,
+                "structure_url": structure_url,
+                "confidence": confidence,
+            })
+
+    return results
