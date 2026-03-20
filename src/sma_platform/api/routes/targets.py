@@ -74,20 +74,28 @@ async def get_target_deep_dive(target_id: str):
     symbol = target["symbol"]
     tid = str(target["id"])
 
-    # Claims mentioning this target
+    # Claims mentioning this target (via subject_id / object_id foreign keys)
     claims = await fetch(
-        """SELECT id, claim_type, predicate, confidence, metadata
-           FROM claims WHERE CAST(metadata AS TEXT) LIKE $1
-           ORDER BY confidence DESC LIMIT 50""",
-        f'%"{symbol}"%',
+        """SELECT * FROM (
+               SELECT DISTINCT ON (c.id) c.id, c.claim_type, c.predicate, c.confidence,
+                      c.metadata, s.title AS source_title, s.external_id AS pmid
+               FROM claims c
+               LEFT JOIN evidence e ON e.claim_id = c.id
+               LEFT JOIN sources s ON e.source_id = s.id
+               WHERE c.subject_id = $1 OR c.object_id = $1
+               ORDER BY c.id, s.title NULLS LAST
+           ) sub
+           ORDER BY confidence DESC NULLS LAST
+           LIMIT 50""",
+        target["id"],
     )
 
-    # Hypotheses for this target
+    # Hypotheses for this target (search by symbol in title/description)
     hypotheses = await fetch(
-        """SELECT id, hypothesis_type, title, confidence, status, metadata
-           FROM hypotheses WHERE CAST(metadata AS TEXT) LIKE $1
+        """SELECT id, hypothesis_type, title, description, confidence, status, metadata
+           FROM hypotheses WHERE title ILIKE $1 OR description ILIKE $1
            ORDER BY confidence DESC LIMIT 20""",
-        f'%"target_id": "{tid}"%',
+        f'%{symbol}%',
     )
 
     # Drugs targeting this target
