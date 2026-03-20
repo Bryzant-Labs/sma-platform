@@ -415,6 +415,9 @@
         .tier-tab { background: var(--panel); border: 1px solid var(--line); padding: 6px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; color: var(--text-secondary); }
         .tier-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
         .tier-tab:hover:not(.active) { background: var(--line-light); }
+        .hyp-page-btn { background: var(--panel); border: 1px solid var(--line); padding: 4px 10px; font-size: 11px; font-weight: 600; cursor: pointer; color: var(--text-secondary); border-radius: 3px; }
+        .hyp-page-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+        .hyp-page-btn:hover:not(.active) { background: var(--line-light); }
         .hyp-card { background: var(--panel); border: 1px solid var(--line); padding: 20px; margin-bottom: 12px; position: relative; }
         .hyp-card.tier-A { border-left: 3px solid var(--green); }
         .hyp-card.tier-B { border-left: 3px solid var(--amber); }
@@ -1272,11 +1275,48 @@
 <section class="section" id="hypotheses">
     <div class="section-header"><h2 class="section-title">Hypothesis Prioritization</h2><span class="section-count" id="hypotheses-count"></span></div>
     <p class="section-desc">Phase 2: Multi-criteria ranked hypotheses scored across evidence depth, source convergence, therapeutic clarity, target strength, and novelty. Tier A = top 5 high-conviction, Tier B = medium priority, Tier C = needs more evidence.</p>
-    <div id="hyp-tier-tabs" style="display:none;margin-bottom:16px;">
-        <button class="tier-tab active" data-tier="A" id="tier-tab-a">Tier A</button>
-        <button class="tier-tab" data-tier="B" id="tier-tab-b">Tier B</button>
-        <button class="tier-tab" data-tier="C" id="tier-tab-c">Tier C</button>
-        <button class="tier-tab" data-tier="all" id="tier-tab-all">All</button>
+    <div id="hyp-filter-bar" style="display:none;margin-bottom:16px;">
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 12px 0">
+            <!-- Tier buttons -->
+            <div id="hyp-tier-buttons" style="display:flex;gap:4px">
+                <button class="tier-tab active" data-tier="A" id="tier-tab-a">Tier A</button>
+                <button class="tier-tab" data-tier="B" id="tier-tab-b">Tier B</button>
+                <button class="tier-tab" data-tier="C" id="tier-tab-c">Tier C</button>
+                <button class="tier-tab" data-tier="all" id="tier-tab-all">All</button>
+            </div>
+            <!-- Search -->
+            <input type="text" id="hyp-search" placeholder="Search hypotheses..."
+                   style="flex:1;min-width:200px;padding:6px 10px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <!-- Target dropdown -->
+            <select id="hyp-target" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+                <option value="">All targets</option>
+            </select>
+            <!-- Type dropdown -->
+            <select id="hyp-type" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+                <option value="">All types</option>
+            </select>
+            <!-- Confidence filter -->
+            <select id="hyp-confidence" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+                <option value="">All confidence</option>
+                <option value="0.9">&ge;90%</option>
+                <option value="0.7">&ge;70%</option>
+                <option value="0.5">&ge;50%</option>
+                <option value="0.3">&ge;30%</option>
+            </select>
+            <!-- Filter count -->
+            <span id="hyp-filter-count" style="font-size:11px;color:var(--muted)"></span>
+        </div>
+        <!-- Pagination controls -->
+        <div id="hyp-pagination" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <select id="hyp-per-page" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+                <option value="100">100 per page</option>
+                <option value="9999">Show all</option>
+            </select>
+            <div id="hyp-page-buttons" style="display:flex;gap:2px;flex-wrap:wrap"></div>
+            <span id="hyp-page-info" style="font-size:11px;color:var(--muted)"></span>
+        </div>
     </div>
     <div id="hypotheses-body-wrap"><div class="loading">Loading hypotheses...</div></div>
 </section>
@@ -3337,13 +3377,20 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     var hypData = null;
+    var hypAllList = [];       // flattened list of all hypotheses
+    var hypFilteredList = [];  // after applying filters
+    var hypCurrentPage = 1;
+    var hypActiveTier = 'A';   // default tier
+
     function loadHypotheses() {
         if (loaded.hypotheses) return; loaded.hypotheses = true;
         fetch(API + '/hypotheses/prioritized').then(function(r) { return r.json(); }).then(function(data) {
             hypData = data;
             var total = data.total || 0;
             document.getElementById('hypotheses-count').textContent = total + ' hypotheses';
-            document.getElementById('hyp-tier-tabs').style.display = total > 0 ? '' : 'none';
+            document.getElementById('hyp-filter-bar').style.display = total > 0 ? '' : 'none';
+            // Build flattened list with tier info preserved
+            hypAllList = (data.tier_a || []).concat(data.tier_b || []).concat(data.tier_c || []);
             // Update tab labels with counts
             var tabs = document.querySelectorAll('.tier-tab');
             for (var ti = 0; ti < tabs.length; ti++) {
@@ -3353,31 +3400,182 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 else if (t === 'C') tabs[ti].textContent = 'Tier C (' + (data.tier_c_count || 0) + ')';
                 else tabs[ti].textContent = 'All (' + total + ')';
             }
-            renderHypotheses(data.tier_a || []);
+            // Populate target dropdown from data
+            var targetSet = {};
+            for (var ai = 0; ai < hypAllList.length; ai++) {
+                var ts = hypAllList[ai].target_symbol;
+                if (ts) targetSet[ts] = true;
+            }
+            var targetSel = document.getElementById('hyp-target');
+            var sortedTargets = Object.keys(targetSet).sort();
+            for (var si = 0; si < sortedTargets.length; si++) {
+                var opt = document.createElement('option');
+                opt.value = sortedTargets[si];
+                opt.textContent = sortedTargets[si];
+                targetSel.appendChild(opt);
+            }
+            // Populate type dropdown from data (hypothesis_type or claim_type)
+            var typeSet = {};
+            for (var bi = 0; bi < hypAllList.length; bi++) {
+                var ht = hypAllList[bi].hypothesis_type || hypAllList[bi].claim_type;
+                if (ht) typeSet[ht] = true;
+            }
+            var typeSel = document.getElementById('hyp-type');
+            var sortedTypes = Object.keys(typeSet).sort();
+            for (var ui = 0; ui < sortedTypes.length; ui++) {
+                var opt2 = document.createElement('option');
+                opt2.value = sortedTypes[ui];
+                opt2.textContent = sortedTypes[ui].replace(/_/g, ' ');
+                typeSel.appendChild(opt2);
+            }
+            // Initial render
+            applyHypFilters();
         });
     }
-    function filterHypTier(tier, btn) {
-        var tabs = document.querySelectorAll('.tier-tab');
-        for (var i = 0; i < tabs.length; i++) tabs[i].className = 'tier-tab';
-        btn.className = 'tier-tab active';
-        if (!hypData) return;
-        if (tier === 'A') renderHypotheses(hypData.tier_a || []);
-        else if (tier === 'B') renderHypotheses(hypData.tier_b || []);
-        else if (tier === 'C') renderHypotheses(hypData.tier_c || []);
-        else {
-            var all = (hypData.tier_a || []).concat(hypData.tier_b || []).concat(hypData.tier_c || []);
-            renderHypotheses(all);
-        }
+
+    function getHypTierList() {
+        if (!hypData) return [];
+        if (hypActiveTier === 'A') return hypData.tier_a || [];
+        if (hypActiveTier === 'B') return hypData.tier_b || [];
+        if (hypActiveTier === 'C') return hypData.tier_c || [];
+        return hypAllList;
     }
+
+    function applyHypFilters() {
+        var base = getHypTierList();
+        var search = (document.getElementById('hyp-search').value || '').toLowerCase().trim();
+        var targetVal = document.getElementById('hyp-target').value;
+        var typeVal = document.getElementById('hyp-type').value;
+        var confVal = parseFloat(document.getElementById('hyp-confidence').value) || 0;
+
+        hypFilteredList = [];
+        for (var i = 0; i < base.length; i++) {
+            var h = base[i];
+            // Search filter: match against title, description, target_symbol
+            if (search) {
+                var haystack = ((h.title || '') + ' ' + (h.description || '') + ' ' + (h.target_symbol || '')).toLowerCase();
+                if (haystack.indexOf(search) === -1) continue;
+            }
+            // Target filter
+            if (targetVal && (h.target_symbol || '') !== targetVal) continue;
+            // Type filter
+            if (typeVal) {
+                var hType = h.hypothesis_type || h.claim_type || '';
+                if (hType !== typeVal) continue;
+            }
+            // Confidence filter
+            if (confVal > 0 && (h.confidence || 0) < confVal) continue;
+            hypFilteredList.push(h);
+        }
+
+        // Update filter count
+        var countEl = document.getElementById('hyp-filter-count');
+        if (search || targetVal || typeVal || confVal > 0) {
+            countEl.textContent = hypFilteredList.length + ' of ' + base.length + ' shown';
+        } else {
+            countEl.textContent = '';
+        }
+
+        // Reset to page 1 when filters change
+        hypCurrentPage = 1;
+        renderHypPage();
+    }
+
+    function renderHypPage() {
+        var perPage = parseInt(document.getElementById('hyp-per-page').value) || 25;
+        var total = hypFilteredList.length;
+        var totalPages = Math.max(1, Math.ceil(total / perPage));
+        if (hypCurrentPage > totalPages) hypCurrentPage = totalPages;
+
+        var start = (hypCurrentPage - 1) * perPage;
+        var end = Math.min(start + perPage, total);
+        var pageList = hypFilteredList.slice(start, end);
+
+        // Render page buttons
+        var pageBtnWrap = document.getElementById('hyp-page-buttons');
+        pageBtnWrap.textContent = '';
+        if (totalPages > 1) {
+            // Previous button
+            if (hypCurrentPage > 1) {
+                var prevBtn = el('button', {className: 'hyp-page-btn', text: '\u2190'});
+                prevBtn.addEventListener('click', function() { hypCurrentPage--; renderHypPage(); });
+                pageBtnWrap.appendChild(prevBtn);
+            }
+            // Page numbers (show max 7 around current)
+            var rangeStart = Math.max(1, hypCurrentPage - 3);
+            var rangeEnd = Math.min(totalPages, hypCurrentPage + 3);
+            if (rangeStart > 1) {
+                var first = el('button', {className: 'hyp-page-btn' + (hypCurrentPage === 1 ? ' active' : ''), text: '1'});
+                first.addEventListener('click', function() { hypCurrentPage = 1; renderHypPage(); });
+                pageBtnWrap.appendChild(first);
+                if (rangeStart > 2) pageBtnWrap.appendChild(el('span', {text: '...', style: 'font-size:11px;color:var(--muted);padding:0 4px'}));
+            }
+            for (var p = rangeStart; p <= rangeEnd; p++) {
+                (function(page) {
+                    var btn = el('button', {className: 'hyp-page-btn' + (page === hypCurrentPage ? ' active' : ''), text: '' + page});
+                    btn.addEventListener('click', function() { hypCurrentPage = page; renderHypPage(); });
+                    pageBtnWrap.appendChild(btn);
+                })(p);
+            }
+            if (rangeEnd < totalPages) {
+                if (rangeEnd < totalPages - 1) pageBtnWrap.appendChild(el('span', {text: '...', style: 'font-size:11px;color:var(--muted);padding:0 4px'}));
+                var last = el('button', {className: 'hyp-page-btn' + (hypCurrentPage === totalPages ? ' active' : ''), text: '' + totalPages});
+                last.addEventListener('click', function() { hypCurrentPage = totalPages; renderHypPage(); });
+                pageBtnWrap.appendChild(last);
+            }
+            // Next button
+            if (hypCurrentPage < totalPages) {
+                var nextBtn = el('button', {className: 'hyp-page-btn', text: '\u2192'});
+                nextBtn.addEventListener('click', function() { hypCurrentPage++; renderHypPage(); });
+                pageBtnWrap.appendChild(nextBtn);
+            }
+        }
+
+        // Page info
+        var pageInfo = document.getElementById('hyp-page-info');
+        if (total > 0) {
+            pageInfo.textContent = 'Showing ' + (start + 1) + '-' + end + ' of ' + total;
+        } else {
+            pageInfo.textContent = '';
+        }
+
+        renderHypotheses(pageList);
+    }
+
     // Wire up tier tab buttons
     ['a','b','c','all'].forEach(function(t) {
         var tabBtn = document.getElementById('tier-tab-' + t);
-        if (tabBtn) tabBtn.addEventListener('click', function() { filterHypTier(t.toUpperCase() === 'ALL' ? 'all' : t.toUpperCase(), tabBtn); });
+        if (tabBtn) tabBtn.addEventListener('click', function() {
+            var tabs = document.querySelectorAll('.tier-tab');
+            for (var i = 0; i < tabs.length; i++) tabs[i].className = 'tier-tab';
+            tabBtn.className = 'tier-tab active';
+            hypActiveTier = t.toUpperCase() === 'ALL' ? 'all' : t.toUpperCase();
+            applyHypFilters();
+        });
     });
+    // Wire up search with debounce
+    var hypSearchTimer = null;
+    var hypSearchEl = document.getElementById('hyp-search');
+    if (hypSearchEl) hypSearchEl.addEventListener('input', function() {
+        clearTimeout(hypSearchTimer);
+        hypSearchTimer = setTimeout(applyHypFilters, 250);
+    });
+    // Wire up dropdown filters
+    ['hyp-target', 'hyp-type', 'hyp-confidence'].forEach(function(id) {
+        var sel = document.getElementById(id);
+        if (sel) sel.addEventListener('change', applyHypFilters);
+    });
+    // Wire up per-page selector
+    var hypPerPageEl = document.getElementById('hyp-per-page');
+    if (hypPerPageEl) hypPerPageEl.addEventListener('change', function() {
+        hypCurrentPage = 1;
+        renderHypPage();
+    });
+
     function renderHypotheses(list) {
         var wrap = clearEl('hypotheses-body-wrap');
         if (list.length === 0) {
-            wrap.appendChild(el('div', {className: 'empty-state'}, [el('h3', {text: 'No hypotheses in this tier'})]));
+            wrap.appendChild(el('div', {className: 'empty-state'}, [el('h3', {text: 'No hypotheses match your filters'})]));
             return;
         }
         var dimLabels = {evidence_depth:'Evidence Depth',source_convergence:'Source Convergence',therapeutic_clarity:'Therapeutic Clarity',target_strength:'Target Strength',novelty:'Novelty'};
