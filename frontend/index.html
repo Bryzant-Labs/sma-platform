@@ -707,6 +707,7 @@
     <a href="/claims" class="nav-link" data-section="claims">Claims</a>
     <a href="/hypotheses" class="nav-link" data-section="hypotheses">Hypotheses</a>
     <a href="/predictions" class="nav-link" data-section="predictions">Predictions</a>
+    <a href="/convergence" class="nav-link" data-section="convergence">Convergence</a>
     <a href="/graph" class="nav-link" data-section="graph">Graph</a>
     <span class="nav-sep">|</span>
     <a href="/scores" class="nav-link" data-section="scores">Scores</a>
@@ -1255,6 +1256,16 @@
     <p class="section-desc">Evidence-grounded, falsifiable predictions generated from convergence scoring across 5 dimensions: Volume, Lab Independence, Method Diversity, Temporal Trend, and Replication. All scoring weights are <a href="https://github.com/Bryzant-Labs/sma-platform/blob/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent)">open source on GitHub</a>. Each card links every claim to its source paper.</p>
     <div id="predictions-filters" style="margin-bottom:16px;display:none"></div>
     <div id="predictions-content"><div class="loading" style="padding:40px;text-align:center">Loading prediction cards...</div></div>
+</section>
+
+<section class="section" id="convergence">
+    <div class="section-header"><h2 class="section-title">Evidence Convergence</h2><span class="section-count" id="convergence-count"></span></div>
+    <p class="section-desc">Multi-dimensional evidence convergence scoring across 30,000+ claims. Each target is scored on claim volume, lab independence, method diversity, temporal trend, and replication. All weights are <a href="https://github.com/Bryzant-Labs/sma-platform/blob/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent)">open source on GitHub</a>. Generates falsifiable predictions grounded in evidence.</p>
+    <div id="convergence-content">
+        <div id="convergence-table-wrap"><div class="loading">Loading convergence scores...</div></div>
+        <h3 style="margin-top:24px;font-size:16px;font-weight:600;color:var(--text)">Prediction Cards</h3>
+        <div id="convergence-prediction-cards"><div class="loading">Loading predictions...</div></div>
+    </div>
 </section>
 
 <section class="section" id="scores">
@@ -3333,6 +3344,190 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 el('h3', {text: 'Predictions not available yet'}),
                 el('p', {text: 'The convergence engine needs to run first. This feature is being deployed.'})
             ]));
+        });
+    }
+
+    function loadConvergence() {
+        if (loaded.convergence) return; loaded.convergence = true;
+
+        // Fetch convergence scores table
+        fetch(API + '/convergence/scores?limit=50').then(function(r) { return r.json(); }).then(function(data) {
+            var countEl = document.getElementById('convergence-count');
+            var targets = data.targets || [];
+            countEl.textContent = targets.length + ' targets scored';
+
+            var wrap = document.getElementById('convergence-table-wrap');
+            wrap.textContent = '';
+
+            if (targets.length === 0) {
+                wrap.appendChild(el('div', {className: 'empty-state'}, [
+                    el('h3', {text: 'No convergence scores yet'}),
+                    el('p', {text: 'Run /convergence/compute to score all targets.'})
+                ]));
+                return;
+            }
+
+            var table = document.createElement('table');
+            table.className = 'data-table';
+
+            var thead = document.createElement('thead');
+            var hr = document.createElement('tr');
+            ['Target', 'Score', 'Confidence', 'Claims', 'Sources', 'Volume', 'Independence', 'Methods', 'Trend', 'Replication'].forEach(function(h) {
+                var th = document.createElement('th');
+                th.textContent = h;
+                hr.appendChild(th);
+            });
+            thead.appendChild(hr);
+            table.appendChild(thead);
+
+            var tbody = document.createElement('tbody');
+            targets.forEach(function(t) {
+                var row = document.createElement('tr');
+
+                var tdTarget = document.createElement('td');
+                tdTarget.textContent = t.target_label || t.target_key || '';
+                tdTarget.style.fontWeight = '600';
+                row.appendChild(tdTarget);
+
+                var tdScore = document.createElement('td');
+                var scoreVal = parseFloat(t.composite_score) || 0;
+                tdScore.textContent = (scoreVal * 100).toFixed(0) + '%';
+                tdScore.style.fontWeight = '700';
+                if (scoreVal >= 0.75) tdScore.style.color = '#22c55e';
+                else if (scoreVal >= 0.55) tdScore.style.color = '#eab308';
+                else tdScore.style.color = '#94a3b8';
+                row.appendChild(tdScore);
+
+                var tdConf = document.createElement('td');
+                var cl = (t.confidence_level || 'low').replace('_', ' ');
+                tdConf.textContent = cl;
+                tdConf.style.textTransform = 'capitalize';
+                row.appendChild(tdConf);
+
+                var tdClaims = document.createElement('td');
+                tdClaims.textContent = t.claim_count || 0;
+                row.appendChild(tdClaims);
+
+                var tdSources = document.createElement('td');
+                tdSources.textContent = t.source_count || 0;
+                row.appendChild(tdSources);
+
+                // Mini bars for the 5 dimensions
+                [t.volume, t.lab_independence, t.method_diversity, t.temporal_trend, t.replication].forEach(function(v) {
+                    var td = document.createElement('td');
+                    var val = parseFloat(v) || 0;
+                    var bar = document.createElement('div');
+                    bar.style.cssText = 'width:50px;height:8px;background:var(--line);border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle';
+                    var fill = document.createElement('div');
+                    fill.style.cssText = 'height:100%;border-radius:4px;background:' + (val >= 0.7 ? '#22c55e' : val >= 0.4 ? '#eab308' : '#94a3b8');
+                    fill.style.width = (val * 100) + '%';
+                    bar.appendChild(fill);
+                    td.appendChild(bar);
+                    var label = document.createElement('span');
+                    label.textContent = ' ' + (val * 100).toFixed(0) + '%';
+                    label.style.cssText = 'font-size:10px;color:var(--muted)';
+                    td.appendChild(label);
+                    row.appendChild(td);
+                });
+
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+            wrap.appendChild(table);
+        }).catch(function(err) {
+            var wrap = document.getElementById('convergence-table-wrap');
+            wrap.textContent = '';
+            wrap.appendChild(el('div', {className: 'empty-state'}, [
+                el('h3', {text: 'Convergence scores not available'}),
+                el('p', {text: 'The convergence engine needs to run first. Error: ' + err.message})
+            ]));
+        });
+
+        // Fetch prediction cards for convergence view
+        fetch(API + '/convergence/predictions?limit=30').then(function(r) { return r.json(); }).then(function(data) {
+            var cardsDiv = document.getElementById('convergence-prediction-cards');
+            cardsDiv.textContent = '';
+
+            var predictions = data.predictions || [];
+            if (predictions.length === 0) {
+                cardsDiv.appendChild(el('div', {className: 'empty-state'}, [
+                    el('p', {text: 'No prediction cards generated yet. Run /predictions/generate after convergence scoring.'})
+                ]));
+                return;
+            }
+
+            function confColor(level) {
+                if (level === 'very_high') return '#16a34a';
+                if (level === 'high') return '#2563eb';
+                if (level === 'medium') return '#d97706';
+                return '#6b7280';
+            }
+
+            predictions.forEach(function(p) {
+                var card = document.createElement('div');
+                card.style.cssText = 'border:1px solid var(--line);border-radius:4px;padding:16px;margin-bottom:12px;background:var(--panel)';
+
+                var header = document.createElement('div');
+                header.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:8px';
+                var title = document.createElement('strong');
+                title.textContent = p.target_label || 'Unknown';
+                title.style.fontSize = '15px';
+                header.appendChild(title);
+                var scoreVal = parseFloat(p.convergence_score) || 0;
+                var badge = document.createElement('span');
+                badge.textContent = (scoreVal * 100).toFixed(0) + '% convergence';
+                badge.style.cssText = 'font-size:11px;padding:2px 8px;border-radius:10px;background:var(--panel);color:' + confColor(p.confidence_level || 'low') + ';border:1px solid var(--line);font-weight:600';
+                header.appendChild(badge);
+                card.appendChild(header);
+
+                // Prediction text
+                var predText = p.prediction_text || '';
+                var pred = document.createElement('p');
+                pred.textContent = predText.length > 250 ? predText.substring(0, 250) + '...' : predText;
+                pred.style.cssText = 'font-size:13px;line-height:1.5;margin:0 0 8px 0;color:var(--text-secondary)';
+                card.appendChild(pred);
+
+                // Dimension mini-bars
+                var dims = [
+                    {key: 'volume', label: 'Vol'},
+                    {key: 'lab_independence', label: 'Lab'},
+                    {key: 'method_diversity', label: 'Meth'},
+                    {key: 'temporal_trend', label: 'Time'},
+                    {key: 'replication', label: 'Repl'}
+                ];
+                var dimRow = document.createElement('div');
+                dimRow.style.cssText = 'display:flex;gap:12px;font-size:10px;color:var(--muted);margin-bottom:8px';
+                dims.forEach(function(d) {
+                    var dv = parseFloat(p[d.key]) || 0;
+                    var span = document.createElement('span');
+                    span.textContent = d.label + ':' + (dv * 100).toFixed(0) + '%';
+                    dimRow.appendChild(span);
+                });
+                card.appendChild(dimRow);
+
+                // Suggested experiments
+                var experiments = p.suggested_experiments || [];
+                if (typeof experiments === 'string') { try { experiments = JSON.parse(experiments); } catch(e) { experiments = []; } }
+                if (experiments.length > 0) {
+                    var expDiv = document.createElement('div');
+                    expDiv.style.cssText = 'font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px';
+                    var expItems = [];
+                    for (var i = 0; i < Math.min(experiments.length, 3); i++) {
+                        var exp = experiments[i];
+                        if (typeof exp === 'object' && exp.title) expItems.push(exp.title);
+                        else if (typeof exp === 'string') expItems.push(exp);
+                    }
+                    if (expItems.length > 0) {
+                        expDiv.textContent = 'Suggested: ' + expItems.join(' | ');
+                        card.appendChild(expDiv);
+                    }
+                }
+
+                cardsDiv.appendChild(card);
+            });
+        }).catch(function() {
+            var cardsDiv = document.getElementById('convergence-prediction-cards');
+            cardsDiv.textContent = '';
         });
     }
 
@@ -6570,7 +6765,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         mission: loadMission, research: loadResearch,
         targets: loadTargets, trials: loadTrials, drugs: loadDrugs,
         sources: loadSources, datasets: loadDatasets, claims: loadClaims,
-        hypotheses: loadHypotheses, predictions: loadPredictions, scores: loadScores, evidence: loadEvidence,
+        hypotheses: loadHypotheses, predictions: loadPredictions, convergence: loadConvergence, scores: loadScores, evidence: loadEvidence,
         screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
         outcomes: loadOutcomes, hits: loadHits, comparative: loadComparative,
         directions: loadDirections, links: loadLinks, contact: loadContact,
@@ -6600,6 +6795,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         claims:      {title: 'Evidence Claims — SMA Research Platform', desc: '13,000+ LLM-extracted claims from SMA literature, structured by type, confidence, and linked to molecular targets.'},
         hypotheses:  {title: 'Hypotheses — SMA Research Platform', desc: '189 prioritized research hypotheses for SMA, scored by evidence depth, source convergence, and therapeutic clarity.'},
         predictions: {title: 'Predictions — SMA Research Platform', desc: 'AI-generated predictions for SMA research outcomes based on evidence graph analysis.'},
+        convergence: {title: 'Evidence Convergence — SMA Research Platform', desc: 'Multi-dimensional evidence convergence scoring for SMA targets. 5 dimensions: claim volume, lab independence, method diversity, temporal trend, and replication. Generates falsifiable predictions from 30,000+ claims.'},
         graph:       {title: 'Evidence Graph — SMA Research Platform', desc: 'Interactive network visualization of SMA evidence relationships between targets, drugs, claims, and trials.'},
         scores:      {title: 'Target Scores — SMA Research Platform', desc: '7-dimension composite scoring for SMA molecular targets: druggability, evidence, clinical relevance, and more.'},
         outcomes:    {title: 'Drug Outcomes — SMA Research Platform', desc: 'Clinical trial outcome tracking for SMA therapeutics across all phases.'},

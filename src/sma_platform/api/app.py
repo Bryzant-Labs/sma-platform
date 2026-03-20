@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, binder_design, biomarker, blackboard, calibration, cascade, chat, comparative, contact, crispr, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hit_validation, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty, virtual_screening
+from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, binder_design, biomarker, blackboard, calibration, cascade, chat, comparative, contact, convergence, crispr, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hit_validation, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty, virtual_screening
 
 
 @asynccontextmanager
@@ -91,6 +91,7 @@ def create_app() -> FastAPI:
     app.include_router(ingestion.router, prefix="/api/v2", tags=["ingestion"])
     app.include_router(scoring.router, prefix="/api/v2", tags=["scoring"])
     app.include_router(contact.router, prefix="/api/v2", tags=["contact"])
+    app.include_router(convergence.router, prefix="/api/v2", tags=["convergence"])
     app.include_router(screening.router, prefix="/api/v2", tags=["screening"])
     app.include_router(research.router, prefix="/api/v2", tags=["research"])
     app.include_router(export.router, prefix="/api/v2", tags=["export"])
@@ -198,6 +199,7 @@ def create_app() -> FastAPI:
         "mission", "search", "ask", "chat",
         "targets", "trials", "drugs", "sources", "claims",
         "hypotheses", "predictions", "graph",
+        "convergence",
         "scores", "outcomes", "screening", "candidates", "hits",
         "comparative", "directions",
         "spatial", "regen", "nmj", "multisystem", "bioelectric",
