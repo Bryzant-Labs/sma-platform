@@ -631,10 +631,10 @@
         .smiles-cell { font-family: 'JetBrains Mono', monospace; font-size: 10px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
 
         /* Knowledge Graph */
-        #graph-canvas { width: 100%; height: 650px; background: var(--panel); border: 1px solid var(--line); position: relative; overflow: hidden; }
-        .graph-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); font-size: 11px; color: var(--text-secondary); }
+        #graph-canvas { width: 100%; height: 85vh; min-height: 700px; max-height: 1200px; background: #0f172a; border: 1px solid var(--line); position: relative; overflow: hidden; border-radius: 4px; }
+        .graph-legend { display: flex; gap: 8px 16px; flex-wrap: wrap; margin-top: 8px; padding: 8px 14px; background: var(--panel); border: 1px solid var(--line); font-size: 10px; color: var(--text-secondary); border-radius: 4px; }
         .graph-legend-item { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
-        .graph-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        .graph-legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 
         /* Drug Outcomes */
         .outcome-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
@@ -4693,13 +4693,13 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             canvas.style.cursor = 'pointer';
             container.appendChild(canvas);
             var W = container.clientWidth || 1200;
-            var H = 650;
+            var H = container.clientHeight || 800;
             canvas.width = W * 2; canvas.height = H * 2;
             canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
             var ctx = canvas.getContext('2d');
             ctx.scale(2, 2);
 
-            var typeColors = {gene: '#1a56db', protein: '#92400e', pathway: '#15803d', cell_state: '#6b7280', phenotype: '#555', other: '#888'};
+            var typeColors = {gene: '#60a5fa', protein: '#f59e0b', pathway: '#34d399', cell_state: '#94a3b8', phenotype: '#a78bfa', other: '#cbd5e1'};
             var nodeMap = {};
             // Count connections per node for sizing
             var connCount = {};
@@ -4711,12 +4711,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var n = nodes[i];
                 var angle = (2 * Math.PI * i) / nodes.length;
                 var radius = Math.min(W, H) * 0.35;
-                n.x = W / 2 + radius * Math.cos(angle) + (Math.random() - 0.5) * 40;
-                n.y = H / 2 + radius * Math.sin(angle) + (Math.random() - 0.5) * 40;
+                n.x = W / 2 + radius * Math.cos(angle) + (Math.random() - 0.5) * 60;
+                n.y = H / 2 + radius * Math.sin(angle) + (Math.random() - 0.5) * 60;
                 n.vx = 0; n.vy = 0;
                 n.color = typeColors[n.type] || '#888';
                 n.connections = connCount[n.id] || 1;
-                n.radius = Math.max(6, Math.min(16, 5 + n.connections * 0.8));
+                n.radius = Math.max(8, Math.min(24, 6 + n.connections * 1.2));
                 nodeMap[n.id] = n;
             }
 
@@ -4739,7 +4739,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                             var dx = nodes[b].x - nodes[a].x;
                             var dy = nodes[b].y - nodes[a].y;
                             var dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                            var force = 1200 / (dist * dist);
+                            var force = 4000 / (dist * dist);
                             nodes[a].vx -= (dx / dist) * force;
                             nodes[a].vy -= (dy / dist) * force;
                             nodes[b].vx += (dx / dist) * force;
@@ -4751,7 +4751,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                         var ldx = link.target.x - link.source.x;
                         var ldy = link.target.y - link.source.y;
                         var ldist = Math.sqrt(ldx * ldx + ldy * ldy) || 1;
-                        var lf = (ldist - 100) * 0.008;
+                        var lf = (ldist - 180) * 0.006;
                         link.source.vx += (ldx / ldist) * lf;
                         link.source.vy += (ldy / ldist) * lf;
                         link.target.vx -= (ldx / ldist) * lf;
@@ -4773,9 +4773,14 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
             function draw() {
                 ctx.clearRect(0, 0, W, H);
-                // Background
-                ctx.fillStyle = '#fafafa';
+                // Background — dark space theme
+                ctx.fillStyle = '#0f172a';
                 ctx.fillRect(0, 0, W, H);
+                // Subtle grid
+                ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+                ctx.lineWidth = 1;
+                for (var gx = 0; gx < W; gx += 60) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+                for (var gy = 0; gy < H; gy += 60) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
                 // Edges with color by relation type
                 for (var e = 0; e < resolvedLinks.length; e++) {
                     var link = resolvedLinks[e];
@@ -4788,13 +4793,13 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                         ctx.lineWidth = 2.5;
                         ctx.globalAlpha = 1;
                     } else if (selectedNode) {
-                        ctx.strokeStyle = '#e5e7eb';
+                        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
                         ctx.lineWidth = 0.5;
                         ctx.globalAlpha = 0.3;
                     } else {
                         ctx.strokeStyle = link.color;
-                        ctx.lineWidth = 1;
-                        ctx.globalAlpha = 0.35;
+                        ctx.lineWidth = 1.2;
+                        ctx.globalAlpha = 0.45;
                     }
                     ctx.stroke();
                     ctx.globalAlpha = 1;
@@ -4827,19 +4832,19 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     ctx.arc(node.x, node.y, isSelected ? node.radius + 3 : node.radius, 0, Math.PI * 2);
                     ctx.fillStyle = node.color;
                     ctx.fill();
-                    ctx.strokeStyle = isSelected ? '#000' : '#fff';
-                    ctx.lineWidth = isSelected ? 2.5 : 1.5;
+                    ctx.strokeStyle = isSelected ? '#fff' : 'rgba(255,255,255,0.3)';
+                    ctx.lineWidth = isSelected ? 2.5 : 1;
                     ctx.stroke();
                     // Label
-                    ctx.font = (isSelected ? 'bold 13px' : '11px') + ' Inter, sans-serif';
-                    ctx.fillStyle = '#1a1a1a';
+                    ctx.font = (isSelected ? 'bold 14px' : '12px') + ' Inter, sans-serif';
+                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
                     ctx.textAlign = 'center';
                     ctx.fillText(node.symbol, node.x, node.y - node.radius - 6);
                     // Connection count badge for selected
                     if (isSelected) {
-                        ctx.font = '9px Inter, sans-serif';
-                        ctx.fillStyle = '#666';
-                        ctx.fillText(node.connections + ' connections', node.x, node.y + node.radius + 14);
+                        ctx.font = '10px Inter, sans-serif';
+                        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                        ctx.fillText(node.connections + ' connections', node.x, node.y + node.radius + 16);
                     }
                     ctx.globalAlpha = 1;
                 }
@@ -4848,12 +4853,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var connEdges = resolvedLinks.filter(function(l) { return l.source === selectedNode || l.target === selectedNode; });
                     var panel = 'Selected: ' + selectedNode.symbol + (selectedNode.name ? ' (' + selectedNode.name + ')' : '') + ' | Type: ' + selectedNode.type + ' | ' + connEdges.length + ' edges';
                     ctx.font = '11px Inter, sans-serif';
-                    ctx.fillStyle = 'rgba(0,0,0,0.75)';
+                    ctx.fillStyle = 'rgba(255,255,255,0.12)';
                     var tw = ctx.measureText(panel).width + 20;
-                    ctx.fillRect(10, H - 30, tw, 22);
-                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(10, H - 34, tw, 26);
+                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
                     ctx.textAlign = 'left';
-                    ctx.fillText(panel, 20, H - 14);
+                    ctx.fillText(panel, 20, H - 16);
                 }
             }
             draw();
