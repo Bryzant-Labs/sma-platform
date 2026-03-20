@@ -4026,11 +4026,13 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     // Cross-Species Comparative tab
     var SPECIES_INFO = {
-        'Ambystoma mexicanum': {common: 'Axolotl', emoji: '', desc: 'Limb & spinal cord regeneration'},
-        'Danio rerio': {common: 'Zebrafish', emoji: '', desc: 'Motor neuron regeneration model'},
-        'Heterocephalus glaber': {common: 'Naked Mole Rat', emoji: '', desc: 'Neuroprotection & longevity'},
-        'Caenorhabditis elegans': {common: 'C. elegans', emoji: '', desc: 'Genetic motor neuron model'},
-        'Drosophila melanogaster': {common: 'Fruit Fly', emoji: '', desc: 'SMN ortholog studies'}
+        'Mus musculus': {common: 'Mouse', desc: 'Primary SMA disease model'},
+        'Rattus norvegicus': {common: 'Rat', desc: 'Pharmacokinetic studies'},
+        'Ambystoma mexicanum': {common: 'Axolotl', desc: 'Spinal cord regeneration'},
+        'Danio rerio': {common: 'Zebrafish', desc: 'Motor neuron regeneration'},
+        'Heterocephalus glaber': {common: 'Naked Mole Rat', desc: 'Neurodegeneration resistance'},
+        'Caenorhabditis elegans': {common: 'C. elegans', desc: 'SMN ortholog studies'},
+        'Drosophila melanogaster': {common: 'Fruit Fly', desc: 'SMN loss-of-function models'}
     };
     function loadComparative() {
         if (loaded.comparative) return; loaded.comparative = true;

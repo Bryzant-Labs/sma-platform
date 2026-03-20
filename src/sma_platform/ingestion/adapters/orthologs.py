@@ -22,6 +22,8 @@ NCBI_API = "https://api.ncbi.nlm.nih.gov/datasets/v2"
 
 MODEL_ORGANISMS = {
     "9606": "Homo sapiens",
+    "10090": "Mus musculus",
+    "10116": "Rattus norvegicus",
     "8296": "Ambystoma mexicanum",
     "7955": "Danio rerio",
     "10181": "Heterocephalus glaber",
@@ -30,7 +32,7 @@ MODEL_ORGANISMS = {
 }
 
 # Default species to search (excluding human)
-DEFAULT_SPECIES = ["8296", "7955", "10181", "6239", "7227"]
+DEFAULT_SPECIES = ["10090", "10116", "8296", "7955", "10181", "6239", "7227"]
 
 
 async def _search_gene_in_species(

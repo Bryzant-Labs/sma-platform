@@ -20,6 +20,10 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 SPECIES_INFO = [
+    {"id": "10090", "name": "Mouse", "scientific": "Mus musculus",
+     "key_trait": "Primary SMA disease model, 90% of preclinical research"},
+    {"id": "10116", "name": "Rat", "scientific": "Rattus norvegicus",
+     "key_trait": "Pharmacokinetic and toxicology studies"},
     {"id": "8296", "name": "Axolotl", "scientific": "Ambystoma mexicanum",
      "key_trait": "Full spinal cord regeneration"},
     {"id": "7955", "name": "Zebrafish", "scientific": "Danio rerio",
