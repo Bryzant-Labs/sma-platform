@@ -774,10 +774,10 @@
         <p class="hero-sub" id="hero-sub">We combine molecular screening, evidence analysis, and computational biology to identify and validate new therapeutic candidates for SMA &mdash; from target discovery to drug-likeness prediction</p>
     </div>
     <div class="hero-ask">
-        <div class="hero-ask-label">Ask the Evidence Graph</div>
+        <div class="hero-ask-label">Search the Evidence Graph</div>
         <div class="hero-ask-row">
             <input type="text" id="hero-ask-input" placeholder="e.g. What evidence supports NCALD as a therapeutic target?">
-            <button id="hero-ask-btn">Ask</button>
+            <button id="hero-ask-btn">Search</button>
         </div>
         <div class="hero-ask-examples">
             <span class="hero-ask-ex" data-q="What is the role of PLS3 in SMA?">PLS3 in SMA</span>
@@ -2590,13 +2590,17 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         function doHeroAsk() {
             var q = heroInput.value.trim();
             if (!q || q.length < 5) return;
-            heroBtn.textContent = 'Thinking...';
-            heroBtn.disabled = true;
-            heroResult.style.display = '';
-            heroLoading.style.display = '';
-            heroAnswer.textContent = '';
-            heroMeta.textContent = '';
-
+            // Navigate to unified Search/Chat with query pre-filled
+            window.location.hash = '';
+            showSection('search');
+            var chatInput = document.getElementById('chat-input');
+            if (chatInput) {
+                chatInput.value = q;
+                // Trigger the chat
+                if (typeof doChat === 'function') doChat();
+            }
+            return;
+            // Legacy inline ask (kept for reference but unreachable)
             fetch(API + '/ask?q=' + encodeURIComponent(q) + '&max_context=30')
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
