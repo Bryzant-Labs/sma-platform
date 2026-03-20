@@ -4471,12 +4471,42 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         chatHistory = [];
         chatConversationId = null;
         chatExchangeCount = 0;
+        chatLoaded = false;
         var messagesDiv = document.getElementById('chat-messages');
         messagesDiv.textContent = '';
         var welcome = document.createElement('div');
         welcome.className = 'chat-welcome';
-        welcome.appendChild(el('p', {innerHTML: '<strong>Welcome to SMA Research Chat</strong>'}));
-        welcome.appendChild(el('p', {text: 'Ask any question about SMA research. You can ask follow-up questions to go deeper.', style: 'color:var(--muted);font-size:13px'}));
+        var title = document.createElement('p');
+        var strong = document.createElement('strong');
+        strong.textContent = 'Ask anything about SMA research';
+        title.appendChild(strong);
+        welcome.appendChild(title);
+        var desc = document.createElement('p');
+        desc.style.cssText = 'color:var(--muted);font-size:13px';
+        desc.textContent = 'Search the evidence base, explore targets, drugs, and clinical trials. You can ask follow-up questions.';
+        welcome.appendChild(desc);
+        var suggestions = document.createElement('div');
+        suggestions.className = 'chat-suggestions';
+        var qs = [
+            ['What is the evidence for p53-induced motor neuron death in SMA?', 'p53 in SMA'],
+            ['What are the key differences between nusinersen, risdiplam, and onasemnogene?', 'Compare therapies'],
+            ['What evidence supports PLS3 as a disease modifier?', 'PLS3 modifier'],
+            ['What role does NCALD play in SMA pathology?', 'NCALD role'],
+            ['What are the most promising drug targets beyond SMN?', 'Emerging targets'],
+            ['How does risdiplam modify SMN2 splicing?', 'Risdiplam mechanism']
+        ];
+        for (var qi = 0; qi < qs.length; qi++) {
+            var btn = document.createElement('button');
+            btn.className = 'chat-suggestion';
+            btn.dataset.q = qs[qi][0];
+            btn.textContent = qs[qi][1];
+            btn.addEventListener('click', function() {
+                document.getElementById('chat-input').value = this.dataset.q;
+                doChat();
+            });
+            suggestions.appendChild(btn);
+        }
+        welcome.appendChild(suggestions);
         messagesDiv.appendChild(welcome);
         document.getElementById('chat-new').style.display = 'none';
         document.getElementById('chat-status').textContent = '';
