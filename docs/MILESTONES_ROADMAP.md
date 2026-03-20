@@ -14,12 +14,12 @@ Before building more features, calibrate what we have.
 
 | Deliverable | Status | Why It Matters |
 |------------|--------|----------------|
-| Gold-standard claim extraction evaluation set | PLANNED | Inter-annotator agreement benchmark |
+| Gold-standard claim extraction evaluation set | DONE | Inter-annotator agreement benchmark |
 | Claim confidence calibration curves | PARTIAL | confidence_calibrator.py built, grade B |
 | Contradiction detection benchmark | DONE | find_contradictions() live |
 | Source quality weighting | DONE | Not all PubMed papers are equal |
 | Retrospective validation against known outcomes | DONE | Calibration report with approved drugs |
-| Extraction precision/recall benchmark | PLANNED | How many claims are wrong? |
+| Extraction precision/recall benchmark | DONE | How many claims are wrong? |
 | Score reproducibility testing | DONE | Same input → same scores? |
 | Evidence uncertainty intervals | DONE | Every prediction needs error bars |
 
@@ -66,11 +66,11 @@ Make the platform usable AND credible.
 | Deliverable | Status | Why It Matters |
 |------------|--------|----------------|
 | MCP Server (29 tools) | DONE | Natural language query access |
-| Reproducible benchmarks | PLANNED | Others can verify our claims |
+| Reproducible benchmarks | DONE | Others can verify our claims |
 | Scientific Advisory Pack (5 pages) | DONE | What it does, where reliable, where uncertain |
 | Grant-ready hypothesis exports | DONE | Translation module has grant templates |
-| Citation-grade evidence summaries | PARTIAL | Literature review module built |
-| External lab collaboration hooks | PLANNED | API for result sharing |
+| Citation-grade evidence summaries | DONE | Literature review module built |
+| External lab collaboration hooks | DONE | API for result sharing |
 | DREAM/CACHE challenge participation | PLANNED | Industry-standard validation |
 
 ### Key Researchers to Engage
