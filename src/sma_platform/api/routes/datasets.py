@@ -1,4 +1,8 @@
-"""Omics dataset endpoints."""
+"""Omics dataset endpoints.
+
+Provides database-backed dataset CRUD plus a curated RNA-seq data catalog
+of publicly available SMA-relevant datasets (Nanopore, Illumina, 10x, etc.).
+"""
 
 from __future__ import annotations
 
@@ -7,10 +11,99 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Query
 
 from ...core.database import fetch, fetchrow
+from ...ingestion.adapters.nanopore_rnaseq import (
+    get_curated_nanopore_datasets,
+    get_curated_rnaseq_datasets,
+)
 
 router = APIRouter()
 
 MAX_LIMIT = 2000
+
+
+# ---------------------------------------------------------------------------
+# Curated RNA-seq Data Catalog (static / hand-curated)
+# ---------------------------------------------------------------------------
+# These MUST be registered before /datasets/{dataset_id} so that FastAPI
+# matches the literal path segments before the UUID path parameter.
+
+
+@router.get("/datasets/rnaseq")
+async def list_rnaseq_datasets(
+    platform: str | None = Query(
+        default=None,
+        description=(
+            "Filter by sequencing platform (case-insensitive substring). "
+            "Examples: nanopore, illumina, 10x, SMART-seq2, Visium."
+        ),
+    ),
+    organism: str | None = Query(
+        default=None,
+        description=(
+            "Filter by organism (case-insensitive substring). "
+            "Examples: Homo sapiens, Mus musculus."
+        ),
+    ),
+    tag: str | None = Query(
+        default=None,
+        description=(
+            "Filter by tag (exact match). "
+            "Examples: nanopore, single_cell, treatment_response, "
+            "spatial, motor_neuron, mouse_model, direct_rna."
+        ),
+    ),
+):
+    """List curated RNA-seq datasets relevant to SMA research.
+
+    Returns a hand-curated catalog of publicly available RNA-seq datasets
+    spanning multiple platforms (Nanopore direct RNA, Illumina short-read,
+    10x Genomics single-cell, SMART-seq2, 10x Visium spatial) and tissues
+    (motor neurons, spinal cord, fibroblasts, CSF/blood).
+
+    Each entry includes accession, platform, organism, tissue, SMA type,
+    sample count, experimental condition, scientific relevance, and a
+    direct URL to the repository.
+    """
+    datasets = get_curated_rnaseq_datasets(
+        platform=platform,
+        organism=organism,
+        tag=tag,
+    )
+    return {
+        "count": len(datasets),
+        "filters_applied": {
+            k: v
+            for k, v in {"platform": platform, "organism": organism, "tag": tag}.items()
+            if v is not None
+        },
+        "datasets": datasets,
+    }
+
+
+@router.get("/datasets/rnaseq/nanopore")
+async def list_nanopore_datasets():
+    """List Nanopore direct RNA sequencing datasets for SMA.
+
+    Returns entries from the curated catalog that use Oxford Nanopore
+    technology.  These datasets are especially valuable because direct
+    RNA sequencing preserves native RNA modifications and captures
+    full-length transcript isoforms without reverse-transcription bias.
+    """
+    datasets = get_curated_nanopore_datasets()
+    return {
+        "count": len(datasets),
+        "note": (
+            "Nanopore direct RNA datasets are prioritised because they "
+            "reveal SMN2 splicing complexity (exon 7 inclusion/skipping, "
+            "cryptic exons, polyA tail lengths) not visible in short-read data."
+        ),
+        "datasets": datasets,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Database-backed dataset endpoints
+# ---------------------------------------------------------------------------
 
 
 @router.get("/datasets")

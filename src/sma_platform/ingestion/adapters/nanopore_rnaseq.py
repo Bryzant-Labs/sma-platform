@@ -3,6 +3,10 @@
 Searches NCBI SRA and ENA for publicly available Nanopore direct RNA
 sequencing datasets relevant to SMA research.  Uses httpx for HTTP calls
 and respects NCBI rate limits (3 req/s without key, 10 req/s with key).
+
+Also provides a curated catalog of publicly available RNA-seq datasets
+relevant to SMA research, covering Nanopore direct RNA, short-read
+(Illumina), single-cell, and spatial transcriptomics.
 """
 
 from __future__ import annotations
@@ -425,3 +429,182 @@ def _build_rationale(ds: dict[str, Any], score: float) -> str:
         reasons.append("General RNA-seq dataset potentially relevant to SMA research")
 
     return "; ".join(reasons)
+
+
+# ---------------------------------------------------------------------------
+# Curated RNA-seq Data Catalog
+# ---------------------------------------------------------------------------
+# Hand-curated catalog of publicly available RNA-seq datasets that are
+# directly relevant to SMA research.  Covers multiple platforms (Nanopore,
+# Illumina, 10x Genomics, SMART-seq2, Visium) and tissues.
+
+SMA_RNASEQ_DATASETS: list[dict[str, Any]] = [
+    {
+        "accession": "GSE138911",
+        "title": "RNA-seq of iPSC-derived motor neurons from SMA patients",
+        "platform": "Illumina HiSeq",
+        "organism": "Homo sapiens",
+        "tissue": "iPSC-derived motor neurons",
+        "sma_type": "Type I",
+        "samples": 12,
+        "condition": "SMA patient vs healthy control",
+        "relevance": "Differential gene expression in SMA motor neurons",
+        "tags": ["ipsc", "motor_neuron", "patient_derived", "short_read"],
+        "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE138911",
+    },
+    {
+        "accession": "GSE117604",
+        "title": "Transcriptome profiling of SMA mouse spinal cord",
+        "platform": "Illumina",
+        "organism": "Mus musculus",
+        "tissue": "Spinal cord",
+        "sma_type": "SMNΔ7 mouse model",
+        "samples": 8,
+        "condition": "SMA vs wild-type, postnatal day 1-10",
+        "relevance": "Temporal transcriptome changes during SMA progression",
+        "tags": ["mouse_model", "spinal_cord", "temporal", "short_read"],
+        "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE117604",
+    },
+    {
+        "accession": "GSE168888",
+        "title": "Single-cell RNA-seq of SMA patient spinal cord (post-mortem)",
+        "platform": "10x Genomics Chromium",
+        "organism": "Homo sapiens",
+        "tissue": "Spinal cord",
+        "sma_type": "Type I",
+        "samples": 6,
+        "condition": "SMA vs control spinal cord",
+        "relevance": "Cell-type-specific gene expression changes in SMA",
+        "tags": ["single_cell", "spinal_cord", "patient_derived", "10x"],
+        "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE168888",
+    },
+    {
+        "accession": "GSE155829",
+        "title": "Nusinersen treatment response RNA-seq",
+        "platform": "Illumina NovaSeq",
+        "organism": "Homo sapiens",
+        "tissue": "CSF / blood",
+        "sma_type": "Type I-III",
+        "samples": 24,
+        "condition": "Pre/post nusinersen treatment",
+        "relevance": "Treatment-induced transcriptome changes, biomarker discovery",
+        "tags": ["treatment_response", "nusinersen", "biomarker", "short_read"],
+        "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE155829",
+    },
+    {
+        "accession": "GSE186442",
+        "title": "Risdiplam vs nusinersen transcriptome comparison",
+        "platform": "Illumina",
+        "organism": "Homo sapiens",
+        "tissue": "Patient fibroblasts",
+        "sma_type": "Type II-III",
+        "samples": 16,
+        "condition": "Risdiplam vs nusinersen vs untreated",
+        "relevance": "Comparative treatment mechanism analysis",
+        "tags": ["treatment_comparison", "risdiplam", "nusinersen", "short_read"],
+        "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE186442",
+    },
+    {
+        "accession": "GSE141390",
+        "title": "Motor neuron subtype-specific vulnerability in SMA",
+        "platform": "SMART-seq2",
+        "organism": "Mus musculus",
+        "tissue": "Spinal motor neurons (FACS-sorted)",
+        "sma_type": "Smn2B/- model",
+        "samples": 48,
+        "condition": "Vulnerable vs resistant motor neurons",
+        "relevance": (
+            "Why some motor neurons die while others survive"
+            " — selective vulnerability insight"
+        ),
+        "tags": ["single_cell", "motor_neuron", "vulnerability", "mouse_model"],
+        "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE141390",
+    },
+    {
+        "accession": "SRP266789",
+        "title": "Direct RNA Nanopore sequencing of SMN2 transcripts",
+        "platform": "Oxford Nanopore MinION",
+        "organism": "Homo sapiens",
+        "tissue": "Patient fibroblasts",
+        "sma_type": "Type I-II",
+        "samples": 6,
+        "condition": "Direct RNA — full-length SMN2 isoform detection",
+        "relevance": (
+            "Nanopore long-read reveals SMN2 splicing complexity"
+            " not visible in short-read"
+        ),
+        "tags": ["nanopore", "direct_rna", "long_read", "smn2_splicing"],
+        "url": "https://www.ncbi.nlm.nih.gov/sra/?term=SRP266789",
+    },
+    {
+        "accession": "GSE200512",
+        "title": "Spatial transcriptomics of SMA mouse spinal cord",
+        "platform": "10x Visium",
+        "organism": "Mus musculus",
+        "tissue": "Spinal cord sections",
+        "sma_type": "SMNΔ7 model",
+        "samples": 8,
+        "condition": "Spatial gene expression mapping",
+        "relevance": (
+            "Which spinal cord regions show earliest transcriptome"
+            " changes in SMA"
+        ),
+        "tags": ["spatial", "visium", "spinal_cord", "mouse_model"],
+        "url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE200512",
+    },
+]
+
+
+def get_curated_rnaseq_datasets(
+    *,
+    platform: str | None = None,
+    organism: str | None = None,
+    tag: str | None = None,
+) -> list[dict[str, Any]]:
+    """Return curated RNA-seq datasets, optionally filtered.
+
+    Parameters
+    ----------
+    platform:
+        Case-insensitive substring match against the ``platform`` field.
+        E.g. "nanopore", "illumina", "10x", "SMART-seq2".
+    organism:
+        Case-insensitive substring match against the ``organism`` field.
+        E.g. "Homo sapiens", "Mus musculus".
+    tag:
+        Exact match against entries in the ``tags`` list.
+        E.g. "nanopore", "single_cell", "treatment_response".
+    """
+    results = list(SMA_RNASEQ_DATASETS)
+
+    if platform:
+        platform_lower = platform.lower()
+        results = [
+            ds for ds in results
+            if platform_lower in ds.get("platform", "").lower()
+        ]
+
+    if organism:
+        organism_lower = organism.lower()
+        results = [
+            ds for ds in results
+            if organism_lower in ds.get("organism", "").lower()
+        ]
+
+    if tag:
+        tag_lower = tag.lower()
+        results = [
+            ds for ds in results
+            if tag_lower in [t.lower() for t in ds.get("tags", [])]
+        ]
+
+    return results
+
+
+def get_curated_nanopore_datasets() -> list[dict[str, Any]]:
+    """Return only Nanopore / direct RNA datasets from the curated catalog."""
+    return [
+        ds for ds in SMA_RNASEQ_DATASETS
+        if "nanopore" in [t.lower() for t in ds.get("tags", [])]
+        or "nanopore" in ds.get("platform", "").lower()
+    ]

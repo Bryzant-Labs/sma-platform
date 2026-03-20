@@ -110,6 +110,50 @@ NN_PARAMS: dict[str, tuple[float, float]] = {
 NN_INIT_H = 0.1   # kcal/mol
 NN_INIT_S = -2.8   # cal/mol·K
 
+# ---------------------------------------------------------------------------
+# Chemistry recommendations per target region
+# ---------------------------------------------------------------------------
+
+CHEMISTRY_BY_REGION: dict[str, dict[str, str]] = {
+    "ISS-N1": {
+        "sugar": "2'-O-methoxyethyl (2'-MOE) at all positions",
+        "backbone": "Full phosphorothioate (PS)",
+        "bases": "5-methylcytosine at all CpG sites",
+        "design": "Steric-blocker (mixmer or fully modified)",
+        "note": "Same chemistry class as nusinersen (Spinraza). "
+                "Blocks hnRNP A1/A2 access to ISS-N1 by steric occlusion.",
+        "delivery": "Intrathecal injection (proven CNS route)",
+    },
+    "ISS-N2": {
+        "sugar": "2'-O-methoxyethyl (2'-MOE) at all positions",
+        "backbone": "Full phosphorothioate (PS)",
+        "bases": "5-methylcytosine at all CpG sites",
+        "design": "Steric-blocker (fully modified)",
+        "note": "Secondary silencer — may synergize with ISS-N1-targeting ASOs. "
+                "Consider combination therapy with nusinersen.",
+        "delivery": "Intrathecal injection",
+    },
+    "ESS_exon7": {
+        "sugar": "2'-O-methoxyethyl (2'-MOE) or PMO (phosphorodiamidate morpholino)",
+        "backbone": "Full phosphorothioate (PS) for 2'-MOE; charge-neutral for PMO",
+        "bases": "5-methylcytosine at all CpG sites (for 2'-MOE)",
+        "design": "Steric-blocker — exonic target requires careful splice-site avoidance",
+        "note": "Exonic targeting carries higher off-target risk — must confirm no "
+                "disruption of ESE elements. PMO chemistry avoids RNase H cleavage.",
+        "delivery": "Intrathecal injection; PMO may offer better safety profile",
+    },
+    "element2": {
+        "sugar": "PMO (phosphorodiamidate morpholino) preferred; 2'-MOE alternative",
+        "backbone": "Charge-neutral (PMO) or phosphorothioate (2'-MOE)",
+        "bases": "Standard (PMO) or 5-methylcytosine (2'-MOE)",
+        "design": "Enhancer-modulating — steric block to redirect splicing factor binding",
+        "note": "Element 2 is a short exonic motif (AGGAA) affected by C6T. "
+                "Targeting requires extended flanking to achieve 15+ nt length. "
+                "PMO avoids immune stimulation risk in this exonic context.",
+        "delivery": "Intrathecal injection; consider peptide-PMO conjugate for enhanced uptake",
+    },
+}
+
 
 # ---------------------------------------------------------------------------
 # Data classes
@@ -126,6 +170,7 @@ class ASOCandidate:
     position_offset: int         # offset within extended target window
     gc_content: float
     tm_estimate: float           # predicted melting temperature (°C)
+    binding_energy: float        # predicted ΔG at 37°C (kcal/mol), more negative = stronger
     self_complementarity_score: float  # 0-1, lower is better (less self-pairing)
     bbb_score: float             # 0-1, predicted BBB penetration likelihood
     target_complementarity: float  # 0-1, fraction of perfect base pairing
@@ -297,6 +342,42 @@ def _bbb_score(length: int, gc_content: float) -> float:
     return round(max(0.0, min(1.0, score)), 3)
 
 
+def _binding_energy(seq: str, temp_c: float = 37.0) -> float:
+    """Estimate Gibbs free energy (ΔG) at a given temperature.
+
+    Uses the nearest-neighbor thermodynamic parameters.
+    ΔG = ΔH - T·ΔS (at the specified temperature, default 37°C).
+
+    For 2'-MOE ASOs hybridized to RNA, actual ΔG is typically ~1-2 kcal/mol
+    more favorable — we add a chemistry correction.
+
+    Returns:
+        ΔG in kcal/mol (more negative = stronger binding).
+    """
+    seq = seq.upper()
+    n = len(seq)
+    if n < 2:
+        return 0.0
+
+    dH = NN_INIT_H  # kcal/mol
+    dS = NN_INIT_S  # cal/mol·K
+
+    for i in range(n - 1):
+        dinuc = seq[i:i + 2]
+        h, s = NN_PARAMS.get(dinuc, (-7.5, -21.0))
+        dH += h
+        dS += s
+
+    temp_k = temp_c + 273.15
+    dG = dH - (temp_k * dS / 1000.0)  # convert dS from cal to kcal
+
+    # 2'-MOE chemistry correction: ~0.5 kcal/mol more stable per modification
+    # (conservative estimate; literature reports 0.3-1.0 kcal/mol per mod)
+    moe_correction = -0.5 * n
+
+    return round(dG + moe_correction, 2)
+
+
 def _sequence_hash(seq: str, target: str) -> str:
     """Generate a short deterministic ID for an ASO candidate."""
     h = hashlib.md5(f"{seq}:{target}".encode()).hexdigest()[:8]
@@ -341,6 +422,7 @@ def _generate_candidates_for_region(
 
             gc = _gc_content(aso_seq)
             tm = _tm_nearest_neighbor(aso_seq)
+            dG = _binding_energy(aso_seq)
             self_comp = _self_complementarity(aso_seq)
             bbb = _bbb_score(aso_len, gc)
 
@@ -382,6 +464,9 @@ def _generate_candidates_for_region(
                 + 0.20 * bbb
             )
 
+            # Use region-specific chemistry recommendations
+            chem = CHEMISTRY_BY_REGION.get(region_key, CHEMISTRY_BY_REGION["ISS-N1"])
+
             candidates.append(ASOCandidate(
                 id=_sequence_hash(aso_seq, region_key),
                 sequence=aso_seq,
@@ -391,16 +476,12 @@ def _generate_candidates_for_region(
                 position_offset=start - len(flank_5p),
                 gc_content=gc,
                 tm_estimate=tm,
+                binding_energy=dG,
                 self_complementarity_score=round(self_comp, 3),
                 bbb_score=bbb,
                 target_complementarity=complementarity,
                 overall_score=round(overall, 3),
-                chemistry_modifications={
-                    "sugar": "2'-O-methoxyethyl (2'-MOE) at all positions",
-                    "backbone": "Full phosphorothioate (PS)",
-                    "bases": "5-methylcytosine at all CpG sites",
-                    "note": "Same chemistry class as nusinersen (Spinraza)",
-                },
+                chemistry_modifications=chem,
                 mechanism=region["mechanism"],
                 comparison_to_nusinersen=comparison,
             ))
@@ -503,12 +584,14 @@ async def compare_to_nusinersen(aso_sequence: str) -> dict[str, Any]:
     # Candidate metrics
     aso_gc = _gc_content(aso_seq)
     aso_tm = _tm_nearest_neighbor(aso_seq)
+    aso_dG = _binding_energy(aso_seq)
     aso_self_comp = _self_complementarity(aso_seq)
     aso_bbb = _bbb_score(len(aso_seq), aso_gc)
 
     # Nusinersen metrics
     nus_gc = _gc_content(nus_seq)
     nus_tm = _tm_nearest_neighbor(nus_seq)
+    nus_dG = _binding_energy(nus_seq)
     nus_self_comp = _self_complementarity(nus_seq)
     nus_bbb = _bbb_score(len(nus_seq), nus_gc)
 
@@ -547,12 +630,18 @@ async def compare_to_nusinersen(aso_sequence: str) -> dict[str, Any]:
     if aso_bbb > nus_bbb:
         advantages.append("Better predicted BBB penetration score")
 
+    if aso_dG < nus_dG:
+        advantages.append(f"Stronger predicted binding (ΔG {aso_dG} vs {nus_dG} kcal/mol)")
+    elif aso_dG > nus_dG + 3:
+        disadvantages.append(f"Weaker predicted binding (ΔG {aso_dG} vs {nus_dG} kcal/mol)")
+
     return {
         "candidate": {
             "sequence": aso_seq,
             "length": len(aso_seq),
             "gc_content": aso_gc,
             "tm_estimate": aso_tm,
+            "binding_energy_kcal_mol": aso_dG,
             "self_complementarity": aso_self_comp,
             "bbb_score": aso_bbb,
             "iss_n1_overlap": aso_target_overlap,
@@ -562,6 +651,7 @@ async def compare_to_nusinersen(aso_sequence: str) -> dict[str, Any]:
             "length": len(nus_seq),
             "gc_content": nus_gc,
             "tm_estimate": nus_tm,
+            "binding_energy_kcal_mol": nus_dG,
             "self_complementarity": nus_self_comp,
             "bbb_score": nus_bbb,
             "iss_n1_overlap": nus_target_overlap,
@@ -655,6 +745,7 @@ async def score_custom_aso(
     gc = _gc_content(seq)
     tm_nn = _tm_nearest_neighbor(seq)
     tm_simple = _tm_simple(seq)
+    dG = _binding_energy(seq)
     self_comp = _self_complementarity(seq)
     bbb = _bbb_score(len(seq), gc)
 
@@ -730,6 +821,7 @@ async def score_custom_aso(
             "gc_content": gc,
             "tm_nearest_neighbor": tm_nn,
             "tm_simple_rule": tm_simple,
+            "binding_energy_kcal_mol": dG,
             "self_complementarity": self_comp,
             "bbb_penetration_score": bbb,
             "target_complementarity": min(1.0, complementarity),
@@ -742,13 +834,81 @@ async def score_custom_aso(
             "complementarity_score": round(min(1.0, complementarity), 3),
             "overall_score": round(overall, 3),
         },
-        "chemistry": {
-            "recommended_sugar": "2'-O-methoxyethyl (2'-MOE)",
-            "recommended_backbone": "Full phosphorothioate (PS)",
-            "recommended_bases": "5-methylcytosine at CpG dinucleotides",
-            "delivery": "Intrathecal injection (CNS targeting)" if len(seq) > 18 else "Intrathecal or potentially systemic",
-        },
+        "chemistry": CHEMISTRY_BY_REGION.get(target, CHEMISTRY_BY_REGION["ISS-N1"]),
         "feedback": feedback,
         "overall_score": round(overall, 3),
         "id": _sequence_hash(seq, target),
+    }
+
+
+async def score_aso(sequence: str) -> dict[str, Any]:
+    """Score an ASO sequence on intrinsic design properties (no target needed).
+
+    Evaluates: GC content, melting temperature, binding energy, length,
+    self-complementarity, and BBB penetration potential. Provides pass/fail
+    flags for key design criteria.
+
+    This is a lightweight check useful for filtering before full target-specific
+    scoring via ``score_custom_aso``.
+
+    Args:
+        sequence: ASO sequence in DNA notation (5'->3'), 10-30 nt.
+
+    Returns:
+        Dict with metrics, pass/fail flags, and design recommendations.
+    """
+    seq = sequence.upper().strip()
+
+    if not seq or not all(c in "ATGCN" for c in seq):
+        return {"error": "Invalid sequence — must contain only A, T, G, C, N"}
+
+    if len(seq) < 10 or len(seq) > 30:
+        return {"error": "Sequence length must be 10-30 nt"}
+
+    gc = _gc_content(seq)
+    tm_nn = _tm_nearest_neighbor(seq)
+    tm_simple = _tm_simple(seq)
+    dG = _binding_energy(seq)
+    self_comp = _self_complementarity(seq)
+    bbb = _bbb_score(len(seq), gc)
+
+    # Pass/fail design criteria
+    checks = {
+        "length_ok": 15 <= len(seq) <= 25,
+        "gc_optimal": 0.35 <= gc <= 0.65,
+        "gc_ideal": 0.40 <= gc <= 0.60,
+        "low_self_complementarity": self_comp < 0.35,
+        "tm_therapeutic_range": 50.0 <= tm_nn <= 80.0,
+        "strong_binding": dG < -15.0,
+    }
+
+    passed = sum(1 for v in checks.values() if v)
+    total = len(checks)
+
+    # Quick grade
+    if passed == total:
+        grade = "A — excellent intrinsic properties"
+    elif passed >= total - 1:
+        grade = "B — good, minor issue"
+    elif passed >= total - 2:
+        grade = "C — acceptable, review flagged criteria"
+    else:
+        grade = "D — poor, redesign recommended"
+
+    return {
+        "sequence": seq,
+        "length": len(seq),
+        "metrics": {
+            "gc_content": gc,
+            "tm_nearest_neighbor": tm_nn,
+            "tm_simple_rule": tm_simple,
+            "binding_energy_kcal_mol": dG,
+            "self_complementarity": round(self_comp, 3),
+            "bbb_penetration_score": bbb,
+        },
+        "checks": checks,
+        "passed": passed,
+        "total_checks": total,
+        "grade": grade,
+        "id": _sequence_hash(seq, "GENERIC"),
     }
