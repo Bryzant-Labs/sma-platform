@@ -850,6 +850,7 @@
             <a href="/prime" class="nav-link" data-section="prime">Prime Edit</a>
             <a href="/rnabind" class="nav-link" data-section="rnabind">RNA Binding</a>
             <a href="/docking" class="nav-link" data-section="docking">Docking</a>
+            <a href="/mlproxy" class="nav-link" data-section="mlproxy">ML Proxy</a>
             <a href="/nim-results" class="nav-link" data-section="nim-results">NIM Results</a>
             <a href="/mdsim" class="nav-link" data-section="mdsim">MD Sim</a>
             <a href="/splicemap" class="nav-link" data-section="splicemap">Splice Map</a>
@@ -1959,6 +1960,21 @@
         <th>#</th><th>Compound</th><th>Target</th><th>Affinity (kcal/mol)</th><th>Shape</th><th>H-Bond</th><th>Hydrophobic</th><th>Score</th><th>Class</th>
     </tr></thead>
     <tbody id="docking-body"><tr><td colspan="9" class="loading">Loading...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="mlproxy">
+    <div class="section-header"><h2 class="section-title">ML Docking Proxy</h2><span class="section-count" id="mlproxy-count"></span></div>
+    <p class="section-desc">Machine learning surrogate trained on 4,116 DiffDock v2.2 results. Uses RDKit Morgan fingerprints (ECFP4, 2048-bit) + RandomForest to predict binding confidence ~1000x faster than physics-based docking. Enables screening millions of molecules on CPU in minutes.</p>
+    <div id="mlproxy-metrics" class="screen-summary"><div class="loading">Loading ML proxy status...</div></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Actual vs Predicted (Training Set)</h3>
+    <div id="mlproxy-scatter" style="position:relative;width:100%;max-width:500px;height:350px;border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-bottom:24px"><canvas id="mlproxy-canvas" style="width:100%;height:100%"></canvas></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Top 20 Feature Importances</h3>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Feature</th><th>Importance</th><th>Bar</th>
+    </tr></thead>
+    <tbody id="mlproxy-features-body"><tr><td colspan="4" class="loading">Loading...</td></tr></tbody></table></div>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Target Distribution</h3>
+    <div id="mlproxy-targets" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:24px"></div>
 </section>
 
 <section class="section" id="prime">

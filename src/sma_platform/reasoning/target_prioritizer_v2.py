@@ -25,7 +25,10 @@ import os
 from pathlib import Path
 from typing import Any
 
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    np = None  # ESM-2 similarity scoring will be unavailable
 
 from ..core.database import fetch, fetchrow, fetchval
 
@@ -89,6 +92,10 @@ def _load_esm2_metadata() -> dict[str, dict[str, Any]]:
 
 def _load_esm2_embeddings() -> dict[str, Any]:
     """Load ESM-2 .npy embeddings and compute pairwise cosine similarity."""
+    if np is None:
+        logger.info('numpy not available — ESM-2 similarity scoring disabled')
+        return {"metadata": {}, "similarities": {}, "avg_similarity": {}}
+
     metadata = _load_esm2_metadata()
     if not metadata:
         return {"metadata": {}, "similarities": {}, "avg_similarity": {}}
@@ -448,6 +455,8 @@ async def _score_novelty(target_id: str, novelty_cache: dict[str, dict]) -> tupl
     ) or 1)
 
     # Count claims with recent sources (last 2 years)
+    from datetime import datetime, timedelta, timezone
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=730)).strftime('%Y-%m-%d')
     recent_val = await fetchval(
         """SELECT COUNT(DISTINCT c.id)
            FROM claims c
@@ -455,8 +464,8 @@ async def _score_novelty(target_id: str, novelty_cache: dict[str, dict]) -> tupl
            JOIN sources s ON e.source_id = s.id
            WHERE c.subject_id = $1
              AND s.pub_date IS NOT NULL
-             AND s.pub_date >= (CURRENT_DATE - INTERVAL '730 days')""",
-        target_id,
+             AND s.pub_date >= $2""",
+        target_id, cutoff,
     )
     recent_claims = int(recent_val or 0)
 
