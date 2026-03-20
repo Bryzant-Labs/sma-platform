@@ -745,6 +745,7 @@
     </span>
     <span class="nav-sep">|</span>
     <a href="/research" class="nav-link" data-section="research">About</a>
+    <a href="/advisory" class="nav-link" data-section="advisory">Advisory Pack</a>
     <a href="/analytics" class="nav-link" data-section="analytics">Analytics</a>
     <a href="/links" class="nav-link" data-section="links">Links</a>
     <a href="/write" class="nav-link" data-section="write">Write</a>
@@ -2011,6 +2012,12 @@
     <div class="table-wrap"><table><thead><tr><th>#</th><th>Compound</th><th>Target</th><th>Confidence</th><th>Binding Energy</th><th>Pose Rank</th><th>Status</th></tr></thead>
     <tbody id="nim-results-body"><tr><td colspan="7" class="loading">Loading NIM docking results...</td></tr></tbody></table></div>
     <div id="nim-results-pagination"></div>
+</section>
+
+<section class="section" id="advisory">
+    <div class="section-header"><h2 class="section-title">Scientific Advisory Pack</h2></div>
+    <p class="section-desc">Auto-generated comprehensive research summary for external collaborators, professors, and grant reviewers.</p>
+    <div id="advisory-content"><p class="loading">Loading advisory pack...</p></div>
 </section>
 
 <section class="section" id="analytics">
@@ -6767,6 +6774,208 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+    // ============ Scientific Advisory Pack ============
+    function loadAdvisory() {
+        if (loaded.advisory) return; loaded.advisory = true;
+        var container = clearEl('advisory-content');
+        container.appendChild(el('p', {className: 'loading', text: 'Generating advisory pack...'}));
+
+        fetch(API + '/advisory/pack').then(function(r) { return r.json(); }).then(function(data) {
+            container = clearEl('advisory-content');
+            if (data.error) { container.appendChild(el('p', {className: 'loading', text: data.error})); return; }
+            var pack = data.pack;
+
+            // --- Section 1: Overview ---
+            var s1 = el('div', {style: 'margin-bottom:32px'});
+            var s1Title = el('h3', {style: 'font-size:18px;font-weight:700;margin-bottom:8px'});
+            s1Title.textContent = pack.section_1_overview.title;
+            s1.appendChild(s1Title);
+            var s1Sub = el('p', {style: 'font-size:14px;color:var(--muted);margin-bottom:16px;font-style:italic'});
+            s1Sub.textContent = pack.section_1_overview.subtitle + ' — ' + pack.section_1_overview.generated;
+            s1.appendChild(s1Sub);
+
+            var statsGrid = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px'});
+            var st = pack.section_1_overview.stats;
+            var statItems = [
+                {label: 'PubMed Sources', value: st.pubmed_sources, color: 'var(--blue)'},
+                {label: 'Extracted Claims', value: st.extracted_claims, color: 'var(--green)'},
+                {label: 'Hypotheses', value: st.hypotheses, color: 'var(--amber)'},
+                {label: 'Molecular Targets', value: st.molecular_targets, color: 'var(--red, #e74c3c)'},
+                {label: 'Clinical Trials', value: st.clinical_trials, color: 'var(--purple, #9b59b6)'}
+            ];
+            for (var si = 0; si < statItems.length; si++) {
+                var card = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center'});
+                var valEl = el('div', {style: 'font-size:24px;font-weight:700;color:' + statItems[si].color});
+                valEl.textContent = Number(statItems[si].value).toLocaleString();
+                var lblEl = el('div', {style: 'font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)'});
+                lblEl.textContent = statItems[si].label;
+                card.appendChild(valEl);
+                card.appendChild(lblEl);
+                statsGrid.appendChild(card);
+            }
+            s1.appendChild(statsGrid);
+
+            var methP = el('p', {style: 'font-size:13px;line-height:1.7;color:var(--text-secondary)'});
+            methP.textContent = pack.section_1_overview.methodology;
+            s1.appendChild(methP);
+            container.appendChild(s1);
+
+            // --- Section 2: Top Targets ---
+            var s2 = el('div', {style: 'margin-bottom:32px'});
+            var s2Title = el('h3', {style: 'font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            s2Title.textContent = pack.section_2_top_targets.title;
+            s2.appendChild(s2Title);
+            var tgtList = pack.section_2_top_targets.targets;
+            if (tgtList.length === 0) {
+                s2.appendChild(el('p', {style: 'color:var(--muted);font-size:13px', text: 'No convergence data available yet.'}));
+            } else {
+                var tbl = el('table', {className: 'data-table', style: 'width:100%'});
+                var thead = el('thead');
+                var hRow = el('tr');
+                var headers = ['Symbol', 'Name', 'Score', 'Confidence', 'Claims', 'Sources'];
+                for (var hi = 0; hi < headers.length; hi++) {
+                    var th = el('th'); th.textContent = headers[hi]; hRow.appendChild(th);
+                }
+                thead.appendChild(hRow);
+                tbl.appendChild(thead);
+                var tbody = el('tbody');
+                for (var ti = 0; ti < tgtList.length; ti++) {
+                    var tgt = tgtList[ti];
+                    var tr = el('tr');
+                    var tdSym = el('td', {style: 'font-weight:700;color:var(--blue)'}); tdSym.textContent = tgt.symbol;
+                    var tdName = el('td'); tdName.textContent = truncate(tgt.name, 40);
+                    var tdScore = el('td', {style: 'font-weight:600'}); tdScore.textContent = tgt.convergence_score.toFixed(3);
+                    var confCls = tgt.confidence === 'very_high' ? 'badge-green' : tgt.confidence === 'high' ? 'badge-blue' : tgt.confidence === 'medium' ? 'badge-amber' : 'badge-gray';
+                    var tdConf = el('td'); tdConf.appendChild(badgeEl(tgt.confidence || '-', confCls));
+                    var tdCl = el('td'); tdCl.textContent = tgt.claims;
+                    var tdSr = el('td'); tdSr.textContent = tgt.sources;
+                    tr.appendChild(tdSym); tr.appendChild(tdName); tr.appendChild(tdScore);
+                    tr.appendChild(tdConf); tr.appendChild(tdCl); tr.appendChild(tdSr);
+                    tbody.appendChild(tr);
+                }
+                tbl.appendChild(tbody);
+                s2.appendChild(tbl);
+            }
+            container.appendChild(s2);
+
+            // --- Section 3: Virtual Screening ---
+            var s3 = el('div', {style: 'margin-bottom:32px'});
+            var s3Title = el('h3', {style: 'font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px'});
+            s3Title.textContent = pack.section_3_screening.title;
+            s3.appendChild(s3Title);
+            var s3Meth = el('p', {style: 'font-size:12px;color:var(--muted);margin-bottom:12px'});
+            s3Meth.textContent = 'Pipeline: ' + pack.section_3_screening.methodology;
+            s3.appendChild(s3Meth);
+            var s3Stats = el('p', {style: 'font-size:13px;margin-bottom:12px'});
+            s3Stats.textContent = pack.section_3_screening.total_positive + ' positive hits out of ' + pack.section_3_screening.total_screened + ' compounds screened';
+            s3.appendChild(s3Stats);
+            var hits = pack.section_3_screening.hits;
+            if (hits.length > 0) {
+                var htbl = el('table', {className: 'data-table', style: 'width:100%'});
+                var hthead = el('thead');
+                var hhRow = el('tr');
+                var hhdrs = ['Target', 'Compound (SMILES)', 'Docking Confidence'];
+                for (var hhi = 0; hhi < hhdrs.length; hhi++) {
+                    var hth = el('th'); hth.textContent = hhdrs[hhi]; hhRow.appendChild(hth);
+                }
+                hthead.appendChild(hhRow);
+                htbl.appendChild(hthead);
+                var htbody = el('tbody');
+                for (var hti = 0; hti < hits.length; hti++) {
+                    var hit = hits[hti];
+                    var htr = el('tr');
+                    var htdTgt = el('td', {style: 'font-weight:600'}); htdTgt.textContent = hit.target;
+                    var htdCmp = el('td', {style: 'font-family:monospace;font-size:11px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'}); htdCmp.textContent = truncate(hit.compound, 60);
+                    var htdDock = el('td'); htdDock.textContent = hit.docking_confidence.toFixed(3);
+                    htr.appendChild(htdTgt); htr.appendChild(htdCmp); htr.appendChild(htdDock);
+                    htbody.appendChild(htr);
+                }
+                htbl.appendChild(htbody);
+                s3.appendChild(htbl);
+            } else {
+                s3.appendChild(el('p', {style: 'color:var(--muted);font-size:13px', text: 'No screening hits available yet.'}));
+            }
+            container.appendChild(s3);
+
+            // --- Section 4: Key Hypotheses ---
+            var s4 = el('div', {style: 'margin-bottom:32px'});
+            var s4Title = el('h3', {style: 'font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            s4Title.textContent = pack.section_4_hypotheses.title;
+            s4.appendChild(s4Title);
+            var hyps = pack.section_4_hypotheses.hypotheses;
+            if (hyps.length === 0) {
+                s4.appendChild(el('p', {style: 'color:var(--muted);font-size:13px', text: 'No hypotheses available yet.'}));
+            } else {
+                for (var hyi = 0; hyi < hyps.length; hyi++) {
+                    var hyp = hyps[hyi];
+                    var hypCard = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:10px'});
+                    var hypHead = el('div', {style: 'display:flex;justify-content:space-between;align-items:center;margin-bottom:6px'});
+                    var hypTitle = el('strong', {style: 'font-size:13px'}); hypTitle.textContent = hyp.title;
+                    hypHead.appendChild(hypTitle);
+                    if (hyp.confidence !== null) {
+                        var confBadge = badgeEl((hyp.confidence * 100).toFixed(0) + '%', hyp.confidence >= 0.7 ? 'badge-green' : hyp.confidence >= 0.4 ? 'badge-amber' : 'badge-gray');
+                        hypHead.appendChild(confBadge);
+                    }
+                    hypCard.appendChild(hypHead);
+                    if (hyp.type) {
+                        var typeBadge = badgeEl(hyp.type, 'badge-blue');
+                        typeBadge.style.marginBottom = '6px';
+                        hypCard.appendChild(typeBadge);
+                    }
+                    var hypDesc = el('p', {style: 'font-size:12px;color:var(--text-secondary);margin:0;line-height:1.6'});
+                    hypDesc.textContent = hyp.description;
+                    hypCard.appendChild(hypDesc);
+                    s4.appendChild(hypCard);
+                }
+            }
+            container.appendChild(s4);
+
+            // --- Section 5: Assessment ---
+            var s5 = el('div', {style: 'margin-bottom:32px'});
+            var s5Title = el('h3', {style: 'font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            s5Title.textContent = pack.section_5_assessment.title;
+            s5.appendChild(s5Title);
+
+            var twoCol = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px'});
+
+            var strBox = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px'});
+            var strTitle = el('h4', {style: 'font-size:13px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px'});
+            strTitle.textContent = 'Strengths';
+            strBox.appendChild(strTitle);
+            var strList = el('ul', {style: 'margin:0;padding-left:18px;font-size:13px;line-height:1.8;color:var(--text-secondary)'});
+            var strengths = pack.section_5_assessment.strengths;
+            for (var stri = 0; stri < strengths.length; stri++) {
+                var li = el('li'); li.textContent = strengths[stri]; strList.appendChild(li);
+            }
+            strBox.appendChild(strList);
+            twoCol.appendChild(strBox);
+
+            var limBox = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px'});
+            var limTitle = el('h4', {style: 'font-size:13px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px'});
+            limTitle.textContent = 'Limitations & Uncertainties';
+            limBox.appendChild(limTitle);
+            var limList = el('ul', {style: 'margin:0;padding-left:18px;font-size:13px;line-height:1.8;color:var(--text-secondary)'});
+            var limitations = pack.section_5_assessment.limitations;
+            for (var limi = 0; limi < limitations.length; limi++) {
+                var lli = el('li'); lli.textContent = limitations[limi]; limList.appendChild(lli);
+            }
+            limBox.appendChild(limList);
+            twoCol.appendChild(limBox);
+
+            s5.appendChild(twoCol);
+            container.appendChild(s5);
+
+            // --- Footer note ---
+            var footer = el('p', {style: 'font-size:11px;color:var(--muted);text-align:center;margin-top:24px;font-style:italic'});
+            footer.textContent = 'This Advisory Pack is auto-generated from live platform data. For questions or collaboration inquiries, use the Contact form.';
+            container.appendChild(footer);
+
+        }).catch(function(err) {
+            container = clearEl('advisory-content');
+            container.appendChild(el('p', {className: 'loading', text: 'Failed to load advisory pack: ' + err.message}));
+        });
+    }
+
     // ============ Platform Analytics ============
     function loadAnalytics() {
         if (loaded.analytics) return; loaded.analytics = true;
@@ -7049,6 +7258,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         synergy: loadSynergy,
         'nim-results': loadNimResults,
         news: loadNews,
+        advisory: loadAdvisory,
         analytics: loadAnalytics
     };
 
@@ -7100,6 +7310,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         write:       {title: 'Evidence Writer — SMA Research Platform', desc: 'AI-assisted evidence writing for SMA research summaries and grant applications.'},
         repurposing: {title: 'Drug Repurposing — SMA Research Platform', desc: 'Drug repurposing candidates for SMA identified through computational screening and evidence analysis.'},
         versions:    {title: 'Version History — SMA Research Platform', desc: 'Platform version history and changelog for the SMA Research Platform.'},
+        advisory:    {title: 'Scientific Advisory Pack — SMA Research Platform', desc: 'Auto-generated 5-section research summary for external collaborators, professors, and grant reviewers. Covers platform overview, top targets, virtual screening, key hypotheses, and honest assessment of strengths and limitations.'},
         analytics:   {title: 'Platform Analytics — SMA Research Platform', desc: 'Real-time analytics dashboard showing platform stats, evidence convergence, claim distributions, top journals, and research progress for the SMA Research Platform.'}
     };
 
