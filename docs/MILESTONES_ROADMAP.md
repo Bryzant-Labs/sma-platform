@@ -15,7 +15,7 @@ Before building more features, calibrate what we have.
 | Deliverable | Status | Why It Matters |
 |------------|--------|----------------|
 | Gold-standard claim extraction evaluation set | DONE | Inter-annotator agreement benchmark |
-| Claim confidence calibration curves | PARTIAL | confidence_calibrator.py built, grade B |
+| Claim confidence calibration curves | DONE | confidence_calibrator.py built, grade B |
 | Contradiction detection benchmark | DONE | find_contradictions() live |
 | Source quality weighting | DONE | Not all PubMed papers are equal |
 | Retrospective validation against known outcomes | DONE | Calibration report with approved drugs |
@@ -28,18 +28,18 @@ Go deeper on SMA-specific biology, not broader.
 
 | Deliverable | Status | Why It Matters |
 |------------|--------|----------------|
-| SMN locus resolution (long-read haplotypes) | PLANNED | Copy number alone doesn't explain phenotype |
+| SMN locus resolution (long-read haplotypes) | DONE | Copy number alone doesn't explain phenotype |
 | SMN2 splicing regulatory grammar model | PLANNED | Fine-tune Evo/ESM-2 on SMA splice data (~$100 GPU) |
 | Modifier-aware phenotype prediction | DONE | modifier_predictor.py — SMN2 copies + PLS3/NCALD/NAIP |
-| Off-target splice impact prediction | PLANNED | ASO safety beyond primary target |
+| Off-target splice impact prediction | DONE | ASO safety beyond primary target |
 | Cross-disease transfer (mechanistically grounded only) | DONE | ALS/DMD overlap where biologically justified |
 | Spatial/single-cell integration | PLANNED | When Slide-seq/MERFISH data available |
 | RNA structure-informed ligand ranking | PLANNED | Via OpenFold3/RNAPro NIMs |
 | **RNAPro SMN2 pre-mRNA 3D structure** | IN PROGRESS | GTC 2026 — RNA structure at ISS-N1 nusinersen binding site |
 | **Proteina-Complexa protein binders** | PLANNED | GTC 2026 — new therapeutic modality: designed protein binders for SMA targets |
 | **ESM-2 fine-tuning via BioNeMo Recipes** | PLANNED | GTC 2026 — SMA-specific protein embeddings |
-| **ASO Sequence Generator** | BUILDING | Design novel ASOs targeting SMN2 ISS-N1/ISS-N2/ESS regions |
-| **Nanopore RNA-seq Data Catalog** | BUILDING | Search SRA/ENA for public SMA direct RNA datasets |
+| **ASO Sequence Generator** | DONE | Design novel ASOs targeting SMN2 ISS-N1/ISS-N2/ESS regions |
+| **Nanopore RNA-seq Data Catalog** | DONE | Search SRA/ENA for public SMA direct RNA datasets |
 | **Generative RNA Therapeutics** | PLANNED | Diffusion models for ASO design with BBB penetration |
 | **Bio-LLM for Splicing Grammar** | PLANNED | Fine-tune on 762 SMA splice variants + SpliceAI data |
 

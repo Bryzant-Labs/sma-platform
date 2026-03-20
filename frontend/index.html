@@ -462,9 +462,10 @@
         .page-info { font-size: 11px; color: var(--muted); margin-top: 8px; }
         .expand-row { display: none; }
         .expand-row.open { display: table-row; }
-        .expand-cell { padding: 16px 12px; background: var(--bg); border-bottom: 1px solid var(--line); }
-        .expand-abstract { font-size: 13px; line-height: 1.7; color: var(--text-secondary); max-width: 900px; }
+        .expand-cell { padding: 16px 20px; background: var(--bg); border-bottom: 1px solid var(--line); }
+        .expand-abstract { font-size: 13px; line-height: 1.7; color: var(--text-secondary); max-width: 100%; word-wrap: break-word; }
         .expand-abstract strong { color: var(--text); }
+        .expand-abstract p { max-width: 100%; }
         .expand-meta { font-size: 11px; color: var(--muted); margin-top: 8px; }
         .expand-meta a { color: var(--accent); text-decoration: none; }
         .expand-meta a:hover { text-decoration: underline; }
@@ -669,6 +670,15 @@
         .dd-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 10px; }
         .dd-item { padding: 6px 0; border-bottom: 1px solid var(--line-light); font-size: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .dd-item:last-child { border-bottom: none; }
+        .dd-claim-source { font-size: 10px; color: var(--muted); width: 100%; padding-left: 4px; }
+        .dd-hyp-item { padding: 8px 0; border-bottom: 1px solid var(--line-light); cursor: pointer; transition: background 0.15s; }
+        .dd-hyp-item:last-child { border-bottom: none; }
+        .dd-hyp-item:hover { background: var(--blue-bg); }
+        .dd-hyp-header { display: flex; gap: 8px; align-items: center; font-size: 12px; flex-wrap: wrap; }
+        .dd-hyp-toggle { font-size: 10px; color: var(--muted); transition: transform 0.2s; display: inline-block; }
+        .dd-hyp-toggle.open { transform: rotate(90deg); }
+        .dd-hyp-desc { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; font-size: 11px; color: var(--text-secondary); line-height: 1.5; padding: 0 4px 0 22px; }
+        .dd-hyp-desc.open { max-height: 300px; padding-top: 6px; }
 
         @media (max-width: 768px) {
             .dd-grid { grid-template-columns: 1fr; }
@@ -4319,21 +4329,39 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 item.appendChild(badgeEl(cl.claim_type || '?', 'badge-blue'));
                 item.appendChild(el('span', {text: truncate(cl.predicate || '', 100)}));
                 if (cl.confidence) item.appendChild(badgeEl((cl.confidence * 100).toFixed(0) + '%', cl.confidence >= 0.7 ? 'badge-green' : 'badge-amber'));
+                if (cl.source_title) {
+                    var srcEl = el('div', {className: 'dd-claim-source', text: cl.source_title + (cl.pmid ? ' (PMID: ' + cl.pmid + ')' : '')});
+                    item.appendChild(srcEl);
+                }
                 claimsSec.appendChild(item);
             }
+            if (data.claims_count === 0) claimsSec.appendChild(el('div', {style: 'font-size:12px;color:var(--muted)', text: 'No claims linked yet'}));
             if (data.claims_count > 8) claimsSec.appendChild(el('div', {style: 'font-size:11px;color:var(--muted);margin-top:6px', text: '+ ' + (data.claims_count - 8) + ' more claims'}));
             grid.appendChild(claimsSec);
 
-            // Hypotheses section
+            // Hypotheses section (clickable / expandable)
             var hypSec = el('div', {className: 'dd-section'});
             hypSec.appendChild(el('div', {className: 'dd-section-title', text: 'Hypotheses (' + data.hypotheses_count + ')'}));
             for (var h = 0; h < data.hypotheses.length; h++) {
                 var hyp = data.hypotheses[h];
-                var hItem = el('div', {className: 'dd-item'});
-                hItem.appendChild(badgeEl(hyp.hypothesis_type || '?', 'badge-amber'));
-                hItem.appendChild(el('span', {text: truncate(hyp.title || '', 100)}));
-                if (hyp.confidence) hItem.appendChild(badgeEl((hyp.confidence * 100).toFixed(0) + '%', 'badge-gray'));
-                hypSec.appendChild(hItem);
+                var hWrap = el('div', {className: 'dd-hyp-item'});
+                var hHeader = el('div', {className: 'dd-hyp-header'});
+                var hToggle = el('span', {className: 'dd-hyp-toggle', text: '\u25B6'});
+                hHeader.appendChild(hToggle);
+                hHeader.appendChild(badgeEl(hyp.hypothesis_type || '?', 'badge-amber'));
+                hHeader.appendChild(el('span', {text: truncate(hyp.title || '', 100)}));
+                if (hyp.confidence) hHeader.appendChild(badgeEl((hyp.confidence * 100).toFixed(0) + '%', 'badge-gray'));
+                hWrap.appendChild(hHeader);
+                var descText = hyp.description || 'No description available.';
+                var hDesc = el('div', {className: 'dd-hyp-desc', text: descText});
+                hWrap.appendChild(hDesc);
+                (function(toggle, desc) {
+                    hWrap.addEventListener('click', function() {
+                        toggle.classList.toggle('open');
+                        desc.classList.toggle('open');
+                    });
+                })(hToggle, hDesc);
+                hypSec.appendChild(hWrap);
             }
             if (data.hypotheses_count === 0) hypSec.appendChild(el('div', {style: 'font-size:12px;color:var(--muted)', text: 'No hypotheses generated yet'}));
             grid.appendChild(hypSec);
