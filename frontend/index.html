@@ -1223,14 +1223,14 @@
 
 <section class="section" id="targets">
     <div class="section-header"><h2 class="section-title">Targets</h2><span class="section-count" id="targets-count"></span></div>
-    <p class="section-desc">Genes, proteins, and pathways implicated in SMA pathogenesis. Core targets include SMN1/SMN2 (primary), STMN2 (neuroprotective), and natural protective modifiers PLS3 and NCALD.</p>
+    <p class="section-desc">Genes, proteins, and pathways implicated in SMA pathogenesis. Core targets include SMN1/SMN2 (primary), STMN2 (neuroprotective), and natural protective modifiers PLS3 and NCALD. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/targets.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div class="table-wrap"><table><thead><tr><th>Symbol</th><th>Name</th><th>Type</th><th>Identifiers</th><th>Description</th><th></th></tr></thead>
     <tbody id="targets-body"><tr><td colspan="6" class="loading">Loading targets...</td></tr></tbody></table></div>
 </section>
 
 <section class="section" id="trials">
     <div class="section-header"><h2 class="section-title">Clinical Trials</h2><span class="section-count" id="trials-count"></span></div>
-    <p class="section-desc">SMA clinical trials from ClinicalTrials.gov. Data refreshed via automated ingestion from the ClinicalTrials.gov v2 API.</p>
+    <p class="section-desc">SMA clinical trials from ClinicalTrials.gov. Data refreshed via automated ingestion from the ClinicalTrials.gov v2 API. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/trials.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="trial-filter-bar" style="display:flex;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
         <div style="flex:1;min-width:180px">
             <input type="text" id="trial-search" placeholder="Search NCT ID, title, sponsor..."
@@ -1263,14 +1263,30 @@
 
 <section class="section" id="drugs">
     <div class="section-header"><h2 class="section-title">Drugs &amp; Therapies</h2><span class="section-count" id="drugs-count"></span></div>
-    <p class="section-desc">Approved SMA therapies and pipeline candidates. Three approved treatments target the SMN pathway; pipeline drugs explore muscle-enhancing and neuroprotective approaches.</p>
+    <p class="section-desc">Approved SMA therapies and pipeline candidates. Three approved treatments target the SMN pathway; pipeline drugs explore muscle-enhancing and neuroprotective approaches. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/drugs.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <div id="drugs-filter-bar" style="display:flex;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+            <input type="text" id="drugs-search" placeholder="Search drug name, brand, mechanism..."
+                   style="width:100%;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+        </div>
+        <select id="drugs-status-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All statuses</option>
+            <option value="approved">Approved</option>
+            <option value="phase3">Phase 3</option>
+            <option value="phase2">Phase 2</option>
+            <option value="phase1">Phase 1</option>
+            <option value="investigational">Investigational</option>
+            <option value="preclinical">Preclinical</option>
+            <option value="discontinued">Discontinued</option>
+        </select>
+    </div>
     <div class="table-wrap"><table><thead><tr><th>Name</th><th>Brand</th><th>Type</th><th>Status</th><th>Mechanism</th><th></th></tr></thead>
     <tbody id="drugs-body"><tr><td colspan="6" class="loading">Loading drugs...</td></tr></tbody></table></div>
 </section>
 
 <section class="section" id="sources">
     <div class="section-header"><h2 class="section-title">Literature</h2><span class="section-count" id="sources-count"></span></div>
-    <p class="section-desc">PubMed papers ingested via automated daily search, scanned by AI for structured claims about SMA biology, targets, and therapies. Sorted by most recent first.</p>
+    <p class="section-desc">PubMed papers ingested via automated daily search, scanned by AI for structured claims about SMA biology, targets, and therapies. Sorted by most recent first. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/sources.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="sources-type-tabs" class="filter-tabs" style="margin-bottom:6px"></div>
     <div id="sources-filter-bar" style="display:none;gap:12px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
         <div style="display:flex;gap:4px;align-items:center">
@@ -1318,7 +1334,7 @@
 
 <section class="section" id="claims">
     <div class="section-header"><h2 class="section-title">Extracted Claims</h2><span class="section-count" id="claims-count"></span></div>
-    <p class="section-desc">Structured assertions extracted from paper abstracts using LLM analysis. Each claim is typed, scored for confidence, and linked to its source paper. Click any row to see the full provenance chain: paper, abstract, evidence excerpt, and metadata.</p>
+    <p class="section-desc">Structured assertions extracted from paper abstracts using LLM analysis. Each claim is typed, scored for confidence, and linked to its source paper. Click any row to see the full provenance chain: paper, abstract, evidence excerpt, and metadata. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/claims.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div class="claims-toolbar">
         <div class="claims-filters-row">
             <div class="claims-filter-group">
@@ -1355,7 +1371,7 @@
 
 <section class="section" id="hypotheses">
     <div class="section-header"><h2 class="section-title">Hypothesis Prioritization</h2><span class="section-count" id="hypotheses-count"></span></div>
-    <p class="section-desc">Phase 2: Multi-criteria ranked hypotheses scored across evidence depth, source convergence, therapeutic clarity, target strength, and novelty. Tier A = top 5 high-conviction, Tier B = medium priority, Tier C = needs more evidence.</p>
+    <p class="section-desc">Phase 2: Multi-criteria ranked hypotheses scored across evidence depth, source convergence, therapeutic clarity, target strength, and novelty. Tier A = top 5 high-conviction, Tier B = medium priority, Tier C = needs more evidence. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/hypothesis_prioritizer.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="hyp-filter-bar" style="display:none;margin-bottom:16px;">
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 12px 0">
             <!-- Tier buttons -->
@@ -1411,7 +1427,7 @@
 
 <section class="section" id="convergence">
     <div class="section-header"><h2 class="section-title">Evidence Convergence</h2><span class="section-count" id="convergence-count"></span></div>
-    <p class="section-desc">Multi-dimensional evidence convergence scoring across 30,000+ claims. Each target is scored on claim volume, lab independence, method diversity, temporal trend, and replication. All weights are <a href="https://github.com/Bryzant-Labs/sma-platform/blob/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent)">open source on GitHub</a>. Generates falsifiable predictions grounded in evidence.</p>
+    <p class="section-desc">Multi-dimensional evidence convergence scoring across 30,000+ claims. Each target is scored on claim volume, lab independence, method diversity, temporal trend, and replication. All weights are <a href="https://github.com/Bryzant-Labs/sma-platform/blob/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent)">open source on GitHub</a>. Generates falsifiable predictions grounded in evidence. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="convergence-content">
         <div id="convergence-table-wrap"><div class="loading">Loading convergence scores...</div></div>
         <h3 style="margin-top:24px;font-size:16px;font-weight:600;color:var(--text)">Prediction Cards</h3>
@@ -1421,7 +1437,11 @@
 
 <section class="section" id="scores">
     <div class="section-header"><h2 class="section-title">Target Prioritization</h2><span class="section-count" id="scores-count"></span></div>
-    <p class="section-desc">Multi-criteria scoring across 7 dimensions: evidence strength, biological coherence, fragility relevance, interventionability, translational feasibility, novelty, and contradiction risk. Composite score determines Phase 3 priority.</p>
+    <p class="section-desc">Multi-criteria scoring across 7 dimensions: evidence strength, biological coherence, fragility relevance, interventionability, translational feasibility, novelty, and contradiction risk. Composite score determines Phase 3 priority. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/scoring.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <div id="scores-filter-bar" style="display:none;margin:0 0 12px 0">
+        <input type="text" id="scores-search" placeholder="Search target name or symbol..."
+               style="width:100%;max-width:360px;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+    </div>
     <div id="scores-body"><div class="loading">Loading scores...</div></div>
 </section>
 
@@ -1460,13 +1480,30 @@
 
 <section class="section" id="screening">
     <div class="section-header"><h2 class="section-title">Drug Screening</h2><span class="section-count" id="screening-count"></span></div>
-    <p class="section-desc">Computational molecular analysis of ChEMBL compounds. RDKit screens for Lipinski drug-likeness, blood-brain barrier permeability, CNS MPO score, QED, and PAINS alerts. Compounds that can cross the BBB are critical for reaching motor neurons.</p>
+    <p class="section-desc">Computational molecular analysis of ChEMBL compounds. RDKit screens for Lipinski drug-likeness, blood-brain barrier permeability, CNS MPO score, QED, and PAINS alerts. Compounds that can cross the BBB are critical for reaching motor neurons. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/virtual_screening.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="screening-summary" class="screen-summary"><div class="loading">Loading screening data...</div></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Top Candidates</h3>
+    <div id="screening-filter-bar" style="display:none;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+            <input type="text" id="screening-search" placeholder="Search ChEMBL ID, SMILES, target..."
+                   style="width:100%;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+        </div>
+        <select id="screening-target-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All targets</option>
+        </select>
+        <select id="screening-score-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All scores</option>
+            <option value="0.5">QED &gt; 0.5</option>
+            <option value="0.3">QED &gt; 0.3</option>
+            <option value="0.1">QED &gt; 0.1</option>
+        </select>
+        <span id="screening-filter-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
+    </div>
     <div class="table-wrap"><table><thead><tr>
         <th>ChEMBL ID</th><th>SMILES</th><th>MW</th><th>LogP</th><th>QED</th><th>CNS MPO</th><th>BBB</th><th>Lipinski</th><th>PAINS</th><th>pChEMBL</th>
     </tr></thead>
     <tbody id="screening-body"><tr><td colspan="10" class="loading">Loading...</td></tr></tbody></table></div>
+    <div id="screening-pagination"></div>
 </section>
 
 <section class="section" id="repurposing">
@@ -1485,10 +1522,21 @@
     <p class="section-desc">Integrated ranking combining drug-likeness (QED, Lipinski), BBB/CNS access, ADMET safety, potency (pChEMBL), target relevance, and repurposing evidence. Each candidate is scored 0-1 and assigned a tier (A/B/C). This is the unified view — the best compounds from all analysis pipelines.</p>
     <div id="candidates-summary" class="screen-summary"><div class="loading">Loading integrated candidates...</div></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Ranked Candidates</h3>
+    <div id="candidates-filter-bar" style="display:none;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+            <input type="text" id="candidates-search" placeholder="Search compound name..."
+                   style="width:100%;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+        </div>
+        <select id="candidates-target-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All targets</option>
+        </select>
+        <span id="candidates-filter-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
+    </div>
     <div class="table-wrap"><table><thead><tr>
         <th>#</th><th>ChEMBL ID</th><th>Target</th><th>Score</th><th>Tier</th><th>QED</th><th>BBB</th><th>ADMET</th><th>pChEMBL</th><th>Flags</th>
     </tr></thead>
     <tbody id="candidates-body"><tr><td colspan="10" class="loading">Loading...</td></tr></tbody></table></div>
+    <div id="candidates-pagination"></div>
 </section>
 
 <section class="section" id="hits">
@@ -1503,7 +1551,7 @@
 
 <section class="section" id="graph">
     <div class="section-header"><h2 class="section-title">Knowledge Graph</h2><span class="section-count" id="graph-count"></span></div>
-    <p class="section-desc">Interactive network of SMA molecular targets connected by protein-protein interactions (STRING), shared pathways (KEGG/UniProt), and compound bioactivity (ChEMBL). Click a node to highlight its connections.</p>
+    <p class="section-desc">Interactive network of SMA molecular targets connected by protein-protein interactions (STRING), shared pathways (KEGG/UniProt), and compound bioactivity (ChEMBL). Click a node to highlight its connections. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/graph.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="graph-canvas"><div class="loading" style="padding:40px;text-align:center">Loading knowledge graph...</div></div>
     <div class="graph-legend" id="graph-legend">
         <div class="graph-legend-item"><span class="graph-legend-dot" style="background:#1a56db"></span> Gene</div>
@@ -1515,7 +1563,7 @@
 
 <section class="section" id="outcomes">
     <div class="section-header"><h2 class="section-title">Drug Outcome Database</h2><span class="section-count" id="outcomes-count"></span></div>
-    <p class="section-desc">Structured database of drug successes and failures in SMA research. Every outcome traces back to a source paper — capturing not just what worked, but why compounds failed (toxicity, bioavailability, efficacy).</p>
+    <p class="section-desc">Structured database of drug successes and failures in SMA research. Every outcome traces back to a source paper — capturing not just what worked, but why compounds failed (toxicity, bioavailability, efficacy). <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/drug_outcomes.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="outcomes-summary" class="outcome-summary"><div class="loading" style="grid-column:1/-1;text-align:center;padding:30px">Loading outcomes...</div></div>
     <div class="outcome-filters" id="outcomes-filters"></div>
     <div class="table-wrap"><table><thead><tr><th>Compound</th><th>Target</th><th>Outcome</th><th>Phase</th><th>Failure Reason</th><th>Key Finding</th><th>Source</th></tr></thead>
@@ -1524,7 +1572,7 @@
 
 <section class="section" id="comparative">
     <div class="section-header"><h2 class="section-title">Cross-Species Comparative</h2><span class="section-count" id="comparative-count"></span></div>
-    <p class="section-desc">Conservation mapping of SMA-relevant targets across 5 model organisms — axolotl, zebrafish, naked mole rat, C. elegans, Drosophila. Organisms with natural regeneration or motor neuron resilience reveal potential therapeutic pathways.</p>
+    <p class="section-desc">Conservation mapping of SMA-relevant targets across 5 model organisms — axolotl, zebrafish, naked mole rat, C. elegans, Drosophila. Organisms with natural regeneration or motor neuron resilience reveal potential therapeutic pathways. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/comparative.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div class="species-grid" id="species-grid"><div class="loading" style="grid-column:1/-1;text-align:center;padding:30px">Loading species data...</div></div>
     <h3 style="font-size:14px;margin:24px 0 12px;font-weight:600">Conservation Heatmap</h3>
     <div class="table-wrap" id="heatmap-wrap"><div class="loading" style="padding:30px;text-align:center">Loading heatmap...</div></div>
@@ -2113,7 +2161,7 @@
 
 <section class="section" id="synthesis">
     <div class="section-header"><h2 class="section-title">Cross-Paper Synthesis</h2><span class="section-count" id="synthesis-count"></span></div>
-    <p class="section-desc">Non-obvious connections across 25,000+ claims from different papers. Discover shared mechanisms and co-occurring targets that no single publication reveals.</p>
+    <p class="section-desc">Non-obvious connections across 25,000+ claims from different papers. Discover shared mechanisms and co-occurring targets that no single publication reveals. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/cross_paper_synthesis.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div class="filter-tabs" id="synthesis-tabs">
         <button class="filter-tab active" data-synth-tab="cooccurrences">Co-occurrences</button>
         <button class="filter-tab" data-synth-tab="shared-mechanisms">Shared Mechanisms</button>
@@ -2150,6 +2198,18 @@
 <section class="section" id="synergy">
     <div class="section-header"><h2 class="section-title">Synergy Predictions</h2><span class="section-count" id="synergy-count"></span></div>
     <p class="section-desc">AI-predicted drug-target synergy scores combining docking affinity, literature evidence, pathway overlap, and claim support. Identifies the most promising multi-mechanism therapeutic combinations for SMA.</p>
+    <div id="synergy-filter-bar" style="display:none;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+            <input type="text" id="synergy-search" placeholder="Search drug or target..."
+                   style="width:100%;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+        </div>
+        <select id="synergy-sort" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="score">Highest synergy</option>
+            <option value="claims">Most evidence</option>
+            <option value="alpha">A-Z (drug)</option>
+        </select>
+        <span id="synergy-filter-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
+    </div>
     <div class="table-wrap"><table><thead><tr><th>Drug</th><th>Target</th><th>Synergy Score</th><th>Docking</th><th>Literature</th><th>Pathway</th><th>Claims</th></tr></thead>
     <tbody id="synergy-body"><tr><td colspan="7" class="loading">Loading synergy predictions...</td></tr></tbody></table></div>
 </section>
@@ -3487,6 +3547,108 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         fetchClaimsPage();
     }
 
+    var drugsAllData = [];
+    var drugsSearchTimer = null;
+    function renderDrugsTable(filtered) {
+        document.getElementById('drugs-count').textContent = filtered.length + ' of ' + drugsAllData.length + ' therapies';
+        var body = clearEl('drugs-body');
+        for (var i = 0; i < filtered.length; i++) {
+            var d = filtered[i];
+            var brands = parseJ(d.brand_names);
+            var brandStr = (brands && brands.length) ? brands.join(', ') : '\u2014';
+            var expandId = 'drug-trials-' + d.id;
+            var btnTd = el('td');
+            var btn = el('button', {className: 'btn-expand', text: 'Trials'});
+            (function(drugId, eid, b) {
+                btn.addEventListener('click', function() {
+                    var row = document.getElementById(eid);
+                    if (row) {
+                        row.classList.toggle('open');
+                        b.textContent = row.classList.contains('open') ? 'Close' : 'Trials';
+                        return;
+                    }
+                    b.textContent = 'Loading...';
+                    fetch(API + '/drugs/' + drugId + '/trials').then(function(r) { return r.json(); }).then(function(res) {
+                        var trials = res.trials || [];
+                        var expandRow = el('tr', {className: 'expand-row open', id: eid});
+                        var expandCell = el('td', {colSpan: 6, className: 'expand-cell'});
+                        if (trials.length === 0) {
+                            expandCell.appendChild(el('p', {text: 'No clinical trials found for this drug.', style: 'color:var(--muted);font-size:13px'}));
+                        } else {
+                            expandCell.appendChild(el('strong', {text: trials.length + ' related clinical trials', style: 'font-size:13px'}));
+                            var tbl = el('table', {style: 'width:100%;margin-top:8px;font-size:12px'});
+                            var thead = el('thead');
+                            thead.appendChild(el('tr', null, [
+                                el('th', {text: 'NCT ID', style: 'padding:4px 8px;text-align:left'}),
+                                el('th', {text: 'Title', style: 'padding:4px 8px;text-align:left'}),
+                                el('th', {text: 'Phase', style: 'padding:4px 8px;text-align:left'}),
+                                el('th', {text: 'Status', style: 'padding:4px 8px;text-align:left'}),
+                                el('th', {text: 'N', style: 'padding:4px 8px;text-align:left'}),
+                                el('th', {text: 'Dates', style: 'padding:4px 8px;text-align:left'})
+                            ]));
+                            tbl.appendChild(thead);
+                            var tbody = el('tbody');
+                            for (var j = 0; j < trials.length; j++) {
+                                var tr = trials[j];
+                                var url = tr.url || ('https://clinicaltrials.gov/study/' + tr.nct_id);
+                                var trRow = el('tr', {style: 'border-top:1px solid var(--line)'}, [
+                                    el('td', {style: 'padding:4px 8px'}),
+                                    el('td', {text: truncate(tr.title, 80), style: 'padding:4px 8px'}),
+                                    el('td', null, [tr.phase ? el('span', {className: 'badge badge-blue', text: tr.phase}) : document.createTextNode('')]),
+                                    el('td', null, [el('span', {className: 'badge ' + trialCls(tr.status), text: tr.status})]),
+                                    el('td', {text: tr.enrollment ? String(tr.enrollment) : '\u2014', style: 'padding:4px 8px;font-family:monospace'}),
+                                    el('td', {text: (tr.start_date || '?') + ' \u2013 ' + (tr.completion_date || 'ongoing'), style: 'padding:4px 8px;font-size:11px;color:var(--text-secondary)'})
+                                ]);
+                                var nctLink = el('a', {href: url, target: '_blank', rel: 'noopener', text: tr.nct_id, style: 'color:var(--accent)'});
+                                trRow.children[0].appendChild(nctLink);
+                                if (tr.results_summary && tr.results_summary.length > 20) {
+                                    var sumRow = el('tr', {style: 'background:var(--bg)'});
+                                    var sumCell = el('td', {colSpan: 6, style: 'padding:6px 8px 6px 24px;font-size:12px;color:var(--text-secondary);line-height:1.6'});
+                                    sumCell.appendChild(el('span', {text: tr.results_summary}));
+                                    tbody.appendChild(trRow);
+                                    tbody.appendChild(sumRow);
+                                } else {
+                                    tbody.appendChild(trRow);
+                                }
+                            }
+                            tbl.appendChild(tbody);
+                            expandCell.appendChild(tbl);
+                        }
+                        expandRow.appendChild(expandCell);
+                        var mainRow = b.closest('tr');
+                        mainRow.parentNode.insertBefore(expandRow, mainRow.nextSibling);
+                        b.textContent = 'Close';
+                    }).catch(function() {
+                        b.textContent = 'Trials';
+                    });
+                });
+            })(d.id, expandId, btn);
+            btnTd.appendChild(btn);
+            body.appendChild(el('tr', null, [
+                td(d.name, '', 'font-weight:600;text-transform:capitalize'),
+                td(brandStr, 'mono'),
+                tdBadge((d.drug_type || '').replace(/_/g, ' '), 'badge-gray'),
+                tdBadge(d.approval_status, statusCls(d.approval_status)),
+                td(d.mechanism, 'desc'),
+                btnTd
+            ]));
+        }
+        if (filtered.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: 'No drugs match this filter.'})]));
+        }
+    }
+    function filterDrugs() {
+        var q = (document.getElementById('drugs-search').value || '').trim().toLowerCase();
+        var statusVal = document.getElementById('drugs-status-filter').value.toLowerCase();
+        var filtered = drugsAllData.filter(function(d) {
+            var matchSearch = !q || (d.name || '').toLowerCase().indexOf(q) !== -1 ||
+                (d.mechanism || '').toLowerCase().indexOf(q) !== -1 ||
+                (JSON.stringify(d.brand_names) || '').toLowerCase().indexOf(q) !== -1;
+            var matchStatus = !statusVal || (d.approval_status || '').toLowerCase() === statusVal;
+            return matchSearch && matchStatus;
+        });
+        renderDrugsTable(filtered);
+    }
     function loadDrugs() {
         if (loaded.drugs) return; loaded.drugs = true;
         fetch(API + '/drugs?limit=100').then(function(r) { return r.json(); }).then(function(data) {
@@ -3495,90 +3657,14 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var sa = (a.approval_status||'').toLowerCase(), sb = (b.approval_status||'').toLowerCase();
                 return (statusOrder[sa] !== undefined ? statusOrder[sa] : 9) - (statusOrder[sb] !== undefined ? statusOrder[sb] : 9);
             });
-            document.getElementById('drugs-count').textContent = data.length + ' therapies';
-            var body = clearEl('drugs-body');
-            for (var i = 0; i < data.length; i++) {
-                var d = data[i];
-                var brands = parseJ(d.brand_names);
-                var brandStr = (brands && brands.length) ? brands.join(', ') : '\u2014';
-                var expandId = 'drug-trials-' + i;
-                var btnTd = el('td');
-                var btn = el('button', {className: 'btn-expand', text: 'Trials'});
-                (function(drugId, eid, b) {
-                    btn.addEventListener('click', function() {
-                        var row = document.getElementById(eid);
-                        if (row) {
-                            row.classList.toggle('open');
-                            b.textContent = row.classList.contains('open') ? 'Close' : 'Trials';
-                            return;
-                        }
-                        b.textContent = 'Loading...';
-                        fetch(API + '/drugs/' + drugId + '/trials').then(function(r) { return r.json(); }).then(function(res) {
-                            var trials = res.trials || [];
-                            var expandRow = el('tr', {className: 'expand-row open', id: eid});
-                            var expandCell = el('td', {colSpan: 6, className: 'expand-cell'});
-                            if (trials.length === 0) {
-                                expandCell.appendChild(el('p', {text: 'No clinical trials found for this drug.', style: 'color:var(--muted);font-size:13px'}));
-                            } else {
-                                expandCell.appendChild(el('strong', {text: trials.length + ' related clinical trials', style: 'font-size:13px'}));
-                                var tbl = el('table', {style: 'width:100%;margin-top:8px;font-size:12px'});
-                                var thead = el('thead');
-                                thead.appendChild(el('tr', null, [
-                                    el('th', {text: 'NCT ID', style: 'padding:4px 8px;text-align:left'}),
-                                    el('th', {text: 'Title', style: 'padding:4px 8px;text-align:left'}),
-                                    el('th', {text: 'Phase', style: 'padding:4px 8px;text-align:left'}),
-                                    el('th', {text: 'Status', style: 'padding:4px 8px;text-align:left'}),
-                                    el('th', {text: 'N', style: 'padding:4px 8px;text-align:left'}),
-                                    el('th', {text: 'Dates', style: 'padding:4px 8px;text-align:left'})
-                                ]));
-                                tbl.appendChild(thead);
-                                var tbody = el('tbody');
-                                for (var j = 0; j < trials.length; j++) {
-                                    var tr = trials[j];
-                                    var url = tr.url || ('https://clinicaltrials.gov/study/' + tr.nct_id);
-                                    var trRow = el('tr', {style: 'border-top:1px solid var(--line)'}, [
-                                        el('td', {style: 'padding:4px 8px'}),
-                                        el('td', {text: truncate(tr.title, 80), style: 'padding:4px 8px'}),
-                                        el('td', null, [tr.phase ? el('span', {className: 'badge badge-blue', text: tr.phase}) : document.createTextNode('')]),
-                                        el('td', null, [el('span', {className: 'badge ' + trialCls(tr.status), text: tr.status})]),
-                                        el('td', {text: tr.enrollment ? String(tr.enrollment) : '\u2014', style: 'padding:4px 8px;font-family:monospace'}),
-                                        el('td', {text: (tr.start_date || '?') + ' \u2013 ' + (tr.completion_date || 'ongoing'), style: 'padding:4px 8px;font-size:11px;color:var(--text-secondary)'})
-                                    ]);
-                                    var nctLink = el('a', {href: url, target: '_blank', rel: 'noopener', text: tr.nct_id, style: 'color:var(--accent)'});
-                                    trRow.children[0].appendChild(nctLink);
-                                    // Add results summary if available
-                                    if (tr.results_summary && tr.results_summary.length > 20) {
-                                        var sumRow = el('tr', {style: 'background:var(--bg)'});
-                                        var sumCell = el('td', {colSpan: 6, style: 'padding:6px 8px 6px 24px;font-size:12px;color:var(--text-secondary);line-height:1.6'});
-                                        sumCell.appendChild(el('span', {text: tr.results_summary}));
-                                        tbody.appendChild(trRow);
-                                        tbody.appendChild(sumRow);
-                                    } else {
-                                        tbody.appendChild(trRow);
-                                    }
-                                }
-                                tbl.appendChild(tbody);
-                                expandCell.appendChild(tbl);
-                            }
-                            expandRow.appendChild(expandCell);
-                            var mainRow = b.closest('tr');
-                            mainRow.parentNode.insertBefore(expandRow, mainRow.nextSibling);
-                            b.textContent = 'Close';
-                        }).catch(function() {
-                            b.textContent = 'Trials';
-                        });
-                    });
-                })(d.id, expandId, btn);
-                btnTd.appendChild(btn);
-                body.appendChild(el('tr', null, [
-                    td(d.name, '', 'font-weight:600;text-transform:capitalize'),
-                    td(brandStr, 'mono'),
-                    tdBadge((d.drug_type || '').replace(/_/g, ' '), 'badge-gray'),
-                    tdBadge(d.approval_status, statusCls(d.approval_status)),
-                    td(d.mechanism, 'desc'),
-                    btnTd
-                ]));
-            }
+            drugsAllData = data;
+            renderDrugsTable(data);
+            // Debounced search
+            document.getElementById('drugs-search').addEventListener('keyup', function() {
+                if (drugsSearchTimer) clearTimeout(drugsSearchTimer);
+                drugsSearchTimer = setTimeout(function() { filterDrugs(); }, 250);
+            });
+            document.getElementById('drugs-status-filter').addEventListener('change', function() { filterDrugs(); });
         });
     }
 
@@ -4348,49 +4434,77 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+    var scoresAllTargets = [];
+    var scoresSearchTimer = null;
+    function renderScoreCards(filtered) {
+        var wrap = clearEl('scores-body');
+        if (filtered.length === 0) {
+            wrap.appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'No targets match this search.'})]));
+            return;
+        }
+        var dimLabels = {evidence_volume:'Evidence Volume',evidence_quality:'Evidence Quality',biological_coherence:'Bio Coherence',source_independence:'Source Independence',interventionability:'Interventionability',translational_readiness:'Translational',network_centrality:'Network Centrality'};
+        function dimColor(v) { return v >= 0.7 ? 'var(--green)' : v >= 0.4 ? 'var(--amber)' : 'var(--muted)'; }
+        function tierClass(c) { return c >= 0.7 ? 'tier-high' : c >= 0.4 ? 'tier-medium' : c >= 0.2 ? 'tier-low' : 'tier-excluded'; }
+        for (var i = 0; i < filtered.length; i++) {
+            var t = filtered[i];
+            var card = el('div', {className: 'score-card'});
+            var header = el('div', {className: 'score-header'});
+            var left = el('div');
+            left.appendChild(el('span', {className: 'score-symbol', text: '#' + (t._origRank || (i+1)) + ' '}));
+            left.appendChild(badgeEl(t.symbol, 'badge-blue'));
+            if (t.name) left.appendChild(el('span', {text: ' \u2014 ' + t.name, style: 'font-size:13px;color:var(--text-secondary);margin-left:8px'}));
+            header.appendChild(left);
+            header.appendChild(el('span', {className: 'score-composite ' + tierClass(t.composite_score), text: (t.composite_score * 100).toFixed(1) + '%'}));
+            card.appendChild(header);
+            if (t.metadata && t.metadata.claim_count !== undefined) {
+                card.appendChild(el('div', {style: 'margin-bottom:10px'}, [badgeEl(t.metadata.claim_count + ' claims', 'badge-gray'), el('span', {style: 'display:inline-block;width:6px'}), badgeEl(t.target_type || '', 'badge-gray')]));
+            }
+            var dims = el('div', {className: 'score-dims'});
+            var d = t.dimensions || {};
+            for (var dk in dimLabels) {
+                if (!dimLabels.hasOwnProperty(dk)) continue;
+                var val = d[dk] || 0;
+                var row = el('div', {className: 'dim-row'});
+                row.appendChild(el('span', {className: 'dim-label', text: dimLabels[dk]}));
+                var valWrap = el('span', {className: 'dim-val'});
+                var bar = el('span', {className: 'dim-bar'});
+                bar.appendChild(el('span', {className: 'dim-fill', style: 'width:' + (val*100) + '%;background:' + dimColor(val)}));
+                valWrap.appendChild(bar);
+                valWrap.appendChild(document.createTextNode((val*100).toFixed(0) + '%'));
+                row.appendChild(valWrap); dims.appendChild(row);
+            }
+            card.appendChild(dims); wrap.appendChild(card);
+        }
+    }
+    function filterScores() {
+        var q = (document.getElementById('scores-search').value || '').trim().toLowerCase();
+        if (!q) { renderScoreCards(scoresAllTargets); return; }
+        var filtered = scoresAllTargets.filter(function(t) {
+            return (t.symbol || '').toLowerCase().indexOf(q) !== -1 ||
+                   (t.name || '').toLowerCase().indexOf(q) !== -1;
+        });
+        renderScoreCards(filtered);
+    }
     function loadScores() {
         if (loaded.scores) return; loaded.scores = true;
         fetch(API + '/scores').then(function(r) { return r.json(); }).then(function(data) {
             var targets = data.targets || [];
             document.getElementById('scores-count').textContent = targets.length + ' targets scored';
-            var wrap = clearEl('scores-body');
             if (targets.length === 0) {
+                var wrap = clearEl('scores-body');
                 wrap.appendChild(el('div', {className: 'empty-state'}, [el('h3', {text: 'No scores computed yet'}), el('p', {text: 'Scores are computed on-the-fly from claims, evidence, drugs, and graph edges.'})]));
                 return;
             }
-            var dimLabels = {evidence_volume:'Evidence Volume',evidence_quality:'Evidence Quality',biological_coherence:'Bio Coherence',source_independence:'Source Independence',interventionability:'Interventionability',translational_readiness:'Translational',network_centrality:'Network Centrality'};
-            function dimColor(v) { return v >= 0.7 ? 'var(--green)' : v >= 0.4 ? 'var(--amber)' : 'var(--muted)'; }
-            function tierClass(c) { return c >= 0.7 ? 'tier-high' : c >= 0.4 ? 'tier-medium' : c >= 0.2 ? 'tier-low' : 'tier-excluded'; }
-            for (var i = 0; i < targets.length; i++) {
-                var t = targets[i];
-                var card = el('div', {className: 'score-card'});
-                var header = el('div', {className: 'score-header'});
-                var left = el('div');
-                left.appendChild(el('span', {className: 'score-symbol', text: '#' + (i+1) + ' '}));
-                left.appendChild(badgeEl(t.symbol, 'badge-blue'));
-                if (t.name) left.appendChild(el('span', {text: ' \u2014 ' + t.name, style: 'font-size:13px;color:var(--text-secondary);margin-left:8px'}));
-                header.appendChild(left);
-                header.appendChild(el('span', {className: 'score-composite ' + tierClass(t.composite_score), text: (t.composite_score * 100).toFixed(1) + '%'}));
-                card.appendChild(header);
-                if (t.metadata && t.metadata.claim_count !== undefined) {
-                    card.appendChild(el('div', {style: 'margin-bottom:10px'}, [badgeEl(t.metadata.claim_count + ' claims', 'badge-gray'), el('span', {style: 'display:inline-block;width:6px'}), badgeEl(t.target_type || '', 'badge-gray')]));
-                }
-                var dims = el('div', {className: 'score-dims'});
-                var d = t.dimensions || {};
-                for (var dk in dimLabels) {
-                    if (!dimLabels.hasOwnProperty(dk)) continue;
-                    var val = d[dk] || 0;
-                    var row = el('div', {className: 'dim-row'});
-                    row.appendChild(el('span', {className: 'dim-label', text: dimLabels[dk]}));
-                    var valWrap = el('span', {className: 'dim-val'});
-                    var bar = el('span', {className: 'dim-bar'});
-                    bar.appendChild(el('span', {className: 'dim-fill', style: 'width:' + (val*100) + '%;background:' + dimColor(val)}));
-                    valWrap.appendChild(bar);
-                    valWrap.appendChild(document.createTextNode((val*100).toFixed(0) + '%'));
-                    row.appendChild(valWrap); dims.appendChild(row);
-                }
-                card.appendChild(dims); wrap.appendChild(card);
-            }
+            // Store original rank
+            for (var r2 = 0; r2 < targets.length; r2++) { targets[r2]._origRank = r2 + 1; }
+            scoresAllTargets = targets;
+            document.getElementById('scores-filter-bar').style.display = 'block';
+            renderScoreCards(targets);
+            // Debounced search
+            document.getElementById('scores-search').addEventListener('keyup', function() {
+                if (scoresSearchTimer) clearTimeout(scoresSearchTimer);
+                scoresSearchTimer = setTimeout(function() { filterScores(); }, 250);
+            });
         }).catch(function() {
             var wrap = clearEl('scores-body');
             wrap.appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Scoring endpoint not available.'})]));
@@ -4508,6 +4622,55 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     // ============ Drug Screening ============
+    var screeningAllData = []; var screeningPage = 1;
+    var screeningSearchQuery = ''; var screeningTargetFilter = ''; var screeningScoreFilter = '';
+    var screeningSearchTimer = null;
+    function getFilteredScreening() {
+        var result = screeningAllData;
+        if (screeningSearchQuery) {
+            result = result.filter(function(c) {
+                var q = screeningSearchQuery;
+                return (c.chembl_id || '').toLowerCase().indexOf(q) !== -1 ||
+                       (c.smiles || '').toLowerCase().indexOf(q) !== -1 ||
+                       (c.target || '').toLowerCase().indexOf(q) !== -1;
+            });
+        }
+        if (screeningTargetFilter) {
+            result = result.filter(function(c) { return (c.target || '') === screeningTargetFilter; });
+        }
+        if (screeningScoreFilter) {
+            var minQed = parseFloat(screeningScoreFilter);
+            result = result.filter(function(c) { return (c.qed || 0) > minQed; });
+        }
+        return result;
+    }
+    function renderScreeningPage() {
+        var filtered = getFilteredScreening();
+        var countEl = document.getElementById('screening-filter-count');
+        if (countEl) countEl.textContent = filtered.length === screeningAllData.length ? '' : filtered.length + ' matching';
+        var body = clearEl('screening-body');
+        var start = (screeningPage - 1) * PER_PAGE;
+        var end = Math.min(start + PER_PAGE, filtered.length);
+        for (var i = start; i < end; i++) {
+            var c = filtered[i];
+            body.appendChild(el('tr', {className: 'compound-row'}, [
+                td(c.chembl_id, 'mono', 'font-weight:600'),
+                el('td', {className: 'smiles-cell', text: c.smiles, title: c.smiles}),
+                td(String(c.mw), 'mono'),
+                td(String(c.logp), 'mono'),
+                tdBadge(String(c.qed), c.qed >= 0.5 ? 'badge-green' : 'badge-gray'),
+                tdBadge(String(c.cns_mpo) + '/6', c.cns_mpo >= 4 ? 'badge-green' : c.cns_mpo >= 3 ? 'badge-amber' : 'badge-gray'),
+                tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
+                tdBadge(c.lipinski_pass ? 'PASS' : 'fail', c.lipinski_pass ? 'badge-green' : 'badge-red'),
+                tdBadge(c.pains_alert ? 'ALERT' : 'clean', c.pains_alert ? 'badge-red' : 'badge-green'),
+                td(c.best_pchembl ? String(c.best_pchembl) : '-', 'mono')
+            ]));
+        }
+        if (filtered.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 10, className: 'loading', text: 'No compounds match this filter.'})]));
+        }
+        renderPagination('screening-pagination', filtered.length, screeningPage, function(p) { screeningPage = p; renderScreeningPage(); });
+    }
     function loadScreening() {
         if (loaded.screening) return; loaded.screening = true;
         fetch(API + '/screen/compounds/results')
@@ -4531,24 +4694,40 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
                 summary.appendChild(card);
             }
-            // Top 10 compounds table
-            var body = clearEl('screening-body');
-            var top = data.top_10 || [];
-            for (var i = 0; i < top.length; i++) {
-                var c = top[i];
-                body.appendChild(el('tr', {className: 'compound-row'}, [
-                    td(c.chembl_id, 'mono', 'font-weight:600'),
-                    el('td', {className: 'smiles-cell', text: c.smiles, title: c.smiles}),
-                    td(String(c.mw), 'mono'),
-                    td(String(c.logp), 'mono'),
-                    tdBadge(String(c.qed), c.qed >= 0.5 ? 'badge-green' : 'badge-gray'),
-                    tdBadge(String(c.cns_mpo) + '/6', c.cns_mpo >= 4 ? 'badge-green' : c.cns_mpo >= 3 ? 'badge-amber' : 'badge-gray'),
-                    tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
-                    tdBadge(c.lipinski_pass ? 'PASS' : 'fail', c.lipinski_pass ? 'badge-green' : 'badge-red'),
-                    tdBadge(c.pains_alert ? 'ALERT' : 'clean', c.pains_alert ? 'badge-red' : 'badge-green'),
-                    td(c.best_pchembl ? String(c.best_pchembl) : '-', 'mono')
-                ]));
+            // Store all compounds and render with pagination
+            screeningAllData = data.all_compounds || data.top_50 || data.top_10 || [];
+            // Populate target dropdown
+            var targets = {};
+            for (var t = 0; t < screeningAllData.length; t++) {
+                var tgt = screeningAllData[t].target;
+                if (tgt) targets[tgt] = true;
             }
+            var targetSel = document.getElementById('screening-target-filter');
+            var targetKeys = Object.keys(targets).sort();
+            for (var tk = 0; tk < targetKeys.length; tk++) {
+                var opt = document.createElement('option');
+                opt.value = targetKeys[tk];
+                opt.textContent = targetKeys[tk];
+                targetSel.appendChild(opt);
+            }
+            // Show filter bar
+            document.getElementById('screening-filter-bar').style.display = 'flex';
+            renderScreeningPage();
+            // Debounced search
+            document.getElementById('screening-search').addEventListener('keyup', function() {
+                var self = this;
+                if (screeningSearchTimer) clearTimeout(screeningSearchTimer);
+                screeningSearchTimer = setTimeout(function() {
+                    screeningSearchQuery = self.value.trim().toLowerCase();
+                    screeningPage = 1; renderScreeningPage();
+                }, 250);
+            });
+            document.getElementById('screening-target-filter').addEventListener('change', function() {
+                screeningTargetFilter = this.value; screeningPage = 1; renderScreeningPage();
+            });
+            document.getElementById('screening-score-filter').addEventListener('change', function() {
+                screeningScoreFilter = this.value; screeningPage = 1; renderScreeningPage();
+            });
         }).catch(function(e) {
             clearEl('screening-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Screening not available: ' + e.message})]));
         });
@@ -4602,6 +4781,55 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     // ============ Top Drug Candidates (Integrated) ============
+    var candidatesAllData = []; var candidatesPage = 1;
+    var candidatesSearchQuery = ''; var candidatesTargetFilter = '';
+    var candidatesSearchTimer = null;
+    function getFilteredCandidates() {
+        var result = candidatesAllData;
+        if (candidatesSearchQuery) {
+            result = result.filter(function(c) {
+                var q = candidatesSearchQuery;
+                return (c.chembl_id || '').toLowerCase().indexOf(q) !== -1 ||
+                       (c.target || '').toLowerCase().indexOf(q) !== -1;
+            });
+        }
+        if (candidatesTargetFilter) {
+            result = result.filter(function(c) { return (c.target || '') === candidatesTargetFilter; });
+        }
+        return result;
+    }
+    function renderCandidatesPage() {
+        var filtered = getFilteredCandidates();
+        var countEl = document.getElementById('candidates-filter-count');
+        if (countEl) countEl.textContent = filtered.length === candidatesAllData.length ? '' : filtered.length + ' matching';
+        var body = clearEl('candidates-body');
+        var start = (candidatesPage - 1) * PER_PAGE;
+        var end = Math.min(start + PER_PAGE, filtered.length);
+        for (var i = start; i < end; i++) {
+            var c = filtered[i];
+            var scoreClass = c.integrated_score >= 0.6 ? 'badge-green' : c.integrated_score >= 0.4 ? 'badge-amber' : 'badge-gray';
+            var tierClass = c.tier === 'A' ? 'badge-green' : c.tier === 'B' ? 'badge-amber' : 'badge-gray';
+            var admetClass = (c.admet_score || 0) >= 0.6 ? 'badge-green' : (c.admet_score || 0) >= 0.4 ? 'badge-amber' : 'badge-red';
+            var flagsText = (c.flags || []).join(', ') || 'none';
+            var flagsClass = (c.flags || []).length > 0 ? 'badge-red' : 'badge-green';
+            body.appendChild(el('tr', {className: 'compound-row'}, [
+                td(String(c.rank || (i + 1)), 'mono', 'font-weight:600;text-align:center'),
+                td(c.chembl_id, 'mono', 'font-weight:600'),
+                td(c.target || '-'),
+                tdBadge(String(c.integrated_score), scoreClass),
+                tdBadge(c.tier, tierClass),
+                td(String(c.qed || '-'), 'mono'),
+                tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
+                tdBadge(c.admet_score ? String(c.admet_score) : '-', admetClass),
+                td(c.pchembl ? String(c.pchembl) : '-', 'mono'),
+                tdBadge(flagsText, flagsClass)
+            ]));
+        }
+        if (filtered.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 10, className: 'loading', text: 'No candidates match this filter.'})]));
+        }
+        renderPagination('candidates-pagination', filtered.length, candidatesPage, function(p) { candidatesPage = p; renderCandidatesPage(); });
+    }
     function loadCandidates() {
         if (loaded.candidates) return; loaded.candidates = true;
         fetch(API + '/screen/candidates?top_n=50')
@@ -4631,29 +4859,36 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
                 summary.appendChild(card);
             }
-            // Candidates table
-            var body = clearEl('candidates-body');
-            var candidates = data.candidates || [];
-            for (var i = 0; i < candidates.length; i++) {
-                var c = candidates[i];
-                var scoreClass = c.integrated_score >= 0.6 ? 'badge-green' : c.integrated_score >= 0.4 ? 'badge-amber' : 'badge-gray';
-                var tierClass = c.tier === 'A' ? 'badge-green' : c.tier === 'B' ? 'badge-amber' : 'badge-gray';
-                var admetClass = (c.admet_score || 0) >= 0.6 ? 'badge-green' : (c.admet_score || 0) >= 0.4 ? 'badge-amber' : 'badge-red';
-                var flagsText = (c.flags || []).join(', ') || 'none';
-                var flagsClass = (c.flags || []).length > 0 ? 'badge-red' : 'badge-green';
-                body.appendChild(el('tr', {className: 'compound-row'}, [
-                    td(String(c.rank), 'mono', 'font-weight:600;text-align:center'),
-                    td(c.chembl_id, 'mono', 'font-weight:600'),
-                    td(c.target || '-'),
-                    tdBadge(String(c.integrated_score), scoreClass),
-                    tdBadge(c.tier, tierClass),
-                    td(String(c.qed || '-'), 'mono'),
-                    tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
-                    tdBadge(c.admet_score ? String(c.admet_score) : '-', admetClass),
-                    td(c.pchembl ? String(c.pchembl) : '-', 'mono'),
-                    tdBadge(flagsText, flagsClass)
-                ]));
+            // Store candidates and setup filters
+            candidatesAllData = data.candidates || [];
+            // Populate target dropdown
+            var cTargets = {};
+            for (var ct = 0; ct < candidatesAllData.length; ct++) {
+                var ctgt = candidatesAllData[ct].target;
+                if (ctgt) cTargets[ctgt] = true;
             }
+            var cTargetSel = document.getElementById('candidates-target-filter');
+            var cTargetKeys = Object.keys(cTargets).sort();
+            for (var ck = 0; ck < cTargetKeys.length; ck++) {
+                var copt = document.createElement('option');
+                copt.value = cTargetKeys[ck];
+                copt.textContent = cTargetKeys[ck];
+                cTargetSel.appendChild(copt);
+            }
+            document.getElementById('candidates-filter-bar').style.display = 'flex';
+            renderCandidatesPage();
+            // Debounced search
+            document.getElementById('candidates-search').addEventListener('keyup', function() {
+                var self = this;
+                if (candidatesSearchTimer) clearTimeout(candidatesSearchTimer);
+                candidatesSearchTimer = setTimeout(function() {
+                    candidatesSearchQuery = self.value.trim().toLowerCase();
+                    candidatesPage = 1; renderCandidatesPage();
+                }, 250);
+            });
+            document.getElementById('candidates-target-filter').addEventListener('change', function() {
+                candidatesTargetFilter = this.value; candidatesPage = 1; renderCandidatesPage();
+            });
         }).catch(function(e) {
             clearEl('candidates-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Candidates not available: ' + e.message})]));
         });
@@ -7340,37 +7575,83 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     // ============ Synergy Predictions ============
+    var synergyAllData = [];
+    var synergySearchTimer = null;
+    function renderSynergyTable(items) {
+        var body = clearEl('synergy-body');
+        if (items.length === 0) {
+            body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No synergy predictions match this filter.'})]));
+            return;
+        }
+        var countEl = document.getElementById('synergy-filter-count');
+        if (countEl) countEl.textContent = items.length === synergyAllData.length ? '' : items.length + ' matching';
+        for (var i = 0; i < items.length; i++) {
+            var s = items[i];
+            var synergyScore = s.synergy_score != null ? Number(s.synergy_score).toFixed(3) : (s.score != null ? Number(s.score).toFixed(3) : '-');
+            var docking = s.docking != null ? Number(s.docking).toFixed(2) : (s.docking_score != null ? Number(s.docking_score).toFixed(2) : '-');
+            var literature = s.literature != null ? Number(s.literature).toFixed(2) : (s.literature_score != null ? Number(s.literature_score).toFixed(2) : '-');
+            var pathway = s.pathway != null ? Number(s.pathway).toFixed(2) : (s.pathway_score != null ? Number(s.pathway_score).toFixed(2) : '-');
+            var claims = String(s.claims || s.claim_count || 0);
+            var scoreNum = Number(s.synergy_score || s.score || 0);
+            var scoreCls = scoreNum > 0.5 ? 'badge-green' : scoreNum > 0.3 ? 'badge-amber' : 'badge-gray';
+            body.appendChild(el('tr', null, [
+                td(s.drug || s.drug_name || s.compound || '', '', 'font-weight:600'),
+                td(s.target || s.target_symbol || '', '', 'font-weight:600'),
+                tdBadge(synergyScore, scoreCls),
+                td(docking, 'mono'),
+                td(literature, 'mono'),
+                td(pathway, 'mono'),
+                td(claims, 'mono')
+            ]));
+        }
+    }
+    function filterSynergy() {
+        var q = (document.getElementById('synergy-search').value || '').trim().toLowerCase();
+        var sortVal = document.getElementById('synergy-sort').value;
+        var filtered = synergyAllData;
+        if (q) {
+            filtered = filtered.filter(function(s) {
+                var drug = (s.drug || s.drug_name || s.compound || '').toLowerCase();
+                var target = (s.target || s.target_symbol || '').toLowerCase();
+                return drug.indexOf(q) !== -1 || target.indexOf(q) !== -1;
+            });
+        }
+        // Sort
+        filtered = filtered.slice(); // copy before sorting
+        if (sortVal === 'claims') {
+            filtered.sort(function(a, b) { return (b.claims || b.claim_count || 0) - (a.claims || a.claim_count || 0); });
+        } else if (sortVal === 'alpha') {
+            filtered.sort(function(a, b) {
+                var da = (a.drug || a.drug_name || a.compound || '').toLowerCase();
+                var db = (b.drug || b.drug_name || b.compound || '').toLowerCase();
+                return da < db ? -1 : da > db ? 1 : 0;
+            });
+        } else {
+            filtered.sort(function(a, b) { return (b.synergy_score || b.score || 0) - (a.synergy_score || a.score || 0); });
+        }
+        renderSynergyTable(filtered);
+    }
     function loadSynergy() {
         if (loaded.synergy) return; loaded.synergy = true;
 
         fetch(API + '/nim-batch/synergy?limit=30').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.predictions || data.results || data;
             if (!Array.isArray(items)) items = [];
-            var body = clearEl('synergy-body');
             if (items.length === 0) {
+                var body = clearEl('synergy-body');
                 body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No synergy predictions available yet. Predictions will appear as the analysis engine processes drug-target combinations.'})]));
                 return;
             }
             setText('synergy-count', items.length + ' predictions');
-            for (var i = 0; i < items.length; i++) {
-                var s = items[i];
-                var synergyScore = s.synergy_score != null ? Number(s.synergy_score).toFixed(3) : (s.score != null ? Number(s.score).toFixed(3) : '-');
-                var docking = s.docking != null ? Number(s.docking).toFixed(2) : (s.docking_score != null ? Number(s.docking_score).toFixed(2) : '-');
-                var literature = s.literature != null ? Number(s.literature).toFixed(2) : (s.literature_score != null ? Number(s.literature_score).toFixed(2) : '-');
-                var pathway = s.pathway != null ? Number(s.pathway).toFixed(2) : (s.pathway_score != null ? Number(s.pathway_score).toFixed(2) : '-');
-                var claims = String(s.claims || s.claim_count || 0);
-                var scoreNum = Number(s.synergy_score || s.score || 0);
-                var scoreCls = scoreNum > 0.5 ? 'badge-green' : scoreNum > 0.3 ? 'badge-amber' : 'badge-gray';
-                body.appendChild(el('tr', null, [
-                    td(s.drug || s.drug_name || s.compound || '', '', 'font-weight:600'),
-                    td(s.target || s.target_symbol || '', '', 'font-weight:600'),
-                    tdBadge(synergyScore, scoreCls),
-                    td(docking, 'mono'),
-                    td(literature, 'mono'),
-                    td(pathway, 'mono'),
-                    td(claims, 'mono')
-                ]));
-            }
+            synergyAllData = items;
+            document.getElementById('synergy-filter-bar').style.display = 'flex';
+            renderSynergyTable(items);
+            // Debounced search
+            document.getElementById('synergy-search').addEventListener('keyup', function() {
+                if (synergySearchTimer) clearTimeout(synergySearchTimer);
+                synergySearchTimer = setTimeout(function() { filterSynergy(); }, 250);
+            });
+            document.getElementById('synergy-sort').addEventListener('change', function() { filterSynergy(); });
         }).catch(function(e) {
             clearEl('synergy-body').appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'Synergy predictions not available: ' + e.message})]));
         });
