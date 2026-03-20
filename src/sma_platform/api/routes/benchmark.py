@@ -5,6 +5,8 @@ Provides endpoints to evaluate claim extraction quality:
 - GET  /benchmark/gold-standard    — sample claims for manual review
 - POST /benchmark/evaluate         — submit a gold-standard evaluation (admin)
 - GET  /benchmark/reproducibility  — re-extract and measure consistency
+- GET  /benchmark/claim-quality    — automated multi-signal claim quality evaluation
+- GET  /benchmark/claim-quality/by-type — quality breakdown by claim_type
 """
 
 from __future__ import annotations
@@ -12,6 +14,10 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from ...reasoning.claim_quality import (
+    claim_quality_by_type,
+    evaluate_claim_quality,
+)
 from ...reasoning.extraction_benchmark import (
     build_gold_standard,
     evaluate_extraction,
@@ -104,3 +110,45 @@ async def benchmark_reproducibility(
     so it may take a few minutes to complete for larger sample sizes.
     """
     return await test_reproducibility(sample_size=sample_size)
+
+
+@router.get("/benchmark/claim-quality")
+async def benchmark_claim_quality(
+    sample_size: int = Query(
+        default=100,
+        ge=10,
+        le=1000,
+        description="Number of claims to sample for automated quality evaluation",
+    ),
+):
+    """Auto-evaluate claim extraction quality using multiple signals.
+
+    Scores claims on 6 dimensions without manual labeling:
+    - **specificity**: predicate length vs ideal range
+    - **entities**: presence of gene names, measurements, p-values
+    - **type_consistency**: claim_type keywords match predicate text
+    - **evidence_strength**: excerpt, method, p-value, effect size present
+    - **source_attribution**: PMID, journal, entity types present
+    - **replication**: claim backed by multiple independent sources
+
+    Returns distribution, per-dimension averages, common issues, and
+    worst/best scoring samples for review.
+    """
+    return await evaluate_claim_quality(limit=sample_size)
+
+
+@router.get("/benchmark/claim-quality/by-type")
+async def benchmark_claim_quality_by_type(
+    sample_size: int = Query(
+        default=500,
+        ge=10,
+        le=5000,
+        description="Number of claims to sample for per-type quality breakdown",
+    ),
+):
+    """Break down automated claim quality scores by claim_type.
+
+    Returns per-type average quality, count, min/max scores, and
+    top issues for each claim type in the database.
+    """
+    return await claim_quality_by_type(limit=sample_size)

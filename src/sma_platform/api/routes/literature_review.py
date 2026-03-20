@@ -28,6 +28,38 @@ async def list_reviewable_targets():
     }
 
 
+@router.get("/citation-summary/{target_symbol}")
+async def citation_summary(target_symbol: str):
+    """Generate a citation-grade evidence summary for a target.
+
+    Returns publication-ready text with PMID citations (Vancouver style)
+    suitable for paper introductions, review articles, or grant backgrounds.
+
+    The response includes:
+    - Narrative text with inline [1], [2] citations
+    - Numbered reference list (Vancouver format)
+    - Claim evidence breakdown per type with citation refs
+    - Convergence score context
+    - Suggested citation for the platform
+    """
+    from ...reasoning.literature_reviewer import generate_citation_summary
+
+    try:
+        result = await generate_citation_summary(target_symbol)
+    except Exception as e:
+        logger.error(
+            "Citation summary failed for %s: %s", target_symbol, e, exc_info=True
+        )
+        raise HTTPException(500, f"Citation summary generation failed: {str(e)}")
+
+    if result.get("status") == "not_found":
+        raise HTTPException(
+            404, result.get("error", f"Target '{target_symbol}' not found")
+        )
+
+    return result
+
+
 @router.get("/{target_symbol}")
 async def get_target_review(
     target_symbol: str,

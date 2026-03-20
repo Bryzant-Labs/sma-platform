@@ -48,17 +48,17 @@ Prioritize experiments, not just ideas.
 
 | Deliverable | Status | Why It Matters |
 |------------|--------|----------------|
-| Organoid/NMJ validation scorecard | PLANNED | Which predictions are testable in organoids? |
+| Organoid/NMJ validation scorecard | DONE | Which predictions are testable in organoids? |
 | Expected Value of Experiment score | DONE | Cost/time/likelihood ranking per hypothesis |
 | Assay-ready output format | DONE | 3 hypotheses with assay + model + readouts + go/no-go |
-| Biomarker atlas (molecular/imaging/fluid) | PLANNED | Treatment response stratification |
-| Compound/ASO/CRISPR comparison engine | PARTIAL | Dual-target + CRISPR + AAV modules exist |
+| Biomarker atlas (molecular/imaging/fluid) | DONE | Treatment response stratification |
+| Compound/ASO/CRISPR comparison engine | DONE | Dual-target + CRISPR + AAV modules exist |
 | Therapy combination ranking | DONE | Digital twin has basic combo scoring |
 | **Generative Virtual Screening Blueprint** | IN PROGRESS | GTC 2026 — NVIDIA open-source pipeline: GenMol → Filter → DiffDock → Rank |
 | **nvMolKit GPU cheminformatics** | PLANNED | GTC 2026 — faster Lipinski/BBB/PAINS filtering |
 | **AlphaFold DB protein complexes** | IN PROGRESS | GTC 2026 — 1.7M new complexes for SMA structural biology |
 | **Agentic Drug Discovery** | PLANNED | GTC 2026 — autonomous BioNeMo NIM orchestration |
-| IP/freedom-to-operate signal | PLANNED | Patent landscape integration |
+| IP/freedom-to-operate signal | DONE | Patent landscape integration |
 
 ### Track 4: Researcher Distribution (ACCESS + TRUST)
 Make the platform usable AND credible.
@@ -68,7 +68,7 @@ Make the platform usable AND credible.
 | MCP Server (29 tools) | DONE | Natural language query access |
 | Reproducible benchmarks | PLANNED | Others can verify our claims |
 | Scientific Advisory Pack (5 pages) | DONE | What it does, where reliable, where uncertain |
-| Grant-ready hypothesis exports | PARTIAL | Translation module has grant templates |
+| Grant-ready hypothesis exports | DONE | Translation module has grant templates |
 | Citation-grade evidence summaries | PARTIAL | Literature review module built |
 | External lab collaboration hooks | PLANNED | API for result sharing |
 | DREAM/CACHE challenge participation | PLANNED | Industry-standard validation |

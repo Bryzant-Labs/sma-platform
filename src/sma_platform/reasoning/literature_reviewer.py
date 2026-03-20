@@ -625,3 +625,297 @@ async def list_reviewable_targets() -> list[dict]:
     # Re-sort by total claims
     results.sort(key=lambda x: x["claim_count"], reverse=True)
     return results
+
+
+# ---------------------------------------------------------------------------
+# Citation-Grade Evidence Summary
+# ---------------------------------------------------------------------------
+
+def _format_vancouver_reference(source: dict, ref_num: int) -> str:
+    """Format a source as a Vancouver-style numbered reference.
+
+    Example output:
+      1. Wirth B, et al. Spinal Muscular Atrophy: Disease Mechanisms and Therapy.
+         Hum Mol Genet. 2024. PMID: 38401234. doi:10.1093/hmg/ddae001
+    """
+    parts: list[str] = [f"{ref_num}."]
+
+    # Authors — first author + "et al." if multiple
+    authors = source.get("authors")
+    if authors and isinstance(authors, list) and len(authors) > 0:
+        first_author = authors[0]
+        if len(authors) > 1:
+            parts.append(f"{first_author}, et al.")
+        else:
+            parts.append(f"{first_author}.")
+    else:
+        parts.append("[Authors unknown].")
+
+    # Title
+    title = source.get("title") or "Untitled"
+    if not title.endswith("."):
+        title += "."
+    parts.append(title)
+
+    # Journal + year
+    journal = source.get("journal")
+    pub_date = source.get("pub_date")
+    year = pub_date[:4] if pub_date and len(pub_date) >= 4 else None
+    if journal:
+        journal_part = journal
+        if year:
+            journal_part += f". {year}"
+        parts.append(journal_part + ".")
+    elif year:
+        parts.append(f"{year}.")
+
+    # PMID
+    pmid = source.get("pmid")
+    if pmid:
+        parts.append(f"PMID: {pmid}.")
+
+    # DOI
+    doi = source.get("doi")
+    if doi:
+        parts.append(f"doi:{doi}")
+
+    return " ".join(parts)
+
+
+def _compose_narrative(
+    target: dict,
+    claims: list[dict],
+    grouped: dict[str, list[dict]],
+    sources: list[dict],
+    pmid_to_refnum: dict[str, int],
+    convergence_score: float | None,
+) -> str:
+    """Compose a narrative evidence paragraph with inline Vancouver citations.
+
+    Builds prose from the data — no LLM required. Sentences reference PMIDs
+    as [1], [2], etc. following the numbered reference list.
+    """
+    symbol = target["symbol"]
+    name = target.get("name") or symbol
+    num_claims = len(claims)
+    num_sources = len(sources)
+
+    # Opening sentence
+    sentences: list[str] = []
+    desc = target.get("description")
+    if desc:
+        sentences.append(desc.rstrip(".") + ".")
+
+    sentences.append(
+        f"{name} ({symbol}) has been investigated in {num_sources} "
+        f"publication{'s' if num_sources != 1 else ''}, yielding {num_claims} "
+        f"evidence claim{'s' if num_claims != 1 else ''} across "
+        f"{len(grouped)} evidence type{'s' if len(grouped) != 1 else ''}."
+    )
+
+    # Convergence context
+    if convergence_score is not None:
+        if convergence_score >= 0.75:
+            conv_word = "strong"
+        elif convergence_score >= 0.55:
+            conv_word = "moderate"
+        elif convergence_score >= 0.35:
+            conv_word = "emerging"
+        else:
+            conv_word = "limited"
+        sentences.append(
+            f"Evidence convergence is {conv_word} "
+            f"(score: {convergence_score:.2f}/1.00)."
+        )
+
+    # Per-type summaries with inline citations
+    type_order = sorted(grouped.items(), key=lambda x: len(x[1]), reverse=True)
+    for ct, ct_claims in type_order[:5]:  # Top 5 evidence types
+        label = CLAIM_TYPE_LABELS.get(ct, ct.replace("_", " ").title())
+        count = len(ct_claims)
+
+        # Collect inline citation numbers for this type
+        cite_nums: list[int] = []
+        seen_pmids: set[str] = set()
+        for c in ct_claims:
+            pmid = c.get("pmid")
+            if pmid and pmid not in seen_pmids and pmid in pmid_to_refnum:
+                seen_pmids.add(pmid)
+                cite_nums.append(pmid_to_refnum[pmid])
+        cite_nums.sort()
+
+        # Pick the highest-confidence predicate as representative
+        best = max(ct_claims, key=lambda c: c.get("confidence") or 0)
+        predicate = best.get("predicate", "")
+
+        cite_str = ""
+        if cite_nums:
+            cite_str = " [" + ",".join(str(n) for n in cite_nums[:5]) + "]"
+
+        if predicate:
+            sentences.append(
+                f"{label} evidence ({count} claim{'s' if count != 1 else ''}): "
+                f"{predicate}{cite_str}."
+            )
+        else:
+            sentences.append(
+                f"{label}: {count} claim{'s' if count != 1 else ''}{cite_str}."
+            )
+
+    return " ".join(sentences)
+
+
+async def generate_citation_summary(target_symbol: str) -> dict:
+    """Generate a citation-grade evidence summary for a target.
+
+    Returns publication-ready text with PMID citations (Vancouver style)
+    suitable for paper introductions, review articles, or grant backgrounds.
+
+    This is a pure data-driven function — no LLM required.
+
+    Args:
+        target_symbol: Gene/protein symbol (e.g., "SMN1", "PLS3")
+
+    Returns:
+        Dict with narrative text, numbered reference list, claim breakdown,
+        convergence context, and suggested platform citation.
+    """
+    target = await _get_target_by_symbol(target_symbol)
+    if not target:
+        return {"error": f"Target '{target_symbol}' not found", "status": "not_found"}
+
+    target_id = str(target["id"])
+    claims = await _get_claims_for_target(target_id, target["symbol"])
+
+    if not claims:
+        return {
+            "target": target["symbol"],
+            "error": "No claims found for this target",
+            "status": "no_data",
+        }
+
+    # Sort by confidence descending
+    claims.sort(key=lambda c: c.get("confidence") or 0, reverse=True)
+
+    grouped = _group_claims_by_type(claims)
+    sources = _get_unique_sources(claims)
+
+    # Build PMID → reference number mapping (Vancouver style)
+    # Only include sources with PMIDs; order by first appearance in top claims
+    pmid_order: list[str] = []
+    seen_pmids: set[str] = set()
+    for c in claims:
+        pmid = c.get("pmid")
+        if pmid and pmid not in seen_pmids:
+            seen_pmids.add(pmid)
+            pmid_order.append(pmid)
+
+    pmid_to_refnum: dict[str, int] = {
+        pmid: i + 1 for i, pmid in enumerate(pmid_order)
+    }
+
+    # Build source lookup for reference formatting
+    source_by_pmid: dict[str, dict] = {}
+    for s in sources:
+        if s.get("pmid"):
+            source_by_pmid[s["pmid"]] = s
+
+    # Numbered reference list (Vancouver)
+    reference_list: list[dict] = []
+    for pmid in pmid_order:
+        ref_num = pmid_to_refnum[pmid]
+        src = source_by_pmid.get(pmid, {"pmid": pmid, "title": "Unknown"})
+        formatted = _format_vancouver_reference(src, ref_num)
+        reference_list.append({
+            "ref_number": ref_num,
+            "pmid": pmid,
+            "formatted": formatted,
+            "title": src.get("title"),
+            "journal": src.get("journal"),
+            "year": src["pub_date"][:4] if src.get("pub_date") and len(src["pub_date"]) >= 4 else None,
+            "doi": src.get("doi"),
+        })
+
+    # Get convergence score if available
+    convergence_score: float | None = None
+    try:
+        conv_row = await fetchrow(
+            "SELECT composite_score FROM convergence_scores WHERE target_id = $1 "
+            "ORDER BY computed_at DESC LIMIT 1",
+            target["id"],
+        )
+        if conv_row:
+            convergence_score = float(conv_row["composite_score"])
+    except Exception:
+        pass  # convergence_scores table may not exist yet
+
+    # Compose narrative
+    narrative = _compose_narrative(
+        target, claims, grouped, sources, pmid_to_refnum, convergence_score,
+    )
+
+    # Claim evidence breakdown
+    claim_breakdown: list[dict] = []
+    for ct, ct_claims in sorted(grouped.items(), key=lambda x: len(x[1]), reverse=True):
+        label = CLAIM_TYPE_LABELS.get(ct, ct.replace("_", " ").title())
+        ct_avg_conf = sum(c.get("confidence", 0.5) for c in ct_claims) / max(len(ct_claims), 1)
+
+        # Unique PMIDs for this type
+        ct_pmids = list({
+            c["pmid"] for c in ct_claims if c.get("pmid")
+        })
+        ct_refs = sorted(pmid_to_refnum[p] for p in ct_pmids if p in pmid_to_refnum)
+
+        top_predicates = []
+        seen_preds: set[str] = set()
+        for c in sorted(ct_claims, key=lambda x: x.get("confidence") or 0, reverse=True)[:5]:
+            pred = c.get("predicate", "")
+            if pred and pred not in seen_preds:
+                seen_preds.add(pred)
+                entry: dict[str, Any] = {
+                    "predicate": pred,
+                    "confidence": round(c.get("confidence") or 0, 3),
+                }
+                if c.get("pmid"):
+                    entry["citation"] = f"[{pmid_to_refnum[c['pmid']]}]"
+                    entry["pmid"] = c["pmid"]
+                top_predicates.append(entry)
+
+        claim_breakdown.append({
+            "evidence_type": label,
+            "claim_count": len(ct_claims),
+            "avg_confidence": round(ct_avg_conf, 3),
+            "citation_refs": [f"[{n}]" for n in ct_refs[:10]],
+            "top_claims": top_predicates,
+        })
+
+    # Suggested platform citation
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    platform_citation = (
+        f"SMA Research Platform. Evidence summary for {target['symbol']}. "
+        f"Generated {today}. https://sma-research.com/review/{target['symbol']}"
+    )
+
+    # Average confidence across all claims
+    avg_confidence = sum(c.get("confidence", 0.5) for c in claims) / max(len(claims), 1)
+
+    return {
+        "target": target["symbol"],
+        "target_name": target.get("name"),
+        "target_type": target.get("target_type"),
+        "status": "success",
+        "narrative": narrative,
+        "reference_list": reference_list,
+        "claim_breakdown": claim_breakdown,
+        "convergence_score": convergence_score,
+        "suggested_citation": platform_citation,
+        "metadata": {
+            "total_claims": len(claims),
+            "total_references": len(reference_list),
+            "total_sources": len(sources),
+            "evidence_types": len(grouped),
+            "avg_confidence": round(avg_confidence, 3),
+            "citation_style": "Vancouver",
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        },
+    }
