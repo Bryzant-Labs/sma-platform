@@ -730,103 +730,26 @@ async def get_target_evidence_summary(target_symbol: str) -> dict[str, Any]:
 
 
 @mcp.tool()
-async def compare_targets(symbols: list[str]) -> dict[str, Any]:
-    """Compare multiple SMA targets side-by-side.
+async def compare_targets(symbol_a: str, symbol_b: str) -> dict[str, Any]:
+    """Compare two SMA targets side-by-side across all dimensions.
 
-    Fetches evidence statistics for each target and returns a structured
-    comparison table.  Useful for prioritising targets for experimental
-    validation or understanding the relative maturity of the evidence base.
+    Uses the dedicated comparison endpoint to compare convergence scores,
+    claims, screening hits, species conservation, and hypotheses for two
+    targets.  Useful for prioritising which target to pursue experimentally
+    or understanding relative evidence maturity.
 
     Args:
-        symbols: List of HGNC target symbols to compare, e.g.
-                 ["SMN1", "SMN2", "STMN2", "PLS3"].
-                 Between 2 and 10 symbols recommended.
+        symbol_a: HGNC symbol of the first target (e.g. "SMN2", "STMN2").
+        symbol_b: HGNC symbol of the second target (e.g. "PLS3", "NCALD").
 
     Returns:
-        Dict containing:
-          - symbols: the requested symbols
-          - comparison: list of per-target dicts, each with symbol, found (bool),
-            target_type, claim_count, hypothesis_count, validated_hypotheses,
-            trial_count, drug_count, and evidence_strength_score.
-          - ranking: symbols ordered by evidence_strength_score descending.
+        Dict containing side-by-side comparison across convergence, claims,
+        screening hits, conservation, and hypotheses for both targets.
     """
-    if not symbols:
-        return {"error": "Provide at least one symbol to compare."}
-
-    comparison = []
-    for symbol in symbols:
-        target = await _get(f"/targets/symbol/{symbol}")
-        if _is_error(target):
-            comparison.append({"symbol": symbol, "found": False})
-            continue
-
-        claims_result = await _get(
-            "/claims", params={"target_symbol": symbol, "limit": 500}
-        )
-        claims = (
-            claims_result if isinstance(claims_result, list)
-            else claims_result.get("items", [])
-            if not _is_error(claims_result)
-            else []
-        )
-
-        hypotheses_result = await _get("/hypotheses")
-        all_hyp = (
-            hypotheses_result if isinstance(hypotheses_result, list)
-            else hypotheses_result.get("items", [])
-            if not _is_error(hypotheses_result)
-            else []
-        )
-        target_id = target.get("id")
-        related_hyp = [
-            h for h in all_hyp
-            if target_id and target_id in (h.get("target_ids") or [])
-        ]
-        validated = sum(1 for h in related_hyp if h.get("status") == "validated")
-
-        trials_result = await _get("/trials", params={"q": symbol, "limit": 50})
-        trials = (
-            trials_result if isinstance(trials_result, list)
-            else trials_result.get("items", [])
-            if not _is_error(trials_result)
-            else []
-        )
-
-        drugs_result = await _get("/drugs", params={"q": symbol})
-        drugs = (
-            drugs_result if isinstance(drugs_result, list)
-            else drugs_result.get("items", [])
-            if not _is_error(drugs_result)
-            else []
-        )
-
-        score = min(
-            100,
-            len(claims) * 2 + validated * 10 + len(trials) * 5 + len(drugs) * 8,
-        )
-
-        comparison.append({
-            "symbol": symbol,
-            "found": True,
-            "target_type": target.get("target_type"),
-            "claim_count": len(claims),
-            "hypothesis_count": len(related_hyp),
-            "validated_hypotheses": validated,
-            "trial_count": len(trials),
-            "drug_count": len(drugs),
-            "evidence_strength_score": score,
-        })
-
-    ranking = [
-        c["symbol"]
-        for c in sorted(
-            [c for c in comparison if c.get("found")],
-            key=lambda c: c.get("evidence_strength_score", 0),
-            reverse=True,
-        )
-    ]
-
-    return {"symbols": symbols, "comparison": comparison, "ranking": ranking}
+    result = await _get("/compare/targets", params={"a": symbol_a, "b": symbol_b})
+    if _is_error(result):
+        return result
+    return result
 
 
 @mcp.tool()
@@ -1309,6 +1232,156 @@ async def list_binder_targets() -> list[dict[str, Any]]:
         binding_site_residues, proteina_ready (bool), and notes.
     """
     result = await _get("/structures/binder-targets")
+    if _is_error(result):
+        return [result]  # type: ignore[list-item]
+    return result if isinstance(result, list) else result.get("items", result)
+
+
+# ---------------------------------------------------------------------------
+# Target Report, Advisory, Analytics & Experiment tools
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+async def get_target_report(symbol: str) -> dict[str, Any]:
+    """Get comprehensive report card for any SMA target.
+
+    Returns a single-call overview combining convergence score, top claims,
+    screening hits, species conservation, hypotheses, AlphaFold structure
+    availability, and an assay suggestion.  This is the go-to tool for
+    quickly understanding the full evidence landscape for a target.
+
+    Args:
+        symbol: HGNC symbol of the target (e.g. "SMN2", "STMN2", "PLS3",
+                "NCALD", "CORO1C", "UBA1").
+
+    Returns:
+        Dict containing convergence_score, top_claims, screening_hits,
+        conservation, hypotheses, alphafold_structure, assay_suggestion,
+        and overall_summary.
+    """
+    result = await _get(f"/report/target/{symbol}")
+    if _is_error(result):
+        return result
+    return result
+
+
+@mcp.tool()
+async def get_advisory_pack() -> dict[str, Any]:
+    """Generate a comprehensive Scientific Advisory Pack.
+
+    Produces a 5-section document suitable for sharing with external
+    collaborators such as Scientific Advisory Board members, grant reviewers,
+    or potential research partners.  Sections cover: platform overview, top
+    targets with convergence scores, computational screening highlights,
+    hypothesis landscape, and strengths/limitations assessment.
+
+    Returns:
+        Dict with keys: overview, top_targets, screening_hits, hypotheses,
+        strengths_and_limitations, generated_at.
+    """
+    result = await _get("/advisory/pack")
+    if _is_error(result):
+        return result
+    return result
+
+
+@mcp.tool()
+async def get_experiment_rankings(
+    budget_k: Optional[float] = None,
+    max_weeks: Optional[int] = None,
+) -> dict[str, Any]:
+    """Rank all SMA targets by Expected Value of Experiment.
+
+    Computes P(success) x Impact / Cost for each target to help prioritise
+    which experiments to run first given limited resources.  Optionally
+    constrain by budget (in thousands of USD) and timeline (weeks).
+
+    Args:
+        budget_k: Optional budget constraint in thousands of USD (e.g. 50.0
+                  for $50,000).  Filters out experiments exceeding this cost.
+        max_weeks: Optional timeline constraint in weeks.  Filters out
+                   experiments taking longer than this.
+
+    Returns:
+        Dict containing ranked list of targets with expected_value, p_success,
+        impact_score, estimated_cost_k, estimated_weeks, and suggested_assay
+        for each.
+    """
+    params: dict[str, Any] = {}
+    if budget_k is not None:
+        params["budget_k"] = budget_k
+    if max_weeks is not None:
+        params["max_weeks"] = max_weeks
+    result = await _get("/experiment-value/rankings", params=params or None)
+    if _is_error(result):
+        return result
+    return result
+
+
+@mcp.tool()
+async def get_analytics_summary() -> dict[str, Any]:
+    """Get real-time platform analytics summary.
+
+    Returns a comprehensive snapshot of the knowledge base including source
+    counts by type, claim type distribution, convergence score distribution
+    across targets, journal impact rankings, hypothesis status breakdown,
+    and recent ingestion activity.
+
+    Returns:
+        Dict with keys: source_counts, claim_types, convergence_distribution,
+        journal_rankings, hypothesis_status, recent_activity, generated_at.
+    """
+    result = await _get("/analytics/summary")
+    if _is_error(result):
+        return result
+    return result
+
+
+@mcp.tool()
+async def test_reproducibility() -> dict[str, Any]:
+    """Run reproducibility tests on convergence scores.
+
+    Verifies that the platform's scoring algorithms are deterministic and
+    that target rankings are stable across repeated computations.  This is
+    a scientific integrity check — important for demonstrating that the
+    platform's outputs are reliable and not subject to hidden randomness.
+
+    Returns:
+        Dict with keys: deterministic (bool), ranking_stable (bool),
+        tests_run (int), tests_passed (int), details (list of individual
+        test results), and tested_at.
+    """
+    result = await _get("/reproducibility/test")
+    if _is_error(result):
+        return result
+    return result
+
+
+@mcp.tool()
+async def get_repurposing_candidates(
+    min_score: Optional[float] = None,
+) -> list[dict[str, Any]]:
+    """List cross-disease drug repurposing candidates for SMA.
+
+    Identifies approved or clinical-stage drugs from related neuromuscular
+    diseases (ALS, DMD, myasthenia gravis, other motor neuron diseases) that
+    share molecular targets or pathways with SMA and may be candidates for
+    repurposing.
+
+    Args:
+        min_score: Optional minimum repurposing relevance score (0.0 – 1.0).
+                   Higher values return only the most promising candidates.
+
+    Returns:
+        List of repurposing candidate records, each including drug_name,
+        original_indication, shared_targets, shared_pathways, repurposing_score,
+        approval_status, mechanism, and evidence_summary.
+    """
+    params: dict[str, Any] = {}
+    if min_score is not None:
+        params["min_score"] = min_score
+    result = await _get("/repurpose/candidates", params=params or None)
     if _is_error(result):
         return [result]  # type: ignore[list-item]
     return result if isinstance(result, list) else result.get("items", result)

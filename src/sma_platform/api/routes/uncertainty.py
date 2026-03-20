@@ -9,8 +9,10 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException, Query
 
 from ...reasoning.uncertainty import (
+    compute_all_intervals,
     compute_all_uncertainties,
     compute_uncertainty,
+    compute_uncertainty_intervals,
     uncertainty_summary,
 )
 
@@ -62,3 +64,49 @@ async def get_uncertainty_summary():
     plus the top-5 most and least uncertain targets.
     """
     return await uncertainty_summary()
+
+
+@router.get("/uncertainty/intervals")
+async def get_uncertainty_intervals(
+    n_bootstrap: int = Query(
+        default=50,
+        ge=20,
+        le=2000,
+        description="Number of bootstrap resamples per target.",
+    ),
+):
+    """Compute 95% confidence intervals for all target convergence scores.
+
+    Uses the full 5-dimension convergence engine formula (volume,
+    lab_independence, method_diversity, temporal_trend, replication)
+    with bootstrap resampling. Every prediction gets error bars.
+    """
+    results = await compute_all_intervals(n_bootstrap=n_bootstrap)
+    return {
+        "targets": results,
+        "total": len(results),
+        "method": "bootstrap",
+        "scoring": "convergence_engine_5d",
+        "n_bootstrap": n_bootstrap,
+    }
+
+
+@router.get("/uncertainty/intervals/{symbol}")
+async def get_target_uncertainty_interval(
+    symbol: str,
+    n_bootstrap: int = Query(
+        default=100,
+        ge=20,
+        le=5000,
+        description="Number of bootstrap resamples (higher = more precise, slower).",
+    ),
+):
+    """Compute uncertainty interval for a specific target.
+
+    Returns the convergence score with 95% CI, e.g.
+    "63% (95% CI: 58-68%)" instead of just "63%".
+    """
+    result = await compute_uncertainty_intervals(symbol, n_bootstrap=n_bootstrap)
+    if "error" in result and "not found" in result.get("error", "").lower():
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
