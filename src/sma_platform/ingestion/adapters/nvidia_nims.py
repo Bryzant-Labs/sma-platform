@@ -24,8 +24,11 @@ logger = logging.getLogger(__name__)
 # API configuration
 NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "")
 
-# NIM cloud API endpoints (build.nvidia.com hosted)
-DIFFDOCK_URL = "https://health.api.nvidia.com/v1/biology/mit/diffdock"
+# NIM cloud API endpoints (build.nvidia.com hosted) — free but rate-limited
+# Self-hosted: set DIFFDOCK_SELF_URL env var to Vast.ai instance for unlimited docking
+DIFFDOCK_CLOUD_URL = "https://health.api.nvidia.com/v1/biology/mit/diffdock"
+DIFFDOCK_SELF_URL = os.environ.get("DIFFDOCK_SELF_URL", "")  # e.g. http://77.48.24.250:8000/molecular-docking/diffdock/generate
+DIFFDOCK_URL = DIFFDOCK_SELF_URL or DIFFDOCK_CLOUD_URL  # Self-hosted takes priority
 OPENFOLD3_URL = "https://health.api.nvidia.com/v1/biology/openfold/openfold3"
 GENMOL_URL = "https://health.api.nvidia.com/v1/biology/nvidia/genmol"
 RNAPRO_URL = "https://health.api.nvidia.com/v1/biology/nvidia/rnapro"
@@ -33,8 +36,14 @@ RNAPRO_URL = "https://health.api.nvidia.com/v1/biology/nvidia/rnapro"
 TIMEOUT = 120  # seconds — structure prediction can be slow
 
 
-def _headers() -> dict:
-    """Standard auth headers for NVIDIA NIM API."""
+def _headers(for_self_hosted: bool = False) -> dict:
+    """Standard auth headers for NVIDIA NIM API.
+
+    Self-hosted NIMs on Vast.ai don't need auth headers.
+    Cloud NIMs need Bearer token.
+    """
+    if for_self_hosted or DIFFDOCK_SELF_URL:
+        return {"Content-Type": "application/json", "Accept": "application/json"}
     if not NVIDIA_API_KEY:
         raise ValueError(
             "NVIDIA_API_KEY environment variable not set. "
