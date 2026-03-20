@@ -209,12 +209,31 @@ async def _dock_molecules(
             logger.error("No PDB structure available for target %s", target)
             return molecules
 
+    # Convert SMILES to SDF format for DiffDock
+    try:
+        from rdkit import Chem
+        from rdkit.Chem import AllChem
+    except ImportError:
+        logger.warning("RDKit not available — cannot convert SMILES to SDF for docking")
+        return molecules
+
     docked = []
+    docked_count = 0
+    failed_count = 0
     for mol_result in molecules:
         try:
+            # Convert SMILES → 3D SDF (DiffDock needs SDF, not SMILES)
+            mol = Chem.MolFromSmiles(mol_result.smiles)
+            if mol is None:
+                raise ValueError(f"Invalid SMILES: {mol_result.smiles}")
+            mol = Chem.AddHs(mol)
+            AllChem.EmbedMolecule(mol, AllChem.ETKDGv3())
+            AllChem.MMFFOptimizeMolecule(mol, maxIters=200)
+            sdf_block = Chem.MolToMolBlock(mol)
+
             dock_result = await diffdock_dock(
                 protein_pdb=pdb_content,
-                ligand_sdf=mol_result.smiles,  # DiffDock accepts SMILES too
+                ligand_sdf=sdf_block,
                 num_poses=3,
             )
             confidence = dock_result.get("position_confidence", dock_result.get("confidence", -1.0))
@@ -224,8 +243,11 @@ async def _dock_molecules(
             mol_result.docking_target = target
             mol_result.stage = "docked"
             docked.append(mol_result)
+            docked_count += 1
         except Exception as e:
-            logger.debug("Docking failed for %s: %s", mol_result.name, e)
+            failed_count += 1
+            if failed_count <= 3:
+                logger.warning("Docking failed for %s: %s", mol_result.name, e)
             mol_result.docking_confidence = -999.0
             mol_result.stage = "dock_failed"
             docked.append(mol_result)
@@ -251,10 +273,36 @@ def _rank_candidates(molecules: list[ScreeningResult]) -> list[ScreeningResult]:
     return sorted(molecules, key=lambda m: m.composite_score, reverse=True)
 
 
+# AlphaFold PDB files for SMA targets (downloaded from alphafold.ebi.ac.uk)
+_TARGET_PDB_MAP = {
+    "SMN2": "data/pdb/SMN2_Q16637.pdb",
+    "SMN1": "data/pdb/SMN2_Q16637.pdb",  # Same protein
+    "STMN2": "data/pdb/STMN2_Q93045.pdb",
+    "PLS3": "data/pdb/PLS3_P13797.pdb",
+    "NCALD": "data/pdb/NCALD_P61601.pdb",
+    "UBA1": "data/pdb/UBA1_P22314.pdb",
+    "CORO1C": "data/pdb/CORO1C_Q9ULV4.pdb",
+    "TP53": "data/pdb/TP53_P04637.pdb",
+}
+
+
 def _get_target_pdb(target: str) -> str | None:
-    """Get PDB content for a known SMA target. Returns None if not available."""
-    # These would come from AlphaFold predictions or PDB downloads
-    # For now, return None — the caller should provide PDB content
-    # TODO: integrate with alphafold adapter to auto-fetch
-    logger.info("Auto-PDB lookup for target %s — not yet implemented, need explicit PDB", target)
+    """Get PDB content for a known SMA target from AlphaFold structures."""
+    from pathlib import Path
+
+    pdb_path = _TARGET_PDB_MAP.get(target.upper())
+    if not pdb_path:
+        logger.warning("No PDB structure for target %s. Available: %s", target, list(_TARGET_PDB_MAP.keys()))
+        return None
+
+    # Try both relative (local dev) and absolute (moltbot) paths
+    for base in [Path("."), Path("/home/bryzant/sma-platform")]:
+        full = base / pdb_path
+        if full.exists():
+            content = full.read_text()
+            atoms = sum(1 for l in content.split("\n") if l.startswith("ATOM"))
+            logger.info("Loaded PDB for %s: %d atoms from %s", target, atoms, full)
+            return content
+
+    logger.warning("PDB file not found for %s at %s", target, pdb_path)
     return None
