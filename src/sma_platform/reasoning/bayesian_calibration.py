@@ -101,7 +101,7 @@ async def _get_outcome_convergence_pairs() -> list[dict]:
         """SELECT d_o.id, d_o.compound_name, d_o.target, d_o.mechanism,
                   d_o.outcome, d_o.failure_reason, d_o.trial_phase,
                   d_o.confidence AS outcome_confidence, d_o.key_finding
-           FROM drug_outcomes do
+           FROM drug_outcomes d_o
            WHERE d_o.target IS NOT NULL AND d_o.target != ''
            ORDER BY d_o.compound_name"""
     )
