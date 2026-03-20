@@ -47,7 +47,7 @@ async def _enrich_results(results: list[dict]) -> list[dict]:
 
         if r["type"] == "claim":
             row = await fetchrow(
-                """SELECT c.id, c.claim_type, c.predicate, c.subject_type,
+                """SELECT c.id, c.claim_number, c.claim_type, c.predicate, c.subject_type,
                           c.object_type, c.confidence, c.metadata,
                           s.title AS source_title, s.external_id AS source_pmid
                    FROM claims c
@@ -66,6 +66,7 @@ async def _enrich_results(results: list[dict]) -> list[dict]:
                 item["object_type"] = d.get("object_type")
                 item["source_title"] = d.get("source_title")
                 item["source_pmid"] = d.get("source_pmid")
+                item["claim_number"] = d.get("claim_number")
 
         elif r["type"] == "source":
             row = await fetchrow(

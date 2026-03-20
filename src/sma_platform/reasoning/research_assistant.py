@@ -29,7 +29,7 @@ SYSTEM_PROMPT = """You are the SMA Research Platform AI assistant — an expert 
 You answer questions based ONLY on the evidence provided in the context below. If the evidence is insufficient, say so clearly rather than speculating.
 
 Rules:
-1. Cite specific claims and papers by their IDs (e.g., "Claim #123", "PMID: 12345678")
+1. Cite specific claims by their number (e.g., "CLAIM-12345") and papers by PMID (e.g., "PMID: 12345678")
 2. Distinguish between established facts and hypothetical connections
 3. Note confidence levels when available
 4. If asked about approved therapies (nusinersen, risdiplam, onasemnogene), provide accurate mechanism info
@@ -56,7 +56,7 @@ async def _retrieve_context(query: str, top_k: int = 30) -> dict[str, Any]:
     claims_context = []
     for cid in claim_ids[:MAX_CONTEXT_CLAIMS]:
         row = await fetchrow(
-            """SELECT c.id, c.claim_type, c.predicate, c.subject_type, c.object_type,
+            """SELECT c.id, c.claim_number, c.claim_type, c.predicate, c.subject_type, c.object_type,
                       c.confidence, c.metadata,
                       s.title AS source_title, s.external_id AS source_pmid,
                       s.journal, s.pub_date,
@@ -114,8 +114,9 @@ def _format_context(context: dict[str, Any]) -> str:
                 if c.get("evidence_excerpt")
                 else ""
             )
+            claim_label = f"CLAIM-{c['claim_number']:05d}" if c.get('claim_number') else f"#{str(c['id'])[:8]}"
             parts.append(
-                f"{i}. [Claim #{c['id']}] [{c.get('claim_type', '')}] "
+                f"{i}. [{claim_label}] [{c.get('claim_type', '')}] "
                 f"{c.get('subject_type', '')} → {c.get('predicate', '')} → "
                 f"{c.get('object_type', '')}"
                 f"{conf}{source}{excerpt}\n"

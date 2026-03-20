@@ -28,7 +28,7 @@ async def list_evidence(
     """List evidence records linking claims to sources."""
     rows = await fetch(
         """SELECT e.id, e.claim_id, e.source_id, e.method, e.excerpt, e.created_at,
-                  c.predicate as claim_text, c.claim_type, c.confidence as claim_confidence,
+                  c.predicate as claim_text, c.claim_type, c.confidence as claim_confidence, c.claim_number,
                   s.title as source_title, s.external_id as source_pmid, s.journal, s.pub_date
            FROM evidence e
            JOIN claims c ON e.claim_id = c.id

@@ -146,6 +146,7 @@ CREATE TABLE claims (
     object_type     TEXT,
     value           TEXT,                        -- quantitative or qualitative value
     confidence      NUMERIC(3,2) DEFAULT 0.5 CHECK (confidence >= 0 AND confidence <= 1),
+    claim_number    SERIAL UNIQUE,               -- Human-readable ID (CLAIM-00001)
     metadata        JSONB DEFAULT '{}',
     created_at      TIMESTAMPTZ DEFAULT NOW()
 );
@@ -318,3 +319,127 @@ CREATE TABLE drug_outcomes (
 CREATE INDEX idx_drug_outcomes_compound ON drug_outcomes(compound_name);
 CREATE INDEX idx_drug_outcomes_outcome ON drug_outcomes(outcome);
 CREATE INDEX idx_drug_outcomes_source ON drug_outcomes(source_id);
+
+-- ============================================================
+-- CONVERGENCE SCORES (Evidence Convergence Engine)
+-- All scoring weights are in src/sma_platform/reasoning/convergence_engine.py
+-- Open source, auditable: github.com/Bryzant-Labs/sma-platform
+-- ============================================================
+
+CREATE TABLE convergence_scores (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    target_key      TEXT NOT NULL,
+    target_label    TEXT,
+    target_type     TEXT,
+    target_id       UUID,
+    volume          NUMERIC(4,3) NOT NULL,
+    lab_independence NUMERIC(4,3) NOT NULL,
+    method_diversity NUMERIC(4,3) NOT NULL,
+    temporal_trend  NUMERIC(4,3) NOT NULL,
+    replication     NUMERIC(4,3) NOT NULL,
+    composite_score NUMERIC(4,3) NOT NULL,
+    confidence_level TEXT NOT NULL CHECK (confidence_level IN ('low', 'medium', 'high', 'very_high')),
+    claim_count     INTEGER NOT NULL,
+    source_count    INTEGER NOT NULL,
+    claim_ids       UUID[] DEFAULT '{}',
+    computed_at     TIMESTAMPTZ DEFAULT NOW(),
+    weights_version TEXT DEFAULT 'v1',
+    UNIQUE (target_key, weights_version)
+);
+
+CREATE INDEX idx_convergence_composite ON convergence_scores(composite_score DESC);
+CREATE INDEX idx_convergence_target ON convergence_scores(target_id);
+
+-- ============================================================
+-- PREDICTION CARDS (Evidence-grounded falsifiable predictions)
+-- ============================================================
+
+CREATE TABLE prediction_cards (
+    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    hypothesis_id       UUID REFERENCES hypotheses(id),
+    convergence_score_id UUID REFERENCES convergence_scores(id),
+    prediction_text     TEXT NOT NULL,
+    target_label        TEXT NOT NULL,
+    target_id           UUID,
+    convergence_score   NUMERIC(4,3) NOT NULL,
+    convergence_breakdown JSONB NOT NULL,
+    confidence_level    TEXT NOT NULL,
+    supporting_claims   UUID[] DEFAULT '{}',
+    contradicting_claims UUID[] DEFAULT '{}',
+    neutral_claims      UUID[] DEFAULT '{}',
+    evidence_summary    JSONB DEFAULT '{}',
+    suggested_experiments JSONB DEFAULT '[]',
+    evidence_gaps       TEXT[] DEFAULT '{}',
+    linked_patents      UUID[] DEFAULT '{}',
+    status              TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'validated', 'monitoring', 'strengthened', 'weakened', 'confirmed', 'refuted')),
+    score_history       JSONB DEFAULT '[]',
+    last_validated_at   TIMESTAMPTZ,
+    validation_notes    TEXT[] DEFAULT '{}',
+    generated_by        TEXT DEFAULT 'convergence-prediction-agent',
+    weights_version     TEXT DEFAULT 'v1',
+    created_at          TIMESTAMPTZ DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_predictions_score ON prediction_cards(convergence_score DESC);
+CREATE INDEX idx_predictions_status ON prediction_cards(status);
+CREATE INDEX idx_predictions_target ON prediction_cards(target_id);
+
+-- ============================================================
+-- BREAKTHROUGH SIGNALS (Auto-Discovery Pipeline)
+-- Detected by discovery_agent: claim spikes, hypothesis
+-- confirmations, novel targets scored by composite metric.
+-- ============================================================
+
+CREATE TABLE breakthrough_signals (
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    signal_type     TEXT NOT NULL CHECK (signal_type IN ('claim_spike', 'hypothesis_confirmation', 'novel_target')),
+    title           TEXT NOT NULL,
+    description     TEXT,
+    target_symbol   TEXT,
+    composite_score NUMERIC(4,3) DEFAULT 0 CHECK (composite_score >= 0 AND composite_score <= 1),
+    novelty_score   NUMERIC(4,3) DEFAULT 0,
+    convergence_score NUMERIC(4,3) DEFAULT 0,
+    impact_score    NUMERIC(4,3) DEFAULT 0,
+    status          TEXT DEFAULT 'new' CHECK (status IN ('new', 'reviewed', 'actionable', 'dismissed')),
+    metadata        JSONB DEFAULT '{}',
+    created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_signals_composite ON breakthrough_signals(composite_score DESC);
+CREATE INDEX idx_signals_type ON breakthrough_signals(signal_type);
+CREATE INDEX idx_signals_status ON breakthrough_signals(status);
+
+-- ============================================================
+-- NEWS & DISCOVERIES (research highlights + comment board)
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS news_posts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    content TEXT NOT NULL,
+    category TEXT DEFAULT 'discovery' CHECK (category IN ('discovery', 'gpu_result', 'hypothesis', 'data_update', 'announcement')),
+    tags TEXT[] DEFAULT '{}',
+    author TEXT DEFAULT 'SMA Research Platform',
+    featured BOOLEAN DEFAULT FALSE,
+    published BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_news_slug ON news_posts(slug);
+CREATE INDEX IF NOT EXISTS idx_news_created ON news_posts(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS news_comments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    post_id UUID NOT NULL REFERENCES news_posts(id) ON DELETE CASCADE,
+    author_name TEXT NOT NULL,
+    author_email TEXT,
+    content TEXT NOT NULL,
+    approved BOOLEAN DEFAULT FALSE,
+    spam_score NUMERIC DEFAULT 0,
+    ip_address TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_comments_post ON news_comments(post_id);
+CREATE INDEX IF NOT EXISTS idx_comments_approved ON news_comments(approved);

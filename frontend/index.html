@@ -524,6 +524,7 @@
         .sr-title a { color: var(--text); text-decoration: none; }
         .sr-title a:hover { color: var(--accent); }
         .sr-text { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+        .sr-claim-id { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-left: 8px; }
         .sr-meta { font-size: 11px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; }
         .sr-score { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
         .search-empty { text-align: center; padding: 48px 0; color: var(--muted); font-size: 14px; }
@@ -4300,6 +4301,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     // Type badge
                     var typeCls2 = r.type === 'claim' ? 'sr-type-claim' : 'sr-type-source';
                     card.appendChild(el('span', {className: 'sr-type ' + typeCls2, text: r.type === 'claim' ? 'CLAIM' : 'PAPER'}));
+
+                    // Claim number (human-readable)
+                    if (r.type === 'claim' && r.claim_number) {
+                        card.appendChild(el('span', {className: 'sr-claim-id', text: 'CLAIM-' + String(r.claim_number).padStart(5, '0')}));
+                    }
 
                     // Title
                     var titleDiv = el('div', {className: 'sr-title'});
