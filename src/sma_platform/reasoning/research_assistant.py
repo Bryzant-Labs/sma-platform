@@ -214,3 +214,98 @@ async def ask(
             "output_tokens": response.usage.output_tokens,
         },
     }
+
+
+CHAT_SYSTEM_PROMPT = """You are the SMA Research Platform AI assistant — an expert in Spinal Muscular Atrophy molecular biology and drug development.
+
+You answer questions based ONLY on the evidence provided in the context below. If the evidence is insufficient, say so clearly rather than speculating.
+
+Rules:
+1. Cite specific claims by their number (e.g., "CLAIM-12345") and papers by PMID (e.g., "PMID: 12345678")
+2. Distinguish between established facts and hypothetical connections
+3. Note confidence levels when available
+4. If asked about approved therapies (nusinersen, risdiplam, onasemnogene), provide accurate mechanism info
+5. Be precise about molecular mechanisms — this is for researchers, not patients
+6. If multiple claims conflict, present both sides with their evidence strength
+7. This is a conversation — you can reference your previous answers and build on them
+8. Keep answers focused and concise. Use clear sections when appropriate.
+
+Format: Use markdown for structure. Include a "Sources" section at the end listing the papers you referenced."""
+
+
+async def chat(
+    message: str,
+    history: list[dict[str, str]] | None = None,
+    max_context: int = 20,
+    model: str | None = None,
+) -> dict[str, Any]:
+    """Multi-turn conversational RAG over the SMA evidence base."""
+    if not _ensure_index():
+        return {
+            "answer": "The search index has not been built yet. Please run POST /search/reindex first.",
+            "sources_used": 0,
+            "model": None,
+            "error": "index_not_built",
+        }
+
+    # Build search query from current message + recent user context
+    search_query = message
+    if history:
+        recent_user_msgs = [m["content"] for m in history[-4:] if m["role"] == "user"]
+        if recent_user_msgs:
+            search_query = message + " " + " ".join(recent_user_msgs[-1:])
+
+    context = await _retrieve_context(search_query, top_k=max_context)
+
+    if not context["claims"] and not context["sources"]:
+        return {
+            "answer": "No relevant evidence found for this question. Try rephrasing or broadening your query.",
+            "sources_used": 0,
+            "model": None,
+            "claims_cited": [],
+            "sources_cited": [],
+        }
+
+    context_text = _format_context(context)
+
+    # Build messages array with conversation history
+    messages = []
+    if history:
+        for h in history[-10:]:
+            messages.append({"role": h["role"], "content": h["content"]})
+
+    messages.append({
+        "role": "user",
+        "content": f"## Evidence Context\n\n{context_text}\n\n## Question\n\n{message}",
+    })
+
+    use_model = model or MODEL
+    client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+
+    response = await client.messages.create(
+        model=use_model,
+        max_tokens=2000,
+        system=CHAT_SYSTEM_PROMPT,
+        messages=messages,
+    )
+
+    answer_text = response.content[0].text if response.content else "No response generated."
+
+    import re
+    cited_claims = re.findall(r'CLAIM-(\d+)', answer_text)
+    cited_pmids = re.findall(r'PMID:\s*(\d+)', answer_text)
+
+    return {
+        "answer": answer_text,
+        "message": message,
+        "model": use_model,
+        "sources_used": len(context["claims"]) + len(context["sources"]),
+        "claims_in_context": len(context["claims"]),
+        "sources_in_context": len(context["sources"]),
+        "claims_cited": cited_claims,
+        "sources_cited": cited_pmids,
+        "usage": {
+            "input_tokens": response.usage.input_tokens,
+            "output_tokens": response.usage.output_tokens,
+        },
+    }

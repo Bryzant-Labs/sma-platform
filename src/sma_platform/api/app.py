@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, biomarker, blackboard, calibration, cascade, comparative, contact, crispr, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty
+from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, biomarker, blackboard, calibration, cascade, chat, comparative, contact, crispr, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty
 
 
 @asynccontextmanager
@@ -102,6 +102,7 @@ def create_app() -> FastAPI:
     app.include_router(splice.router, prefix="/api/v2", tags=["splice"])
     app.include_router(splice_predictor.router, prefix="/api/v2", tags=["splice_predictor"])
     app.include_router(assistant.router, prefix="/api/v2", tags=["assistant"])
+    app.include_router(chat.router, prefix="/api/v2", tags=["chat"])
     app.include_router(hypothesis_gen.router, prefix="/api/v2", tags=["hypothesis_gen"])
     app.include_router(evidence_writer.router, prefix="/api/v2", tags=["writing"])
     app.include_router(molecule_screen.router, prefix="/api/v2", tags=["screening"])
@@ -191,7 +192,7 @@ def create_app() -> FastAPI:
     # /gpu-results or /targets are shareable and SEO-friendly.
     # Registered AFTER all /api/v2 routes to avoid conflicts.
     SECTION_SLUGS = {
-        "mission", "search", "ask",
+        "mission", "search", "ask", "chat",
         "targets", "trials", "drugs", "sources", "claims",
         "hypotheses", "predictions", "graph",
         "scores", "outcomes", "screening", "candidates",
