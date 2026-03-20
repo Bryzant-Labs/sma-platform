@@ -1013,6 +1013,70 @@
     <div class="section-header"><h2 class="section-title">Research Directions</h2><span class="section-count">16 active directions</span></div>
     <p class="section-desc">Cutting-edge research directions we are exploring &mdash; from spatial multi-omics to engineered probiotics. Each direction connects to specific molecular targets and therapeutic modalities.</p>
 
+    <!-- Experimental Validation Plan -->
+    <div style="background:var(--panel);border:2px solid var(--accent);padding:20px;margin-bottom:24px;border-radius:4px">
+        <h3 style="margin:0 0 12px 0;font-size:16px;color:var(--text)">Experimental Validation Plan</h3>
+        <p style="font-size:13px;color:var(--text-secondary);margin:0 0 16px 0">Priority experiments to validate our computational discoveries. Estimated total budget: &euro;55&ndash;90K over 12 months. Each phase has explicit go/no-go gates.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:16px">
+            <div style="background:var(--bg);border:1px solid var(--line);padding:14px;border-left:3px solid #ef4444">
+                <div style="font-size:10px;text-transform:uppercase;color:#ef4444;font-weight:700;margin-bottom:4px">Priority 1 &mdash; Go/No-Go Gate</div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:6px">4-AP &rarr; CORO1C Binding (SPR Assay)</div>
+                <div style="font-size:12px;color:var(--text-secondary)">Surface plasmon resonance to measure direct binding. K<sub>d</sub> &lt; 50 &mu;M = proceed. Est. &euro;3&ndash;5K, 4&ndash;6 weeks.</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:6px">a priori probability: 15&ndash;30%</div>
+            </div>
+            <div style="background:var(--bg);border:1px solid var(--line);padding:14px;border-left:3px solid #f59e0b">
+                <div style="font-size:10px;text-transform:uppercase;color:#f59e0b;font-weight:700;margin-bottom:4px">Priority 2 &mdash; Parallel Track</div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:6px">Riluzole &rarr; SMN2 Binding Validation</div>
+                <div style="font-size:12px;color:var(--text-secondary)">SPR for riluzole-SMN2 interaction. FDA-approved ALS drug with prior SMA Phase 1 data (PMID: 14623733). Est. &euro;3&ndash;5K.</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:6px">Clinical repurposing path if confirmed</div>
+            </div>
+            <div style="background:var(--bg);border:1px solid var(--line);padding:14px;border-left:3px solid #3b82f6">
+                <div style="font-size:10px;text-transform:uppercase;color:#3b82f6;font-weight:700;margin-bottom:4px">Priority 3 &mdash; Tissue Analysis</div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:6px">CORO1C Expression in SMA Mouse (L1 vs L5)</div>
+                <div style="font-size:12px;color:var(--text-secondary)">IHC staining of CORO1C in SMA mouse spinal cord. Compare vulnerable (L1) vs resistant (L5) segments. Collaboration: C. Simon, Leipzig.</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:6px">Simon meeting: week of March 30</div>
+            </div>
+            <div style="background:var(--bg);border:1px solid var(--line);padding:14px;border-left:3px solid #22c55e">
+                <div style="font-size:10px;text-transform:uppercase;color:#22c55e;font-weight:700;margin-bottom:4px">Priority 4 &mdash; Computational (Now)</div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:6px">Orthogonal Docking + MD Simulation</div>
+                <div style="font-size:12px;color:var(--text-secondary)">AutoDock Vina + GNINA consensus docking for 4-AP/CORO1C. 100ns MD simulation to test pose stability. Est. &lt;&euro;5.</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:6px">Can run immediately on Vast.ai</div>
+            </div>
+        </div>
+
+        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-secondary)">
+            <div><strong>Phase 1</strong> (Month 1&ndash;3): Computational + SPR &mdash; &euro;4&ndash;6K</div>
+            <div><strong>Phase 2</strong> (Month 3&ndash;6): iPSC-MN functional studies &mdash; &euro;31&ndash;50K</div>
+            <div><strong>Phase 3</strong> (Month 6&ndash;12): SMA mouse model &mdash; &euro;20&ndash;34K</div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted)"><a href="https://github.com/Bryzant-Labs/sma-platform/blob/master/docs/research_validation_plan.md" target="_blank" style="color:var(--accent)">Full validation plan on GitHub</a> &mdash; 12 experiments, 5 discoveries, grant opportunities</div>
+    </div>
+
+    <!-- Platform Performance -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:24px">
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px;text-align:center">
+            <div style="font-size:24px;font-weight:700;font-family:var(--mono)">A</div>
+            <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase">Calibration Grade</div>
+            <div style="font-size:10px;color:var(--muted)">89.8% &mdash; 227 outcomes</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px;text-align:center">
+            <div style="font-size:24px;font-weight:700;font-family:var(--mono)">4,116</div>
+            <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase">DiffDock Dockings</div>
+            <div style="font-size:10px;color:var(--muted)">630 compounds &times; 7 targets</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px;text-align:center">
+            <div style="font-size:24px;font-weight:700;font-family:var(--mono)">15</div>
+            <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase">ESM-2 Embeddings</div>
+            <div style="font-size:10px;color:var(--muted)">Similarity matrix + contacts</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px;text-align:center">
+            <div style="font-size:24px;font-weight:700;font-family:var(--mono)">9/9</div>
+            <div style="font-size:10px;color:var(--text-secondary);text-transform:uppercase">Variant Predictions</div>
+            <div style="font-size:10px;color:var(--muted)">SMN1 mutations correct</div>
+        </div>
+    </div>
+
     <div class="research-group">
         <div class="research-group-title">Frontier Approaches</div>
         <div class="research-grid">
@@ -6957,6 +7021,163 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+    function loadMlProxy() {
+        if (loaded.mlproxy) return; loaded.mlproxy = true;
+        fetch(API + '/ml-proxy/status').then(function(r) { return r.json(); }).then(function(data) {
+            var metricsDiv = clearEl('mlproxy-metrics');
+            var isTrained = data.status === 'trained';
+
+            // Count display
+            var countEl = document.getElementById('mlproxy-count');
+            if (countEl) {
+                countEl.textContent = isTrained ? (data.training_samples || 0).toLocaleString() + ' samples' : 'not trained';
+            }
+
+            // Metrics cards
+            var stats = [];
+            if (isTrained) {
+                stats = [
+                    {val: String(data.training_samples || 0), label: 'Training Samples', cls: ''},
+                    {val: String(data.unique_compounds || 0), label: 'Unique Compounds', cls: ''},
+                    {val: (data.r2_score || 0).toFixed(3), label: 'R\u00B2 Score', cls: 'highlight'},
+                    {val: (data.mae || 0).toFixed(3), label: 'MAE', cls: ''},
+                    {val: data.feature_mode === 'morgan_2048' ? 'Morgan 2048' : 'String 12', label: 'Feature Mode', cls: ''},
+                    {val: data.model_type ? data.model_type.split('(')[0].trim() : '-', label: 'Model', cls: ''},
+                ];
+                if (data.cross_validation && data.cross_validation.cv_r2_mean !== undefined) {
+                    stats.push({val: data.cross_validation.cv_r2_mean.toFixed(3), label: 'CV R\u00B2 Mean', cls: 'highlight'});
+                }
+            } else {
+                stats = [
+                    {val: 'Not Trained', label: 'Model Status', cls: ''},
+                    {val: data.rdkit_available ? 'Yes' : 'No', label: 'RDKit Available', cls: data.rdkit_available ? 'highlight' : ''},
+                    {val: data.sklearn_available ? 'Yes' : 'No', label: 'sklearn Available', cls: data.sklearn_available ? 'highlight' : ''},
+                ];
+            }
+            for (var s = 0; s < stats.length; s++) {
+                var card = el('div', {className: 'screen-stat'});
+                card.appendChild(el('div', {className: 'screen-stat-val' + (stats[s].cls ? ' ' + stats[s].cls : ''), text: stats[s].val}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
+                metricsDiv.appendChild(card);
+            }
+
+            // Scatter plot (actual vs predicted)
+            if (data.scatter_data && data.scatter_data.actual && data.scatter_data.actual.length > 0) {
+                var canvas = document.getElementById('mlproxy-canvas');
+                if (canvas && canvas.getContext) {
+                    var ctx = canvas.getContext('2d');
+                    var rect = canvas.parentElement.getBoundingClientRect();
+                    canvas.width = rect.width * (window.devicePixelRatio || 1);
+                    canvas.height = rect.height * (window.devicePixelRatio || 1);
+                    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+                    var w = rect.width, h = rect.height;
+                    var pad = 50;
+                    var actual = data.scatter_data.actual;
+                    var predicted = data.scatter_data.predicted;
+                    var allVals = actual.concat(predicted);
+                    var vMin = Math.min.apply(null, allVals);
+                    var vMax = Math.max.apply(null, allVals);
+                    var range = vMax - vMin || 1;
+                    vMin -= range * 0.05; vMax += range * 0.05; range = vMax - vMin;
+
+                    // Background
+                    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#fff';
+                    ctx.fillRect(0, 0, w, h);
+
+                    // Axes
+                    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line').trim() || '#ddd';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, h - pad); ctx.lineTo(w - pad, h - pad); ctx.stroke();
+
+                    // Diagonal (perfect prediction line)
+                    ctx.strokeStyle = '#e5383b';
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([5, 3]);
+                    ctx.beginPath();
+                    ctx.moveTo(pad, h - pad); ctx.lineTo(w - pad, pad);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Points
+                    ctx.fillStyle = 'rgba(59, 130, 246, 0.5)';
+                    for (var i = 0; i < actual.length; i++) {
+                        var x = pad + ((actual[i] - vMin) / range) * (w - 2 * pad);
+                        var y = (h - pad) - ((predicted[i] - vMin) / range) * (h - 2 * pad);
+                        ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+                    }
+
+                    // Labels
+                    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#222';
+                    ctx.font = '11px system-ui, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Actual DiffDock Confidence', w / 2, h - 8);
+                    ctx.save(); ctx.translate(12, h / 2); ctx.rotate(-Math.PI / 2);
+                    ctx.fillText('Predicted Confidence', 0, 0); ctx.restore();
+
+                    // Axis tick labels
+                    ctx.font = '10px system-ui, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(vMin.toFixed(1), pad, h - pad + 15);
+                    ctx.fillText(vMax.toFixed(1), w - pad, h - pad + 15);
+                    ctx.textAlign = 'right';
+                    ctx.fillText(vMin.toFixed(1), pad - 5, h - pad + 4);
+                    ctx.fillText(vMax.toFixed(1), pad - 5, pad + 4);
+
+                    // R2 label
+                    ctx.textAlign = 'left';
+                    ctx.font = '12px system-ui, sans-serif';
+                    ctx.fillStyle = '#e5383b';
+                    ctx.fillText('R\u00B2 = ' + (data.r2_score || 0).toFixed(3), pad + 10, pad + 15);
+                    ctx.fillText('n = ' + actual.length, pad + 10, pad + 30);
+                }
+            } else {
+                var scatterDiv = document.getElementById('mlproxy-scatter');
+                if (scatterDiv) {
+                    scatterDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:12px">Train model to see scatter plot</div>';
+                }
+            }
+
+            // Feature importances table
+            var featBody = clearEl('mlproxy-features-body');
+            var features = data.top_20_features || [];
+            if (features.length === 0 && !isTrained) {
+                featBody.appendChild(el('tr', null, [el('td', {colSpan: 4, text: 'Train model to see feature importances', className: 'loading'})]));
+            }
+            var maxImp = features.length > 0 ? features[0].importance : 1;
+            for (var fi = 0; fi < features.length; fi++) {
+                var f = features[fi];
+                var barWidth = Math.round((f.importance / maxImp) * 100);
+                var barTd = el('td');
+                var barOuter = el('div');
+                barOuter.style.cssText = 'background:var(--line);height:14px;border-radius:3px;overflow:hidden';
+                var barInner = el('div');
+                barInner.style.cssText = 'background:var(--accent);height:100%;width:' + barWidth + '%;border-radius:3px';
+                barOuter.appendChild(barInner);
+                barTd.appendChild(barOuter);
+                featBody.appendChild(el('tr', null, [
+                    td(String(f.rank), 'mono'),
+                    td(f.feature, null, 'font-family:var(--mono);font-size:11px'),
+                    td(f.importance.toFixed(4), 'mono'),
+                    barTd
+                ]));
+            }
+
+            // Target distribution
+            var targetsDiv = clearEl('mlproxy-targets');
+            if (data.target_distribution) {
+                var targets = Object.keys(data.target_distribution);
+                for (var ti = 0; ti < targets.length; ti++) {
+                    var tCard = el('div', {className: 'screen-stat'});
+                    tCard.appendChild(el('div', {className: 'screen-stat-val', text: String(data.target_distribution[targets[ti]])}));
+                    tCard.appendChild(el('div', {className: 'screen-stat-label', text: targets[ti]}));
+                    targetsDiv.appendChild(tCard);
+                }
+            }
+        }).catch(function(e) {
+            clearEl('mlproxy-metrics').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'ML Proxy not available: ' + e.message})]));
+        });
+    }
+
     function loadPrime() {
         if (loaded.prime) return; loaded.prime = true;
         fetch(API + '/prime-editing/feasibility').then(function(r) { return r.json(); }).then(function(data) {
@@ -9861,7 +10082,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         directions: loadDirections, links: loadLinks, contact: loadContact,
         search: loadChat, write: loadWrite,
         molecules: loadMolecules, crispr: loadCrispr, aav: loadAav, versions: loadVersions,
-        docking: loadDocking, prime: loadPrime, mdsim: loadMdsim,
+        docking: loadDocking, mlproxy: loadMlProxy, prime: loadPrime, mdsim: loadMdsim,
         spatial: loadSpatial, regen: loadRegen, nmj: loadNmj,
         multisystem: loadMultisystem, bioelectric: loadBioelectric,
         splicemap: loadSpliceMap, rnabind: loadRnaBinding,
@@ -9910,6 +10131,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         crispr:      {title: 'CRISPR — SMA Research Platform', desc: 'CRISPR-based gene editing strategies for SMN1 restoration and SMN2 exon 7 inclusion.'},
         aav:         {title: 'AAV Vectors — SMA Research Platform', desc: 'Adeno-associated virus vector design and optimization for SMA gene therapy.'},
         docking:     {title: 'Molecular Docking — SMA Research Platform', desc: 'Computational docking results for SMA drug candidates against prioritized targets.'},
+        mlproxy:     {title: 'ML Docking Proxy — SMA Research Platform', desc: 'Machine learning surrogate trained on 4,116 DiffDock results. Morgan fingerprints + RandomForest for 1000x faster binding prediction.'},
         prime:       {title: 'Prime Editing — SMA Research Platform', desc: 'Prime editing approaches for precise SMN1/SMN2 correction in SMA.'},
         mdsim:       {title: 'MD Simulation — SMA Research Platform', desc: 'Molecular dynamics simulations of SMN protein complexes and drug-target interactions.'},
         labos:       {title: 'Lab-OS — SMA Research Platform', desc: 'Laboratory operating system for SMA experiment tracking and protocol management.'},
