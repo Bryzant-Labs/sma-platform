@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, advisory_pack, analytics, aso, assistant, bayesian, benchmark, binder_design, biomarker, blackboard, calibration, cascade, chat, comparative, contact, convergence, crispr, cross_disease, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hit_validation, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, reproducibility, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, target_compare, target_report, targets, timeline, translation, trials, uncertainty, virtual_screening
+from .routes import aav, advanced_analytics, advisory_pack, analytics, aso, assistant, bayesian, benchmark, binder_design, biomarker, blackboard, calibration, cascade, chat, combinations, comparative, contact, convergence, crispr, cross_disease, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hit_validation, hypothesis_gen, ingestion, interaction_network, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, reproducibility, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, target_compare, target_report, targets, timeline, translation, trials, uncertainty, virtual_screening
 
 
 @asynccontextmanager
@@ -160,6 +160,8 @@ def create_app() -> FastAPI:
     app.include_router(reproducibility.router, prefix="/api/v2", tags=["reproducibility"])
     app.include_router(cross_disease.router, prefix="/api/v2", tags=["cross-disease"])
     app.include_router(timeline.router, prefix="/api/v2", tags=["timeline"])
+    app.include_router(combinations.router, prefix="/api/v2", tags=["combinations"])
+    app.include_router(interaction_network.router, prefix="/api/v2", tags=["interaction-network"])
 
     @app.get("/health")
     @app.get("/api/v2/health")
