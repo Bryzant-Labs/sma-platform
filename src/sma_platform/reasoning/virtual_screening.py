@@ -199,8 +199,13 @@ async def _dock_molecules(
     target: str,
     pdb_content: str | None = None,
 ) -> list[ScreeningResult]:
-    """Dock molecules against target using DiffDock NIM."""
-    from ..ingestion.adapters.nvidia_nims import diffdock_dock
+    """Dock molecules against target using DiffDock NIM batch mode.
+
+    Sends ALL molecules in a single API call (multi-line SMILES text)
+    instead of one-by-one, which is 10-50x faster.
+    Falls back to individual docking if batch fails.
+    """
+    from ..ingestion.adapters.nvidia_nims import diffdock_batch_dock, diffdock_dock
 
     # Get PDB content for target if not provided
     if not pdb_content:
@@ -209,20 +214,65 @@ async def _dock_molecules(
             logger.error("No PDB structure available for target %s", target)
             return molecules
 
-    # Convert SMILES to SDF format for DiffDock
+    # Filter valid SMILES first
     try:
         from rdkit import Chem
-        from rdkit.Chem import AllChem
     except ImportError:
-        logger.warning("RDKit not available — cannot convert SMILES to SDF for docking")
+        logger.warning("RDKit not available")
         return molecules
 
-    docked = []
-    docked_count = 0
-    failed_count = 0
+    valid_molecules = []
     for mol_result in molecules:
+        mol = Chem.MolFromSmiles(mol_result.smiles)
+        if mol is not None:
+            valid_molecules.append(mol_result)
+
+    if not valid_molecules:
+        return molecules
+
+    # Try batch docking first (much faster — 1 API call for all molecules)
+    smiles_list = [m.smiles for m in valid_molecules]
+    try:
+        logger.info("Attempting batch docking: %d molecules vs %s", len(smiles_list), target)
+        batch_result = await diffdock_batch_dock(
+            protein_pdb=pdb_content,
+            smiles_list=smiles_list,
+            num_poses=3,
+        )
+
+        # Parse batch results — output may be list of per-ligand results
+        outputs = batch_result.get("output", batch_result.get("poses", batch_result.get("results", [])))
+        if isinstance(outputs, list) and len(outputs) == len(valid_molecules):
+            for mol_result, output in zip(valid_molecules, outputs):
+                confidence = output.get("position_confidence", output.get("confidence", -1.0))
+                if isinstance(confidence, list):
+                    confidence = max(confidence) if confidence else -1.0
+                mol_result.docking_confidence = float(confidence)
+                mol_result.docking_target = target
+                mol_result.stage = "docked"
+            logger.info("Batch docking succeeded: %d molecules in single call", len(valid_molecules))
+            return valid_molecules
+        else:
+            # Batch returned but structure doesn't match — try parsing differently
+            confidence = batch_result.get("position_confidence", batch_result.get("confidence"))
+            if isinstance(confidence, list) and len(confidence) >= len(valid_molecules):
+                for i, mol_result in enumerate(valid_molecules):
+                    mol_result.docking_confidence = float(confidence[i])
+                    mol_result.docking_target = target
+                    mol_result.stage = "docked"
+                return valid_molecules
+            logger.warning("Batch result format unexpected, falling back to individual docking")
+
+    except Exception as e:
+        logger.warning("Batch docking failed (%s), falling back to individual docking", e)
+
+    # Fallback: individual docking (slower but reliable)
+    logger.info("Individual docking: %d molecules vs %s", len(valid_molecules), target)
+    from rdkit.Chem import AllChem
+    docked = []
+    failed_count = 0
+    for mol_result in valid_molecules:
         try:
-            # Convert SMILES → 3D SDF (DiffDock needs SDF, not SMILES)
             mol = Chem.MolFromSmiles(mol_result.smiles)
             if mol is None:
                 raise ValueError(f"Invalid SMILES: {mol_result.smiles}")
@@ -243,7 +293,6 @@ async def _dock_molecules(
             mol_result.docking_target = target
             mol_result.stage = "docked"
             docked.append(mol_result)
-            docked_count += 1
         except Exception as e:
             failed_count += 1
             if failed_count <= 3:

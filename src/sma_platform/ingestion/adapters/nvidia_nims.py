@@ -128,6 +128,63 @@ async def diffdock_dock_smiles(
         return resp.json()
 
 
+async def diffdock_batch_dock(
+    protein_pdb: str,
+    smiles_list: list[str],
+    num_poses: int = 3,
+    time_divisions: int = 20,
+    steps: int = 18,
+) -> dict:
+    """
+    Batch-dock multiple ligands against one protein in a single API call.
+
+    DiffDock V2 supports multi-line SMILES text as ligand input,
+    docking all molecules against the same receptor concurrently.
+    Much faster than individual calls (1 request vs N requests).
+
+    Args:
+        protein_pdb: PDB file content as string
+        smiles_list: List of SMILES strings to dock
+        num_poses: Number of poses per ligand
+        time_divisions: Diffusion time divisions
+        steps: Diffusion steps
+
+    Returns:
+        dict with per-ligand results
+    """
+    # Multi-line SMILES text — one SMILES per line
+    smiles_text = "\n".join(smiles_list)
+
+    payload = {
+        "ligand": smiles_text,
+        "ligand_file_type": "txt",
+        "protein": protein_pdb,
+        "num_poses": num_poses,
+        "time_divisions": time_divisions,
+        "steps": steps,
+    }
+
+    # Batch docking can take longer — scale timeout with number of molecules
+    batch_timeout = max(TIMEOUT, len(smiles_list) * 5 + 60)
+
+    async with httpx.AsyncClient(timeout=batch_timeout) as client:
+        logger.info(
+            f"DiffDock v2.2 BATCH: Docking {len(smiles_list)} ligands "
+            f"in single request ({num_poses} poses each)"
+        )
+        resp = await client.post(
+            DIFFDOCK_URL,
+            json=payload,
+            headers=_headers(),
+        )
+        resp.raise_for_status()
+        result = resp.json()
+
+    n_results = len(result.get("output", result.get("poses", [])))
+    logger.info(f"DiffDock v2.2 BATCH: Got results for {n_results} ligands")
+    return result
+
+
 # =============================================================================
 # OpenFold3 — Structure Prediction
 # =============================================================================
