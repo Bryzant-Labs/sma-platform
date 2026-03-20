@@ -342,18 +342,18 @@
         .section-title { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .section-count { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
         .section-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; max-width: 800px; }
-        .table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; background: var(--panel); border: 1px solid var(--line); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: auto; }
         thead th {
             text-align: left; padding: 10px 12px; font-size: 10px; font-weight: 600;
             text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);
             background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: 0; white-space: nowrap;
         }
-        tbody td { padding: 10px 12px; border-bottom: 1px solid var(--line-light); vertical-align: top; }
+        tbody td { padding: 10px 12px; border-bottom: 1px solid var(--line-light); vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; }
         tbody tr:hover { background: #f8f9fa; }
         tbody tr:last-child td { border-bottom: none; }
         td.symbol { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 13px; white-space: nowrap; }
-        td.desc { color: var(--text-secondary); font-size: 12px; max-width: 500px; }
+        td.desc { color: var(--text-secondary); font-size: 12px; max-width: 500px; word-wrap: break-word; overflow-wrap: break-word; }
         td.nct a, td.accession a { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); text-decoration: none; }
         td.nct a:hover, td.accession a:hover { text-decoration: underline; }
         td.mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
@@ -462,11 +462,11 @@
         .page-info { font-size: 11px; color: var(--muted); margin-top: 8px; }
         .expand-row { display: none; }
         .expand-row.open { display: table-row; }
-        .expand-cell { padding: 16px 20px; background: var(--bg); border-bottom: 1px solid var(--line); }
+        .expand-cell { padding: 16px 20px; background: var(--bg); border-bottom: 1px solid var(--line); word-wrap: break-word; overflow-wrap: break-word; }
         .expand-abstract { font-size: 13px; line-height: 1.7; color: var(--text-secondary); max-width: 100%; word-wrap: break-word; }
         .expand-abstract strong { color: var(--text); }
         .expand-abstract p { max-width: 100%; }
-        .expand-meta { font-size: 11px; color: var(--muted); margin-top: 8px; }
+        .expand-meta { font-size: 11px; color: var(--muted); margin-top: 12px; word-wrap: break-word; overflow-wrap: break-word; }
         .expand-meta a { color: var(--accent); text-decoration: none; }
         .expand-meta a:hover { text-decoration: underline; }
         .btn-expand {
@@ -479,10 +479,10 @@
         .claim-source-line { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
         .claim-source-line a { color: var(--accent); text-decoration: none; font-weight: 600; }
         .claim-source-line a:hover { text-decoration: underline; }
-        .claim-detail-panel { background: var(--bg); padding: 16px 20px; border-top: none; line-height: 1.8; }
+        .claim-detail-panel { background: var(--bg); padding: 16px 20px; border-top: none; line-height: 1.8; word-wrap: break-word; overflow-wrap: break-word; }
         .claim-detail-panel .cd-section { margin-bottom: 12px; }
         .claim-detail-panel .cd-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 4px; }
-        .claim-detail-panel .cd-text { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+        .claim-detail-panel .cd-text { font-size: 13px; color: var(--text-secondary); line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word; }
         .claim-detail-panel .cd-abstract { font-size: 12px; color: var(--text-secondary); line-height: 1.7; max-height: 120px; overflow: hidden; transition: max-height 0.3s; }
         .claim-detail-panel .cd-abstract.expanded { max-height: none; }
         .claim-detail-panel .cd-show-more { font-size: 11px; color: var(--accent); cursor: pointer; margin-top: 4px; font-weight: 600; }
@@ -664,11 +664,11 @@
         /* Target Deep-Dive overlay */
         .target-row { cursor: pointer; }
         .target-row:hover td { background: var(--blue-bg); }
-        .deep-dive-cell { padding: 20px !important; background: var(--bg) !important; }
+        .deep-dive-cell { padding: 20px !important; background: var(--bg) !important; word-wrap: break-word; overflow-wrap: break-word; }
         .dd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .dd-section { background: var(--panel); border: 1px solid var(--line); padding: 16px; }
         .dd-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 10px; }
-        .dd-item { padding: 6px 0; border-bottom: 1px solid var(--line-light); font-size: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .dd-item { padding: 6px 0; border-bottom: 1px solid var(--line-light); font-size: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; word-wrap: break-word; overflow-wrap: break-word; }
         .dd-item:last-child { border-bottom: none; }
         .dd-claim-source { font-size: 10px; color: var(--muted); width: 100%; padding-left: 4px; }
         .dd-hyp-item { padding: 8px 0; border-bottom: 1px solid var(--line-light); cursor: pointer; transition: background 0.15s; }
@@ -1374,7 +1374,7 @@
     <div class="section-header"><h2 class="section-title">Screening Hits</h2><span class="section-count" id="hits-count"></span></div>
     <p class="section-desc">Positive binding predictions from AI-driven virtual screening. Each hit goes through a 6-stage validation pipeline: computational validation, structural analysis, analog search, ADMET prediction, literature review, and experimental design.</p>
     <div id="hits-content">
-        <div id="hits-table-wrap"></div>
+        <div id="hits-table-wrap" class="table-wrap"></div>
         <h3 style="margin-top:24px">Validation Pipeline</h3>
         <div id="hits-milestones"></div>
     </div>
@@ -2658,7 +2658,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 body.appendChild(el('tr', null, [
                     td(t.symbol, 'symbol'), td(t.name),
                     tdBadge(t.target_type, typeCls(t.target_type)),
-                    td(formatIds(t.identifiers), 'mono', 'font-size:11px;color:var(--muted);max-width:250px'),
+                    td(formatIds(t.identifiers), 'mono', 'font-size:11px;color:var(--muted);word-wrap:break-word;overflow-wrap:break-word'),
                     td(t.description, 'desc'),
                     btnTd
                 ]));
@@ -2881,7 +2881,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             idCell.appendChild(sourceTypeBadge(s.source_type || 'pubmed'));
             body.appendChild(el('tr', null, [
                 idCell,
-                td(stripHtml(s.title) || '', '', 'max-width:500px'),
+                td(stripHtml(s.title) || '', '', ''),
                 td(s.source_type === 'patent' ? (parseJ(s.authors)||[]).join(', ') : (s.journal || ''), '', 'font-size:12px;color:var(--text-secondary)'),
                 td(s.pub_date || '', 'mono', 'font-size:11px;white-space:nowrap'),
                 td(cc > 0 ? String(cc) : '\u2014', 'mono', 'font-size:12px;text-align:center;' + (cc > 0 ? 'color:var(--green);font-weight:600' : 'color:var(--muted)')),
@@ -3042,7 +3042,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var shortPred = predText.length > 140 ? predText.substring(0, 140) + '...' : predText;
 
                 // Source paper column
-                var srcTd = el('td', {style: 'max-width:220px;font-size:11px;line-height:1.5'});
+                var srcTd = el('td', {style: 'min-width:160px;font-size:11px;line-height:1.5;word-wrap:break-word;overflow-wrap:break-word'});
                 var srcTitle = c.source_title || meta.source_title || '';
                 var srcPmid = c.source_pmid || meta.source_pmid || '';
                 var srcJournal = c.source_journal || '';
@@ -3065,7 +3065,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var detailBtn = el('button', {className: 'btn-expand', text: 'Details'});
 
                 var row = el('tr', {style: 'cursor:pointer'}, [
-                    td(shortPred, 'desc', 'max-width:400px'),
+                    td(shortPred, 'desc', ''),
                     srcTd,
                     tdBadge(c.claim_type ? c.claim_type.replace(/_/g, ' ') : 'unknown', 'badge-blue'),
                     tdBadge(conf, confCls),
@@ -6194,7 +6194,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     td(p.designation, null, 'font-size:10px'),
                     td(p.timeline, 'mono', 'font-size:10px'),
                     td((p.current_sma_drugs || []).join(', '), null, 'font-size:10px'),
-                    td(p.sma_relevance, null, 'font-size:9px;max-width:250px')
+                    td(p.sma_relevance, null, 'font-size:9px;word-wrap:break-word;overflow-wrap:break-word')
                 ]));
             }
         });
@@ -6241,7 +6241,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     td((v.assays || []).slice(0, 2).join(', '), null, 'font-size:9px'),
                     td(v.timeline, 'mono', 'font-size:10px'),
                     td(v.cost_estimate, 'mono', 'font-size:10px'),
-                    td(v.go_no_go, null, 'font-size:9px;max-width:200px')
+                    td(v.go_no_go, null, 'font-size:9px;word-wrap:break-word;overflow-wrap:break-word')
                 ]));
             }
             if (data.insight) {
@@ -7116,7 +7116,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var hit = hits[hti];
                     var htr = el('tr');
                     var htdTgt = el('td', {style: 'font-weight:600'}); htdTgt.textContent = hit.target;
-                    var htdCmp = el('td', {style: 'font-family:monospace;font-size:11px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'}); htdCmp.textContent = truncate(hit.compound, 60);
+                    var htdCmp = el('td', {style: 'font-family:monospace;font-size:11px;max-width:400px;word-wrap:break-word;overflow-wrap:break-word'}); htdCmp.textContent = truncate(hit.compound, 60);
                     var htdDock = el('td'); htdDock.textContent = hit.docking_confidence.toFixed(3);
                     htr.appendChild(htdTgt); htr.appendChild(htdCmp); htr.appendChild(htdDock);
                     htbody.appendChild(htr);
