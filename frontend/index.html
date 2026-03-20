@@ -794,6 +794,7 @@
             <a href="/hypotheses" class="nav-link" data-section="hypotheses">Hypotheses</a>
             <a href="/predictions" class="nav-link" data-section="predictions">Predictions</a>
             <a href="/convergence" class="nav-link" data-section="convergence">Convergence</a>
+            <a href="/calibration" class="nav-link" data-section="calibration">Calibration</a>
         </div>
     </span>
     <span class="nav-dropdown-wrap">
@@ -1486,6 +1487,23 @@
         <div id="convergence-table-wrap"><div class="loading">Loading convergence scores...</div></div>
         <h3 style="margin-top:24px;font-size:16px;font-weight:600;color:var(--text)">Prediction Cards</h3>
         <div id="convergence-prediction-cards"><div class="loading">Loading predictions...</div></div>
+    </div>
+</section>
+
+
+<section class="section" id="calibration">
+    <div class="section-header"><h2 class="section-title">Evidence Calibration</h2><span class="section-count" id="calibration-count"></span></div>
+    <p class="section-desc">Bayesian back-testing of convergence scores against known drug outcomes. Measures how well the platform's evidence scoring predicts real-world drug success and failure. If approved drugs score high and failed drugs score low, the scoring system is well-calibrated. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/bayesian_calibration.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <div id="calibration-content">
+        <div id="calibration-gauge" style="text-align:center;padding:24px 0">
+            <div class="loading">Loading calibration data...</div>
+        </div>
+        <div id="calibration-comparison" style="margin-top:20px"></div>
+        <h3 style="margin-top:24px;font-size:14px;font-weight:600;color:var(--text)">Calibration Curve</h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Convergence score bins vs actual drug success rate. Perfect calibration = diagonal line.</p>
+        <div id="calibration-curve-chart" style="margin-bottom:20px"></div>
+        <h3 style="margin-top:24px;font-size:14px;font-weight:600;color:var(--text)">Metrics</h3>
+        <div id="calibration-metrics" style="margin-bottom:16px"></div>
     </div>
 </section>
 
@@ -9141,12 +9159,239 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+
+    // ============ Evidence Calibration (M5 Bayesian) ============
+    function loadCalibration() {
+        if (loaded.calibration) return; loaded.calibration = true;
+
+        fetch(API + '/calibration/bayesian/report').then(function(r) { return r.json(); }).then(function(data) {
+            var gaugeWrap = clearEl('calibration-gauge');
+            var pct = data.calibration_pct;
+            var grade = data.grade || '-';
+            var gradeLabel = data.grade_label || 'Unknown';
+
+            // Grade color
+            var gradeColor = '#94a3b8';
+            if (grade === 'A') gradeColor = '#22c55e';
+            else if (grade === 'B') gradeColor = '#eab308';
+            else if (grade === 'C') gradeColor = '#f97316';
+            else if (grade === 'D') gradeColor = '#ef4444';
+
+            // Big gauge number
+            var gaugeNum = document.createElement('div');
+            gaugeNum.style.cssText = 'font-size:48px;font-weight:800;color:' + gradeColor + ';letter-spacing:-1px';
+            gaugeNum.textContent = pct != null ? pct + '%' : '--';
+            gaugeWrap.appendChild(gaugeNum);
+
+            var gaugeLabel = document.createElement('div');
+            gaugeLabel.style.cssText = 'font-size:14px;color:var(--muted);margin-top:4px';
+            gaugeLabel.textContent = 'Calibrated (' + grade + ' — ' + gradeLabel + ')';
+            gaugeWrap.appendChild(gaugeLabel);
+
+            // Summary stats
+            var summary = data.summary || {};
+            setText('calibration-count', (summary.total_outcomes || 0) + ' outcomes tested');
+
+            // === Approved vs Failed comparison table ===
+            var compWrap = clearEl('calibration-comparison');
+            var outcomeCal = data.outcome_calibration || {};
+            var groupStats = outcomeCal.group_stats || {};
+
+            if (Object.keys(groupStats).length > 0) {
+                var compTitle = document.createElement('h3');
+                compTitle.style.cssText = 'font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px';
+                compTitle.textContent = 'Approved vs Failed Comparison';
+                compWrap.appendChild(compTitle);
+
+                var compTable = document.createElement('table');
+                compTable.className = 'data-table';
+                var cHead = document.createElement('thead');
+                var cHr = document.createElement('tr');
+                ['Outcome Group', 'Count', 'Scored', 'Mean Convergence', 'Median', 'Min', 'Max'].forEach(function(h) {
+                    var cTh = document.createElement('th'); cTh.textContent = h; cHr.appendChild(cTh);
+                });
+                cHead.appendChild(cHr);
+                compTable.appendChild(cHead);
+
+                var cBody = document.createElement('tbody');
+                ['success', 'failure', 'ongoing'].forEach(function(grp) {
+                    var gs = groupStats[grp];
+                    if (!gs) return;
+                    var row = document.createElement('tr');
+
+                    var tdGrp = document.createElement('td');
+                    tdGrp.textContent = grp.charAt(0).toUpperCase() + grp.slice(1);
+                    tdGrp.style.fontWeight = '600';
+                    if (grp === 'success') tdGrp.style.color = '#22c55e';
+                    else if (grp === 'failure') tdGrp.style.color = '#ef4444';
+                    else tdGrp.style.color = '#eab308';
+                    row.appendChild(tdGrp);
+
+                    var tdCount = document.createElement('td'); tdCount.textContent = gs.count || 0; row.appendChild(tdCount);
+                    var tdScored = document.createElement('td'); tdScored.textContent = gs.scored_count || 0; row.appendChild(tdScored);
+
+                    var tdMean = document.createElement('td');
+                    var meanVal = gs.mean_convergence;
+                    tdMean.textContent = meanVal != null ? (meanVal * 100).toFixed(1) + '%' : '-';
+                    tdMean.style.fontWeight = '700';
+                    row.appendChild(tdMean);
+
+                    var tdMedian = document.createElement('td');
+                    var medVal = gs.median_convergence;
+                    tdMedian.textContent = medVal != null ? (medVal * 100).toFixed(1) + '%' : '-';
+                    row.appendChild(tdMedian);
+
+                    var tdMin = document.createElement('td');
+                    tdMin.textContent = gs.min_convergence != null ? (gs.min_convergence * 100).toFixed(1) + '%' : '-';
+                    row.appendChild(tdMin);
+
+                    var tdMax = document.createElement('td');
+                    tdMax.textContent = gs.max_convergence != null ? (gs.max_convergence * 100).toFixed(1) + '%' : '-';
+                    row.appendChild(tdMax);
+
+                    cBody.appendChild(row);
+                });
+                compTable.appendChild(cBody);
+                compWrap.appendChild(compTable);
+            }
+
+            // === Calibration Curve (bar chart using divs) ===
+            var curveWrap = clearEl('calibration-curve-chart');
+            var curveCal = data.calibration_curve || {};
+            var bins = curveCal.bins || [];
+
+            if (bins.length > 0) {
+                var chartContainer = document.createElement('div');
+                chartContainer.style.cssText = 'display:flex;align-items:flex-end;gap:8px;height:160px;padding:0 0 24px 0;border-bottom:1px solid var(--line);position:relative';
+
+                bins.forEach(function(b) {
+                    var barGroup = document.createElement('div');
+                    barGroup.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;height:100%';
+
+                    var barArea = document.createElement('div');
+                    barArea.style.cssText = 'flex:1;display:flex;align-items:flex-end;gap:2px;width:100%';
+
+                    // Convergence score bar (predicted)
+                    var predBar = document.createElement('div');
+                    var predH = b.mean_convergence != null ? Math.max(4, b.mean_convergence * 140) : 0;
+                    predBar.style.cssText = 'flex:1;background:var(--accent);border-radius:2px 2px 0 0;min-height:4px;opacity:0.5';
+                    predBar.style.height = predH + 'px';
+                    predBar.title = 'Convergence: ' + (b.mean_convergence != null ? (b.mean_convergence * 100).toFixed(1) + '%' : '-');
+                    barArea.appendChild(predBar);
+
+                    // Actual success rate bar
+                    var actBar = document.createElement('div');
+                    var actH = b.success_rate != null ? Math.max(4, b.success_rate * 140) : 0;
+                    var actColor = '#22c55e';
+                    if (b.success_rate != null && b.predicted_vs_actual_gap != null) {
+                        if (Math.abs(b.predicted_vs_actual_gap) > 0.2) actColor = '#ef4444';
+                        else if (Math.abs(b.predicted_vs_actual_gap) > 0.1) actColor = '#eab308';
+                    }
+                    actBar.style.cssText = 'flex:1;border-radius:2px 2px 0 0;min-height:4px';
+                    actBar.style.height = actH + 'px';
+                    actBar.style.background = actColor;
+                    actBar.title = 'Success rate: ' + (b.success_rate != null ? (b.success_rate * 100).toFixed(1) + '%' : '-');
+                    barArea.appendChild(actBar);
+
+                    barGroup.appendChild(barArea);
+
+                    // Label
+                    var label = document.createElement('div');
+                    label.style.cssText = 'font-size:10px;color:var(--muted);margin-top:6px;text-align:center;white-space:nowrap';
+                    label.textContent = b.bin;
+                    barGroup.appendChild(label);
+
+                    // Count
+                    var countLabel = document.createElement('div');
+                    countLabel.style.cssText = 'font-size:9px;color:var(--muted);text-align:center';
+                    countLabel.textContent = 'n=' + (b.outcome_count || 0);
+                    barGroup.appendChild(countLabel);
+
+                    chartContainer.appendChild(barGroup);
+                });
+
+                curveWrap.appendChild(chartContainer);
+
+                // Legend
+                var legend = document.createElement('div');
+                legend.style.cssText = 'display:flex;gap:16px;margin-top:10px;font-size:11px;color:var(--muted)';
+                var leg1 = document.createElement('span');
+                leg1.innerHTML = '<span style="display:inline-block;width:10px;height:10px;background:var(--accent);opacity:0.5;border-radius:1px;vertical-align:middle;margin-right:4px"></span>Convergence Score';
+                var leg2 = document.createElement('span');
+                leg2.innerHTML = '<span style="display:inline-block;width:10px;height:10px;background:#22c55e;border-radius:1px;vertical-align:middle;margin-right:4px"></span>Actual Success Rate';
+                legend.appendChild(leg1);
+                legend.appendChild(leg2);
+                curveWrap.appendChild(legend);
+            } else {
+                curveWrap.appendChild(el('div', {className: 'empty-state'}, [
+                    el('p', {text: 'No calibration curve data available. Requires drug outcomes with convergence scores.'})
+                ]));
+            }
+
+            // === Metrics panel ===
+            var metricsWrap = clearEl('calibration-metrics');
+            var metrics = summary;
+            var metricsGrid = document.createElement('div');
+            metricsGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px';
+
+            var metricItems = [
+                {label: 'Separation Score', value: metrics.separation_score, fmt: 'score'},
+                {label: 'Rank Correlation', value: metrics.rank_correlation, fmt: 'score'},
+                {label: 'Prediction Accuracy', value: metrics.prediction_accuracy, fmt: 'pct'},
+                {label: 'Brier Score', value: metrics.brier_score, fmt: 'brier'},
+                {label: 'Outcomes Tested', value: metrics.total_outcomes, fmt: 'int'},
+                {label: 'With Convergence', value: metrics.outcomes_with_convergence, fmt: 'int'}
+            ];
+
+            metricItems.forEach(function(m) {
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:12px 16px';
+
+                var val = document.createElement('div');
+                val.style.cssText = 'font-size:20px;font-weight:700;color:var(--text)';
+                if (m.value == null) {
+                    val.textContent = '--';
+                } else if (m.fmt === 'pct') {
+                    val.textContent = (m.value * 100).toFixed(1) + '%';
+                } else if (m.fmt === 'brier') {
+                    val.textContent = Number(m.value).toFixed(4);
+                    if (m.value <= 0.1) val.style.color = '#22c55e';
+                    else if (m.value <= 0.2) val.style.color = '#eab308';
+                    else val.style.color = '#ef4444';
+                } else if (m.fmt === 'score') {
+                    val.textContent = Number(m.value).toFixed(4);
+                    if (m.value >= 0.3) val.style.color = '#22c55e';
+                    else if (m.value >= 0) val.style.color = '#eab308';
+                    else val.style.color = '#ef4444';
+                } else {
+                    val.textContent = String(m.value);
+                }
+                card.appendChild(val);
+
+                var lbl = document.createElement('div');
+                lbl.style.cssText = 'font-size:11px;color:var(--muted);margin-top:4px';
+                lbl.textContent = m.label;
+                card.appendChild(lbl);
+
+                metricsGrid.appendChild(card);
+            });
+            metricsWrap.appendChild(metricsGrid);
+
+        }).catch(function(err) {
+            var gaugeWrap = clearEl('calibration-gauge');
+            gaugeWrap.appendChild(el('div', {className: 'empty-state'}, [
+                el('h3', {text: 'Calibration data not available'}),
+                el('p', {text: 'The Bayesian calibration engine requires drug outcomes and convergence scores. Error: ' + err.message})
+            ]));
+        });
+    }
+
     // Section loader map
     var loaders = {
         mission: loadMission, research: loadResearch,
         targets: loadTargets, trials: loadTrials, drugs: loadDrugs,
         sources: loadSources, datasets: loadDatasets, claims: loadClaims,
-        hypotheses: loadHypotheses, predictions: loadPredictions, convergence: loadConvergence, scores: loadScores, evidence: loadEvidence,
+        hypotheses: loadHypotheses, predictions: loadPredictions, convergence: loadConvergence, calibration: loadCalibration, scores: loadScores, evidence: loadEvidence,
         screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
         outcomes: loadOutcomes, hits: loadHits, comparative: loadComparative,
         directions: loadDirections, links: loadLinks, contact: loadContact,

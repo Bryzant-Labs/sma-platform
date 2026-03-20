@@ -4,11 +4,16 @@ Back-tests scoring models against known SMA drug approvals to measure
 how well our predictions and hypotheses align with established biology.
 Also provides calibration curves showing predicted confidence vs actual
 replication rate across all claims.
+
+M5 Bayesian Evidence Calibration endpoints back-test convergence scores
+against known drug outcomes (approved vs failed) from the drug_outcomes table.
 """
 
 from __future__ import annotations
 
-from fastapi import APIRouter
+import logging
+
+from fastapi import APIRouter, HTTPException
 
 from ...reasoning.confidence_calibrator import (
     calibrate_hypotheses,
@@ -16,7 +21,14 @@ from ...reasoning.confidence_calibrator import (
     generate_calibration_curves,
     get_calibration_report,
 )
+from ...reasoning.bayesian_calibration import (
+    calibrate_against_outcomes,
+    compute_calibration_curve as bayesian_calibration_curve,
+    get_bayesian_calibration_report,
+    validate_target_score,
+)
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -73,3 +85,78 @@ async def calibration_curves():
     - recalibration_suggestions: actionable advice for bins where confidence diverges from evidence
     """
     return await generate_calibration_curves()
+
+
+# =========================================================================
+# M5 Bayesian Evidence Calibration — back-tests convergence vs drug outcomes
+# =========================================================================
+
+@router.get("/calibration/bayesian/report")
+async def bayesian_report():
+    """Full Bayesian evidence calibration report.
+
+    Back-tests convergence scores against known drug outcomes (approved,
+    failed, ongoing) from the drug_outcomes table. Returns calibration
+    percentage, grade, separation score, rank correlation, Brier score,
+    and calibration curve data.
+
+    This is the primary endpoint for measuring how well the platform's
+    5-dimension convergence scoring predicts real-world drug success.
+    """
+    try:
+        return await get_bayesian_calibration_report()
+    except Exception as e:
+        logger.error("Bayesian calibration report failed: %s", e, exc_info=True)
+        raise HTTPException(500, detail="Calibration report failed: %s" % str(e))
+
+
+@router.get("/calibration/bayesian/outcomes")
+async def bayesian_outcomes():
+    """Compare convergence scores of approved vs failed drugs.
+
+    Groups drug outcomes by type (success, failure, ongoing) and computes
+    mean/median convergence scores per group. Measures separation between
+    approved and failed drugs, rank correlation, and prediction accuracy.
+    """
+    try:
+        return await calibrate_against_outcomes()
+    except Exception as e:
+        logger.error("Outcome calibration failed: %s", e, exc_info=True)
+        raise HTTPException(500, detail="Outcome calibration failed: %s" % str(e))
+
+
+@router.get("/calibration/bayesian/curve")
+async def bayesian_curve():
+    """Calibration curve: convergence score bins vs actual drug success rates.
+
+    Bins drug outcomes by their target's convergence score (0-0.2, 0.2-0.4, etc.)
+    and computes the actual success rate in each bin. A well-calibrated system
+    shows increasing success rates in higher convergence bins. Also returns
+    Brier score and plot-ready data arrays.
+    """
+    try:
+        return await bayesian_calibration_curve()
+    except Exception as e:
+        logger.error("Calibration curve failed: %s", e, exc_info=True)
+        raise HTTPException(500, detail="Calibration curve failed: %s" % str(e))
+
+
+@router.get("/calibration/bayesian/validate/{target_symbol}")
+async def bayesian_validate_target(target_symbol: str):
+    """Validate a specific target's convergence score against its drug outcomes.
+
+    For the given target, compares the convergence score with the actual
+    success/failure rate of drugs targeting it. Returns calibration gap,
+    verdict (well_calibrated / overconfident / underconfident), and
+    per-compound outcome details.
+    """
+    try:
+        result = await validate_target_score(target_symbol)
+        if result.get("status") == "not_found":
+            raise HTTPException(404, detail=result["message"])
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Target validation failed for %s: %s", target_symbol, e, exc_info=True)
+        raise HTTPException(500, detail="Target validation failed: %s" % str(e))
