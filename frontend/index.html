@@ -638,7 +638,11 @@
 
         /* Drug Outcomes */
         .outcome-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
-        .outcome-stat { background: var(--panel); border: 1px solid var(--line); padding: 16px; text-align: center; }
+        .outcome-stat { background: var(--panel); border: 1px solid var(--line); padding: 16px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.15s; }
+        .outcome-stat:hover { border-color: var(--accent); background: var(--blue-bg, #eff6ff); }
+        .outcome-stat.active { border-color: var(--text); background: var(--text); color: #fff; }
+        .outcome-stat.active .outcome-stat-val { color: #fff; }
+        .outcome-stat.active .outcome-stat-label { color: rgba(255,255,255,0.7); }
         .outcome-stat-val { font-size: 28px; font-weight: 700; font-family: var(--mono); }
         .outcome-stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
         .outcome-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -5136,13 +5140,21 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var srcLink = el('a', {href: 'https://pubmed.ncbi.nlm.nih.gov/' + o.pmid + '/', target: '_blank', rel: 'noopener', text: o.pmid});
                 srcTd.appendChild(srcLink);
             }
+            var compTd = td(o.compound_name, 'symbol');
+            compTd.style.maxWidth = '140px';
+            compTd.style.overflow = 'hidden';
+            compTd.style.textOverflow = 'ellipsis';
+            compTd.title = o.compound_name || '';
+            var findTd = td(truncate(o.key_finding || '', 160), 'desc');
+            findTd.style.minWidth = '200px';
+            findTd.style.fontSize = '12px';
             body.appendChild(el('tr', null, [
-                td(o.compound_name, 'symbol'),
+                compTd,
                 td(o.target || '-'),
                 el('td', null, [el('span', {className: outCls, text: (o.outcome || '').replace(/_/g, ' ')})]),
                 td(o.trial_phase || '-'),
                 failTd,
-                td(truncate(o.key_finding || '', 100), 'desc'),
+                findTd,
                 srcTd
             ]));
         }
@@ -5163,9 +5175,22 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 stats.push({val: summary.by_outcome[b].count, label: summary.by_outcome[b].outcome.replace(/_/g, ' ')});
             }
             for (var s = 0; s < stats.length; s++) {
-                var card = el('div', {className: 'outcome-stat'});
+                var card = el('div', {className: 'outcome-stat' + (s === 0 ? ' active' : '')});
                 card.appendChild(el('div', {className: 'outcome-stat-val', text: String(stats[s].val)}));
                 card.appendChild(el('div', {className: 'outcome-stat-label', text: stats[s].label}));
+                var filterVal = s === 0 ? 'all' : summary.by_outcome[s - 1].outcome;
+                (function(val) { card.addEventListener('click', function() {
+                    outcomesFilter = val;
+                    var allCards = document.querySelectorAll('.outcome-stat');
+                    for (var x = 0; x < allCards.length; x++) allCards[x].classList.remove('active');
+                    this.classList.add('active');
+                    var allBtns = document.querySelectorAll('.outcome-filter');
+                    for (var y = 0; y < allBtns.length; y++) {
+                        allBtns[y].classList.remove('active');
+                        if (allBtns[y].textContent === val.replace(/_/g, ' ') || (val === 'all' && allBtns[y].textContent === 'all')) allBtns[y].classList.add('active');
+                    }
+                    renderOutcomes();
+                }); })(filterVal);
                 sumEl.appendChild(card);
             }
             // Filters
