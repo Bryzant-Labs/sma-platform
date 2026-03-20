@@ -309,19 +309,254 @@ async def calibrate_hypotheses() -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# Claim Confidence Calibration Curves
+# ---------------------------------------------------------------------------
+
+# Bin edges for confidence buckets
+_BIN_EDGES = [(0.0, 0.2), (0.2, 0.4), (0.4, 0.6), (0.6, 0.8), (0.8, 1.0)]
+_BIN_LABELS = ["0.0–0.2", "0.2–0.4", "0.4–0.6", "0.6–0.8", "0.8–1.0"]
+
+
+def _brier_score(confidences: list[float], outcomes: list[int]) -> float:
+    """Compute Brier score: mean squared error between confidence and outcome.
+
+    Lower is better. 0 = perfect calibration, 0.25 = random baseline for binary.
+    outcome = 1 if claim is replicated (2+ independent sources), 0 otherwise.
+    """
+    if not confidences:
+        return 0.0
+    n = len(confidences)
+    return round(sum((c - o) ** 2 for c, o in zip(confidences, outcomes)) / n, 6)
+
+
+async def generate_calibration_curves() -> dict[str, Any]:
+    """Generate calibration curve data — predicted confidence vs actual replication rate.
+
+    For each confidence bin, computes:
+    - mean_confidence: average confidence score in this bin
+    - replication_rate: fraction of claims with 2+ independent sources
+    - claim_type_consistency: fraction where multiple sources assert the same claim_type
+    - claim_count: number of claims in this bin
+
+    Also computes a Brier score (overall calibration quality metric) and
+    recalibration suggestions for bins where confidence diverges from replication.
+    """
+    # 1) Fetch all claims with their confidence and source counts
+    try:
+        rows = await fetch(
+            """SELECT c.id, c.confidence, c.claim_type,
+                      COUNT(DISTINCT e.source_id) AS source_count
+               FROM claims c
+               LEFT JOIN evidence e ON e.claim_id = c.id
+               GROUP BY c.id, c.confidence, c.claim_type
+               ORDER BY c.confidence"""
+        )
+    except Exception as e:
+        logger.error("Failed to fetch claims for calibration curves: %s", e)
+        return {
+            "status": "error",
+            "message": f"Failed to fetch claims: {e}",
+            "bins": [],
+            "brier_score": None,
+        }
+
+    total_claims = len(rows)
+    if total_claims == 0:
+        return {
+            "status": "no_data",
+            "message": "No claims found. Run ingestion first.",
+            "total_claims": 0,
+            "bins": [],
+            "brier_score": None,
+        }
+
+    # 2) For claims with 2+ sources, check claim_type consistency across sources.
+    #    We need a separate query for multi-source claims to check if different
+    #    sources corroborate the same claim type.
+    multi_source_claim_ids = [
+        str(r["id"]) for r in rows if int(r["source_count"] or 0) >= 2
+    ]
+
+    claim_type_consistent: set[str] = set()
+    if multi_source_claim_ids:
+        # For each multi-source claim, check if there are other claims with
+        # the same subject+predicate+claim_type from different sources.
+        # This measures whether independent sources assert the same kind of claim.
+        try:
+            consistency_rows = await fetch(
+                """SELECT c1.id AS claim_id,
+                          COUNT(DISTINCT c2.id) AS matching_claims
+                   FROM claims c1
+                   JOIN evidence e1 ON e1.claim_id = c1.id
+                   JOIN claims c2 ON c2.claim_type = c1.claim_type
+                                  AND c2.subject_id = c1.subject_id
+                                  AND c2.predicate = c1.predicate
+                                  AND c2.id != c1.id
+                   JOIN evidence e2 ON e2.claim_id = c2.id
+                                    AND e2.source_id != e1.source_id
+                   WHERE c1.id IN (
+                       SELECT c.id FROM claims c
+                       JOIN evidence e ON e.claim_id = c.id
+                       GROUP BY c.id
+                       HAVING COUNT(DISTINCT e.source_id) >= 2
+                   )
+                   GROUP BY c1.id
+                   HAVING COUNT(DISTINCT c2.id) >= 1"""
+            )
+            claim_type_consistent = {str(r["claim_id"]) for r in consistency_rows}
+        except Exception as e:
+            # Non-fatal: consistency check is supplementary
+            logger.warning("Claim type consistency check failed: %s", e)
+
+    # 3) Bin claims by confidence
+    bins: list[dict[str, Any]] = []
+    all_confidences: list[float] = []
+    all_outcomes: list[int] = []
+
+    for i, (lo, hi) in enumerate(_BIN_EDGES):
+        bin_claims = [
+            r for r in rows
+            if lo <= float(r["confidence"] or 0) < hi
+            or (hi == 1.0 and float(r["confidence"] or 0) == 1.0 and lo == 0.8)
+        ]
+
+        if not bin_claims:
+            bins.append({
+                "bin": _BIN_LABELS[i],
+                "range": [lo, hi],
+                "claim_count": 0,
+                "mean_confidence": round((lo + hi) / 2, 2),
+                "replication_rate": None,
+                "claim_type_consistency_rate": None,
+                "predicted_vs_actual_gap": None,
+            })
+            continue
+
+        confidences = [float(r["confidence"] or 0) for r in bin_claims]
+        mean_conf = sum(confidences) / len(confidences)
+
+        # Replication: fraction with 2+ independent sources
+        replicated = sum(1 for r in bin_claims if int(r["source_count"] or 0) >= 2)
+        replication_rate = replicated / len(bin_claims)
+
+        # Claim type consistency: among multi-source claims in this bin,
+        # how many have matching claim types across independent sources?
+        multi_in_bin = [r for r in bin_claims if int(r["source_count"] or 0) >= 2]
+        if multi_in_bin:
+            consistent_count = sum(
+                1 for r in multi_in_bin if str(r["id"]) in claim_type_consistent
+            )
+            consistency_rate = consistent_count / len(multi_in_bin)
+        else:
+            consistency_rate = None
+
+        gap = round(mean_conf - replication_rate, 4)
+
+        bins.append({
+            "bin": _BIN_LABELS[i],
+            "range": [lo, hi],
+            "claim_count": len(bin_claims),
+            "mean_confidence": round(mean_conf, 4),
+            "replication_rate": round(replication_rate, 4),
+            "claim_type_consistency_rate": round(consistency_rate, 4) if consistency_rate is not None else None,
+            "predicted_vs_actual_gap": gap,
+        })
+
+        # Accumulate for Brier score
+        for r in bin_claims:
+            conf = float(r["confidence"] or 0)
+            outcome = 1 if int(r["source_count"] or 0) >= 2 else 0
+            all_confidences.append(conf)
+            all_outcomes.append(outcome)
+
+    # 4) Brier score
+    brier = _brier_score(all_confidences, all_outcomes)
+
+    # 5) Build plot data (predicted vs actual)
+    plot_data = {
+        "x_predicted": [b["mean_confidence"] for b in bins if b["claim_count"] > 0],
+        "y_actual": [b["replication_rate"] for b in bins if b["claim_count"] > 0],
+        "perfect_calibration": [b["mean_confidence"] for b in bins if b["claim_count"] > 0],
+        "bin_sizes": [b["claim_count"] for b in bins if b["claim_count"] > 0],
+    }
+
+    # 6) Recalibration suggestions
+    suggestions: list[dict[str, Any]] = []
+    for b in bins:
+        if b["claim_count"] == 0 or b["replication_rate"] is None:
+            continue
+        gap = b["predicted_vs_actual_gap"]
+        if gap is not None and abs(gap) > 0.15:
+            if gap > 0:
+                direction = "overconfident"
+                action = (
+                    f"Claims in the {b['bin']} range have confidence ~{b['mean_confidence']:.0%} "
+                    f"but only {b['replication_rate']:.0%} are replicated by 2+ sources. "
+                    f"Consider reducing confidence or requiring stronger evidence for this range."
+                )
+            else:
+                direction = "underconfident"
+                action = (
+                    f"Claims in the {b['bin']} range have confidence ~{b['mean_confidence']:.0%} "
+                    f"but {b['replication_rate']:.0%} are replicated. "
+                    f"These claims may deserve higher confidence scores."
+                )
+            suggestions.append({
+                "bin": b["bin"],
+                "direction": direction,
+                "gap": gap,
+                "suggestion": action,
+            })
+
+    # 7) Interpretation
+    if brier <= 0.1:
+        calibration_quality = "EXCELLENT"
+        interpretation = "Confidence scores are well-calibrated against replication evidence."
+    elif brier <= 0.2:
+        calibration_quality = "GOOD"
+        interpretation = "Confidence scores are reasonably calibrated. Minor adjustments may help."
+    elif brier <= 0.3:
+        calibration_quality = "MODERATE"
+        interpretation = "Confidence scores show meaningful miscalibration. Review suggestions below."
+    else:
+        calibration_quality = "POOR"
+        interpretation = "Confidence scores are poorly calibrated against replication evidence. Significant recalibration needed."
+
+    return {
+        "status": "completed",
+        "total_claims": total_claims,
+        "bins": bins,
+        "brier_score": brier,
+        "calibration_quality": calibration_quality,
+        "interpretation": interpretation,
+        "plot_data": plot_data,
+        "recalibration_suggestions": suggestions,
+        "methodology": {
+            "replication_threshold": "2+ independent sources per claim",
+            "brier_score_range": "0 (perfect) to 1 (worst); <0.1 excellent, <0.2 good",
+            "bin_count": len(_BIN_EDGES),
+            "claim_type_consistency": "Fraction of multi-source claims where independent sources assert the same claim type",
+        },
+        "calibrated_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+# ---------------------------------------------------------------------------
 # Combined Calibration Report
 # ---------------------------------------------------------------------------
 
 async def get_calibration_report() -> dict[str, Any]:
-    """Generate a combined calibration report for predictions and hypotheses.
+    """Generate a combined calibration report for predictions, hypotheses, and claim curves.
 
     This is the primary entry point for evaluating how well our scoring models
-    align with known biology (approved SMA drugs).
+    align with known biology (approved SMA drugs) and how well confidence scores
+    predict actual replication rates.
     """
     prediction_cal = await calibrate_predictions()
     hypothesis_cal = await calibrate_hypotheses()
+    curves_cal = await generate_calibration_curves()
 
-    # Overall health score: simple average of key indicators
+    # Overall health score: weighted average of key indicators
     scores = []
 
     # Prediction MRR (0-1)
@@ -337,6 +572,11 @@ async def get_calibration_report() -> dict[str, Any]:
     found = pred_metrics.get("known_positives_found", 0)
     total = pred_metrics.get("known_positives_total", 1)
     scores.append(found / total if total > 0 else 0)
+
+    # Calibration quality: 1 - brier_score (inverted so higher = better)
+    brier = curves_cal.get("brier_score")
+    if brier is not None:
+        scores.append(max(1.0 - brier, 0.0))
 
     overall_score = round(sum(scores) / len(scores), 4) if scores else 0.0
 
@@ -360,5 +600,6 @@ async def get_calibration_report() -> dict[str, Any]:
         "ground_truth_drugs": GROUND_TRUTH,
         "prediction_calibration": prediction_cal,
         "hypothesis_calibration": hypothesis_cal,
+        "claim_calibration_curves": curves_cal,
         "calibrated_at": datetime.now(timezone.utc).isoformat(),
     }
