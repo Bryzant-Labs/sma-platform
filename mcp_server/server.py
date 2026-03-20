@@ -1215,6 +1215,105 @@ async def dock_compound_nim(
     return result
 
 
+
+# ---------------------------------------------------------------------------
+# Drug Discovery & Virtual Screening tools
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+async def run_virtual_screening(
+    target_symbol: str,
+    n_molecules: int = 100,
+    lipinski_filter: bool = True,
+) -> dict[str, Any]:
+    """Run generative virtual screening pipeline: GenMol generates molecules,
+    RDKit filters by drug-likeness, DiffDock docks against AlphaFold structures,
+    and results are ranked by composite score.
+
+    Targets: SMN2, STMN2, PLS3, NCALD, UBA1, CORO1C, TP53.
+
+    This is a multi-step computational chemistry pipeline that:
+    1. Generates novel molecules using GenMol NIM
+    2. Filters for drug-likeness (Lipinski rule of five) via RDKit
+    3. Docks passing molecules against AlphaFold-predicted structures via DiffDock
+    4. Ranks candidates by a composite score (docking affinity + drug-likeness)
+
+    Args:
+        target_symbol: Target gene symbol to screen against (e.g. "SMN2",
+                       "CORO1C", "UBA1").
+        n_molecules: Number of molecules to generate (default 100, max 1000).
+        lipinski_filter: Whether to apply Lipinski drug-likeness filter
+                         (default True).
+
+    Returns:
+        Dict with keys: target, n_generated, n_passed_filter, n_docked,
+        top_candidates (list of ranked molecules with SMILES, docking_score,
+        druglikeness_score, composite_score), pipeline_duration_s, and status.
+        Requires SMA_ADMIN_KEY environment variable.
+    """
+    admin_key = os.environ.get("SMA_ADMIN_KEY")
+    if not admin_key:
+        return {
+            "error": "SMA_ADMIN_KEY environment variable is not set",
+            "detail": "Virtual screening requires admin authentication.",
+        }
+
+    headers = {"X-Admin-Key": admin_key}
+    body = {
+        "target_symbol": target_symbol,
+        "n_molecules": min(n_molecules, 1000),
+        "lipinski_filter": lipinski_filter,
+    }
+    result = await _post("/nims/virtual-screening", json_body=body, headers=headers)
+    if _is_error(result):
+        return result
+    return result
+
+
+@mcp.tool()
+async def check_alphafold_complexes() -> list[dict[str, Any]]:
+    """Check AlphaFold DB for predicted structures of 8 SMA protein complexes.
+
+    Queries AlphaFold Database for predicted structures of key SMA-related
+    protein complexes: SMN-Gemin2, SMN-Gemin3, SMN-Gemin5, SMN-p53,
+    SMN-UBA1, PLS3-actin, NCALD-CaM, and STMN2-tubulin.
+
+    Returns confidence scores (pLDDT and PAE) for each complex, indicating
+    how reliable the predicted structure is for downstream docking studies.
+
+    Returns:
+        List of complex records, each including complex_name, uniprot_ids,
+        alphafold_id, plddt_mean, pae_score, structure_url, found (bool),
+        and confidence_category (high/medium/low).
+    """
+    result = await _get("/structures/alphafold-complexes")
+    if _is_error(result):
+        return [result]  # type: ignore[list-item]
+    return result if isinstance(result, list) else result.get("items", result)
+
+
+@mcp.tool()
+async def list_binder_targets() -> list[dict[str, Any]]:
+    """List 6 SMA targets available for protein binder design via Proteina-Complexa.
+
+    Returns the set of SMA targets that have been prepared for de novo protein
+    binder design: SMN2, SMN-p53 interface, NCALD, UBA1, PLS3, and STMN2.
+
+    Each target includes the binding interface definition, AlphaFold structure
+    availability, and readiness status for Proteina-Complexa submission.
+
+    Returns:
+        List of binder target records, each including target_symbol,
+        interface_description, alphafold_structure (bool), pdb_id,
+        binding_site_residues, proteina_ready (bool), and notes.
+    """
+    result = await _get("/structures/binder-targets")
+    if _is_error(result):
+        return [result]  # type: ignore[list-item]
+    return result if isinstance(result, list) else result.get("items", result)
+
+
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------

@@ -16,14 +16,16 @@ Every assertion traces back to its source. No marketing — only evidence.
 
 | Metric | Count |
 |--------|-------|
-| PubMed sources ingested | 1,773 |
-| LLM-extracted evidence claims | 7,400+ |
+| PubMed sources ingested | 6,042 |
+| LLM-extracted evidence claims | 30,000+ |
 | Clinical trials (ClinicalTrials.gov) | 449 |
 | Molecular targets scored | 21 |
-| Prioritized hypotheses (A/B/C tiers) | 102 |
-| Knowledge graph edges | 214 |
-| Unique compounds (ChEMBL) | 188 |
+| Prioritized hypotheses (A/B/C tiers) | 1,252 |
+| Knowledge graph edges | 428 |
+| Unique compounds (ChEMBL + GenMol) | 200+ |
 | Curated research links | 53 |
+| AlphaFold protein complexes | 8 (all found) |
+| Virtual screening campaigns | 4 targets docked |
 
 ## Scientific Methodology
 
@@ -36,7 +38,7 @@ The pipeline follows a six-stage process:
               107+ curated queries across SMA biology, discovery targets,
               and cross-species comparative biology
                   ↓
-2. EXTRACT    NLP-based claim extraction from 1,773 paper abstracts
+2. EXTRACT    NLP-based claim extraction from 6,042 paper abstracts
               12 typed claim categories (gene_expression, drug_efficacy, etc.)
               Each claim → source paper traceability chain
                   ↓
@@ -103,6 +105,8 @@ A novel module analyzing how regenerative organisms solve motor neuron problems 
 
 | Organism | Key Trait | Why It Matters |
 |----------|-----------|----------------|
+| Mouse | Primary SMA model (SMNΔ7) | Gold-standard preclinical testing |
+| Rat | Large-animal SMA model | Behavioral + electrophysiology studies |
 | Axolotl | Full spinal cord regeneration | Understanding regeneration pathways |
 | Zebrafish | Motor neuron regeneration | SMN ortholog expression in regeneration |
 | Naked Mole Rat | Neurodegeneration resistance | Neuroprotective mechanisms |
@@ -120,13 +124,27 @@ GET /api/v2/scores                   7-dimension composite scores
 GET /api/v2/hypotheses/prioritized   Ranked hypotheses (A/B/C tiers)
 GET /api/v2/trials                   Clinical trials (449 entries)
 GET /api/v2/drugs                    Drugs/therapies (16 entries)
-GET /api/v2/sources                  PubMed literature (1,773 papers)
-GET /api/v2/claims                   Evidence claims (7,400+ entries)
+GET /api/v2/sources                  PubMed literature (6,042 papers)
+GET /api/v2/claims                   Evidence claims (30,000+ entries)
 GET /api/v2/datasets                 Curated omics datasets
 GET /api/v2/comparative/species      Model organisms for cross-species analysis
 ```
 
 Interactive documentation: https://sma-research.info/api/v2/docs
+
+## NVIDIA GTC 2026 Integration
+
+Built with NVIDIA BioNeMo NIMs and the Generative Virtual Screening Blueprint:
+
+| Tool | Purpose | Status |
+|------|---------|--------|
+| GenMol NIM | De novo molecule generation | Live |
+| DiffDock v2.2 NIM | Molecular docking | Live |
+| AlphaFold DB | Protein complex structures | 8/8 found |
+| RNAPro | RNA 3D structure prediction | Self-hosted (planned) |
+| Proteina-Complexa | Protein binder design | GPU required (planned) |
+| BioNeMo Recipes | ESM-2 fine-tuning | Config ready |
+| Virtual Screening Pipeline | End-to-end: generate → filter → dock → rank | Live |
 
 ## Limitations & Transparency
 
