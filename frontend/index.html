@@ -1191,7 +1191,25 @@
 <section class="section" id="sources">
     <div class="section-header"><h2 class="section-title">Literature</h2><span class="section-count" id="sources-count"></span></div>
     <p class="section-desc">PubMed papers ingested via automated daily search, scanned by AI for structured claims about SMA biology, targets, and therapies. Sorted by most recent first.</p>
-    <div id="sources-filter-tabs" class="filter-tabs" style="display:none"></div>
+    <div id="sources-type-tabs" class="filter-tabs" style="margin-bottom:6px"></div>
+    <div id="sources-filter-bar" style="display:none;gap:12px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
+        <div style="display:flex;gap:4px;align-items:center">
+            <label style="font-size:11px;color:var(--muted);white-space:nowrap">Year:</label>
+            <select id="source-year-from" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px">
+                <option value="">All</option>
+            </select>
+            <span style="font-size:11px;color:var(--muted)">to</span>
+            <select id="source-year-to" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px">
+                <option value="">All</option>
+            </select>
+        </div>
+        <div style="flex:1;min-width:200px">
+            <input type="text" id="source-search" placeholder="Search by title, journal, or PMID..."
+                   style="width:100%;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+        </div>
+        <button id="source-filter-btn" type="button" style="padding:6px 14px;background:var(--text);color:#fff;border:none;font-size:11px;font-weight:600;text-transform:uppercase;cursor:pointer;border-radius:3px;letter-spacing:0.3px">Filter</button>
+        <button id="source-reset-btn" type="button" style="padding:6px 14px;background:var(--bg);color:var(--text);border:1px solid var(--line);font-size:11px;cursor:pointer;border-radius:3px">Reset</button>
+    </div>
     <div class="table-wrap"><table><thead><tr><th>PMID</th><th>Title</th><th>Journal</th><th>Date</th><th>Claims</th><th></th></tr></thead>
     <tbody id="sources-body"><tr><td colspan="6" class="loading">Loading sources...</td></tr></tbody></table></div>
     <div id="sources-pagination"></div>
@@ -1939,7 +1957,7 @@
             </div>
             <h2 id="news-detail-title" style="font-size:22px;margin:0 0 16px;line-height:1.3"></h2>
             <div id="news-detail-tags" style="margin-bottom:16px;display:flex;gap:6px;flex-wrap:wrap"></div>
-            <div id="news-detail-content" style="font-size:14px;line-height:1.8;white-space:pre-wrap"></div>
+            <div id="news-detail-content" style="font-size:14px;line-height:1.7"></div>
         </article>
 
         <div style="margin-top:24px">
@@ -2220,6 +2238,155 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function clearEl(id) { var e = document.getElementById(id); while(e.firstChild) e.removeChild(e.firstChild); return e; }
     function setText(id, txt) { var e = document.getElementById(id); if (e) e.textContent = txt; }
     function stripHtml(s) { if (!s) return ''; return s.replace(/<[^>]*>/g, ''); }
+
+    /**
+     * Render markdown content safely into a DOM element.
+     * Supports: tables, headers (##), bold (**), lists (- ), code (```), links, paragraphs.
+     * No innerHTML with untrusted data — uses safe DOM creation.
+     */
+    function renderMarkdownSafe(container, md) {
+        if (!md) return;
+        var lines = md.split('\n');
+        var i = 0;
+        while (i < lines.length) {
+            var line = lines[i];
+            var trimmed = line.trim();
+
+            // Skip empty lines
+            if (!trimmed) { i++; continue; }
+
+            // Table: starts with | and has at least 2 |
+            if (trimmed.startsWith('|') && trimmed.split('|').length >= 3) {
+                var tableRows = [];
+                while (i < lines.length && lines[i].trim().startsWith('|')) {
+                    var row = lines[i].trim();
+                    // Skip separator rows (|---|---|)
+                    if (!/^\|[\s\-:]+\|/.test(row) || row.replace(/[\s|:\-]/g, '').length > 0) {
+                        if (!/^\|[\s\-:|]+$/.test(row)) {
+                            tableRows.push(row);
+                        }
+                    }
+                    i++;
+                }
+                if (tableRows.length > 0) {
+                    var table = document.createElement('table');
+                    table.className = 'data-table';
+                    table.style.cssText = 'width:100%;margin:12px 0;font-size:12px';
+                    for (var tr = 0; tr < tableRows.length; tr++) {
+                        var cells = tableRows[tr].split('|').filter(function(c) { return c.trim() !== ''; });
+                        var rowEl = document.createElement('tr');
+                        for (var tc = 0; tc < cells.length; tc++) {
+                            var cellEl = document.createElement(tr === 0 ? 'th' : 'td');
+                            cellEl.style.cssText = 'padding:6px 10px;border-bottom:1px solid var(--line);text-align:left';
+                            if (tr === 0) cellEl.style.fontWeight = '600';
+                            // Bold text in cells
+                            var cellText = cells[tc].trim().replace(/\*\*/g, '');
+                            cellEl.textContent = cellText;
+                            rowEl.appendChild(cellEl);
+                        }
+                        if (tr === 0) {
+                            var thead = document.createElement('thead');
+                            thead.appendChild(rowEl);
+                            table.appendChild(thead);
+                        } else {
+                            if (!table.querySelector('tbody')) table.appendChild(document.createElement('tbody'));
+                            table.querySelector('tbody').appendChild(rowEl);
+                        }
+                    }
+                    container.appendChild(table);
+                }
+                continue;
+            }
+
+            // Code block
+            if (trimmed.startsWith('```')) {
+                i++;
+                var codeLines = [];
+                while (i < lines.length && !lines[i].trim().startsWith('```')) {
+                    codeLines.push(lines[i]);
+                    i++;
+                }
+                i++; // skip closing ```
+                var pre = document.createElement('pre');
+                pre.style.cssText = 'background:var(--panel);padding:12px;border-radius:4px;overflow-x:auto;font-size:12px;margin:12px 0;border:1px solid var(--line)';
+                var code = document.createElement('code');
+                code.textContent = codeLines.join('\n');
+                pre.appendChild(code);
+                container.appendChild(pre);
+                continue;
+            }
+
+            // Headers
+            if (trimmed.startsWith('### ')) {
+                var h4 = document.createElement('h4');
+                h4.textContent = trimmed.substring(4);
+                h4.style.cssText = 'margin:16px 0 8px 0;font-size:14px';
+                container.appendChild(h4);
+                i++; continue;
+            }
+            if (trimmed.startsWith('## ')) {
+                var h3 = document.createElement('h3');
+                h3.textContent = trimmed.substring(3);
+                h3.style.cssText = 'margin:20px 0 10px 0;font-size:16px';
+                container.appendChild(h3);
+                i++; continue;
+            }
+
+            // List items
+            if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                var ul = document.createElement('ul');
+                ul.style.cssText = 'margin:8px 0;padding-left:20px;font-size:13px;line-height:1.6';
+                while (i < lines.length && (lines[i].trim().startsWith('- ') || lines[i].trim().startsWith('* '))) {
+                    var li = document.createElement('li');
+                    var liText = lines[i].trim().substring(2);
+                    // Handle bold in list items
+                    appendFormattedText(li, liText);
+                    ul.appendChild(li);
+                    i++;
+                }
+                container.appendChild(ul);
+                continue;
+            }
+
+            // Regular paragraph
+            var p = document.createElement('p');
+            p.style.cssText = 'margin:8px 0;font-size:13px;line-height:1.6';
+            appendFormattedText(p, trimmed);
+            container.appendChild(p);
+            i++;
+        }
+    }
+
+    /** Append text with bold (**text**) and PMID links safely */
+    function appendFormattedText(el, text) {
+        // Split on **bold** markers
+        var parts = text.split(/(\*\*[^*]+\*\*)/g);
+        for (var pi = 0; pi < parts.length; pi++) {
+            var part = parts[pi];
+            if (part.startsWith('**') && part.endsWith('**')) {
+                var strong = document.createElement('strong');
+                strong.textContent = part.slice(2, -2);
+                el.appendChild(strong);
+            } else {
+                // Handle PMID links
+                var pmidParts = part.split(/(PMID:\s*\d+)/g);
+                for (var pj = 0; pj < pmidParts.length; pj++) {
+                    var pmatch = pmidParts[pj].match(/PMID:\s*(\d+)/);
+                    if (pmatch) {
+                        var a = document.createElement('a');
+                        a.href = 'https://pubmed.ncbi.nlm.nih.gov/' + pmatch[1] + '/';
+                        a.target = '_blank';
+                        a.rel = 'noopener';
+                        a.textContent = pmidParts[pj];
+                        a.style.color = 'var(--accent)';
+                        el.appendChild(a);
+                    } else {
+                        el.appendChild(document.createTextNode(pmidParts[pj]));
+                    }
+                }
+            }
+        }
+    }
     function truncate(s, n) { return (!s) ? '' : s.length > n ? s.substring(0, n) + '...' : s; }
     function parseJ(s) { try { return typeof s === 'string' ? JSON.parse(s) : s; } catch(e) { return null; } }
     function typeCls(t) { return {gene:'badge-blue',protein:'badge-amber',pathway:'badge-green',cell_state:'badge-gray',phenotype:'badge-gray'}[t] || 'badge-gray'; }
@@ -2563,8 +2730,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
-    // Sources with pagination, year filter, type filter, date sort, claim counts
-    var sourcesData = []; var sourcesFiltered = []; var sourcesPage = 1; var sourcesYearFilter = 'all'; var sourcesTypeFilter = 'all';
+    // Sources with pagination, year range filter, type filter, search, date sort, claim counts
+    var sourcesData = []; var sourcesFiltered = []; var sourcesPage = 1; var sourcesTypeFilter = 'all';
+    var sourcesYearFrom = ''; var sourcesYearTo = ''; var sourcesSearchQuery = '';
     var claimCountBySource = {};
     function getYear(dateStr) { if (!dateStr) return 'unknown'; return dateStr.substring(0, 4); }
     function makeFilterBtn(text, filterVal, isActive) {
@@ -2572,15 +2740,15 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         b.setAttribute('data-filter', filterVal);
         return b;
     }
+    function clearSelectOptions(sel) {
+        while (sel.firstChild) sel.removeChild(sel.firstChild);
+        var defOpt = document.createElement('option'); defOpt.value = ''; defOpt.textContent = 'All';
+        sel.appendChild(defOpt);
+    }
     function buildSourceFilters() {
-        // Source type filter
+        // Source type tabs
         var types = {}; for (var j = 0; j < sourcesData.length; j++) { var t = sourcesData[j].source_type || 'pubmed'; types[t] = (types[t]||0)+1; }
         var typeTabs = document.getElementById('sources-type-tabs');
-        if (!typeTabs) {
-            typeTabs = el('div', {id: 'sources-type-tabs', className: 'filter-tabs', style: 'margin-bottom:6px'});
-            var filterParent = document.getElementById('sources-filter-tabs').parentNode;
-            filterParent.insertBefore(typeTabs, document.getElementById('sources-filter-tabs'));
-        }
         while (typeTabs.firstChild) typeTabs.removeChild(typeTabs.firstChild);
         typeTabs.appendChild(makeFilterBtn('All Sources (' + sourcesData.length + ')', 'all', true));
         var typeKeys = Object.keys(types).sort();
@@ -2592,39 +2760,67 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var btns = typeTabs.querySelectorAll('.filter-tab'); for (var b = 0; b < btns.length; b++) btns[b].classList.remove('active');
             e.target.classList.add('active');
             sourcesTypeFilter = e.target.getAttribute('data-filter');
-            sourcesYearFilter = 'all';
-            buildYearFilters();
             applySourceFilter();
         });
-        // Year filters
-        buildYearFilters();
+        // Year range dropdowns + search bar
+        buildYearDropdowns();
+        var filterBar = document.getElementById('sources-filter-bar');
+        filterBar.style.display = 'flex';
+        // Filter button
+        document.getElementById('source-filter-btn').addEventListener('click', function() {
+            sourcesYearFrom = document.getElementById('source-year-from').value;
+            sourcesYearTo = document.getElementById('source-year-to').value;
+            sourcesSearchQuery = document.getElementById('source-search').value.trim().toLowerCase();
+            applySourceFilter();
+        });
+        // Reset button
+        document.getElementById('source-reset-btn').addEventListener('click', function() {
+            document.getElementById('source-year-from').value = '';
+            document.getElementById('source-year-to').value = '';
+            document.getElementById('source-search').value = '';
+            sourcesYearFrom = ''; sourcesYearTo = ''; sourcesSearchQuery = '';
+            sourcesTypeFilter = 'all';
+            var btns = typeTabs.querySelectorAll('.filter-tab'); for (var b = 0; b < btns.length; b++) btns[b].classList.remove('active');
+            if (btns.length) btns[0].classList.add('active');
+            applySourceFilter();
+        });
+        // Enter key on search triggers filter
+        document.getElementById('source-search').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { document.getElementById('source-filter-btn').click(); }
+        });
     }
-    function buildYearFilters() {
-        var base = sourcesTypeFilter === 'all' ? sourcesData : sourcesData.filter(function(s) { return (s.source_type || 'pubmed') === sourcesTypeFilter; });
-        var years = {}; for (var j = 0; j < base.length; j++) { var y = getYear(base[j].pub_date); years[y] = (years[y]||0)+1; }
+    function buildYearDropdowns() {
+        var years = {}; for (var j = 0; j < sourcesData.length; j++) { var y = getYear(sourcesData[j].pub_date); if (y !== 'unknown') years[y] = true; }
         var sorted = Object.keys(years).sort(function(a,b) { return b.localeCompare(a); });
-        var tabs = document.getElementById('sources-filter-tabs');
-        while (tabs.firstChild) tabs.removeChild(tabs.firstChild);
-        tabs.appendChild(makeFilterBtn('All (' + base.length + ')', 'all', true));
+        var fromSel = document.getElementById('source-year-from');
+        var toSel = document.getElementById('source-year-to');
+        clearSelectOptions(fromSel);
+        clearSelectOptions(toSel);
         for (var k = 0; k < sorted.length; k++) {
-            tabs.appendChild(makeFilterBtn(sorted[k] + ' (' + years[sorted[k]] + ')', sorted[k], false));
+            var opt1 = document.createElement('option'); opt1.value = sorted[k]; opt1.textContent = sorted[k];
+            var opt2 = document.createElement('option'); opt2.value = sorted[k]; opt2.textContent = sorted[k];
+            fromSel.appendChild(opt1); toSel.appendChild(opt2);
         }
-        tabs.style.display = '';
-        tabs.addEventListener('click', function(e) {
-            if (!e.target.classList.contains('filter-tab')) return;
-            var btns = tabs.querySelectorAll('.filter-tab'); for (var b = 0; b < btns.length; b++) btns[b].classList.remove('active');
-            e.target.classList.add('active');
-            sourcesYearFilter = e.target.getAttribute('data-filter');
-            applySourceFilter();
-        });
     }
     function applySourceFilter() {
         var result = sourcesData;
         if (sourcesTypeFilter !== 'all') {
             result = result.filter(function(s) { return (s.source_type || 'pubmed') === sourcesTypeFilter; });
         }
-        if (sourcesYearFilter !== 'all') {
-            result = result.filter(function(s) { return getYear(s.pub_date) === sourcesYearFilter; });
+        if (sourcesYearFrom) {
+            result = result.filter(function(s) { var y = getYear(s.pub_date); return y !== 'unknown' && y >= sourcesYearFrom; });
+        }
+        if (sourcesYearTo) {
+            result = result.filter(function(s) { var y = getYear(s.pub_date); return y !== 'unknown' && y <= sourcesYearTo; });
+        }
+        if (sourcesSearchQuery) {
+            result = result.filter(function(s) {
+                var title = (s.title || '').toLowerCase();
+                var journal = (s.journal || '').toLowerCase();
+                var pmid = (s.external_id || '').toLowerCase();
+                var abs = (s.abstract || '').toLowerCase();
+                return title.indexOf(sourcesSearchQuery) !== -1 || journal.indexOf(sourcesSearchQuery) !== -1 || pmid.indexOf(sourcesSearchQuery) !== -1 || abs.indexOf(sourcesSearchQuery) !== -1;
+            });
         }
         sourcesFiltered = result;
         sourcesPage = 1; renderSourcesPage();
@@ -2645,7 +2841,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function renderSourcesPage() {
         var showing = sourcesFiltered.length;
         var label = sourcesTypeFilter === 'patent' ? ' patents' : sourcesTypeFilter === 'pubmed' ? ' papers' : ' sources';
-        document.getElementById('sources-count').textContent = showing + label + (sourcesYearFilter !== 'all' ? ' (' + sourcesYearFilter + ')' : '');
+        var yearSuffix = '';
+        if (sourcesYearFrom && sourcesYearTo) yearSuffix = ' (' + sourcesYearFrom + '\u2013' + sourcesYearTo + ')';
+        else if (sourcesYearFrom) yearSuffix = ' (from ' + sourcesYearFrom + ')';
+        else if (sourcesYearTo) yearSuffix = ' (to ' + sourcesYearTo + ')';
+        var searchSuffix = sourcesSearchQuery ? ' matching "' + sourcesSearchQuery + '"' : '';
+        document.getElementById('sources-count').textContent = showing + label + yearSuffix + searchSuffix;
         var body = clearEl('sources-body');
         var start = (sourcesPage - 1) * PER_PAGE;
         var end = Math.min(start + PER_PAGE, showing);
@@ -6650,8 +6851,10 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 tagsEl.appendChild(el('span', {className: 'badge badge-gray', text: '#' + tags[t], style: 'font-size:11px'}));
             }
 
-            // Content (render as pre-wrapped text for now)
-            setText('news-detail-content', post.content || '');
+            // Content — render markdown (tables, headers, bold, lists)
+            var contentEl = document.getElementById('news-detail-content');
+            contentEl.textContent = '';
+            renderMarkdownSafe(contentEl, post.content || '');
 
             // Comments
             var comments = post.comments || [];
