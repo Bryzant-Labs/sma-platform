@@ -42,6 +42,11 @@ Go deeper on SMA-specific biology, not broader.
 | **Nanopore RNA-seq Data Catalog** | DONE | Search SRA/ENA for public SMA direct RNA datasets |
 | **Generative RNA Therapeutics** | PLANNED | Diffusion models for ASO design with BBB penetration |
 | **Bio-LLM for Splicing Grammar** | PLANNED | Fine-tune on 762 SMA splice variants + SpliceAI data |
+| **Proprioceptive pathway analysis** | PLANNED | Simon priority — proprioceptive synaptic dysfunction largely ignored by SMA field |
+| **Spinal cord segment mapping** | PLANNED | L1-L5 vulnerability data — Simon showed 0-80% variation in motor neuron loss reports |
+| **Mouse model quality comparison** | PLANNED | Simon: same model shows 0-80% variation across labs. Track model-specific phenotype data |
+| **Spinal cord stimulation research direction** | PLANNED | Capogrosso (Pittsburgh) epidural stimulation — "spectacular" pilot results |
+| **ESM-2 protein embeddings (GPU)** | DONE | 1280-dim embeddings for 7 SMA targets computed on A100 |
 
 ### Track 3: Functional Translation Engine (BRIDGE TO WET LAB)
 Prioritize experiments, not just ideas.
