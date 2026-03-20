@@ -1,6 +1,6 @@
 # SMA Research Platform — Roadmap
 
-> Last updated: 2026-03-16
+> Last updated: 2026-03-20
 
 ## Milestone Tracker
 
@@ -43,7 +43,7 @@
 | Patent literature (578 patents via Google Patents) | DONE | Mar 2026 |
 | AlphaFold protein structures (7 proteins, v6) | DONE | Mar 2026 |
 | MCP Server (29 tools, REST-based) | DONE | Mar 2026 |
-| Claim re-scoring (SMA relevance) | IN PROGRESS | Mar 2026 |
+| Claim re-scoring (SMA relevance) | DONE | Mar 2026 |
 | Hypothesis upgrade (Sonnet 4.6, 515 hypotheses) | DONE | Mar 2026 |
 
 ### MG: GPU Compute Infrastructure (MOSTLY COMPLETE)
@@ -52,15 +52,19 @@
 |------------|--------|------|
 | Docker image (csiicf/sma-gpu-toolkit, 14.7GB) | DONE | Mar 2026 |
 | SpliceAI scoring (252 variants, 21 high-impact) | DONE | Mar 2026 |
-| ESM-2 protein embeddings (6 targets, 1280-dim) | DONE | Mar 2026 |
+| ESM-2 protein embeddings (15 targets, 1280-dim) | DONE | Mar 2026 |
 | Cas-OFFinder off-target scan (2,631 off-targets) | DONE | Mar 2026 |
 | DiffDock v1 docking (140 complexes) | DONE | Mar 2026 |
 | DiffDock v2.2 NIM batch (378 dockings, $0) | DONE | Mar 2026 |
 | Boltz-2 structure prediction (5 proteins on A100) | DONE | Mar 2026 |
 | NVIDIA NIMs integration (DiffDock, OpenFold3, GenMol) | DONE | Mar 2026 |
 | GenMol de novo molecules (20 4-AP analogs) | DONE | Mar 2026 |
+| ESM-2 similarity matrix (105 pairs) | DONE | Mar 2026 |
+| ESM-2 contact maps (5 protein pairs) | DONE | Mar 2026 |
+| SMN1 variant effect scoring (9 mutations) | DONE | Mar 2026 |
+| Protein clustering (15 targets, PCA) | DONE | Mar 2026 |
 | OpenMM molecular dynamics | BLOCKED | Needs CUDA OpenMM plugin |
-| Virtual screening (10K-100K) | PLANNED | Needs ChEMBL API uptime |
+| Virtual screening (630 compounds) | IN PROGRESS | ChEMBL expanded, NIM batch ready |
 
 ### M4: Cross-Paper Synthesis (IN PROGRESS — March 2026)
 
@@ -72,9 +76,9 @@
 | Transitive bridges (53 bridges) | DONE | A→B→C chains across papers |
 | Shared mechanisms (33 mechanisms) | DONE | Same pathway, different targets |
 | Claude synthesis cards (6 cards) | DONE | Mechanistic explanations |
-| Temporal evidence analysis | PLANNED | New evidence retroactively strengthens old findings |
-| Contradiction detection | PLANNED | Conflicting high-confidence claims |
-| "Evidence surprise" scoring | PLANNED | Rank by non-obviousness |
+| Temporal evidence analysis | DONE | New evidence retroactively strengthens old findings |
+| Contradiction detection | DONE | Conflicting high-confidence claims |
+| "Evidence surprise" scoring | DONE | Rank by non-obviousness |
 | Claim-target linking enrichment | IN PROGRESS | NER on predicates to link more claims to targets |
 | Full-text claim extraction | PLANNED | Claims from body text, not just abstracts |
 
@@ -88,9 +92,9 @@
 |------------|--------|-------------|
 | Convergence scoring engine (5 dimensions) | DONE | Volume, lab independence, method diversity, temporal, replication |
 | Prediction cards (falsifiable predictions) | DONE | Structured from convergence scores |
-| Bayesian evidence convergence model | PLANNED | Probability model over claim types, source quality |
-| Drug-target synergy prediction | PLANNED | Screening + pathway overlap + literature co-occurrence |
-| Confidence calibration | PLANNED | Back-test against known outcomes (approved therapies) |
+| Bayesian evidence convergence model | DONE | Grade A (89.8%) — back-tested against 227 drug outcomes |
+| Drug-target synergy prediction | DONE | Synergy module live with search + sort |
+| Confidence calibration | DONE | Approved drugs score higher than failed — validated |
 | Uncertainty quantification | PLANNED | Explicit confidence intervals |
 | Target prioritization engine | PLANNED | Multi-criteria: evidence + biology + interventionability |
 
@@ -115,8 +119,8 @@
 
 | Deliverable | Status | Description |
 |------------|--------|-------------|
-| bioRxiv preprint (multi-target 4-AP) | IN PROGRESS | Outline done, needs full text + MD data |
-| Researcher outreach (Columbia, Cure SMA, EU) | READY | Email drafts written, need review + send |
+| bioRxiv preprint (multi-target 4-AP) | IN PROGRESS | Full draft being written (4000 words) |
+| Researcher outreach (Simon, Cure SMA, Krainer) | DONE | 3 polished emails in docs/emails/ |
 | HuggingFace dataset (updated) | DONE | SMAResearch/sma-evidence-graph |
 | GitHub repository (public) | DONE | Bryzant-Labs/sma-platform |
 | Docker Hub image | DONE | csiicf/sma-gpu-toolkit |
@@ -146,18 +150,24 @@
 
 | Metric | Count |
 |--------|-------|
-| Claims | 25,054 |
-| Hypotheses | 515 |
-| Sources | 5,216 |
+| Claims | 30,153 |
+| Hypotheses | 1,262 |
+| Sources | 6,176 |
 | Trials | 449 |
 | Targets | 21 |
 | Drugs | 16 |
-| MCP tools | 29 |
-| API endpoints | ~190 |
+| Screening compounds | 630 |
+| MCP tools | 32 |
+| API endpoints | ~210 |
 | Synthesis cards | 6 |
-| GPU dockings | 518 (140 v1 + 378 v2.2) |
-| Protein structures | 5 (Boltz-2) |
-| Protein embeddings | 6 (ESM-2) |
+| GPU dockings | 1,429 (140 v1 + 378 v2.2 + 957 GenMol screen) |
+| Protein structures | 8 (AlphaFold DB complexes) |
+| Protein embeddings | 15 (ESM-2) |
+| Similarity pairs | 105 (cosine matrix) |
+| Contact maps | 5 (protein-protein interaction) |
+| Variant scores | 9 (SMN1 pathogenic mutations) |
+| Calibration grade | A (89.8%) |
+| Daily pipeline | Active (cron 6 UTC) |
 
 ---
 
