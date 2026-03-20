@@ -698,9 +698,7 @@
 <nav class="nav-bar"><div class="container"><div class="nav-row">
     <a href="/" class="nav-link active" data-section="mission">Home</a>
     <a href="/news" class="nav-link" data-section="news">News</a>
-    <a href="/search" class="nav-link" data-section="search">Search</a>
-    <a href="/ask" class="nav-link" data-section="ask">Ask AI</a>
-    <a href="/chat" class="nav-link nav-highlight" data-section="chat">Chat</a>
+    <a href="/search" class="nav-link nav-highlight" data-section="search">Search</a>
     <span class="nav-sep">|</span>
     <a href="/targets" class="nav-link" data-section="targets">Targets</a>
     <a href="/trials" class="nav-link" data-section="trials">Trials</a>
@@ -1501,74 +1499,33 @@
 </section>
 
 <section class="section" id="search">
-    <div class="section-header"><h2 class="section-title">Semantic Search</h2><span class="section-count" id="search-index-stats"></span></div>
-    <p class="section-desc">Search across 25,000+ evidence claims and 5,200+ sources using AI-powered semantic similarity. Hybrid mode combines vector search with keyword matching for best results.</p>
-    <details class="search-methodology" style="margin-bottom:12px">
-        <summary style="cursor:pointer;color:var(--accent);font-size:12px;margin-bottom:8px">How does search work?</summary>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6;padding:8px 0">
-            <strong>Hybrid search</strong> combines two methods: <strong>Semantic search</strong> uses sentence-transformers (all-mpnet-base-v2) to encode your query into a 768-dimensional vector, then finds the most similar claims and papers using FAISS vector similarity. <strong>Keyword search</strong> uses direct text matching in the database. Results found by both methods get a relevance boost. All data comes from PubMed, ClinicalTrials.gov, Google Patents, and other public biomedical databases.
-        </div>
-    </details>
-    <div class="search-box">
-        <div class="search-input-wrap">
-            <input type="text" id="search-query" placeholder="e.g. SMN2 splicing modifier neuroprotection, or bioelectric reprogramming motor neuron..." autocomplete="off">
-            <button id="search-btn" type="button">Search</button>
-        </div>
-        <div class="search-mode-bar">
-            <button class="search-mode-btn active" data-mode="hybrid">Hybrid</button>
-            <button class="search-mode-btn" data-mode="semantic">Semantic</button>
-            <button class="search-mode-btn" data-mode="keyword">Keyword</button>
-        </div>
-    </div>
-    <div id="search-stats-line" class="search-stats" style="display:none"></div>
-    <div id="search-results" class="search-results"></div>
-</section>
-
-<section class="section" id="ask">
-    <div class="section-header"><h2 class="section-title">Research Assistant</h2></div>
-    <p class="section-desc">Ask any question about SMA biology, targets, drugs, or evidence. The AI assistant searches the full evidence base and synthesizes a grounded answer with cited sources.</p>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Powered by <strong>Claude Sonnet</strong> (Anthropic) with retrieval-augmented generation (RAG) over 25,000+ claims and 5,200+ sources. Every answer is grounded in cited evidence.</div>
-    <div class="ask-box">
-        <div class="search-input-wrap">
-            <input type="text" id="ask-query" placeholder="e.g. What evidence supports NCALD as an SMA modifier? How does risdiplam modify SMN2 splicing?" autocomplete="off">
-            <button id="ask-btn" type="button">Ask</button>
-        </div>
-        <div class="ask-examples">
-            <span class="ask-example" data-q="What is the role of NCALD in SMA pathology?">NCALD role in SMA</span>
-            <span class="ask-example" data-q="How does risdiplam modify SMN2 splicing?">Risdiplam mechanism</span>
-            <span class="ask-example" data-q="What are the main failure reasons for SMA drug candidates?">Drug failure reasons</span>
-            <span class="ask-example" data-q="What evidence supports PLS3 as a natural SMA severity modifier?">PLS3 as modifier</span>
-            <span class="ask-example" data-q="What is the bioelectric reprogramming hypothesis for SMA?">Bioelectric reprogramming</span>
-        </div>
-    </div>
-    <div id="ask-loading" class="loader" style="display:none">Searching evidence base and synthesizing answer...</div>
-    <div id="ask-result" class="ask-result" style="display:none">
-        <div id="ask-answer" class="ask-answer"></div>
-        <div id="ask-meta" class="ask-meta"></div>
-    </div>
-</section>
-
-<section class="section" id="chat">
-    <div class="section-header"><h2 class="section-title">AI Research Chat</h2></div>
-    <p class="section-desc">Have a conversation about SMA research. Ask follow-up questions to explore topics in depth. Powered by Claude Sonnet (Anthropic) with RAG over the full evidence base.</p>
+    <div class="section-header"><h2 class="section-title">Search</h2><span class="section-count" id="search-index-stats"></span></div>
+    <p class="section-desc">Ask any question about SMA research or search across 25,000+ evidence claims and 6,000+ sources. Ask follow-up questions to go deeper.</p>
     <div class="chat-container">
         <div id="chat-messages" class="chat-messages">
             <div class="chat-welcome">
-                <p><strong>Welcome to SMA Research Chat</strong></p>
-                <p style="color:var(--muted);font-size:13px">Ask any question about SMA biology, drug targets, clinical trials, or evidence. You can ask follow-up questions to go deeper.</p>
+                <p><strong>Ask anything about SMA research</strong></p>
+                <p style="color:var(--muted);font-size:13px">Search the evidence base, explore targets, drugs, and clinical trials. You can ask follow-up questions.</p>
                 <div class="chat-suggestions">
                     <button class="chat-suggestion" data-q="What is the evidence for p53-induced motor neuron death in SMA?">p53 in SMA</button>
-                    <button class="chat-suggestion" data-q="What are the key differences between nusinersen, risdiplam, and onasemnogene?">Compare approved therapies</button>
-                    <button class="chat-suggestion" data-q="What evidence supports PLS3 as a natural disease modifier in SMA?">PLS3 modifier</button>
+                    <button class="chat-suggestion" data-q="What are the key differences between nusinersen, risdiplam, and onasemnogene?">Compare therapies</button>
+                    <button class="chat-suggestion" data-q="What evidence supports PLS3 as a disease modifier?">PLS3 modifier</button>
                     <button class="chat-suggestion" data-q="What role does NCALD play in SMA pathology?">NCALD role</button>
-                    <button class="chat-suggestion" data-q="What are the most promising emerging drug targets for SMA beyond SMN?">Emerging targets</button>
+                    <button class="chat-suggestion" data-q="What are the most promising drug targets beyond SMN?">Emerging targets</button>
+                    <button class="chat-suggestion" data-q="How does risdiplam modify SMN2 splicing?">Risdiplam mechanism</button>
                 </div>
+                <details style="margin-top:16px">
+                    <summary style="cursor:pointer;color:var(--muted);font-size:11px">How does search work?</summary>
+                    <div style="font-size:11px;color:var(--muted);line-height:1.5;padding:8px 0">
+                        Your question is searched across 25,000+ evidence claims and 6,000+ papers using hybrid semantic + keyword matching. An AI assistant then synthesizes a grounded answer citing specific claims and papers. All data comes from PubMed, ClinicalTrials.gov, Google Patents, and other public biomedical databases.
+                    </div>
+                </details>
             </div>
         </div>
         <div class="chat-input-area">
             <div class="chat-input-wrap">
-                <input type="text" id="chat-input" placeholder="Ask a question about SMA research..." autocomplete="off">
-                <button id="chat-send" type="button">Send</button>
+                <input type="text" id="chat-input" placeholder="Ask about SMA targets, drugs, evidence, or any research question..." autocomplete="off">
+                <button id="chat-send" type="button">Search</button>
             </div>
             <div class="chat-meta-bar">
                 <span id="chat-status" style="font-size:11px;color:var(--muted)"></span>
@@ -4626,7 +4583,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             if (data.sources_used > 0) {
                 var sourceMeta = document.createElement('div');
                 sourceMeta.className = 'chat-msg-sources';
-                sourceMeta.textContent = 'Based on ' + (data.claims_in_context || 0) + ' claims and ' + (data.sources_in_context || 0) + ' papers | Model: ' + (data.model || 'Claude Sonnet');
+                sourceMeta.textContent = 'Based on ' + (data.claims_in_context || 0) + ' claims and ' + (data.sources_in_context || 0) + ' papers';
                 aiMsg.appendChild(sourceMeta);
             }
 
@@ -6484,7 +6441,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         screening: loadScreening, repurposing: loadRepurposing, candidates: loadCandidates, graph: loadGraph,
         outcomes: loadOutcomes, comparative: loadComparative,
         directions: loadDirections, links: loadLinks, contact: loadContact,
-        search: loadSearch, ask: loadAsk, chat: loadChat, write: loadWrite,
+        search: loadChat, write: loadWrite,
         molecules: loadMolecules, crispr: loadCrispr, aav: loadAav, versions: loadVersions,
         docking: loadDocking, prime: loadPrime, mdsim: loadMdsim,
         spatial: loadSpatial, regen: loadRegen, nmj: loadNmj,
@@ -6502,9 +6459,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // SEO meta data per section for dynamic <title> and <meta description>
     var sectionMeta = {
         mission:     {title: 'SMA Research Platform — Open Evidence Graph', desc: 'Open-source evidence-first research platform for Spinal Muscular Atrophy (SMA). 4,582 PubMed sources, 13,000+ extracted claims, 189 hypotheses, 449 clinical trials, 21 molecular targets.'},
-        search:      {title: 'Search — SMA Research Platform', desc: 'Search across all SMA research data: targets, trials, drugs, claims, hypotheses, and publications.'},
-        ask:         {title: 'Ask AI — SMA Research Platform', desc: 'Ask questions about SMA research using AI-powered evidence retrieval across 13,000+ structured claims.'},
-        chat:        {title: 'AI Research Chat — SMA Research Platform', desc: 'Conversational AI assistant for SMA research. Ask follow-up questions and explore topics in depth with RAG over 13,000+ evidence claims.'},
+        search:      {title: 'Search — SMA Research Platform', desc: 'Search and ask questions about SMA research across 25,000+ evidence claims and 6,000+ sources with AI-powered answers.'},
         targets:     {title: 'Molecular Targets — SMA Research Platform', desc: '21 prioritized molecular targets for SMA drug discovery, scored across 7 dimensions including druggability, evidence depth, and novelty.'},
         trials:      {title: 'Clinical Trials — SMA Research Platform', desc: '449 SMA clinical trials from ClinicalTrials.gov. Track nusinersen, risdiplam, onasemnogene, and emerging gene therapies.'},
         drugs:       {title: 'Drugs & Compounds — SMA Research Platform', desc: 'SMA drugs and investigational compounds including approved therapies and pipeline candidates.'},
