@@ -295,9 +295,14 @@ SMA_QUERIES = [
     '"miR-200a" AND ("regeneration" OR "spinal cord")',
     '"ERK" AND "sustained" AND ("regeneration" OR "reprogramming") AND "muscle"',
     '"ependymoglial" AND ("regeneration" OR "spinal cord")',
-    # --- Verified: Spinal Cord Stimulation in SMA ---
+    # --- Verified: Spinal Cord Stimulation in SMA (Simon/Capogrosso) ---
     '"spinal cord stimulation" AND "spinal muscular atrophy"',
-    '"epidural stimulation" AND ("motor neuron" OR "SMA")',
+    '"epidural stimulation" AND ("motor neuron" OR "SMA" OR "spinal muscular atrophy")',
+    '"spinal cord stimulation" AND "motor neuron disease"',
+    '"proprioception" AND "spinal muscular atrophy"',
+    '"sensory motor" AND "spinal muscular atrophy" AND "circuit"',
+    '"H-reflex" AND ("SMA" OR "spinal muscular atrophy")',
+    '"Capogrosso" AND "spinal cord stimulation"',
 
     # --- p53 / apoptosis / cell death pathways (Simon feedback, 2026-03-20) ---
     '"p53" AND ("spinal muscular atrophy" OR "SMA") AND "motor neuron"',

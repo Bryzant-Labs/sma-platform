@@ -42,8 +42,8 @@ Go deeper on SMA-specific biology, not broader.
 | **Nanopore RNA-seq Data Catalog** | DONE | Search SRA/ENA for public SMA direct RNA datasets |
 | **Generative RNA Therapeutics** | PLANNED | Diffusion models for ASO design with BBB penetration |
 | **Bio-LLM for Splicing Grammar** | PLANNED | Fine-tune on 762 SMA splice variants + SpliceAI data |
-| **Proprioceptive pathway analysis** | PLANNED | Simon priority — proprioceptive synaptic dysfunction largely ignored by SMA field |
-| **Spinal cord segment mapping** | PLANNED | L1-L5 vulnerability data — Simon showed 0-80% variation in motor neuron loss reports |
+| **Proprioceptive pathway analysis** | DONE | Simon priority — proprioceptive synaptic dysfunction largely ignored by SMA field |
+| **Spinal cord segment mapping** | DONE | L1-L5 vulnerability data — Simon showed 0-80% variation in motor neuron loss reports |
 | **Mouse model quality comparison** | PLANNED | Simon: same model shows 0-80% variation across labs. Track model-specific phenotype data |
 | **Spinal cord stimulation research direction** | PLANNED | Capogrosso (Pittsburgh) epidural stimulation — "spectacular" pilot results |
 | **ESM-2 protein embeddings (GPU)** | DONE | 1280-dim embeddings for 7 SMA targets computed on A100 |
@@ -59,9 +59,9 @@ Prioritize experiments, not just ideas.
 | Biomarker atlas (molecular/imaging/fluid) | DONE | Treatment response stratification |
 | Compound/ASO/CRISPR comparison engine | DONE | Dual-target + CRISPR + AAV modules exist |
 | Therapy combination ranking | DONE | Digital twin has basic combo scoring |
-| **Generative Virtual Screening Blueprint** | IN PROGRESS | GTC 2026 — NVIDIA open-source pipeline: GenMol → Filter → DiffDock → Rank |
+| **Generative Virtual Screening Blueprint** | DONE | GTC 2026 — NVIDIA open-source pipeline: GenMol → Filter → DiffDock → Rank |
 | **nvMolKit GPU cheminformatics** | PLANNED | GTC 2026 — faster Lipinski/BBB/PAINS filtering |
-| **AlphaFold DB protein complexes** | IN PROGRESS | GTC 2026 — 1.7M new complexes for SMA structural biology |
+| **AlphaFold DB protein complexes** | DONE | GTC 2026 — 1.7M new complexes for SMA structural biology |
 | **Agentic Drug Discovery** | PLANNED | GTC 2026 — autonomous BioNeMo NIM orchestration |
 | IP/freedom-to-operate signal | DONE | Patent landscape integration |
 

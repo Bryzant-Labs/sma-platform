@@ -138,9 +138,20 @@ RESEARCH_DIRECTIONS = [
         "id": "spinal-cord-stimulation",
         "title": "Spinal Cord Stimulation in SMA",
         "category": "unconventional",
-        "description": "Epidural spinal stimulation for motor function recovery, extending SCI approaches to SMA motor neurons.",
-        "connected_targets": ["NMJ_MATURATION", "ANK3"],
-        "key_concepts": ["epidural stimulation", "spinal cord stimulation", "neuromodulation", "functional electrical"],
+        "description": (
+            "Epidural spinal cord stimulation targeting proprioceptive circuits to reactivate "
+            "dormant motor neurons — Capogrosso (Pittsburgh) / Simon (Leipzig) / ESPACE Europe. "
+            "Sub-motor threshold stimulation activates Ia afferents, re-establishing proprioceptive-motor "
+            "circuit. Pilot results show 'spectacular' motor improvement after 1 month of 2h/day stimulation."
+        ),
+        "connected_targets": ["NMJ_MATURATION", "ANK3", "STMN2"],
+        "key_concepts": [
+            "epidural stimulation", "spinal cord stimulation", "proprioception",
+            "Capogrosso", "Ia afferent", "H-reflex", "motor neuron reactivation",
+            "ESPACE consortium", "neuromodulation",
+        ],
+        "researcher": "Marco Capogrosso (University of Pittsburgh)",
+        "collaborators": ["ESPACE Europe consortium", "Christian Simon (Leipzig)"],
     },
 ]
 
@@ -263,6 +274,13 @@ async def get_research_direction(direction_id: str):
     result["edge_count"] = edge_count
 
     return result
+
+
+@router.get("/research/spinal-stimulation")
+async def spinal_stimulation():
+    """Spinal cord stimulation for SMA — Capogrosso/Simon approach."""
+    from ...reasoning.spinal_stimulation import get_stimulation_info
+    return get_stimulation_info()
 
 
 @router.get("/research/links")
