@@ -35,7 +35,7 @@ Go deeper on SMA-specific biology, not broader.
 | Cross-disease transfer (mechanistically grounded only) | DONE | ALS/DMD overlap where biologically justified |
 | Spatial/single-cell integration | PLANNED | When Slide-seq/MERFISH data available |
 | RNA structure-informed ligand ranking | PLANNED | Via OpenFold3/RNAPro NIMs |
-| **RNAPro SMN2 pre-mRNA 3D structure** | IN PROGRESS | GTC 2026 — RNA structure at ISS-N1 nusinersen binding site |
+| **RNAPro SMN2 pre-mRNA 3D structure** | BLOCKED (NIM API down) | GTC 2026 — RNA structure at ISS-N1 nusinersen binding site |
 | **Proteina-Complexa protein binders** | PLANNED | GTC 2026 — new therapeutic modality: designed protein binders for SMA targets |
 | **ESM-2 fine-tuning via BioNeMo Recipes** | PLANNED | GTC 2026 — SMA-specific protein embeddings |
 | **ASO Sequence Generator** | DONE | Design novel ASOs targeting SMN2 ISS-N1/ISS-N2/ESS regions |

@@ -7,6 +7,9 @@ replication rate across all claims.
 
 M5 Bayesian Evidence Calibration endpoints back-test convergence scores
 against known drug outcomes (approved vs failed) from the drug_outcomes table.
+
+M5 Uncertainty Quantification endpoints provide Wilson score confidence
+intervals and uncertainty grades (A-D) for every target prediction.
 """
 
 from __future__ import annotations
@@ -26,6 +29,11 @@ from ...reasoning.bayesian_calibration import (
     compute_calibration_curve as bayesian_calibration_curve,
     get_bayesian_calibration_report,
     validate_target_score,
+)
+from ...reasoning.uncertainty_engine import (
+    compute_all_uncertainties as uq_compute_all,
+    compute_target_uncertainty as uq_compute_target,
+    get_uncertainty_report as uq_get_report,
 )
 
 logger = logging.getLogger(__name__)
@@ -160,3 +168,49 @@ async def bayesian_validate_target(target_symbol: str):
     except Exception as e:
         logger.error("Target validation failed for %s: %s", target_symbol, e, exc_info=True)
         raise HTTPException(500, detail="Target validation failed: %s" % str(e))
+
+# =========================================================================
+# M5 Uncertainty Quantification -- Wilson score CI + uncertainty grades
+# =========================================================================
+
+@router.get("/calibration/uncertainty")
+async def uncertainty_report():
+    """Full uncertainty quantification report for all targets.
+
+    Computes Wilson score confidence intervals on the support ratio
+    (fraction of high-confidence claims) for every target with >= 3 claims.
+    Combines CI tightness, source diversity, and temporal stability into
+    a composite certainty score with A-D grading.
+
+    Returns per-target uncertainty bands, platform summary, and the
+    highest/lowest certainty predictions.
+    """
+    try:
+        return await uq_get_report()
+    except Exception as e:
+        logger.error("Uncertainty report failed: %s", e, exc_info=True)
+        raise HTTPException(500, detail="Uncertainty report failed: %s" % str(e))
+
+
+@router.get("/calibration/uncertainty/{target_symbol}")
+async def uncertainty_target(target_symbol: str):
+    """Uncertainty quantification for a single target.
+
+    Returns:
+    - Support ratio with 95% Wilson CI (lower, upper)
+    - Claim counts: support / oppose / neutral
+    - Source diversity (unique labs)
+    - Temporal stability (recency, growth)
+    - Composite certainty score and A-D grade
+    - Contributing factor breakdown
+    """
+    try:
+        result = await uq_compute_target(target_symbol)
+        if "error" in result and "not found" in result.get("error", "").lower():
+            raise HTTPException(404, detail=result["error"])
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Uncertainty computation failed for %s: %s", target_symbol, e, exc_info=True)
+        raise HTTPException(500, detail="Uncertainty computation failed: %s" % str(e))

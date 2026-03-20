@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, advisory_pack, agent, analytics, aso, assistant, bayesian, benchmark, binder_design, biomarker, blackboard, calibration, cascade, chat, collaboration, combinations, comparative, contact, convergence, crispr, cross_disease, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hit_validation, hypothesis_gen, ingestion, interaction_network, lab_os, literature_review, md_simulation, modality_comparison, modifier, molecule_screen, mouse_models, news, nvidia_nims, omics, organoid_scorecard, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, proprioception, reproducibility, research, rna_binding, scoring, screening, search, smn_locus, source_quality, spatial_omics, splice, splice_offtarget, splice_predictor, splicing_map, stats, synergy, synthesis, target_compare, target_report, targets, timeline, translation, trials, uncertainty, virtual_screening
+from .routes import aav, advanced_analytics, advisory_pack, agent, analytics, aso, assistant, bayesian, benchmark, binder_design, biomarker, blackboard, calibration, cascade, chat, collaboration, combinations, comparative, contact, convergence, crispr, cross_disease, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hit_validation, hypothesis_gen, ingestion, interaction_network, lab_os, literature_review, md_simulation, modality_comparison, modifier, molecule_screen, mouse_models, news, nvidia_nims, omics, organoid_scorecard, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, prioritization_v2, proprioception, reproducibility, research, rna_binding, scoring, screening, search, smn_locus, source_quality, spatial_omics, splice, splice_offtarget, splice_predictor, splicing_map, stats, synergy, synthesis, target_compare, target_report, targets, timeline, translation, trials, uncertainty, virtual_screening
 
 
 @asynccontextmanager
@@ -141,6 +141,7 @@ def create_app() -> FastAPI:
     app.include_router(biomarker.router, prefix="/api/v2", tags=["biomarker"])
     app.include_router(bayesian.router, prefix="/api/v2", tags=["bayesian"])
     app.include_router(prioritization.router, prefix="/api/v2", tags=["prioritization"])
+    app.include_router(prioritization_v2.router, prefix="/api/v2", tags=["prioritization-v2"])
     app.include_router(experiment_value.router, prefix="/api/v2", tags=["experiment-value"])
     app.include_router(patent_landscape.router, prefix="/api/v2", tags=["patents"])
     app.include_router(modifier.router, prefix="/api/v2", tags=["modifier"])
@@ -217,7 +218,7 @@ def create_app() -> FastAPI:
         "targets", "trials", "drugs", "sources", "claims",
         "hypotheses", "predictions", "graph",
         "convergence", "calibration",
-        "scores", "outcomes", "screening", "candidates", "hits",
+        "scores", "priority", "outcomes", "screening", "candidates", "hits",
         "comparative", "directions",
         "spatial", "regen", "nmj", "multisystem", "bioelectric",
         "splicemap", "rnabind", "dualtarget", "twin",

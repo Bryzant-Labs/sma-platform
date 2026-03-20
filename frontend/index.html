@@ -453,6 +453,27 @@
         .tier-medium { color: var(--amber); }
         .tier-low { color: var(--muted); }
         .tier-excluded { color: var(--red); }
+        .prio-card { background: var(--panel); border: 1px solid var(--line); padding: 20px; margin-bottom: 12px; }
+        .prio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+        .prio-rank { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--muted); margin-right: 4px; }
+        .prio-composite { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; }
+        .prio-tier { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; padding: 2px 8px; text-transform: uppercase; }
+        .prio-tier-1 { color: var(--green); background: var(--green-bg); }
+        .prio-tier-2 { color: var(--blue); background: var(--blue-bg); }
+        .prio-tier-3 { color: var(--amber); background: var(--amber-bg); }
+        .prio-tier-4 { color: var(--red); background: var(--red-bg); }
+        .prio-dims { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 8px; }
+        .prio-dim { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 6px 0; }
+        .prio-dim-label { color: var(--text-secondary); min-width: 90px; }
+        .prio-dim-bar { flex: 1; height: 8px; background: var(--line-light); position: relative; max-width: 120px; }
+        .prio-dim-fill { height: 100%; transition: width 0.3s ease; }
+        .prio-dim-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 11px; min-width: 36px; text-align: right; }
+        .prio-radar { width: 160px; height: 160px; flex-shrink: 0; }
+        .prio-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+        .prio-strengths { margin-top: 8px; font-size: 11px; color: var(--green); }
+        .prio-weaknesses { margin-top: 4px; font-size: 11px; color: var(--red); }
+        .prio-card-body { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+        .prio-card-dims { flex: 1; min-width: 300px; }
         .pagination { display: flex; gap: 0; margin-top: 12px; border: 1px solid var(--line); width: fit-content; flex-wrap: wrap; }
         .page-btn {
             padding: 6px 12px; font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer;
@@ -814,6 +835,7 @@
             <a href="/candidates" class="nav-link" data-section="candidates">Candidates</a>
             <a href="/hits" class="nav-link" data-section="hits">Hits</a>
             <a href="/scores" class="nav-link" data-section="scores">Scores</a>
+            <a href="/priority" class="nav-link" data-section="priority">Priority v2</a>
             <a href="/outcomes" class="nav-link" data-section="outcomes">Outcomes</a>
             <a href="/synergy" class="nav-link" data-section="synergy">Synergy</a>
             <a href="/drugs" class="nav-link" data-section="drugs">Drugs</a>
@@ -1504,6 +1526,11 @@
         <div id="calibration-curve-chart" style="margin-bottom:20px"></div>
         <h3 style="margin-top:24px;font-size:14px;font-weight:600;color:var(--text)">Metrics</h3>
         <div id="calibration-metrics" style="margin-bottom:16px"></div>
+        <h3 style="margin-top:28px;font-size:14px;font-weight:600;color:var(--text)">Uncertainty Quantification</h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Wilson score confidence intervals on target support ratios. Grades combine CI tightness, source diversity, and temporal stability. Green = high certainty, amber = moderate, red = uncertain. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/uncertainty_engine.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+        <div id="uncertainty-summary" style="margin-bottom:16px"></div>
+        <div id="uncertainty-chart" style="margin-bottom:16px"></div>
+        <div id="uncertainty-extremes" style="margin-bottom:16px"></div>
     </div>
 </section>
 
@@ -1515,6 +1542,16 @@
                style="width:100%;max-width:360px;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
     </div>
     <div id="scores-body"><div class="loading">Loading scores...</div></div>
+</section>
+
+<section class="section" id="priority">
+    <div class="section-header"><h2 class="section-title">Target Priority Engine v2</h2><span class="section-count" id="priority-count"></span></div>
+    <p class="section-desc">Multi-criteria decision engine integrating 6 data dimensions: evidence convergence (25%), druggability via DiffDock screening (20%), ESM-2 structural uniqueness (15%), clinical validation from drug outcomes (15%), cross-species conservation (10%), and target novelty (15%). <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/target_prioritizer_v2.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <div id="priority-filter-bar" style="display:none;margin:0 0 12px 0">
+        <input type="text" id="priority-search" placeholder="Search target name or symbol..."
+               style="width:100%;max-width:360px;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+    </div>
+    <div id="priority-body"><div class="loading">Loading priority engine...</div></div>
 </section>
 
 <section class="section" id="evidence">
@@ -9382,6 +9419,208 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             gaugeWrap.appendChild(el('div', {className: 'empty-state'}, [
                 el('h3', {text: 'Calibration data not available'}),
                 el('p', {text: 'The Bayesian calibration engine requires drug outcomes and convergence scores. Error: ' + err.message})
+            ]));
+        });
+
+        // Load uncertainty quantification in parallel
+        loadUncertainty();
+    }
+
+    // ============ Uncertainty Quantification (M5) ============
+    var uncertaintyLoaded = false;
+    function loadUncertainty() {
+        if (uncertaintyLoaded) return;
+        uncertaintyLoaded = true;
+
+        fetch(API + '/calibration/uncertainty').then(function(r) { return r.json(); }).then(function(data) {
+            if (data.status !== 'completed' || !data.all_targets) {
+                var sumWrap = clearEl('uncertainty-summary');
+                sumWrap.appendChild(el('div', {className: 'empty-state'}, [
+                    el('p', {text: data.message || 'No uncertainty data available.'})
+                ]));
+                return;
+            }
+
+            // --- Summary card ---
+            var sumWrap = clearEl('uncertainty-summary');
+            var ps = data.platform_summary || {};
+            var sumGrid = document.createElement('div');
+            sumGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px';
+
+            var sumItems = [
+                {label: 'Platform Grade', value: ps.platform_grade || '-', color: ps.platform_grade === 'A' ? '#22c55e' : ps.platform_grade === 'B' ? '#eab308' : ps.platform_grade === 'C' ? '#f97316' : '#ef4444'},
+                {label: 'Mean Certainty', value: ps.mean_certainty != null ? (ps.mean_certainty * 100).toFixed(1) + '%' : '--', color: 'var(--text)'},
+                {label: 'Mean CI Width', value: ps.mean_ci_width != null ? ps.mean_ci_width.toFixed(3) : '--', color: 'var(--text)'},
+                {label: 'Targets Analyzed', value: String(data.total_targets || 0), color: 'var(--text)'}
+            ];
+
+            // Grade distribution badges
+            var gd = ps.grade_distribution || {};
+            var gradeItems = [
+                {label: 'Grade A', value: String(gd.A || 0), color: '#22c55e'},
+                {label: 'Grade B', value: String(gd.B || 0), color: '#eab308'},
+                {label: 'Grade C', value: String(gd.C || 0), color: '#f97316'},
+                {label: 'Grade D', value: String(gd.D || 0), color: '#ef4444'}
+            ];
+
+            sumItems.concat(gradeItems).forEach(function(m) {
+                var card = document.createElement('div');
+                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:12px 16px';
+                var val = document.createElement('div');
+                val.style.cssText = 'font-size:20px;font-weight:700';
+                val.style.color = m.color;
+                val.textContent = m.value;
+                card.appendChild(val);
+                var lbl = document.createElement('div');
+                lbl.style.cssText = 'font-size:11px;color:var(--muted);margin-top:4px';
+                lbl.textContent = m.label;
+                card.appendChild(lbl);
+                sumGrid.appendChild(card);
+            });
+            sumWrap.appendChild(sumGrid);
+
+            // --- CI bar chart ---
+            var chartWrap = clearEl('uncertainty-chart');
+            var targets = data.all_targets || [];
+
+            // Sort by certainty score descending for display
+            var sorted = targets.slice().sort(function(a, b) { return b.certainty_score - a.certainty_score; });
+
+            if (sorted.length > 0) {
+                var chartTitle = document.createElement('div');
+                chartTitle.style.cssText = 'font-size:12px;color:var(--muted);margin-bottom:8px';
+                chartTitle.textContent = 'Wilson 95% CI bands per target (sorted by certainty score)';
+                chartWrap.appendChild(chartTitle);
+
+                var barContainer = document.createElement('div');
+                barContainer.style.cssText = 'display:flex;flex-direction:column;gap:4px';
+
+                sorted.forEach(function(t) {
+                    var sr = t.support_ratio || {};
+                    var ciLow = sr.ci_95_lower || 0;
+                    var ciHigh = sr.ci_95_upper || 1;
+                    var center = sr.point_estimate || 0.5;
+                    var ciWidth = sr.ci_width || 1;
+                    var grade = t.grade || 'D';
+
+                    // Color based on CI width
+                    var barColor;
+                    if (ciWidth < 0.15) barColor = '#22c55e';
+                    else if (ciWidth < 0.30) barColor = '#eab308';
+                    else barColor = '#ef4444';
+
+                    var row = document.createElement('div');
+                    row.style.cssText = 'display:flex;align-items:center;gap:8px;height:24px';
+
+                    // Symbol label
+                    var sym = document.createElement('div');
+                    sym.style.cssText = 'width:90px;font-size:11px;font-weight:600;color:var(--text);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+                    sym.textContent = t.target_symbol;
+                    sym.title = (t.target_name || t.target_symbol) + ' (Grade ' + grade + ')';
+                    row.appendChild(sym);
+
+                    // CI bar track
+                    var track = document.createElement('div');
+                    track.style.cssText = 'flex:1;position:relative;height:16px;background:var(--panel);border:1px solid var(--line);border-radius:2px;overflow:hidden';
+
+                    // CI range bar
+                    var ciBar = document.createElement('div');
+                    var leftPct = (ciLow * 100);
+                    var widthPct = ((ciHigh - ciLow) * 100);
+                    ciBar.style.cssText = 'position:absolute;top:2px;bottom:2px;border-radius:1px;opacity:0.6';
+                    ciBar.style.left = leftPct + '%';
+                    ciBar.style.width = Math.max(2, widthPct) + '%';
+                    ciBar.style.background = barColor;
+                    track.appendChild(ciBar);
+
+                    // Center point
+                    var dot = document.createElement('div');
+                    dot.style.cssText = 'position:absolute;top:3px;width:4px;height:10px;background:var(--text);border-radius:1px';
+                    dot.style.left = 'calc(' + (center * 100) + '% - 2px)';
+                    track.appendChild(dot);
+
+                    track.title = t.target_symbol + ': ' + (center * 100).toFixed(1) + '% (95% CI: ' + (ciLow * 100).toFixed(1) + '% - ' + (ciHigh * 100).toFixed(1) + '%)';
+                    row.appendChild(track);
+
+                    // Grade badge
+                    var badge = document.createElement('div');
+                    var badgeColor = grade === 'A' ? '#22c55e' : grade === 'B' ? '#eab308' : grade === 'C' ? '#f97316' : '#ef4444';
+                    badge.style.cssText = 'width:22px;font-size:11px;font-weight:700;text-align:center;flex-shrink:0';
+                    badge.style.color = badgeColor;
+                    badge.textContent = grade;
+                    row.appendChild(badge);
+
+                    barContainer.appendChild(row);
+                });
+
+                chartWrap.appendChild(barContainer);
+
+                // Legend
+                var legend = document.createElement('div');
+                legend.style.cssText = 'display:flex;gap:16px;margin-top:10px;font-size:11px;color:var(--muted)';
+                legend.innerHTML = '<span><span style="display:inline-block;width:10px;height:10px;background:#22c55e;opacity:0.6;border-radius:1px;vertical-align:middle;margin-right:4px"></span>Tight CI (high certainty)</span>'
+                    + '<span><span style="display:inline-block;width:10px;height:10px;background:#eab308;opacity:0.6;border-radius:1px;vertical-align:middle;margin-right:4px"></span>Moderate CI</span>'
+                    + '<span><span style="display:inline-block;width:10px;height:10px;background:#ef4444;opacity:0.6;border-radius:1px;vertical-align:middle;margin-right:4px"></span>Wide CI (uncertain)</span>'
+                    + '<span><span style="display:inline-block;width:4px;height:10px;background:var(--text);border-radius:1px;vertical-align:middle;margin-right:4px"></span>Point estimate</span>';
+                chartWrap.appendChild(legend);
+            }
+
+            // --- Most certain / most uncertain tables ---
+            var extremesWrap = clearEl('uncertainty-extremes');
+            var extremesGrid = document.createElement('div');
+            extremesGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:16px';
+
+            function makeTable(title, items, titleColor) {
+                var wrap = document.createElement('div');
+                var h = document.createElement('h4');
+                h.style.cssText = 'font-size:13px;font-weight:600;margin-bottom:8px';
+                h.style.color = titleColor;
+                h.textContent = title;
+                wrap.appendChild(h);
+
+                if (!items || items.length === 0) {
+                    wrap.appendChild(el('p', {text: 'No data', className: 'empty-state'}));
+                    return wrap;
+                }
+
+                var tbl = document.createElement('table');
+                tbl.className = 'data-table';
+                var thead = document.createElement('thead');
+                var hr = document.createElement('tr');
+                ['Target', 'Score', 'CI Width', 'Labs', 'Grade'].forEach(function(h) {
+                    var th = document.createElement('th'); th.textContent = h; hr.appendChild(th);
+                });
+                thead.appendChild(hr);
+                tbl.appendChild(thead);
+
+                var tbody = document.createElement('tbody');
+                items.forEach(function(item) {
+                    var tr = document.createElement('tr');
+                    var tdSym = document.createElement('td'); tdSym.textContent = item.symbol; tdSym.style.fontWeight = '600'; tr.appendChild(tdSym);
+                    var tdScore = document.createElement('td'); tdScore.textContent = item.certainty_score != null ? (item.certainty_score * 100).toFixed(1) + '%' : '-'; tr.appendChild(tdScore);
+                    var tdCi = document.createElement('td'); tdCi.textContent = item.ci_width != null ? item.ci_width.toFixed(3) : '-'; tr.appendChild(tdCi);
+                    var tdLabs = document.createElement('td'); tdLabs.textContent = item.unique_labs != null ? String(item.unique_labs) : '-'; tr.appendChild(tdLabs);
+                    var tdGrade = document.createElement('td');
+                    var g = item.grade || '-';
+                    tdGrade.textContent = g;
+                    tdGrade.style.fontWeight = '700';
+                    tdGrade.style.color = g === 'A' ? '#22c55e' : g === 'B' ? '#eab308' : g === 'C' ? '#f97316' : '#ef4444';
+                    tr.appendChild(tdGrade);
+                    tbody.appendChild(tr);
+                });
+                tbl.appendChild(tbody);
+                wrap.appendChild(tbl);
+                return wrap;
+            }
+
+            extremesGrid.appendChild(makeTable('Highest Certainty (most actionable)', data.most_certain, '#22c55e'));
+            extremesGrid.appendChild(makeTable('Highest Uncertainty (need more evidence)', data.most_uncertain, '#ef4444'));
+            extremesWrap.appendChild(extremesGrid);
+
+        }).catch(function(err) {
+            var sumWrap = clearEl('uncertainty-summary');
+            sumWrap.appendChild(el('div', {className: 'empty-state'}, [
+                el('p', {text: 'Uncertainty data not available: ' + err.message})
             ]));
         });
     }
