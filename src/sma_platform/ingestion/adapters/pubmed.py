@@ -298,6 +298,29 @@ SMA_QUERIES = [
     # --- Verified: Spinal Cord Stimulation in SMA ---
     '"spinal cord stimulation" AND "spinal muscular atrophy"',
     '"epidural stimulation" AND ("motor neuron" OR "SMA")',
+
+    # --- p53 / apoptosis / cell death pathways (Simon feedback, 2026-03-20) ---
+    '"p53" AND ("spinal muscular atrophy" OR "SMA") AND "motor neuron"',
+    '"TP53" AND "spinal muscular atrophy"',
+    '"p53" AND "motor neuron" AND ("apoptosis" OR "cell death")',
+    '"apoptosis" AND "spinal muscular atrophy" AND "motor neuron"',
+    '"cell death" AND "spinal muscular atrophy"',
+    '"caspase" AND ("SMA" OR "spinal muscular atrophy")',
+    '"Bax" AND ("motor neuron" OR "spinal muscular atrophy")',
+    '"Bcl-2" AND ("motor neuron" OR "spinal muscular atrophy")',
+
+    # --- Broader gap-filling queries (2026-03-20) ---
+    '"Schwann cell" AND "spinal muscular atrophy"',
+    '"astrocyte" AND "spinal muscular atrophy"',
+    '"glia" AND "spinal muscular atrophy" AND "motor neuron"',
+    '"muscle pathology" AND "spinal muscular atrophy"',
+    '"skeletal muscle" AND "spinal muscular atrophy" AND "atrophy"',
+    '"SMA" AND "genotype phenotype correlation"',
+    '"spinal muscular atrophy" AND "modifier gene"',
+
+    # --- Simon / Schoeneberg lab papers (2026-03-20) ---
+    '"Simon C" AND "spinal muscular atrophy"',
+    '"Schoeneberg" AND ("SMA" OR "motor neuron")',
 ]
 
 
