@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
-from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, binder_design, biomarker, blackboard, calibration, cascade, chat, comparative, contact, crispr, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty, virtual_screening
+from .routes import aav, advanced_analytics, aso, assistant, bayesian, benchmark, binder_design, biomarker, blackboard, calibration, cascade, chat, comparative, contact, crispr, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hit_validation, hypothesis_gen, ingestion, lab_os, literature_review, md_simulation, modifier, molecule_screen, news, nvidia_nims, omics, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, research, rna_binding, scoring, screening, search, source_quality, spatial_omics, splice, splice_predictor, splicing_map, stats, synergy, synthesis, targets, translation, trials, uncertainty, virtual_screening
 
 
 @asynccontextmanager
@@ -95,6 +95,7 @@ def create_app() -> FastAPI:
     app.include_router(research.router, prefix="/api/v2", tags=["research"])
     app.include_router(export.router, prefix="/api/v2", tags=["export"])
     app.include_router(graph.router, prefix="/api/v2", tags=["graph"])
+    app.include_router(hit_validation.router, prefix="/api/v2", tags=["hit-validation"])
     app.include_router(comparative.router, prefix="/api/v2/comparative", tags=["comparative"])
     app.include_router(preprints.router, prefix="/api/v2", tags=["preprints"])
     app.include_router(search.router, prefix="/api/v2", tags=["search"])
