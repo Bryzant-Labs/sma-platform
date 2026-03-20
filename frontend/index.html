@@ -1197,11 +1197,30 @@
 <section class="section" id="trials">
     <div class="section-header"><h2 class="section-title">Clinical Trials</h2><span class="section-count" id="trials-count"></span></div>
     <p class="section-desc">SMA clinical trials from ClinicalTrials.gov. Data refreshed via automated ingestion from the ClinicalTrials.gov v2 API.</p>
-    <div class="filter-tabs" id="trial-filters">
-        <button class="filter-tab active" data-filter="all">All</button>
-        <button class="filter-tab" data-filter="recruiting">Recruiting</button>
-        <button class="filter-tab" data-filter="phase3">Phase 3</button>
-        <button class="filter-tab" data-filter="completed">Completed</button>
+    <div id="trial-filter-bar" style="display:flex;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+            <input type="text" id="trial-search" placeholder="Search NCT ID, title, sponsor..."
+                   style="width:100%;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+        </div>
+        <select id="trial-phase" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All phases</option>
+        </select>
+        <select id="trial-status" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All statuses</option>
+        </select>
+        <select id="trial-sponsor" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All sponsors</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text);cursor:pointer;white-space:nowrap">
+            <input type="checkbox" id="trial-has-results"> Has results
+        </label>
+        <select id="trial-per-page" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="25">25 / page</option>
+            <option value="50">50 / page</option>
+            <option value="100">100 / page</option>
+            <option value="0">Show all</option>
+        </select>
+        <span id="trial-filter-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
     </div>
     <div class="table-wrap"><table><thead><tr><th>NCT ID</th><th>Title</th><th>Phase</th><th>Status</th><th>Sponsor</th><th>N</th><th></th></tr></thead>
     <tbody id="trials-body"><tr><td colspan="7" class="loading">Loading trials...</td></tr></tbody></table></div>
@@ -1234,6 +1253,20 @@
             <input type="text" id="source-search" placeholder="Search by title, journal, or PMID..."
                    style="width:100%;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
         </div>
+        <select id="source-journal" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All journals</option>
+        </select>
+        <select id="source-claims-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All</option>
+            <option value="with">With claims</option>
+            <option value="without">Without claims</option>
+        </select>
+        <select id="source-sort" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="claims">Most claims</option>
+            <option value="title">Title A-Z</option>
+        </select>
         <button id="source-filter-btn" type="button" style="padding:6px 14px;background:var(--text);color:#fff;border:none;font-size:11px;font-weight:600;text-transform:uppercase;cursor:pointer;border-radius:3px;letter-spacing:0.3px">Filter</button>
         <button id="source-reset-btn" type="button" style="padding:6px 14px;background:var(--bg);color:var(--text);border:1px solid var(--line);font-size:11px;cursor:pointer;border-radius:3px">Reset</button>
     </div>
@@ -2725,19 +2758,47 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     // Trials with pagination + expand
-    var trialsData = []; var trialsPage = 1; var trialsFilter = 'all';
+    var trialsData = []; var trialsPage = 1;
+    var trialsSearchQuery = ''; var trialsPhaseFilter = ''; var trialsStatusFilter = '';
+    var trialsSponsorFilter = ''; var trialsHasResults = false; var trialsPerPage = 25;
+    var trialsSearchTimer = null;
     function getFilteredTrials() {
-        if (trialsFilter === 'recruiting') return trialsData.filter(function(t) { return t.status && t.status.toUpperCase().indexOf('RECRUITING') > -1 && t.status.toUpperCase().indexOf('NOT') === -1; });
-        if (trialsFilter === 'phase3') return trialsData.filter(function(t) { return t.phase && t.phase.toUpperCase().indexOf('PHASE3') > -1; });
-        if (trialsFilter === 'completed') return trialsData.filter(function(t) { return t.status && t.status.toUpperCase() === 'COMPLETED'; });
-        return trialsData;
+        var result = trialsData;
+        if (trialsSearchQuery) {
+            result = result.filter(function(t) {
+                var q = trialsSearchQuery;
+                var nct = (t.nct_id || '').toLowerCase();
+                var title = (t.title || '').toLowerCase();
+                var sponsor = (t.sponsor || '').toLowerCase();
+                return nct.indexOf(q) !== -1 || title.indexOf(q) !== -1 || sponsor.indexOf(q) !== -1;
+            });
+        }
+        if (trialsPhaseFilter) {
+            result = result.filter(function(t) { return t.phase && t.phase.toUpperCase() === trialsPhaseFilter.toUpperCase(); });
+        }
+        if (trialsStatusFilter) {
+            result = result.filter(function(t) { return t.status && t.status.toUpperCase() === trialsStatusFilter.toUpperCase(); });
+        }
+        if (trialsSponsorFilter) {
+            result = result.filter(function(t) { return t.sponsor === trialsSponsorFilter; });
+        }
+        if (trialsHasResults) {
+            result = result.filter(function(t) { return t.results_summary && t.results_summary.length > 10; });
+        }
+        return result;
+    }
+    function getTrialsPerPage() {
+        return trialsPerPage === 0 ? 999999 : trialsPerPage;
     }
     function renderTrialsPage() {
         var filtered = getFilteredTrials();
         document.getElementById('trials-count').textContent = filtered.length + ' of ' + trialsData.length + ' trials';
+        var countEl = document.getElementById('trial-filter-count');
+        if (countEl) countEl.textContent = filtered.length === trialsData.length ? '' : filtered.length + ' matching';
         var body = clearEl('trials-body');
-        var start = (trialsPage - 1) * PER_PAGE;
-        var end = Math.min(start + PER_PAGE, filtered.length);
+        var pp = getTrialsPerPage();
+        var start = (trialsPage - 1) * pp;
+        var end = Math.min(start + pp, filtered.length);
         for (var i = start; i < end; i++) {
             var t = filtered[i];
             var url = t.url || ('https://clinicaltrials.gov/study/' + t.nct_id);
@@ -2780,27 +2841,69 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         if (filtered.length === 0) {
             body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No trials match this filter.'})]));
         }
-        renderPagination('trials-pagination', filtered.length, trialsPage, function(p) { trialsPage = p; renderTrialsPage(); });
+        renderPagination('trials-pagination', filtered.length, trialsPage, function(p) { trialsPage = p; renderTrialsPage(); }, pp);
+    }
+    function populateTrialDropdown(selectId, values, labelPrefix) {
+        var sel = document.getElementById(selectId);
+        var firstOpt = sel.querySelector('option');
+        while (sel.firstChild) sel.removeChild(sel.firstChild);
+        sel.appendChild(firstOpt);
+        for (var v = 0; v < values.length; v++) {
+            var opt = document.createElement('option');
+            opt.value = values[v];
+            opt.textContent = values[v];
+            sel.appendChild(opt);
+        }
     }
     function loadTrials() {
         if (loaded.trials) return; loaded.trials = true;
         fetch(API + '/trials?limit=1000').then(function(r) { return r.json(); }).then(function(data) {
-            trialsData = data; trialsPage = 1; renderTrialsPage();
+            trialsData = data; trialsPage = 1;
+            // Populate phase dropdown
+            var phases = {}; for (var i = 0; i < data.length; i++) { if (data[i].phase) phases[data[i].phase] = true; }
+            populateTrialDropdown('trial-phase', Object.keys(phases).sort());
+            // Populate status dropdown
+            var statuses = {}; for (var i = 0; i < data.length; i++) { if (data[i].status) statuses[data[i].status] = true; }
+            populateTrialDropdown('trial-status', Object.keys(statuses).sort());
+            // Populate sponsor dropdown
+            var sponsors = {}; for (var i = 0; i < data.length; i++) { if (data[i].sponsor) sponsors[data[i].sponsor] = true; }
+            populateTrialDropdown('trial-sponsor', Object.keys(sponsors).sort(function(a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); }));
+            renderTrialsPage();
         });
-        document.getElementById('trial-filters').addEventListener('click', function(e) {
-            if (e.target.classList.contains('filter-tab')) {
-                var tabs = this.querySelectorAll('.filter-tab');
-                for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
-                e.target.classList.add('active');
-                trialsFilter = e.target.dataset.filter;
+        // Debounced search
+        document.getElementById('trial-search').addEventListener('keyup', function() {
+            var self = this;
+            if (trialsSearchTimer) clearTimeout(trialsSearchTimer);
+            trialsSearchTimer = setTimeout(function() {
+                trialsSearchQuery = self.value.trim().toLowerCase();
                 trialsPage = 1; renderTrialsPage();
-            }
+            }, 250);
+        });
+        // Dropdowns
+        document.getElementById('trial-phase').addEventListener('change', function() {
+            trialsPhaseFilter = this.value; trialsPage = 1; renderTrialsPage();
+        });
+        document.getElementById('trial-status').addEventListener('change', function() {
+            trialsStatusFilter = this.value; trialsPage = 1; renderTrialsPage();
+        });
+        document.getElementById('trial-sponsor').addEventListener('change', function() {
+            trialsSponsorFilter = this.value; trialsPage = 1; renderTrialsPage();
+        });
+        // Has results checkbox
+        document.getElementById('trial-has-results').addEventListener('change', function() {
+            trialsHasResults = this.checked; trialsPage = 1; renderTrialsPage();
+        });
+        // Per-page selector
+        document.getElementById('trial-per-page').addEventListener('change', function() {
+            trialsPerPage = parseInt(this.value, 10); trialsPage = 1; renderTrialsPage();
         });
     }
 
     // Sources with pagination, year range filter, type filter, search, date sort, claim counts
     var sourcesData = []; var sourcesFiltered = []; var sourcesPage = 1; var sourcesTypeFilter = 'all';
     var sourcesYearFrom = ''; var sourcesYearTo = ''; var sourcesSearchQuery = '';
+    var sourcesJournalFilter = ''; var sourcesClaimsFilter = ''; var sourcesSortOrder = 'newest';
+    var sourcesSearchTimer = null;
     var claimCountBySource = {};
     function getYear(dateStr) { if (!dateStr) return 'unknown'; return dateStr.substring(0, 4); }
     function makeFilterBtn(text, filterVal, isActive) {
@@ -2832,6 +2935,27 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
         // Year range dropdowns + search bar
         buildYearDropdowns();
+        // Populate journal dropdown (top 30 by frequency)
+        var journalCounts = {};
+        for (var jj = 0; jj < sourcesData.length; jj++) {
+            var jname = sourcesData[jj].journal;
+            if (jname) journalCounts[jname] = (journalCounts[jname] || 0) + 1;
+        }
+        var journalPairs = [];
+        var jkeys = Object.keys(journalCounts);
+        for (var jk = 0; jk < jkeys.length; jk++) journalPairs.push({name: jkeys[jk], count: journalCounts[jkeys[jk]]});
+        journalPairs.sort(function(a, b) { return b.count - a.count; });
+        var top30 = journalPairs.slice(0, 30);
+        var journalSel = document.getElementById('source-journal');
+        var journalFirst = journalSel.querySelector('option');
+        while (journalSel.firstChild) journalSel.removeChild(journalSel.firstChild);
+        journalSel.appendChild(journalFirst);
+        for (var jp = 0; jp < top30.length; jp++) {
+            var jopt = document.createElement('option');
+            jopt.value = top30[jp].name;
+            jopt.textContent = top30[jp].name + ' (' + top30[jp].count + ')';
+            journalSel.appendChild(jopt);
+        }
         var filterBar = document.getElementById('sources-filter-bar');
         filterBar.style.display = 'flex';
         // Filter button
@@ -2839,6 +2963,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             sourcesYearFrom = document.getElementById('source-year-from').value;
             sourcesYearTo = document.getElementById('source-year-to').value;
             sourcesSearchQuery = document.getElementById('source-search').value.trim().toLowerCase();
+            sourcesJournalFilter = document.getElementById('source-journal').value;
+            sourcesClaimsFilter = document.getElementById('source-claims-filter').value;
+            sourcesSortOrder = document.getElementById('source-sort').value;
             applySourceFilter();
         });
         // Reset button
@@ -2846,15 +2973,43 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             document.getElementById('source-year-from').value = '';
             document.getElementById('source-year-to').value = '';
             document.getElementById('source-search').value = '';
+            document.getElementById('source-journal').value = '';
+            document.getElementById('source-claims-filter').value = '';
+            document.getElementById('source-sort').value = 'newest';
             sourcesYearFrom = ''; sourcesYearTo = ''; sourcesSearchQuery = '';
+            sourcesJournalFilter = ''; sourcesClaimsFilter = ''; sourcesSortOrder = 'newest';
             sourcesTypeFilter = 'all';
             var btns = typeTabs.querySelectorAll('.filter-tab'); for (var b = 0; b < btns.length; b++) btns[b].classList.remove('active');
             if (btns.length) btns[0].classList.add('active');
             applySourceFilter();
         });
-        // Enter key on search triggers filter
+        // Debounced search on keyup (250ms)
+        document.getElementById('source-search').addEventListener('keyup', function() {
+            var self = this;
+            if (sourcesSearchTimer) clearTimeout(sourcesSearchTimer);
+            sourcesSearchTimer = setTimeout(function() {
+                sourcesSearchQuery = self.value.trim().toLowerCase();
+                sourcesYearFrom = document.getElementById('source-year-from').value;
+                sourcesYearTo = document.getElementById('source-year-to').value;
+                sourcesJournalFilter = document.getElementById('source-journal').value;
+                sourcesClaimsFilter = document.getElementById('source-claims-filter').value;
+                sourcesSortOrder = document.getElementById('source-sort').value;
+                applySourceFilter();
+            }, 250);
+        });
+        // Enter key on search also triggers filter
         document.getElementById('source-search').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') { document.getElementById('source-filter-btn').click(); }
+            if (e.key === 'Enter') { if (sourcesSearchTimer) clearTimeout(sourcesSearchTimer); document.getElementById('source-filter-btn').click(); }
+        });
+        // Dropdown change listeners trigger filter immediately
+        document.getElementById('source-journal').addEventListener('change', function() {
+            sourcesJournalFilter = this.value; document.getElementById('source-filter-btn').click();
+        });
+        document.getElementById('source-claims-filter').addEventListener('change', function() {
+            sourcesClaimsFilter = this.value; document.getElementById('source-filter-btn').click();
+        });
+        document.getElementById('source-sort').addEventListener('change', function() {
+            sourcesSortOrder = this.value; document.getElementById('source-filter-btn').click();
         });
     }
     function buildYearDropdowns() {
@@ -2890,6 +3045,23 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 return title.indexOf(sourcesSearchQuery) !== -1 || journal.indexOf(sourcesSearchQuery) !== -1 || pmid.indexOf(sourcesSearchQuery) !== -1 || abs.indexOf(sourcesSearchQuery) !== -1;
             });
         }
+        if (sourcesJournalFilter) {
+            result = result.filter(function(s) { return s.journal === sourcesJournalFilter; });
+        }
+        if (sourcesClaimsFilter === 'with') {
+            result = result.filter(function(s) { return (claimCountBySource[s.id] || 0) > 0; });
+        } else if (sourcesClaimsFilter === 'without') {
+            result = result.filter(function(s) { return !claimCountBySource[s.id]; });
+        }
+        // Sort
+        if (sourcesSortOrder === 'oldest') {
+            result = result.slice().sort(function(a, b) { return (a.pub_date || '').localeCompare(b.pub_date || ''); });
+        } else if (sourcesSortOrder === 'claims') {
+            result = result.slice().sort(function(a, b) { return (claimCountBySource[b.id] || 0) - (claimCountBySource[a.id] || 0); });
+        } else if (sourcesSortOrder === 'title') {
+            result = result.slice().sort(function(a, b) { return (a.title || '').localeCompare(b.title || ''); });
+        }
+        // 'newest' is default sort from loadSources, no re-sort needed
         sourcesFiltered = result;
         sourcesPage = 1; renderSourcesPage();
     }
@@ -4538,7 +4710,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             // Claims section (expandable cards)
             var claimsSec = el('div', {className: 'dd-section'});
             claimsSec.appendChild(el('div', {className: 'dd-section-title', text: 'Claims (' + data.claims_count + ')'}));
-            var claimList = data.claims.slice(0, 8);
+            var claimList = data.claims.slice(0, 20);
             for (var c = 0; c < claimList.length; c++) {
                 var cl = claimList[c];
                 var claimWrap = el('div', {className: 'dd-claim-item'});
@@ -4609,7 +4781,63 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 claimsSec.appendChild(claimWrap);
             }
             if (data.claims_count === 0) claimsSec.appendChild(el('div', {style: 'font-size:12px;color:var(--muted)', text: 'No claims linked yet'}));
-            if (data.claims_count > 8) claimsSec.appendChild(el('div', {style: 'font-size:11px;color:var(--muted);margin-top:6px', text: '+ ' + (data.claims_count - 8) + ' more claims'}));
+            if (data.claims_count > 20) {
+                var showAllBtn = el('button', {
+                    text: 'Show all ' + data.claims_count + ' claims',
+                    style: 'margin-top:8px;padding:6px 14px;background:var(--bg);color:var(--text);border:1px solid var(--line);font-size:11px;cursor:pointer;border-radius:3px;font-weight:600'
+                });
+                (function(section, allClaims, button) {
+                    button.addEventListener('click', function(evt) {
+                        evt.stopPropagation();
+                        var remaining = allClaims.slice(20);
+                        for (var rc = 0; rc < remaining.length; rc++) {
+                            var rcl = remaining[rc];
+                            var rcWrap = el('div', {className: 'dd-claim-item'});
+                            var rcHeader = el('div', {className: 'dd-claim-header'});
+                            var rcToggle = el('span', {className: 'dd-claim-toggle', text: '\u25B6'});
+                            rcHeader.appendChild(rcToggle);
+                            if (rcl.claim_number) {
+                                rcHeader.appendChild(el('code', {className: 'dd-claim-num', text: 'CLAIM-' + String(rcl.claim_number).padStart(5, '0')}));
+                            }
+                            rcHeader.appendChild(badgeEl(rcl.claim_type ? rcl.claim_type.replace(/_/g, ' ') : '?', 'badge-blue'));
+                            rcHeader.appendChild(el('span', {className: 'dd-claim-text', text: truncate(rcl.predicate || '', 80)}));
+                            if (rcl.confidence) rcHeader.appendChild(badgeEl((rcl.confidence * 100).toFixed(0) + '%', rcl.confidence >= 0.7 ? 'badge-green' : 'badge-amber'));
+                            rcWrap.appendChild(rcHeader);
+                            var rcDetail = el('div', {className: 'dd-claim-detail'});
+                            var rcFullText = document.createElement('p');
+                            rcFullText.textContent = rcl.predicate || '';
+                            rcDetail.appendChild(rcFullText);
+                            if (rcl.source_title || rcl.pmid) {
+                                var rcSrcMeta = el('div', {className: 'dd-claim-meta'});
+                                if (rcl.source_title) rcSrcMeta.appendChild(document.createTextNode('Source: ' + rcl.source_title + ' '));
+                                if (rcl.pmid) {
+                                    var rcPmidLink = document.createElement('a');
+                                    rcPmidLink.href = 'https://pubmed.ncbi.nlm.nih.gov/' + rcl.pmid + '/';
+                                    rcPmidLink.target = '_blank'; rcPmidLink.rel = 'noopener';
+                                    rcPmidLink.textContent = 'PMID: ' + rcl.pmid;
+                                    rcSrcMeta.appendChild(rcPmidLink);
+                                }
+                                rcDetail.appendChild(rcSrcMeta);
+                            }
+                            if (rcl.confidence != null) {
+                                var rcConfMeta = el('div', {className: 'dd-claim-meta'});
+                                rcConfMeta.textContent = 'Confidence: ' + (rcl.confidence * 100).toFixed(0) + '%';
+                                rcDetail.appendChild(rcConfMeta);
+                            }
+                            rcWrap.appendChild(rcDetail);
+                            (function(toggle, detail) {
+                                rcWrap.addEventListener('click', function() {
+                                    toggle.classList.toggle('open');
+                                    detail.classList.toggle('open');
+                                });
+                            })(rcToggle, rcDetail);
+                            section.appendChild(rcWrap);
+                        }
+                        button.parentNode.removeChild(button);
+                    });
+                })(claimsSec, data.claims, showAllBtn);
+                claimsSec.appendChild(showAllBtn);
+            }
             grid.appendChild(claimsSec);
 
             // Hypotheses section (clickable / expandable)
