@@ -1,7 +1,7 @@
 # SMA Research Platform — Milestones Roadmap
 
 > Living document tracking research directions and implementation milestones.
-> Last updated: 2026-03-16
+> Last updated: 2026-03-20
 
 ---
 
@@ -35,6 +35,9 @@ Go deeper on SMA-specific biology, not broader.
 | Cross-disease transfer (mechanistically grounded only) | PARTIAL | ALS/DMD overlap where biologically justified |
 | Spatial/single-cell integration | PLANNED | When Slide-seq/MERFISH data available |
 | RNA structure-informed ligand ranking | PLANNED | Via OpenFold3/RNAPro NIMs |
+| **RNAPro SMN2 pre-mRNA 3D structure** | IN PROGRESS | GTC 2026 — RNA structure at ISS-N1 nusinersen binding site |
+| **Proteina-Complexa protein binders** | PLANNED | GTC 2026 — new therapeutic modality: designed protein binders for SMA targets |
+| **ESM-2 fine-tuning via BioNeMo Recipes** | PLANNED | GTC 2026 — SMA-specific protein embeddings |
 | **ASO Sequence Generator** | BUILDING | Design novel ASOs targeting SMN2 ISS-N1/ISS-N2/ESS regions |
 | **Nanopore RNA-seq Data Catalog** | BUILDING | Search SRA/ENA for public SMA direct RNA datasets |
 | **Generative RNA Therapeutics** | PLANNED | Diffusion models for ASO design with BBB penetration |
@@ -51,6 +54,10 @@ Prioritize experiments, not just ideas.
 | Biomarker atlas (molecular/imaging/fluid) | PLANNED | Treatment response stratification |
 | Compound/ASO/CRISPR comparison engine | PARTIAL | Dual-target + CRISPR + AAV modules exist |
 | Therapy combination ranking | PARTIAL | Digital twin has basic combo scoring |
+| **Generative Virtual Screening Blueprint** | IN PROGRESS | GTC 2026 — NVIDIA open-source pipeline: GenMol → Filter → DiffDock → Rank |
+| **nvMolKit GPU cheminformatics** | PLANNED | GTC 2026 — faster Lipinski/BBB/PAINS filtering |
+| **AlphaFold DB protein complexes** | IN PROGRESS | GTC 2026 — 1.7M new complexes for SMA structural biology |
+| **Agentic Drug Discovery** | PLANNED | GTC 2026 — autonomous BioNeMo NIM orchestration |
 | IP/freedom-to-operate signal | PLANNED | Patent landscape integration |
 
 ### Track 4: Researcher Distribution (ACCESS + TRUST)
@@ -398,6 +405,64 @@ These are interesting but not essential for scientific credibility:
 
 ---
 
+## Phase 12: NVIDIA GTC 2026 Integration (IN PROGRESS)
+
+> Integrating 7 new tools and models announced at NVIDIA GTC 2026 (March 17-21).
+> Design doc: `docs/plans/2026-03-20-nvidia-gtc-integration.md`
+
+### 12.1 RNAPro NIM — RNA 3D Structure Prediction (PRIORITY)
+- [ ] Add RNAPro API function to nvidia_nims adapter
+- [ ] Add POST /nims/rna-structure endpoint
+- [ ] Predict SMN2 ISS-N1 pre-mRNA 3D structure (nusinersen binding site)
+- [ ] Predict full SMN2 intron 7 structure
+- [ ] Store results + add to GPU Results section
+- [ ] Compare with existing ASO binding predictions
+
+### 12.2 AlphaFold DB Complex Expansion
+- [ ] Query AlphaFold DB for SMA protein complexes (1.7M new structures added)
+- [ ] Check: SMN+Gemin2/3/4/5, SMN+p53, PLS3+actin, NCALD+calcium channel
+- [ ] Store complex structures in targets.metadata.alphafold_complexes
+- [ ] Display on Targets deep-dive pages
+
+### 12.3 Generative Virtual Screening Blueprint (PRIORITY)
+- [ ] Study NVIDIA Blueprint architecture (github.com/NVIDIA-BioNeMo-blueprints/generative-virtual-screening)
+- [ ] Create virtual_screening.py orchestrator (GenMol → Filter → DiffDock → Rank)
+- [ ] Add POST /screening/virtual endpoint
+- [ ] Run first campaign: 100 molecules from 4-AP scaffold vs 7 SMA targets
+- [ ] Scale to 1000+ molecules
+- [ ] Compare with our existing 378 DiffDock v2.2 results
+
+### 12.4 Proteina-Complexa — Protein Binder Design (NEW MODALITY)
+- [ ] Assess availability (NIM API vs self-hosted on Vast.ai)
+- [ ] Create protein_binder_design.py module
+- [ ] Add POST /binder/design endpoint
+- [ ] Design first binders: SMN2 protein, SMN-p53 interface
+- [ ] Add "Protein Binder Design" as new Research Direction
+- [ ] Validate top designs with structural analysis
+
+### 12.5 BioNeMo Recipes — ESM-2 Fine-Tuning
+- [ ] Install BioNeMo Recipes
+- [ ] Prepare SMA protein dataset (21 targets → UniProt sequences)
+- [ ] Write BioNeMo Recipe config for ESM-2 fine-tuning
+- [ ] Create Vast.ai launch script
+- [ ] Run fine-tuning on SMA-specific protein embeddings
+
+### 12.6 nvMolKit — GPU-Accelerated Cheminformatics
+- [ ] Check nvMolKit availability (pip or BioNeMo container only)
+- [ ] Integrate as optional backend in screening_funnel.py
+- [ ] Benchmark: RDKit vs nvMolKit on 1000 molecules
+- [ ] Use for Lipinski/BBB/PAINS filtering in virtual screening
+
+### 12.7 Agentic Drug Discovery
+- [ ] Design autonomous pipeline: generate → filter → dock → rank → store
+- [ ] Create DrugDiscoveryAgent class
+- [ ] Orchestrate BioNeMo NIMs (GenMol + DiffDock + RNAPro + OpenFold3)
+- [ ] Add POST /agent/drug-discovery endpoint
+- [ ] Auto-create news posts for significant findings
+- [ ] Connect to MCP server for external AI agent access
+
+---
+
 ## Key Research Hypotheses to Validate
 
 These emerged from Querdenker and Harvard-level thinking:
@@ -412,13 +477,13 @@ These emerged from Querdenker and Harvard-level thinking:
 
 ---
 
-## Current Platform Stats (2026-03-16)
+## Current Platform Stats (2026-03-20)
 
 | Metric | Count |
 |--------|-------|
-| Sources (PubMed + Patents + Trial Results) | 5,216 |
-| LLM-Extracted Claims | 25,054 (growing daily) |
-| Prioritized Hypotheses | 515 (A/B/C tiers, Sonnet 4.6) |
+| Sources (PubMed + Patents + Trial Results) | 6,042 (+987 p53/apoptosis/glial papers) |
+| LLM-Extracted Claims | 30,145 (growing — claim extraction running) |
+| Prioritized Hypotheses | 1,252 (A/B/C tiers, Sonnet 4.6) |
 | Knowledge Graph Edges | 428 (34 relation types) |
 | Cross-Paper Synthesis Cards | 6 (Claude-generated) |
 | Co-occurrence Pairs | 30 target pairs |
