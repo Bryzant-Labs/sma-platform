@@ -323,16 +323,16 @@
         .nav-link:hover { color: var(--text); }
         .nav-link.active { color: var(--text); border-bottom-color: var(--text); }
         .nav-sep { color: var(--line); font-size: 11px; padding: 10px 4px; user-select: none; }
-        .nav-group-toggle {
-            display: block; padding: 10px 14px; font-size: 11px; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.3px; color: var(--muted);
-            cursor: pointer; white-space: nowrap; user-select: none;
-        }
-        .nav-group-toggle:hover { color: var(--text); }
-        .nav-group-toggle .nav-arrow { font-size: 9px; transition: transform 0.2s; display: inline-block; }
-        .nav-group-toggle.open .nav-arrow { transform: rotate(180deg); }
-        .nav-group { display: none; }
-        .nav-group.open { display: contents; }
+        .nav-dropdown-wrap { position: relative; display: inline-block; }
+        .nav-dropdown-trigger { padding: 10px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--muted); cursor: pointer; white-space: nowrap; display: inline-block; }
+        .nav-dropdown-trigger:hover { color: var(--text); }
+        .nav-dropdown-trigger .dd-arrow { font-size: 8px; margin-left: 3px; display: inline-block; transition: transform 0.2s; }
+        .nav-dropdown-trigger.open .dd-arrow { transform: rotate(180deg); }
+        .nav-dropdown-trigger.open { color: var(--text); }
+        .nav-dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 4px 16px rgba(0,0,0,0.08); z-index: 1000; min-width: 180px; padding: 4px 0; }
+        .nav-dropdown-menu.open { display: block; }
+        .nav-dropdown-menu .nav-link { display: block; padding: 8px 16px; font-size: 12px; border-bottom: none; text-transform: none; letter-spacing: 0; font-weight: 500; }
+        .nav-dropdown-menu .nav-link:hover { background: var(--blue-bg, #eff6ff); color: var(--accent); }
         .nav-highlight { color: #2563eb !important; font-weight: 700; }
         .nav-highlight:hover { color: #1d4ed8 !important; }
         .section { padding: 32px 0; display: none; }
@@ -722,6 +722,31 @@
         .pred-card .pred-export-link { display: inline-block; margin-top: 8px; font-size: 11px; color: var(--accent); text-decoration: none; }
         .pred-card .pred-export-link:hover { text-decoration: underline; }
 
+        /* Advanced module expandable cards */
+        .adv-card { cursor: pointer; transition: border-color 0.2s; background: var(--panel); border: 1px solid var(--line); padding: 16px; }
+        .adv-card:hover { border-color: var(--accent); }
+        .adv-card .adv-toggle { transition: transform 0.2s; display: inline-block; font-size: 10px; color: var(--muted); margin-right: 6px; }
+        .adv-card.open .adv-toggle { transform: rotate(90deg); }
+        .adv-detail { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+        .adv-detail.open { max-height: 3000px; padding-top: 8px; }
+        /* Advanced module expandable table rows */
+        .adv-row { cursor: pointer; transition: background 0.15s; }
+        .adv-row:hover { background: var(--blue-bg, rgba(59,130,246,0.05)); }
+        .adv-row-toggle { transition: transform 0.2s; display: inline-block; font-size: 10px; color: var(--muted); margin-right: 4px; }
+        .adv-row.open .adv-row-toggle { transform: rotate(90deg); }
+        .adv-row-detail { display: none; }
+        .adv-row-detail.open { display: table-row; }
+        .adv-row-detail td { padding: 12px 16px; background: var(--bg); border-bottom: 1px solid var(--line); }
+        .adv-detail-inner { font-size: 11px; line-height: 1.7; color: var(--text-secondary); }
+        .adv-detail-inner .adv-detail-label { font-weight: 600; color: var(--text); display: inline-block; min-width: 110px; }
+        .adv-detail-inner .adv-detail-row { padding: 3px 0; border-bottom: 1px solid var(--line-light, var(--line)); }
+        .adv-detail-inner .adv-detail-row:last-child { border-bottom: none; }
+        .adv-guide-seq { font-family: var(--mono); font-size: 11px; letter-spacing: 0.5px; background: var(--panel); padding: 4px 8px; display: inline-block; margin: 2px 0; }
+        /* Search filter box for tables */
+        .adv-search-box { width: 100%; max-width: 360px; padding: 8px 12px; font-size: 12px; border: 1px solid var(--line); background: var(--panel); color: var(--text); margin-bottom: 12px; outline: none; font-family: inherit; }
+        .adv-search-box:focus { border-color: var(--accent); }
+        .adv-search-box::placeholder { color: var(--muted); }
+
         .dd-hyp-item { padding: 8px 0; border-bottom: 1px solid var(--line-light); cursor: pointer; transition: background 0.15s; }
         .dd-hyp-item:last-child { border-bottom: none; }
         .dd-hyp-item:hover { background: var(--blue-bg); }
@@ -758,60 +783,89 @@
 
 <nav class="nav-bar"><div class="container"><div class="nav-row">
     <a href="/" class="nav-link active" data-section="mission">Home</a>
-    <a href="/news" class="nav-link" data-section="news">News</a>
     <a href="/search" class="nav-link nav-highlight" data-section="search">Search</a>
+    <a href="/news" class="nav-link" data-section="news">News</a>
     <span class="nav-sep">|</span>
-    <a href="/targets" class="nav-link" data-section="targets">Targets</a>
-    <a href="/trials" class="nav-link" data-section="trials">Trials</a>
-    <a href="/drugs" class="nav-link" data-section="drugs">Drugs</a>
-    <a href="/sources" class="nav-link" data-section="sources">Literature</a>
-    <a href="/claims" class="nav-link" data-section="claims">Claims</a>
-    <a href="/hypotheses" class="nav-link" data-section="hypotheses">Hypotheses</a>
-    <a href="/predictions" class="nav-link" data-section="predictions">Predictions</a>
-    <a href="/convergence" class="nav-link" data-section="convergence">Convergence</a>
-    <a href="/graph" class="nav-link" data-section="graph">Graph</a>
-    <span class="nav-sep">|</span>
-    <a href="/scores" class="nav-link" data-section="scores">Scores</a>
-    <a href="/outcomes" class="nav-link" data-section="outcomes">Drug Outcomes</a>
-    <a href="/screening" class="nav-link" data-section="screening">Screening</a>
-    <a href="/candidates" class="nav-link" data-section="candidates">Candidates</a>
-    <a href="/hits" class="nav-link" data-section="hits">Hits</a>
-    <a href="/comparative" class="nav-link" data-section="comparative">Species</a>
-    <a href="/directions" class="nav-link" data-section="directions">Directions</a>
-    <a href="/synthesis" class="nav-link" data-section="synthesis">Synthesis</a>
-    <a href="/synergy" class="nav-link" data-section="synergy">Synergy</a>
-    <a href="/nim-results" class="nav-link" data-section="nim-results">NIM Docking</a>
-    <span class="nav-sep">|</span>
-    <span class="nav-group-toggle" data-group="advanced">Advanced <span class="nav-arrow">&#9662;</span></span>
-    <span class="nav-group" id="nav-group-advanced" style="display:none">
-        <a href="/spatial" class="nav-link" data-section="spatial">Spatial</a>
-        <a href="/regen" class="nav-link" data-section="regen">Regen</a>
-        <a href="/nmj" class="nav-link" data-section="nmj">NMJ</a>
-        <a href="/multisystem" class="nav-link" data-section="multisystem">Multisystem</a>
-        <a href="/bioelectric" class="nav-link" data-section="bioelectric">Bioelectric</a>
-        <a href="/splicemap" class="nav-link" data-section="splicemap">Splice</a>
-        <a href="/rnabind" class="nav-link" data-section="rnabind">RNA</a>
-        <a href="/dualtarget" class="nav-link" data-section="dualtarget">Dual Target</a>
-        <a href="/twin" class="nav-link" data-section="twin">Twin</a>
-        <a href="/molecules" class="nav-link" data-section="molecules">Molecules</a>
-        <a href="/crispr" class="nav-link" data-section="crispr">CRISPR</a>
-        <a href="/aav" class="nav-link" data-section="aav">AAV</a>
-        <a href="/docking" class="nav-link" data-section="docking">Docking</a>
-        <a href="/prime" class="nav-link" data-section="prime">Prime Edit</a>
-        <a href="/mdsim" class="nav-link" data-section="mdsim">MD Sim</a>
-        <a href="/labos" class="nav-link" data-section="labos">Lab-OS</a>
-        <a href="/federated" class="nav-link" data-section="federated">Federated</a>
-        <a href="/translate" class="nav-link" data-section="translate">Translation</a>
-        <a href="/gpu-results" class="nav-link" data-section="gpu-results">GPU Results</a>
+    <span class="nav-dropdown-wrap">
+        <span class="nav-dropdown-trigger" data-dropdown="evidence">Evidence <span class="dd-arrow">&#9662;</span></span>
+        <div class="nav-dropdown-menu" id="dd-evidence">
+            <a href="/claims" class="nav-link" data-section="claims">Claims</a>
+            <a href="/sources" class="nav-link" data-section="sources">Sources</a>
+            <a href="/hypotheses" class="nav-link" data-section="hypotheses">Hypotheses</a>
+            <a href="/predictions" class="nav-link" data-section="predictions">Predictions</a>
+            <a href="/convergence" class="nav-link" data-section="convergence">Convergence</a>
+        </div>
     </span>
-    <span class="nav-sep">|</span>
-    <a href="/research" class="nav-link" data-section="research">About</a>
-    <a href="/advisory" class="nav-link" data-section="advisory">Advisory Pack</a>
-    <a href="/analytics" class="nav-link" data-section="analytics">Analytics</a>
-    <a href="/links" class="nav-link" data-section="links">Links</a>
-    <a href="/write" class="nav-link" data-section="write">Write</a>
-    <a href="/repurposing" class="nav-link" data-section="repurposing">Repurposing</a>
-    <a href="/versions" class="nav-link" data-section="versions">Versions</a>
+    <span class="nav-dropdown-wrap">
+        <span class="nav-dropdown-trigger" data-dropdown="discovery">Discovery <span class="dd-arrow">&#9662;</span></span>
+        <div class="nav-dropdown-menu" id="dd-discovery">
+            <a href="/targets" class="nav-link" data-section="targets">Targets</a>
+            <a href="/graph" class="nav-link" data-section="graph">Graph</a>
+            <a href="/trials" class="nav-link" data-section="trials">Trials</a>
+            <a href="/synthesis" class="nav-link" data-section="synthesis">Synthesis</a>
+            <a href="/comparative" class="nav-link" data-section="comparative">Species</a>
+        </div>
+    </span>
+    <span class="nav-dropdown-wrap">
+        <span class="nav-dropdown-trigger" data-dropdown="drugdesign">Drug Design <span class="dd-arrow">&#9662;</span></span>
+        <div class="nav-dropdown-menu" id="dd-drugdesign">
+            <a href="/screening" class="nav-link" data-section="screening">Screening</a>
+            <a href="/candidates" class="nav-link" data-section="candidates">Candidates</a>
+            <a href="/hits" class="nav-link" data-section="hits">Hits</a>
+            <a href="/scores" class="nav-link" data-section="scores">Scores</a>
+            <a href="/outcomes" class="nav-link" data-section="outcomes">Outcomes</a>
+            <a href="/synergy" class="nav-link" data-section="synergy">Synergy</a>
+            <a href="/drugs" class="nav-link" data-section="drugs">Drugs</a>
+            <a href="/repurposing" class="nav-link" data-section="repurposing">Repurposing</a>
+        </div>
+    </span>
+    <span class="nav-dropdown-wrap">
+        <span class="nav-dropdown-trigger" data-dropdown="modalities">Modalities <span class="dd-arrow">&#9662;</span></span>
+        <div class="nav-dropdown-menu" id="dd-modalities">
+            <a href="/crispr" class="nav-link" data-section="crispr">CRISPR</a>
+            <a href="/aav" class="nav-link" data-section="aav">AAV</a>
+            <a href="/prime" class="nav-link" data-section="prime">Prime Edit</a>
+            <a href="/rnabind" class="nav-link" data-section="rnabind">RNA Binding</a>
+            <a href="/docking" class="nav-link" data-section="docking">Docking</a>
+            <a href="/nim-results" class="nav-link" data-section="nim-results">NIM Results</a>
+            <a href="/mdsim" class="nav-link" data-section="mdsim">MD Sim</a>
+            <a href="/splicemap" class="nav-link" data-section="splicemap">Splice Map</a>
+        </div>
+    </span>
+    <span class="nav-dropdown-wrap">
+        <span class="nav-dropdown-trigger" data-dropdown="analysis">Analysis <span class="dd-arrow">&#9662;</span></span>
+        <div class="nav-dropdown-menu" id="dd-analysis">
+            <a href="/spatial" class="nav-link" data-section="spatial">Spatial</a>
+            <a href="/regen" class="nav-link" data-section="regen">Regen</a>
+            <a href="/nmj" class="nav-link" data-section="nmj">NMJ</a>
+            <a href="/multisystem" class="nav-link" data-section="multisystem">Multisystem</a>
+            <a href="/bioelectric" class="nav-link" data-section="bioelectric">Bioelectric</a>
+            <a href="/dualtarget" class="nav-link" data-section="dualtarget">Dual Target</a>
+            <a href="/molecules" class="nav-link" data-section="molecules">Molecules</a>
+            <a href="/twin" class="nav-link" data-section="twin">Digital Twin</a>
+        </div>
+    </span>
+    <span class="nav-dropdown-wrap">
+        <span class="nav-dropdown-trigger" data-dropdown="translate">Translate <span class="dd-arrow">&#9662;</span></span>
+        <div class="nav-dropdown-menu" id="dd-translate">
+            <a href="/labos" class="nav-link" data-section="labos">Lab-OS</a>
+            <a href="/translate" class="nav-link" data-section="translate">Translation</a>
+            <a href="/federated" class="nav-link" data-section="federated">Federated</a>
+            <a href="/gpu-results" class="nav-link" data-section="gpu-results">GPU Results</a>
+        </div>
+    </span>
+    <span class="nav-dropdown-wrap">
+        <span class="nav-dropdown-trigger" data-dropdown="about">About <span class="dd-arrow">&#9662;</span></span>
+        <div class="nav-dropdown-menu" id="dd-about">
+            <a href="/research" class="nav-link" data-section="research">Research</a>
+            <a href="/advisory" class="nav-link" data-section="advisory">Advisory Pack</a>
+            <a href="/analytics" class="nav-link" data-section="analytics">Analytics</a>
+            <a href="/links" class="nav-link" data-section="links">Links</a>
+            <a href="/write" class="nav-link" data-section="write">Write</a>
+            <a href="/versions" class="nav-link" data-section="versions">Versions</a>
+            <a href="/directions" class="nav-link" data-section="directions">Directions</a>
+        </div>
+    </span>
 </div></div></nav>
 
 <main class="container">
@@ -6220,23 +6274,97 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         if (loaded.crispr) return; loaded.crispr = true;
         fetch(API + '/crispr/guides?max_guides=30').then(function(r) { return r.json(); }).then(function(data) {
             var strategies = data.strategies || [];
+            var allGuides = data.all_guides || [];
             var container = clearEl('crispr-strategies');
             var grid = el('div', {className: 'screen-summary'});
             grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px';
             for (var s = 0; s < strategies.length; s++) {
-                var st = strategies[s];
-                var card = el('div');
-                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
-                var title = el('div', {text: st.strategy});
-                title.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:8px';
-                card.appendChild(title);
-                var rat = el('div', {text: st.rationale});
-                rat.style.cssText = 'font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px';
-                card.appendChild(rat);
-                var cnt = el('div', {text: st.guide_count + ' guides found'});
-                cnt.style.cssText = 'font-size:11px;font-weight:600;color:var(--accent)';
-                card.appendChild(cnt);
-                grid.appendChild(card);
+                (function(st, idx) {
+                    var card = el('div', {className: 'adv-card'});
+                    var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
+                    var title = el('div');
+                    title.appendChild(toggle);
+                    var titleText = document.createTextNode(' ' + st.strategy);
+                    title.appendChild(titleText);
+                    title.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:8px';
+                    card.appendChild(title);
+                    var rat = el('div', {text: st.rationale});
+                    rat.style.cssText = 'font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px';
+                    card.appendChild(rat);
+                    var cnt = el('div', {text: st.guide_count + ' guides found \u2014 click to expand'});
+                    cnt.style.cssText = 'font-size:11px;font-weight:600;color:var(--accent)';
+                    card.appendChild(cnt);
+
+                    // Build expandable detail with guide list
+                    var detail = el('div', {className: 'adv-detail'});
+                    // Match guides to this strategy by region/strategy name
+                    var strategyGuides = [];
+                    for (var g = 0; g < allGuides.length; g++) {
+                        var gd = allGuides[g];
+                        if (gd.region && st.strategy && gd.region.toLowerCase().indexOf(st.strategy.toLowerCase().split(' ')[0].replace('crispri', '').replace('crispra', '')) >= 0) {
+                            strategyGuides.push(gd);
+                        }
+                    }
+                    // If no match by region, show first N guides proportional to guide_count
+                    if (strategyGuides.length === 0 && st.guide_count > 0) {
+                        var start = 0;
+                        for (var prev = 0; prev < idx; prev++) {
+                            start += (strategies[prev].guide_count || 0);
+                        }
+                        strategyGuides = allGuides.slice(start, start + st.guide_count);
+                    }
+                    if (strategyGuides.length > 0) {
+                        for (var gi = 0; gi < strategyGuides.length; gi++) {
+                            var guide = strategyGuides[gi];
+                            var row = el('div', {className: 'adv-detail-inner'});
+                            row.style.cssText = 'padding:8px;margin-bottom:6px;background:var(--bg);border:1px solid var(--line)';
+                            var seqDiv = el('div');
+                            var seqLabel = el('span', {className: 'adv-detail-label', text: 'Sequence:'});
+                            var seqVal = el('span', {className: 'adv-guide-seq', text: guide.sequence || '-'});
+                            seqDiv.appendChild(seqLabel);
+                            seqDiv.appendChild(seqVal);
+                            row.appendChild(seqDiv);
+                            var pamDiv = el('div', {className: 'adv-detail-row'});
+                            pamDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'PAM:'}));
+                            pamDiv.appendChild(document.createTextNode(guide.pam || '-'));
+                            row.appendChild(pamDiv);
+                            var strandDiv = el('div', {className: 'adv-detail-row'});
+                            strandDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'Strand:'}));
+                            strandDiv.appendChild(document.createTextNode(guide.strand || '-'));
+                            row.appendChild(strandDiv);
+                            var gcDiv = el('div', {className: 'adv-detail-row'});
+                            gcDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'GC Content:'}));
+                            gcDiv.appendChild(document.createTextNode(guide.gc_content ? (guide.gc_content * 100).toFixed(0) + '%' : '-'));
+                            row.appendChild(gcDiv);
+                            var onDiv = el('div', {className: 'adv-detail-row'});
+                            onDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'On-Target:'}));
+                            onDiv.appendChild(document.createTextNode(guide.on_target_score ? guide.on_target_score.toFixed(3) : '-'));
+                            row.appendChild(onDiv);
+                            var specDiv = el('div', {className: 'adv-detail-row'});
+                            specDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'Specificity:'}));
+                            specDiv.appendChild(document.createTextNode(guide.specificity_score ? guide.specificity_score.toFixed(3) : '-'));
+                            row.appendChild(specDiv);
+                            if (guide.overlapping_motifs && guide.overlapping_motifs.length > 0) {
+                                var motDiv = el('div', {className: 'adv-detail-row'});
+                                motDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'Motifs:'}));
+                                motDiv.appendChild(document.createTextNode(guide.overlapping_motifs.join(', ')));
+                                row.appendChild(motDiv);
+                            }
+                            detail.appendChild(row);
+                        }
+                    } else {
+                        var noData = el('div', {text: 'No guide details available for this strategy.'});
+                        noData.style.cssText = 'font-size:11px;color:var(--muted);padding:8px 0';
+                        detail.appendChild(noData);
+                    }
+                    card.appendChild(detail);
+                    card.addEventListener('click', function() {
+                        card.classList.toggle('open');
+                        detail.classList.toggle('open');
+                        cnt.textContent = st.guide_count + ' guides found' + (detail.classList.contains('open') ? '' : ' \u2014 click to expand');
+                    });
+                    grid.appendChild(card);
+                })(strategies[s], s);
             }
             container.appendChild(grid);
 
@@ -6285,46 +6413,110 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         fetch(API + '/aav/evaluate?cargo=SMN1_cDNA').then(function(r) { return r.json(); }).then(function(data) {
             var stContainer = clearEl('aav-strategies');
             var strategies = data.strategies || [];
+            var capsids = data.capsids || [];
             var grid = el('div');
             grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:24px';
             for (var s = 0; s < strategies.length; s++) {
-                var st = strategies[s];
-                var card = el('div');
-                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
-                var title = el('div', {text: st.strategy});
-                title.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:6px';
-                card.appendChild(title);
-                var capsidInfo = el('div', {text: 'Capsid: ' + st.capsid});
-                capsidInfo.style.cssText = 'font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px';
-                card.appendChild(capsidInfo);
-                var rat = el('div', {text: st.rationale});
-                rat.style.cssText = 'font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:6px';
-                card.appendChild(rat);
-                var lim = el('div', {text: 'Limitations: ' + st.limitations});
-                lim.style.cssText = 'font-size:10px;color:var(--text-secondary);line-height:1.5;font-style:italic';
-                card.appendChild(lim);
-                grid.appendChild(card);
+                (function(st) {
+                    var card = el('div', {className: 'adv-card'});
+                    var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
+                    var title = el('div');
+                    title.appendChild(toggle);
+                    title.appendChild(document.createTextNode(' ' + st.strategy));
+                    title.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:6px';
+                    card.appendChild(title);
+                    var capsidInfo = el('div', {text: 'Capsid: ' + st.capsid + ' \u2014 click for details'});
+                    capsidInfo.style.cssText = 'font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px';
+                    card.appendChild(capsidInfo);
+                    var rat = el('div', {text: st.rationale});
+                    rat.style.cssText = 'font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:6px';
+                    card.appendChild(rat);
+                    var detail = el('div', {className: 'adv-detail'});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    detInner.style.cssText = 'padding:8px;background:var(--bg);border:1px solid var(--line)';
+                    var limRow = el('div', {className: 'adv-detail-row'});
+                    limRow.appendChild(el('span', {className: 'adv-detail-label', text: 'Limitations:'}));
+                    limRow.appendChild(document.createTextNode(st.limitations || '-'));
+                    detInner.appendChild(limRow);
+                    var matchedCapsid = null;
+                    for (var ci = 0; ci < capsids.length; ci++) {
+                        if (capsids[ci].serotype === st.capsid) { matchedCapsid = capsids[ci]; break; }
+                    }
+                    if (matchedCapsid) {
+                        var mc = matchedCapsid;
+                        var fields = [
+                            ['MN Tropism', (mc.motor_neuron_tropism * 100).toFixed(0) + '%'],
+                            ['BBB Crossing', (mc.bbb_crossing * 100).toFixed(0) + '%'],
+                            ['Immunogenicity', (mc.immunogenicity * 100).toFixed(0) + '%'],
+                            ['Manufacturing', (mc.manufacturing_score * 100).toFixed(0) + '%'],
+                            ['Composite Score', mc.composite_score.toFixed(3)]
+                        ];
+                        if (mc.packaging) {
+                            fields.push(['Packaging', mc.packaging.fits ? 'Fits (' + mc.packaging.headroom_kb + ' kb free)' : 'Exceeds capacity']);
+                        }
+                        if (mc.clinical_precedent) { fields.push(['Clinical', mc.clinical_precedent]); }
+                        for (var fi = 0; fi < fields.length; fi++) {
+                            var fr = el('div', {className: 'adv-detail-row'});
+                            fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                            fr.appendChild(document.createTextNode(fields[fi][1]));
+                            detInner.appendChild(fr);
+                        }
+                    }
+                    detail.appendChild(detInner);
+                    card.appendChild(detail);
+                    card.addEventListener('click', function() {
+                        card.classList.toggle('open');
+                        detail.classList.toggle('open');
+                        capsidInfo.textContent = 'Capsid: ' + st.capsid + (detail.classList.contains('open') ? '' : ' \u2014 click for details');
+                    });
+                    grid.appendChild(card);
+                })(strategies[s]);
             }
             stContainer.appendChild(grid);
 
             var body = clearEl('aav-body');
-            var capsids = data.capsids || [];
             for (var i = 0; i < capsids.length; i++) {
-                var c = capsids[i];
-                var pkg = c.packaging || {};
-                var pkgText = pkg.fits ? 'OK (' + pkg.headroom_kb + ' kb free)' : 'EXCEED';
-                var scoreClass = c.composite_score >= 0.65 ? 'badge-green' : (c.composite_score >= 0.45 ? 'badge-yellow' : 'badge-gray');
-                body.appendChild(el('tr', null, [
-                    td(String(c.rank), 'mono'),
-                    td(c.serotype, null, 'font-weight:700'),
-                    td((c.motor_neuron_tropism * 100).toFixed(0) + '%', 'mono'),
-                    td((c.bbb_crossing * 100).toFixed(0) + '%', 'mono'),
-                    td((c.immunogenicity * 100).toFixed(0) + '%', 'mono'),
-                    td((c.manufacturing_score * 100).toFixed(0) + '%', 'mono'),
-                    tdBadge(pkgText, pkg.fits ? 'badge-green' : 'badge-red'),
-                    tdBadge(c.composite_score.toFixed(2), scoreClass),
-                    td(c.clinical_precedent ? c.clinical_precedent.substring(0, 80) + (c.clinical_precedent.length > 80 ? '...' : '') : '-', null, 'font-size:10px')
-                ]));
+                (function(c) {
+                    var pkg = c.packaging || {};
+                    var pkgText = pkg.fits ? 'OK (' + pkg.headroom_kb + ' kb free)' : 'EXCEED';
+                    var scoreClass = c.composite_score >= 0.65 ? 'badge-green' : (c.composite_score >= 0.45 ? 'badge-yellow' : 'badge-gray');
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(String(c.rank), 'mono'),
+                        td(c.serotype, null, 'font-weight:700'),
+                        td((c.motor_neuron_tropism * 100).toFixed(0) + '%', 'mono'),
+                        td((c.bbb_crossing * 100).toFixed(0) + '%', 'mono'),
+                        td((c.immunogenicity * 100).toFixed(0) + '%', 'mono'),
+                        td((c.manufacturing_score * 100).toFixed(0) + '%', 'mono'),
+                        tdBadge(pkgText, pkg.fits ? 'badge-green' : 'badge-red'),
+                        tdBadge(c.composite_score.toFixed(2), scoreClass),
+                        td(c.clinical_precedent ? c.clinical_precedent.substring(0, 80) + (c.clinical_precedent.length > 80 ? '...' : '') : '-', null, 'font-size:10px')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 9});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    if (c.clinical_precedent) {
+                        var cpRow = el('div', {className: 'adv-detail-row'});
+                        cpRow.appendChild(el('span', {className: 'adv-detail-label', text: 'Clinical Precedent:'}));
+                        cpRow.appendChild(document.createTextNode(c.clinical_precedent));
+                        detInner.appendChild(cpRow);
+                    }
+                    if (pkg.cargo_capacity_kb) {
+                        var capRow = el('div', {className: 'adv-detail-row'});
+                        capRow.appendChild(el('span', {className: 'adv-detail-label', text: 'Cargo Capacity:'}));
+                        capRow.appendChild(document.createTextNode(pkg.cargo_capacity_kb + ' kb'));
+                        detInner.appendChild(capRow);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(capsids[i]);
             }
         });
     }
@@ -6412,22 +6604,75 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 }
                 pocketsDiv.appendChild(grid);
             }
+            // Add search/filter for docking compounds
+            var dockingSection = document.getElementById('docking');
+            var dockingTableWrap = dockingSection ? dockingSection.querySelectorAll('.table-wrap') : [];
+            if (dockingTableWrap.length > 0) {
+                var lastWrap = dockingTableWrap[dockingTableWrap.length - 1];
+                var searchBox = el('input', {className: 'adv-search-box'});
+                searchBox.setAttribute('type', 'text');
+                searchBox.setAttribute('placeholder', 'Filter compounds by name, target, or class...');
+                lastWrap.parentNode.insertBefore(searchBox, lastWrap);
+                searchBox.addEventListener('input', function() {
+                    var q = searchBox.value.toLowerCase();
+                    var rows = document.getElementById('docking-body').querySelectorAll('tr.adv-row');
+                    for (var ri = 0; ri < rows.length; ri++) {
+                        var txt = rows[ri].textContent.toLowerCase();
+                        var next = rows[ri].nextElementSibling;
+                        var show = q === '' || txt.indexOf(q) >= 0;
+                        rows[ri].style.display = show ? '' : 'none';
+                        if (next && next.classList.contains('adv-row-detail')) next.style.display = show ? '' : 'none';
+                    }
+                });
+            }
             var body = clearEl('docking-body');
             var compounds = data.top_compounds || [];
             for (var i = 0; i < Math.min(compounds.length, 30); i++) {
-                var c = compounds[i];
-                var classColor = c.binding_class === 'strong' ? 'badge-green' : (c.binding_class === 'moderate' ? 'badge-yellow' : 'badge-gray');
-                body.appendChild(el('tr', null, [
-                    td(String(c.rank || i+1), 'mono'),
-                    td(c.compound_name || c.compound_id, null, 'font-size:11px'),
-                    td(c.target_symbol || c.target),
-                    td(String(c.predicted_affinity_kcal), 'mono', 'font-weight:700'),
-                    td(c.shape_score.toFixed(2), 'mono'),
-                    td(c.hbond_score.toFixed(2), 'mono'),
-                    td(c.hydrophobic_score.toFixed(2), 'mono'),
-                    tdBadge(c.composite_score.toFixed(2), classColor),
-                    tdBadge(c.binding_class, classColor)
-                ]));
+                (function(c, idx) {
+                    var classColor = c.binding_class === 'strong' ? 'badge-green' : (c.binding_class === 'moderate' ? 'badge-yellow' : 'badge-gray');
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(String(c.rank || idx+1), 'mono'),
+                        td(c.compound_name || c.compound_id, null, 'font-size:11px'),
+                        td(c.target_symbol || c.target),
+                        td(String(c.predicted_affinity_kcal), 'mono', 'font-weight:700'),
+                        td(c.shape_score.toFixed(2), 'mono'),
+                        td(c.hbond_score.toFixed(2), 'mono'),
+                        td(c.hydrophobic_score.toFixed(2), 'mono'),
+                        tdBadge(c.composite_score.toFixed(2), classColor),
+                        tdBadge(c.binding_class, classColor)
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 9});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['Compound', c.compound_name || c.compound_id],
+                        ['Target', c.target_symbol || c.target || '-'],
+                        ['Affinity', c.predicted_affinity_kcal + ' kcal/mol'],
+                        ['Shape Score', c.shape_score.toFixed(3)],
+                        ['H-Bond Score', c.hbond_score.toFixed(3)],
+                        ['Hydrophobic Score', c.hydrophobic_score.toFixed(3)],
+                        ['Composite Score', c.composite_score.toFixed(3)],
+                        ['Binding Class', c.binding_class]
+                    ];
+                    if (c.electrostatic_score !== undefined) { fields.push(['Electrostatic', String(c.electrostatic_score)]); }
+                    if (c.strain_penalty !== undefined) { fields.push(['Strain Penalty', String(c.strain_penalty)]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(compounds[i], i);
             }
         });
     }
@@ -8589,17 +8834,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         // Update nav
         var navLinks = document.querySelectorAll('.nav-link');
         for (var j = 0; j < navLinks.length; j++) navLinks[j].classList.toggle('active', navLinks[j].dataset.section === sectionId);
-        // Auto-expand nav group if the active link is inside one
-        var activeLink = document.querySelector('.nav-link[data-section="' + sectionId + '"]');
-        if (activeLink) {
-            var parentGroup = activeLink.closest('.nav-group');
-            if (parentGroup && !parentGroup.classList.contains('open')) {
-                parentGroup.classList.add('open');
-                parentGroup.style.display = '';
-                var toggle = document.querySelector('.nav-group-toggle[data-group="' + parentGroup.id.replace('nav-group-', '') + '"]');
-                if (toggle) toggle.classList.add('open');
-            }
-        }
+        // Close any open dropdown menus when navigating
+        var openMenus = document.querySelectorAll('.nav-dropdown-menu.open');
+        var openTriggers = document.querySelectorAll('.nav-dropdown-trigger.open');
+        for (var om = 0; om < openMenus.length; om++) openMenus[om].classList.remove('open');
+        for (var ot = 0; ot < openTriggers.length; ot++) openTriggers[ot].classList.remove('open');
         // Load data if not loaded
         if (loaders[sectionId]) loaders[sectionId]();
         // Update URL via pushState (unless triggered by popstate or initial load)
@@ -8653,19 +8892,43 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
-    // Nav group toggle (Advanced collapsible)
-    var toggles = document.querySelectorAll('.nav-group-toggle');
-    for (var t = 0; t < toggles.length; t++) {
-        toggles[t].addEventListener('click', function() {
-            var groupId = 'nav-group-' + this.dataset.group;
-            var group = document.getElementById(groupId);
-            if (!group) return;
-            var isOpen = group.classList.contains('open');
-            group.classList.toggle('open', !isOpen);
-            group.style.display = isOpen ? 'none' : '';
-            this.classList.toggle('open', !isOpen);
-        });
-    }
+    // Dropdown menu toggle
+    document.addEventListener('click', function(ev) {
+        var trigger = ev.target.closest('.nav-dropdown-trigger');
+        if (trigger) {
+            ev.stopPropagation();
+            var ddId = 'dd-' + trigger.getAttribute('data-dropdown');
+            var menu = document.getElementById(ddId);
+            var wasOpen = menu && menu.classList.contains('open');
+            // Close all
+            var allMenus = document.querySelectorAll('.nav-dropdown-menu');
+            var allTriggers = document.querySelectorAll('.nav-dropdown-trigger');
+            for (var i = 0; i < allMenus.length; i++) allMenus[i].classList.remove('open');
+            for (var j = 0; j < allTriggers.length; j++) allTriggers[j].classList.remove('open');
+            // Toggle current
+            if (!wasOpen && menu) {
+                menu.classList.add('open');
+                trigger.classList.add('open');
+            }
+            return;
+        }
+        // Click on dropdown item - navigate and close
+        var ddItem = ev.target.closest('.nav-dropdown-menu .nav-link');
+        if (ddItem) {
+            var menus = document.querySelectorAll('.nav-dropdown-menu');
+            var trigs = document.querySelectorAll('.nav-dropdown-trigger');
+            for (var k = 0; k < menus.length; k++) menus[k].classList.remove('open');
+            for (var l = 0; l < trigs.length; l++) trigs[l].classList.remove('open');
+            // Don't prevent default - let the existing SPA routing handle navigation
+        }
+        // Click outside - close all
+        if (!ev.target.closest('.nav-dropdown-wrap')) {
+            var all = document.querySelectorAll('.nav-dropdown-menu.open');
+            var allT = document.querySelectorAll('.nav-dropdown-trigger.open');
+            for (var m = 0; m < all.length; m++) all[m].classList.remove('open');
+            for (var n = 0; n < allT.length; n++) allT[n].classList.remove('open');
+        }
+    });
 })();
 </script>
 </body>
