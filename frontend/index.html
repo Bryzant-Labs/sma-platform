@@ -313,7 +313,7 @@
         .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 600; }
         .stat-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
         .nav-bar { background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; }
-        .nav-row { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; flex-wrap: wrap; }
+        .nav-row { display: flex; gap: 0; overflow: visible; flex-wrap: wrap; align-items: center; }
         .nav-row::-webkit-scrollbar { display: none; }
         .nav-link {
             display: block; padding: 10px 14px; font-size: 11px; font-weight: 600;
@@ -6760,37 +6760,91 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function loadSpatial() {
         if (loaded.spatial) return; loaded.spatial = true;
         fetch(API + '/spatial/penetration').then(function(r) { return r.json(); }).then(function(data) {
-            // Zones table
+            // Zones table - expandable rows
             var zb = clearEl('spatial-zones-body');
             var zones = data.zones || {};
             var keys = Object.keys(zones);
             for (var i = 0; i < keys.length; i++) {
-                var z = zones[keys[i]];
-                zb.appendChild(el('tr', null, [
-                    td(z.name, null, 'font-weight:600;font-size:11px'),
-                    td(z.anatomical_region),
-                    td(String(z.bbb_permeability), 'mono'),
-                    td(String(z.csf_exposure), 'mono'),
-                    td(String(z.vascular_density), 'mono'),
-                    tdBadge(String(z.sma_relevance), z.sma_relevance >= 0.8 ? 'badge-green' : z.sma_relevance >= 0.4 ? 'badge-blue' : ''),
-                    td((z.cell_types || []).join(', '), null, 'font-size:10px')
-                ]));
+                (function(z, key) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(z.name, null, 'font-weight:600;font-size:11px'),
+                        td(z.anatomical_region),
+                        td(String(z.bbb_permeability), 'mono'),
+                        td(String(z.csf_exposure), 'mono'),
+                        td(String(z.vascular_density), 'mono'),
+                        tdBadge(String(z.sma_relevance), z.sma_relevance >= 0.8 ? 'badge-green' : z.sma_relevance >= 0.4 ? 'badge-blue' : ''),
+                        td((z.cell_types || []).join(', '), null, 'font-size:10px')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    zb.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 7});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['Zone ID', key],
+                        ['Anatomical Region', z.anatomical_region || '-'],
+                        ['BBB Permeability', String(z.bbb_permeability)],
+                        ['CSF Exposure', String(z.csf_exposure)],
+                        ['Vascular Density', String(z.vascular_density)],
+                        ['SMA Relevance', String(z.sma_relevance)],
+                        ['Cell Types', (z.cell_types || []).join(', ') || '-']
+                    ];
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    zb.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(zones[keys[i]], keys[i]);
             }
-            // Drug penetration table
+            // Drug penetration table - expandable rows
             var db = clearEl('spatial-drugs-body');
             var drugs = data.penetration || [];
             for (var j = 0; j < drugs.length; j++) {
-                var d = drugs[j];
-                var zp = d.zone_penetration || {};
-                db.appendChild(el('tr', null, [
-                    td(d.name, null, 'font-weight:600;font-size:11px'),
-                    tdBadge(d.type, 'badge-blue'),
-                    td(d.route),
-                    tdBadge(d.best_zone, 'badge-green'),
-                    tdBadge(d.worst_zone, 'badge-red'),
-                    td(String(zp.ventral_horn || '-'), 'mono'),
-                    td(String(zp.nmj || '-'), 'mono')
-                ]));
+                (function(d) {
+                    var zp = d.zone_penetration || {};
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(d.name, null, 'font-weight:600;font-size:11px'),
+                        tdBadge(d.type, 'badge-blue'),
+                        td(d.route),
+                        tdBadge(d.best_zone, 'badge-green'),
+                        tdBadge(d.worst_zone, 'badge-red'),
+                        td(String(zp.ventral_horn || '-'), 'mono'),
+                        td(String(zp.nmj || '-'), 'mono')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    db.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 7});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var zpKeys = Object.keys(zp);
+                    var fields = [['Drug', d.name], ['Type', d.type || '-'], ['Route', d.route || '-'], ['Best Zone', d.best_zone || '-'], ['Worst Zone', d.worst_zone || '-']];
+                    for (var zk = 0; zk < zpKeys.length; zk++) {
+                        fields.push([zpKeys[zk].replace(/_/g, ' '), String(zp[zpKeys[zk]])]);
+                    }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    db.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(drugs[j]);
             }
         });
         fetch(API + '/spatial/silent-zones').then(function(r) { return r.json(); }).then(function(data) {
@@ -6798,22 +6852,45 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var sz = data.silent_zones || [];
             if (sz.length === 0) {
                 var p = document.createElement('p');
-                p.textContent = 'No silent zones detected — all SMA-relevant zones have adequate therapeutic coverage (>50% access).';
+                p.textContent = 'No silent zones detected \u2014 all SMA-relevant zones have adequate therapeutic coverage (>50% access).';
                 p.style.cssText = 'color:var(--muted);font-size:12px';
                 box.appendChild(p);
             } else {
                 for (var i = 0; i < sz.length; i++) {
-                    var card = document.createElement('div');
-                    card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px;margin-bottom:8px';
-                    var h = document.createElement('h4');
-                    h.textContent = sz[i].zone_name + ' (relevance: ' + sz[i].sma_relevance + ')';
-                    h.style.cssText = 'margin:0 0 8px;font-size:12px';
-                    card.appendChild(h);
-                    var desc = document.createElement('p');
-                    desc.textContent = 'Best access: ' + sz[i].best_therapy_access + ' | Gap: ' + sz[i].gap;
-                    desc.style.cssText = 'font-size:11px;color:var(--muted);margin:0';
-                    card.appendChild(desc);
-                    box.appendChild(card);
+                    (function(zone) {
+                        var card = document.createElement('div');
+                        card.className = 'adv-card';
+                        card.style.cssText += ';margin-bottom:8px';
+                        var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
+                        var h = document.createElement('h4');
+                        h.appendChild(toggle);
+                        h.appendChild(document.createTextNode(' ' + zone.zone_name + ' (relevance: ' + zone.sma_relevance + ')'));
+                        h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                        card.appendChild(h);
+                        var summary = document.createElement('p');
+                        summary.textContent = 'Best access: ' + zone.best_therapy_access + ' | Gap: ' + zone.gap + ' \u2014 click to expand';
+                        summary.style.cssText = 'font-size:11px;color:var(--muted);margin:0';
+                        card.appendChild(summary);
+                        var detail = el('div', {className: 'adv-detail'});
+                        var detInner = el('div', {className: 'adv-detail-inner'});
+                        detInner.style.cssText = 'padding:8px;background:var(--bg);border:1px solid var(--line)';
+                        var zoneKeys = Object.keys(zone);
+                        for (var zk = 0; zk < zoneKeys.length; zk++) {
+                            var zkey = zoneKeys[zk];
+                            if (zkey === 'zone_name') continue;
+                            var fr = el('div', {className: 'adv-detail-row'});
+                            fr.appendChild(el('span', {className: 'adv-detail-label', text: zkey.replace(/_/g, ' ') + ':'}));
+                            fr.appendChild(document.createTextNode(String(zone[zkey])));
+                            detInner.appendChild(fr);
+                        }
+                        detail.appendChild(detInner);
+                        card.appendChild(detail);
+                        card.addEventListener('click', function() {
+                            card.classList.toggle('open');
+                            detail.classList.toggle('open');
+                        });
+                        box.appendChild(card);
+                    })(sz[i]);
                 }
             }
             if (data.insight) {
@@ -6872,16 +6949,44 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var body = clearEl('nmj-signals-body');
             var sigs = data.signals || [];
             for (var i = 0; i < sigs.length; i++) {
-                var s = sigs[i];
-                body.appendChild(el('tr', null, [
-                    td(s.name, null, 'font-weight:600;font-size:11px'),
-                    tdBadge(s.molecule_type, 'badge-blue'),
-                    td(s.source),
-                    td(s.target, null, 'font-size:10px'),
-                    tdBadge(s.sma_status, s.sma_status === 'reduced' ? 'badge-red' : 'badge-green'),
-                    td(String(s.therapeutic_potential), 'mono', 'font-weight:700'),
-                    tdBadge(s.evidence_strength, s.evidence_strength === 'strong' ? 'badge-green' : '')
-                ]));
+                (function(s) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(s.name, null, 'font-weight:600;font-size:11px'),
+                        tdBadge(s.molecule_type, 'badge-blue'),
+                        td(s.source),
+                        td(s.target, null, 'font-size:10px'),
+                        tdBadge(s.sma_status, s.sma_status === 'reduced' ? 'badge-red' : 'badge-green'),
+                        td(String(s.therapeutic_potential), 'mono', 'font-weight:700'),
+                        tdBadge(s.evidence_strength, s.evidence_strength === 'strong' ? 'badge-green' : '')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 7});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['Signal', s.name], ['Molecule Type', s.molecule_type || '-'], ['Source', s.source || '-'],
+                        ['Target', s.target || '-'], ['SMA Status', s.sma_status || '-'],
+                        ['Therapeutic Potential', String(s.therapeutic_potential)],
+                        ['Evidence Strength', s.evidence_strength || '-']
+                    ];
+                    if (s.mechanism) { fields.push(['Mechanism', s.mechanism]); }
+                    if (s.therapeutic_strategy) { fields.push(['Strategy', s.therapeutic_strategy]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(sigs[i]);
             }
             if (data.insight) {
                 var ins = document.createElement('p');
@@ -6894,41 +6999,80 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var body = clearEl('nmj-ev-body');
             var cargo = data.cargo || [];
             for (var i = 0; i < cargo.length; i++) {
-                var c = cargo[i];
-                body.appendChild(el('tr', null, [
-                    td(c.name, null, 'font-weight:600;font-size:11px'),
-                    tdBadge(c.cargo_type, 'badge-blue'),
-                    td(c.function, null, 'font-size:10px'),
-                    td(c.sma_relevance, null, 'font-size:10px'),
-                    td(String(c.delivery_feasibility), 'mono', 'font-weight:700')
-                ]));
+                (function(c) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(c.name, null, 'font-weight:600;font-size:11px'),
+                        tdBadge(c.cargo_type, 'badge-blue'),
+                        td(c.function, null, 'font-size:10px'),
+                        td(c.sma_relevance, null, 'font-size:10px'),
+                        td(String(c.delivery_feasibility), 'mono', 'font-weight:700')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 5});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [['Cargo', c.name], ['Type', c.cargo_type || '-'], ['Function', c.function || '-'], ['SMA Relevance', c.sma_relevance || '-'], ['Delivery Feasibility', String(c.delivery_feasibility)]];
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(cargo[i]);
             }
         });
         fetch(API + '/nmj/chip-models').then(function(r) { return r.json(); }).then(function(data) {
             var box = clearEl('nmj-chips');
             var models = data.models || [];
             for (var i = 0; i < models.length; i++) {
-                var m = models[i];
-                var card = document.createElement('div');
-                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
-                var h = document.createElement('h4');
-                h.textContent = m.name;
-                h.style.cssText = 'margin:0 0 8px;font-size:12px';
-                card.appendChild(h);
-                var trl = document.createElement('span');
-                trl.textContent = 'TRL ' + m.trl;
-                trl.className = 'badge badge-blue';
-                trl.style.cssText = 'margin-bottom:8px;display:inline-block';
-                card.appendChild(trl);
-                var cost = document.createElement('p');
-                cost.textContent = m.cost_per_chip + ' | ' + m.throughput;
-                cost.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0';
-                card.appendChild(cost);
-                var desc = document.createElement('p');
-                desc.textContent = m.sma_modeling;
-                desc.style.cssText = 'font-size:11px;margin:4px 0 0';
-                card.appendChild(desc);
-                box.appendChild(card);
+                (function(m) {
+                    var card = document.createElement('div');
+                    card.className = 'adv-card';
+                    var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
+                    var h = document.createElement('h4');
+                    h.appendChild(toggle);
+                    h.appendChild(document.createTextNode(' ' + m.name));
+                    h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                    card.appendChild(h);
+                    var trl = document.createElement('span');
+                    trl.textContent = 'TRL ' + m.trl;
+                    trl.className = 'badge badge-blue';
+                    trl.style.cssText = 'margin-bottom:8px;display:inline-block';
+                    card.appendChild(trl);
+                    var summary = document.createElement('p');
+                    summary.textContent = m.cost_per_chip + ' | ' + m.throughput + ' \u2014 click to expand';
+                    summary.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0';
+                    card.appendChild(summary);
+                    var detail = el('div', {className: 'adv-detail'});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    detInner.style.cssText = 'padding:8px;background:var(--bg);border:1px solid var(--line)';
+                    var fields = [['Cost', m.cost_per_chip || '-'], ['Throughput', m.throughput || '-'], ['TRL', String(m.trl)], ['SMA Modeling', m.sma_modeling || '-']];
+                    if (m.cell_types) { fields.push(['Cell Types', Array.isArray(m.cell_types) ? m.cell_types.join(', ') : m.cell_types]); }
+                    if (m.readouts) { fields.push(['Readouts', Array.isArray(m.readouts) ? m.readouts.join(', ') : m.readouts]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detail.appendChild(detInner);
+                    card.appendChild(detail);
+                    card.addEventListener('click', function() {
+                        card.classList.toggle('open');
+                        detail.classList.toggle('open');
+                        summary.textContent = m.cost_per_chip + ' | ' + m.throughput + (detail.classList.contains('open') ? '' : ' \u2014 click to expand');
+                    });
+                    box.appendChild(card);
+                })(models[i]);
             }
         });
     }
@@ -6940,47 +7084,94 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var body = clearEl('multi-organs-body');
             var systems = data.systems || [];
             for (var i = 0; i < systems.length; i++) {
-                var o = systems[i];
-                body.appendChild(el('tr', null, [
-                    td(o.name, null, 'font-weight:600;font-size:11px'),
-                    td(o.organ),
-                    td(o.sma_type_affected),
-                    td((o.prevalence * 100).toFixed(0) + '%', 'mono'),
-                    td((o.severity * 100).toFixed(0) + '%', 'mono', 'font-weight:700'),
-                    tdBadge(o.smn_dependent ? 'Yes' : 'No', o.smn_dependent ? 'badge-green' : ''),
-                    td((o.biomarkers || []).slice(0, 3).join(', '), null, 'font-size:10px')
-                ]));
+                (function(o) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(o.name, null, 'font-weight:600;font-size:11px'),
+                        td(o.organ),
+                        td(o.sma_type_affected),
+                        td((o.prevalence * 100).toFixed(0) + '%', 'mono'),
+                        td((o.severity * 100).toFixed(0) + '%', 'mono', 'font-weight:700'),
+                        tdBadge(o.smn_dependent ? 'Yes' : 'No', o.smn_dependent ? 'badge-green' : ''),
+                        td((o.biomarkers || []).slice(0, 3).join(', '), null, 'font-size:10px')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 7});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['System', o.name], ['Organ', o.organ || '-'], ['SMA Types', o.sma_type_affected || '-'],
+                        ['Prevalence', (o.prevalence * 100).toFixed(0) + '%'],
+                        ['Severity', (o.severity * 100).toFixed(0) + '%'],
+                        ['SMN-Dependent', o.smn_dependent ? 'Yes' : 'No'],
+                        ['Biomarkers', (o.biomarkers || []).join(', ') || '-']
+                    ];
+                    if (o.clinical_manifestation) { fields.push(['Clinical Manifestation', o.clinical_manifestation]); }
+                    if (o.treatment_approach) { fields.push(['Treatment Approach', o.treatment_approach]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(systems[i]);
             }
         });
         fetch(API + '/multisystem/combinations').then(function(r) { return r.json(); }).then(function(data) {
             var box = clearEl('multi-combos');
             var combos = data.strategies || [];
             for (var i = 0; i < combos.length; i++) {
-                var c = combos[i];
-                var card = document.createElement('div');
-                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
-                var h = document.createElement('h4');
-                h.textContent = c.name;
-                h.style.cssText = 'margin:0 0 8px;font-size:12px';
-                card.appendChild(h);
-                var feas = document.createElement('span');
-                feas.textContent = (c.feasibility * 100).toFixed(0) + '% feasible';
-                feas.className = 'badge ' + (c.feasibility >= 0.8 ? 'badge-green' : 'badge-blue');
-                feas.style.cssText = 'margin-bottom:8px;display:inline-block';
-                card.appendChild(feas);
-                var organs = document.createElement('p');
-                organs.textContent = (c.target_organs || []).join(', ');
-                organs.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0';
-                card.appendChild(organs);
-                var rat = document.createElement('p');
-                rat.textContent = c.rationale;
-                rat.style.cssText = 'font-size:11px;margin:4px 0';
-                card.appendChild(rat);
-                var st = document.createElement('p');
-                st.textContent = c.clinical_status;
-                st.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 0;font-style:italic';
-                card.appendChild(st);
-                box.appendChild(card);
+                (function(c) {
+                    var card = document.createElement('div');
+                    card.className = 'adv-card';
+                    var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
+                    var h = document.createElement('h4');
+                    h.appendChild(toggle);
+                    h.appendChild(document.createTextNode(' ' + c.name));
+                    h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                    card.appendChild(h);
+                    var feas = document.createElement('span');
+                    feas.textContent = (c.feasibility * 100).toFixed(0) + '% feasible';
+                    feas.className = 'badge ' + (c.feasibility >= 0.8 ? 'badge-green' : 'badge-blue');
+                    feas.style.cssText = 'margin-bottom:8px;display:inline-block';
+                    card.appendChild(feas);
+                    var organs = document.createElement('p');
+                    organs.textContent = (c.target_organs || []).join(', ') + ' \u2014 click to expand';
+                    organs.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0';
+                    card.appendChild(organs);
+                    var detail = el('div', {className: 'adv-detail'});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    detInner.style.cssText = 'padding:8px;background:var(--bg);border:1px solid var(--line)';
+                    var fields = [
+                        ['Rationale', c.rationale || '-'],
+                        ['Target Organs', (c.target_organs || []).join(', ') || '-'],
+                        ['Feasibility', (c.feasibility * 100).toFixed(0) + '%'],
+                        ['Clinical Status', c.clinical_status || '-']
+                    ];
+                    if (c.drugs) { fields.push(['Drugs', Array.isArray(c.drugs) ? c.drugs.join(', ') : c.drugs]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detail.appendChild(detInner);
+                    card.appendChild(detail);
+                    card.addEventListener('click', function() {
+                        card.classList.toggle('open');
+                        detail.classList.toggle('open');
+                        organs.textContent = (c.target_organs || []).join(', ') + (detail.classList.contains('open') ? '' : ' \u2014 click to expand');
+                    });
+                    box.appendChild(card);
+                })(combos[i]);
             }
         });
         fetch(API + '/multisystem/energy').then(function(r) { return r.json(); }).then(function(data) {
@@ -6990,26 +7181,39 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var grid = document.createElement('div');
             grid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:16px';
             for (var i = 0; i < states.length; i++) {
-                var s = data[states[i]];
-                if (!s) continue;
-                var card = document.createElement('div');
-                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
-                var h = document.createElement('h4');
-                h.textContent = labels[i];
-                h.style.cssText = 'margin:0 0 8px;font-size:12px';
-                card.appendChild(h);
-                var ratio = document.createElement('span');
-                ratio.textContent = 'Supply/Demand: ' + s.supply_demand_ratio;
-                ratio.className = 'badge ' + (s.supply_demand_ratio >= 0.9 ? 'badge-green' : s.supply_demand_ratio >= 0.7 ? 'badge-blue' : 'badge-red');
-                card.appendChild(ratio);
-                var details = ['atp_demand', 'energy_source', 'mitochondrial_function'];
-                for (var j = 0; j < details.length; j++) {
-                    var p = document.createElement('p');
-                    p.textContent = details[j].replace(/_/g, ' ') + ': ' + s[details[j]];
-                    p.style.cssText = 'font-size:10px;margin:4px 0 0;color:var(--muted)';
-                    card.appendChild(p);
-                }
-                grid.appendChild(card);
+                (function(s, label) {
+                    if (!s) return;
+                    var card = document.createElement('div');
+                    card.className = 'adv-card';
+                    var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
+                    var h = document.createElement('h4');
+                    h.appendChild(toggle);
+                    h.appendChild(document.createTextNode(' ' + label));
+                    h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                    card.appendChild(h);
+                    var ratio = document.createElement('span');
+                    ratio.textContent = 'Supply/Demand: ' + s.supply_demand_ratio;
+                    ratio.className = 'badge ' + (s.supply_demand_ratio >= 0.9 ? 'badge-green' : s.supply_demand_ratio >= 0.7 ? 'badge-blue' : 'badge-red');
+                    card.appendChild(ratio);
+                    var detail = el('div', {className: 'adv-detail'});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    detInner.style.cssText = 'padding:8px 0';
+                    var allKeys = Object.keys(s);
+                    for (var j = 0; j < allKeys.length; j++) {
+                        var key = allKeys[j];
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: key.replace(/_/g, ' ') + ':'}));
+                        fr.appendChild(document.createTextNode(String(s[key])));
+                        detInner.appendChild(fr);
+                    }
+                    detail.appendChild(detInner);
+                    card.appendChild(detail);
+                    card.addEventListener('click', function() {
+                        card.classList.toggle('open');
+                        detail.classList.toggle('open');
+                    });
+                    grid.appendChild(card);
+                })(data[states[i]], labels[i]);
             }
             box.appendChild(grid);
             if (data.therapeutic_gap) {
@@ -7028,15 +7232,43 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var body = clearEl('bio-channels-body');
             var chs = data.channels || [];
             for (var i = 0; i < chs.length; i++) {
-                var c = chs[i];
-                body.appendChild(el('tr', null, [
-                    td(c.gene, 'mono', 'font-weight:600;font-size:11px'),
-                    td(c.name, null, 'font-size:11px'),
-                    tdBadge(c.channel_type, 'badge-blue'),
-                    td(c.vmem_role),
-                    tdBadge(c.sma_expression, c.sma_expression === 'downregulated' ? 'badge-red' : c.sma_expression === 'upregulated' ? 'badge-green' : ''),
-                    td((c.drug_candidates || []).join(', '), null, 'font-size:10px')
-                ]));
+                (function(c) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(c.gene, 'mono', 'font-weight:600;font-size:11px'),
+                        td(c.name, null, 'font-size:11px'),
+                        tdBadge(c.channel_type, 'badge-blue'),
+                        td(c.vmem_role),
+                        tdBadge(c.sma_expression, c.sma_expression === 'downregulated' ? 'badge-red' : c.sma_expression === 'upregulated' ? 'badge-green' : ''),
+                        td((c.drug_candidates || []).join(', '), null, 'font-size:10px')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 6});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['Gene', c.gene], ['Channel', c.name || '-'], ['Type', c.channel_type || '-'],
+                        ['Vmem Role', c.vmem_role || '-'], ['SMA Expression', c.sma_expression || '-'],
+                        ['Drug Candidates', (c.drug_candidates || []).join(', ') || 'None']
+                    ];
+                    if (c.conductance) { fields.push(['Conductance', c.conductance]); }
+                    if (c.selectivity) { fields.push(['Selectivity', c.selectivity]); }
+                    if (c.mechanism) { fields.push(['Mechanism', c.mechanism]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(chs[i]);
             }
             if (data.insight) {
                 var ins = document.createElement('p');
@@ -7049,46 +7281,94 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var box = clearEl('bio-vmem');
             var states = data.states || [];
             for (var i = 0; i < states.length; i++) {
-                var v = states[i];
-                var card = document.createElement('div');
-                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
-                var h = document.createElement('h4');
-                h.textContent = v.state;
-                h.style.cssText = 'margin:0 0 8px;font-size:12px';
-                card.appendChild(h);
-                var mv = document.createElement('span');
-                mv.textContent = v.vmem_range_mv;
-                mv.className = 'badge badge-blue';
-                mv.style.cssText = 'display:inline-block;margin-bottom:8px';
-                card.appendChild(mv);
-                var prev = document.createElement('span');
-                prev.textContent = (v.prevalence_in_sma * 100).toFixed(0) + '% of SMA MNs';
-                prev.className = 'badge';
-                prev.style.cssText = 'display:inline-block;margin-left:4px;margin-bottom:8px';
-                card.appendChild(prev);
-                var desc = document.createElement('p');
-                desc.textContent = v.phenotype;
-                desc.style.cssText = 'font-size:11px;margin:4px 0';
-                card.appendChild(desc);
-                var rel = document.createElement('p');
-                rel.textContent = v.sma_relevance;
-                rel.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 0;font-style:italic';
-                card.appendChild(rel);
-                box.appendChild(card);
+                (function(v) {
+                    var card = document.createElement('div');
+                    card.className = 'adv-card';
+                    var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
+                    var h = document.createElement('h4');
+                    h.appendChild(toggle);
+                    h.appendChild(document.createTextNode(' ' + v.state));
+                    h.style.cssText = 'margin:0 0 8px;font-size:12px';
+                    card.appendChild(h);
+                    var mv = document.createElement('span');
+                    mv.textContent = v.vmem_range_mv;
+                    mv.className = 'badge badge-blue';
+                    mv.style.cssText = 'display:inline-block;margin-bottom:8px';
+                    card.appendChild(mv);
+                    var prev = document.createElement('span');
+                    prev.textContent = (v.prevalence_in_sma * 100).toFixed(0) + '% of SMA MNs \u2014 click to expand';
+                    prev.className = 'badge';
+                    prev.style.cssText = 'display:inline-block;margin-left:4px;margin-bottom:8px';
+                    card.appendChild(prev);
+                    var detail = el('div', {className: 'adv-detail'});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    detInner.style.cssText = 'padding:8px;background:var(--bg);border:1px solid var(--line)';
+                    var fields = [
+                        ['State', v.state], ['Vmem Range', v.vmem_range_mv],
+                        ['Prevalence in SMA', (v.prevalence_in_sma * 100).toFixed(0) + '%'],
+                        ['Phenotype', v.phenotype || '-'],
+                        ['SMA Relevance', v.sma_relevance || '-']
+                    ];
+                    if (v.channel_profile) { fields.push(['Channel Profile', v.channel_profile]); }
+                    if (v.therapeutic_approach) { fields.push(['Therapeutic Approach', v.therapeutic_approach]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detail.appendChild(detInner);
+                    card.appendChild(detail);
+                    card.addEventListener('click', function() {
+                        card.classList.toggle('open');
+                        detail.classList.toggle('open');
+                        prev.textContent = (v.prevalence_in_sma * 100).toFixed(0) + '% of SMA MNs' + (detail.classList.contains('open') ? '' : ' \u2014 click to expand');
+                    });
+                    box.appendChild(card);
+                })(states[i]);
             }
         });
         fetch(API + '/bioelectric/electroceuticals').then(function(r) { return r.json(); }).then(function(data) {
             var body = clearEl('bio-electro-body');
             var items = data.interventions || [];
             for (var i = 0; i < items.length; i++) {
-                var e = items[i];
-                body.appendChild(el('tr', null, [
-                    td(e.name, null, 'font-weight:600;font-size:11px'),
-                    tdBadge(e.modality, 'badge-blue'),
-                    td(e.target_vmem_state, null, 'font-size:10px'),
-                    tdBadge(e.evidence_level, e.evidence_level === 'clinical' ? 'badge-green' : e.evidence_level === 'preclinical' ? 'badge-blue' : ''),
-                    td((e.feasibility * 100).toFixed(0) + '%', 'mono', 'font-weight:700')
-                ]));
+                (function(e) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(e.name, null, 'font-weight:600;font-size:11px'),
+                        tdBadge(e.modality, 'badge-blue'),
+                        td(e.target_vmem_state, null, 'font-size:10px'),
+                        tdBadge(e.evidence_level, e.evidence_level === 'clinical' ? 'badge-green' : e.evidence_level === 'preclinical' ? 'badge-blue' : ''),
+                        td((e.feasibility * 100).toFixed(0) + '%', 'mono', 'font-weight:700')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 5});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['Intervention', e.name], ['Modality', e.modality || '-'],
+                        ['Target State', e.target_vmem_state || '-'],
+                        ['Evidence Level', e.evidence_level || '-'],
+                        ['Feasibility', (e.feasibility * 100).toFixed(0) + '%']
+                    ];
+                    if (e.mechanism) { fields.push(['Mechanism', e.mechanism]); }
+                    if (e.parameters) { fields.push(['Parameters', e.parameters]); }
+                    if (e.clinical_status) { fields.push(['Clinical Status', e.clinical_status]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(items[i]);
             }
         });
     }
@@ -7100,17 +7380,47 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var body = clearEl('splicemap-body');
             var events = data.splice_events || [];
             for (var i = 0; i < events.length; i++) {
-                var s = events[i];
-                body.appendChild(el('tr', null, [
-                    td(s.gene_axolotl, null, 'font-weight:600;font-size:11px'),
-                    td(s.gene_human, 'mono'),
-                    tdBadge(s.event_type, 'badge-blue'),
-                    td(s.exon, null, 'font-size:10px'),
-                    tdBadge(s.axolotl_state, 'badge-green'),
-                    tdBadge(s.human_sma_state, s.human_sma_state === 'silenced' ? 'badge-red' : ''),
-                    td(String(s.conservation_score), 'mono'),
-                    td(String(s.reactivation_feasibility), 'mono', 'font-weight:700')
-                ]));
+                (function(s) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(s.gene_axolotl, null, 'font-weight:600;font-size:11px'),
+                        td(s.gene_human, 'mono'),
+                        tdBadge(s.event_type, 'badge-blue'),
+                        td(s.exon, null, 'font-size:10px'),
+                        tdBadge(s.axolotl_state, 'badge-green'),
+                        tdBadge(s.human_sma_state, s.human_sma_state === 'silenced' ? 'badge-red' : ''),
+                        td(String(s.conservation_score), 'mono'),
+                        td(String(s.reactivation_feasibility), 'mono', 'font-weight:700')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 8});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['Axolotl Gene', s.gene_axolotl], ['Human Ortholog', s.gene_human || '-'],
+                        ['Event Type', s.event_type || '-'], ['Exon', s.exon || '-'],
+                        ['Axolotl State', s.axolotl_state || '-'], ['Human SMA State', s.human_sma_state || '-'],
+                        ['Conservation Score', String(s.conservation_score)],
+                        ['Reactivation Feasibility', String(s.reactivation_feasibility)]
+                    ];
+                    if (s.therapeutic_approach) { fields.push(['Therapeutic Approach', s.therapeutic_approach]); }
+                    if (s.splice_site) { fields.push(['Splice Site', s.splice_site]); }
+                    if (s.regulation) { fields.push(['Regulation', s.regulation]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(events[i]);
             }
             if (data.insight) {
                 var ins = document.createElement('p');
@@ -7128,15 +7438,44 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var body = clearEl('rna-targets-body');
             var sites = data.sites || [];
             for (var i = 0; i < sites.length; i++) {
-                var s = sites[i];
-                body.appendChild(el('tr', null, [
-                    td(s.name, null, 'font-weight:600;font-size:11px'),
-                    td(s.location, null, 'font-size:10px'),
-                    td(s.sequence_motif, 'mono', 'font-size:10px'),
-                    td((s.binding_proteins || []).join(', '), null, 'font-size:10px'),
-                    td(String(s.druggability), 'mono', 'font-weight:700'),
-                    tdBadge(s.approved_drug || 'None', s.approved_drug && s.approved_drug !== 'None' ? 'badge-green' : '')
-                ]));
+                (function(s) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(s.name, null, 'font-weight:600;font-size:11px'),
+                        td(s.location, null, 'font-size:10px'),
+                        td(s.sequence_motif, 'mono', 'font-size:10px'),
+                        td((s.binding_proteins || []).join(', '), null, 'font-size:10px'),
+                        td(String(s.druggability), 'mono', 'font-weight:700'),
+                        tdBadge(s.approved_drug || 'None', s.approved_drug && s.approved_drug !== 'None' ? 'badge-green' : '')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 6});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['Site', s.name], ['Location', s.location || '-'],
+                        ['Sequence Motif', s.sequence_motif || '-'],
+                        ['Binding Proteins', (s.binding_proteins || []).join(', ') || '-'],
+                        ['Druggability', String(s.druggability)],
+                        ['Approved Drug', s.approved_drug || 'None']
+                    ];
+                    if (s.structure) { fields.push(['Structure', s.structure]); }
+                    if (s.therapeutic_strategy) { fields.push(['Strategy', s.therapeutic_strategy]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(sites[i]);
             }
             if (data.insight) {
                 var ins = document.createElement('p');
@@ -7149,14 +7488,41 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var body = clearEl('rna-modulators-body');
             var mods = data.modulators || [];
             for (var i = 0; i < mods.length; i++) {
-                var m = mods[i];
-                body.appendChild(el('tr', null, [
-                    td(m.name, null, 'font-weight:600;font-size:11px'),
-                    td(String(m.mw), 'mono'),
-                    td(m.target, null, 'font-size:10px'),
-                    td(String(m.ec50_nm), 'mono', 'font-weight:700'),
-                    tdBadge(m.status, m.status.indexOf('Approved') >= 0 ? 'badge-green' : m.status.indexOf('Discontinued') >= 0 ? 'badge-red' : 'badge-blue')
-                ]));
+                (function(m) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(m.name, null, 'font-weight:600;font-size:11px'),
+                        td(String(m.mw), 'mono'),
+                        td(m.target, null, 'font-size:10px'),
+                        td(String(m.ec50_nm), 'mono', 'font-weight:700'),
+                        tdBadge(m.status, m.status.indexOf('Approved') >= 0 ? 'badge-green' : m.status.indexOf('Discontinued') >= 0 ? 'badge-red' : 'badge-blue')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 5});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['Compound', m.name], ['Molecular Weight', String(m.mw)],
+                        ['Target', m.target || '-'], ['EC50', m.ec50_nm + ' nM'],
+                        ['Status', m.status || '-']
+                    ];
+                    if (m.mechanism) { fields.push(['Mechanism', m.mechanism]); }
+                    if (m.selectivity) { fields.push(['Selectivity', m.selectivity]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(mods[i]);
             }
         });
     }
@@ -7165,19 +7531,70 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function loadDualTarget() {
         if (loaded.dualtarget) return; loaded.dualtarget = true;
         fetch(API + '/screen/dual-target').then(function(r) { return r.json(); }).then(function(data) {
+            // Add search/filter for dual-target candidates
+            var dualSection = document.getElementById('dualtarget');
+            var dualTableWrap = dualSection ? dualSection.querySelectorAll('.table-wrap') : [];
+            if (dualTableWrap.length > 0) {
+                var searchBox = el('input', {className: 'adv-search-box'});
+                searchBox.setAttribute('type', 'text');
+                searchBox.setAttribute('placeholder', 'Filter candidates by name, channel, or status...');
+                dualTableWrap[0].parentNode.insertBefore(searchBox, dualTableWrap[0]);
+                searchBox.addEventListener('input', function() {
+                    var q = searchBox.value.toLowerCase();
+                    var rows = document.getElementById('dual-body').querySelectorAll('tr.adv-row');
+                    for (var ri = 0; ri < rows.length; ri++) {
+                        var txt = rows[ri].textContent.toLowerCase();
+                        var next = rows[ri].nextElementSibling;
+                        var show = q === '' || txt.indexOf(q) >= 0;
+                        rows[ri].style.display = show ? '' : 'none';
+                        if (next && next.classList.contains('adv-row-detail')) next.style.display = show ? '' : 'none';
+                    }
+                });
+            }
             var body = clearEl('dual-body');
             var cands = data.candidates || [];
             for (var i = 0; i < cands.length; i++) {
-                var c = cands[i];
-                body.appendChild(el('tr', null, [
-                    td(c.name, null, 'font-weight:600;font-size:11px'),
-                    td(String(c.smn2_score), 'mono'),
-                    td(c.ion_channel_target, 'mono', 'font-size:10px'),
-                    td(String(c.ion_channel_score), 'mono'),
-                    td(String(c.bbb_penetration), 'mono'),
-                    td(String(c.composite_score), 'mono', 'font-weight:700;color:var(--accent)'),
-                    tdBadge(c.clinical_status.split('.')[0], c.clinical_status.indexOf('Approved') >= 0 ? 'badge-green' : 'badge-blue')
-                ]));
+                (function(c) {
+                    var row = el('tr', {className: 'adv-row'}, [
+                        td(c.name, null, 'font-weight:600;font-size:11px'),
+                        td(String(c.smn2_score), 'mono'),
+                        td(c.ion_channel_target, 'mono', 'font-size:10px'),
+                        td(String(c.ion_channel_score), 'mono'),
+                        td(String(c.bbb_penetration), 'mono'),
+                        td(String(c.composite_score), 'mono', 'font-weight:700;color:var(--accent)'),
+                        tdBadge(c.clinical_status.split('.')[0], c.clinical_status.indexOf('Approved') >= 0 ? 'badge-green' : 'badge-blue')
+                    ]);
+                    var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                    row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
+                    body.appendChild(row);
+                    var detailRow = el('tr', {className: 'adv-row-detail'});
+                    var detailTd = el('td', {colSpan: 7});
+                    var detInner = el('div', {className: 'adv-detail-inner'});
+                    var fields = [
+                        ['Compound', c.name], ['SMN2 Score', String(c.smn2_score)],
+                        ['Ion Channel Target', c.ion_channel_target || '-'],
+                        ['Ion Channel Score', String(c.ion_channel_score)],
+                        ['BBB Penetration', String(c.bbb_penetration)],
+                        ['Composite Score', String(c.composite_score)],
+                        ['Clinical Status', c.clinical_status || '-']
+                    ];
+                    if (c.mechanism) { fields.push(['Mechanism', c.mechanism]); }
+                    if (c.smn2_mechanism) { fields.push(['SMN2 Mechanism', c.smn2_mechanism]); }
+                    if (c.channel_mechanism) { fields.push(['Channel Mechanism', c.channel_mechanism]); }
+                    for (var fi = 0; fi < fields.length; fi++) {
+                        var fr = el('div', {className: 'adv-detail-row'});
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        detInner.appendChild(fr);
+                    }
+                    detailTd.appendChild(detInner);
+                    detailRow.appendChild(detailTd);
+                    body.appendChild(detailRow);
+                    row.addEventListener('click', function() {
+                        row.classList.toggle('open');
+                        detailRow.classList.toggle('open');
+                    });
+                })(cands[i]);
             }
             if (data.insight) {
                 var ins = document.createElement('p');
