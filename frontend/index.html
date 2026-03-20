@@ -745,6 +745,7 @@
     </span>
     <span class="nav-sep">|</span>
     <a href="/research" class="nav-link" data-section="research">About</a>
+    <a href="/analytics" class="nav-link" data-section="analytics">Analytics</a>
     <a href="/links" class="nav-link" data-section="links">Links</a>
     <a href="/write" class="nav-link" data-section="write">Write</a>
     <a href="/repurposing" class="nav-link" data-section="repurposing">Repurposing</a>
@@ -2010,6 +2011,12 @@
     <div class="table-wrap"><table><thead><tr><th>#</th><th>Compound</th><th>Target</th><th>Confidence</th><th>Binding Energy</th><th>Pose Rank</th><th>Status</th></tr></thead>
     <tbody id="nim-results-body"><tr><td colspan="7" class="loading">Loading NIM docking results...</td></tr></tbody></table></div>
     <div id="nim-results-pagination"></div>
+</section>
+
+<section class="section" id="analytics">
+    <div class="section-header"><h2 class="section-title">Platform Analytics</h2></div>
+    <p class="section-desc">Real-time summary of platform capabilities, evidence depth, and research progress.</p>
+    <div id="analytics-content"><p class="loading">Loading analytics...</p></div>
 </section>
 
 </main>
@@ -6760,6 +6767,266 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+    // ============ Platform Analytics ============
+    function loadAnalytics() {
+        if (loaded.analytics) return; loaded.analytics = true;
+        var container = clearEl('analytics-content');
+        var loadingMsg = el('p', {className: 'loading', text: 'Loading analytics...'});
+        container.appendChild(loadingMsg);
+
+        fetch(API + '/analytics/summary').then(function(r) { return r.json(); }).then(function(data) {
+            container = clearEl('analytics-content');
+
+            if (data.error) {
+                container.appendChild(el('p', {className: 'loading', text: data.error}));
+                return;
+            }
+
+            // --- Stat cards grid ---
+            var statsGrid = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:32px'});
+            var coreItems = [
+                {label: 'Sources', value: data.core.sources, color: 'var(--blue)'},
+                {label: 'Claims', value: data.core.claims, color: 'var(--green)'},
+                {label: 'Hypotheses', value: data.core.hypotheses, color: 'var(--amber)'},
+                {label: 'Targets', value: data.core.targets, color: 'var(--red, #e74c3c)'},
+                {label: 'Trials', value: data.core.trials, color: 'var(--purple, #9b59b6)'}
+            ];
+            for (var i = 0; i < coreItems.length; i++) {
+                var card = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center'});
+                var valEl = el('div', {style: 'font-size:28px;font-weight:700;color:' + coreItems[i].color + ';margin-bottom:4px'});
+                valEl.textContent = Number(coreItems[i].value).toLocaleString();
+                var lblEl = el('div', {style: 'font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)'});
+                lblEl.textContent = coreItems[i].label;
+                card.appendChild(valEl);
+                card.appendChild(lblEl);
+                statsGrid.appendChild(card);
+            }
+            container.appendChild(statsGrid);
+
+            // --- Recent activity ---
+            var recentSection = el('div', {style: 'margin-bottom:32px'});
+            var recentTitle = el('h3', {style: 'font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            recentTitle.textContent = 'Recent Activity (Last 7 Days)';
+            recentSection.appendChild(recentTitle);
+            var recentGrid = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px'});
+            var recentItems = [
+                {label: 'New Sources', value: data.recent_7d.new_sources, cls: 'badge-blue'},
+                {label: 'New Claims', value: data.recent_7d.new_claims, cls: 'badge-green'}
+            ];
+            for (var ri = 0; ri < recentItems.length; ri++) {
+                var rCard = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;display:flex;align-items:center;gap:12px'});
+                var rBadge = el('span', {className: 'badge ' + recentItems[ri].cls});
+                rBadge.textContent = Number(recentItems[ri].value).toLocaleString();
+                var rLabel = el('span', {style: 'font-size:13px;color:var(--text)'});
+                rLabel.textContent = recentItems[ri].label;
+                rCard.appendChild(rBadge);
+                rCard.appendChild(rLabel);
+                recentGrid.appendChild(rCard);
+            }
+            recentSection.appendChild(recentGrid);
+            container.appendChild(recentSection);
+
+            // --- Two-column layout for distributions ---
+            var twoCol = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin-bottom:32px'});
+
+            // Convergence distribution
+            var convBox = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px'});
+            var convTitle = el('h3', {style: 'font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            convTitle.textContent = 'Evidence Convergence';
+            convBox.appendChild(convTitle);
+            var convLevels = ['very_high', 'high', 'medium', 'low'];
+            var convColors = {very_high: 'var(--green)', high: 'var(--blue)', medium: 'var(--amber)', low: 'var(--muted)'};
+            var convLabels = {very_high: 'Very High', high: 'High', medium: 'Medium', low: 'Low'};
+            var convTotal = 0;
+            for (var ck in data.convergence) convTotal += data.convergence[ck];
+            if (convTotal === 0) {
+                convBox.appendChild(el('p', {style: 'color:var(--muted);font-size:13px', text: 'No convergence data available yet.'}));
+            } else {
+                for (var ci = 0; ci < convLevels.length; ci++) {
+                    var lvl = convLevels[ci];
+                    var cnt = data.convergence[lvl] || 0;
+                    var pct = convTotal > 0 ? Math.round((cnt / convTotal) * 100) : 0;
+                    var barRow = el('div', {style: 'margin-bottom:8px'});
+                    var barLabel = el('div', {style: 'display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px'});
+                    var barLblText = el('span'); barLblText.textContent = convLabels[lvl] || lvl;
+                    var barLblCount = el('span', {style: 'color:var(--muted)'}); barLblCount.textContent = cnt + ' (' + pct + '%)';
+                    barLabel.appendChild(barLblText);
+                    barLabel.appendChild(barLblCount);
+                    barRow.appendChild(barLabel);
+                    var barTrack = el('div', {style: 'height:6px;background:var(--border);border-radius:3px;overflow:hidden'});
+                    var barFill = el('div', {style: 'height:100%;width:' + pct + '%;background:' + (convColors[lvl] || 'var(--muted)') + ';border-radius:3px;transition:width 0.6s'});
+                    barTrack.appendChild(barFill);
+                    barRow.appendChild(barTrack);
+                    convBox.appendChild(barRow);
+                }
+            }
+            twoCol.appendChild(convBox);
+
+            // Claim type distribution
+            var claimBox = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px'});
+            var claimTitle = el('h3', {style: 'font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            claimTitle.textContent = 'Claim Type Distribution';
+            claimBox.appendChild(claimTitle);
+            var claimTypes = data.claim_types || [];
+            if (claimTypes.length === 0) {
+                claimBox.appendChild(el('p', {style: 'color:var(--muted);font-size:13px', text: 'No claim data available yet.'}));
+            } else {
+                var maxClaim = claimTypes.length > 0 ? claimTypes[0].count : 1;
+                for (var cti = 0; cti < claimTypes.length; cti++) {
+                    var ct = claimTypes[cti];
+                    var ctPct = Math.round((ct.count / maxClaim) * 100);
+                    var ctRow = el('div', {style: 'margin-bottom:6px'});
+                    var ctLabel = el('div', {style: 'display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px'});
+                    var ctName = el('span'); ctName.textContent = (ct.type || 'unknown').replace(/_/g, ' ');
+                    var ctCount = el('span', {style: 'color:var(--muted);font-variant-numeric:tabular-nums'}); ctCount.textContent = Number(ct.count).toLocaleString();
+                    ctLabel.appendChild(ctName);
+                    ctLabel.appendChild(ctCount);
+                    ctRow.appendChild(ctLabel);
+                    var ctTrack = el('div', {style: 'height:4px;background:var(--border);border-radius:2px;overflow:hidden'});
+                    var ctFill = el('div', {style: 'height:100%;width:' + ctPct + '%;background:var(--blue);border-radius:2px;transition:width 0.6s'});
+                    ctTrack.appendChild(ctFill);
+                    ctRow.appendChild(ctTrack);
+                    claimBox.appendChild(ctRow);
+                }
+            }
+            twoCol.appendChild(claimBox);
+            container.appendChild(twoCol);
+
+            // --- Second row: Source types + Top journals ---
+            var twoCol2 = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin-bottom:32px'});
+
+            // Source type distribution
+            var srcBox = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px'});
+            var srcTitle = el('h3', {style: 'font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            srcTitle.textContent = 'Source Types';
+            srcBox.appendChild(srcTitle);
+            var sourceTypes = data.source_types || [];
+            if (sourceTypes.length === 0) {
+                srcBox.appendChild(el('p', {style: 'color:var(--muted);font-size:13px', text: 'No source data available yet.'}));
+            } else {
+                var maxSrc = sourceTypes.length > 0 ? sourceTypes[0].count : 1;
+                for (var si = 0; si < sourceTypes.length; si++) {
+                    var st = sourceTypes[si];
+                    var stPct = Math.round((st.count / maxSrc) * 100);
+                    var stRow = el('div', {style: 'margin-bottom:6px'});
+                    var stLabel = el('div', {style: 'display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px'});
+                    var stName = el('span'); stName.textContent = (st.type || 'unknown').replace(/_/g, ' ');
+                    var stCount = el('span', {style: 'color:var(--muted);font-variant-numeric:tabular-nums'}); stCount.textContent = Number(st.count).toLocaleString();
+                    stLabel.appendChild(stName);
+                    stLabel.appendChild(stCount);
+                    stRow.appendChild(stLabel);
+                    var stTrack = el('div', {style: 'height:4px;background:var(--border);border-radius:2px;overflow:hidden'});
+                    var stFill = el('div', {style: 'height:100%;width:' + stPct + '%;background:var(--amber);border-radius:2px;transition:width 0.6s'});
+                    stTrack.appendChild(stFill);
+                    stRow.appendChild(stTrack);
+                    srcBox.appendChild(stRow);
+                }
+            }
+            twoCol2.appendChild(srcBox);
+
+            // Top 10 journals
+            var jrnlBox = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px'});
+            var jrnlTitle = el('h3', {style: 'font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            jrnlTitle.textContent = 'Top 10 Journals';
+            jrnlBox.appendChild(jrnlTitle);
+            var journals = data.top_journals || [];
+            if (journals.length === 0) {
+                jrnlBox.appendChild(el('p', {style: 'color:var(--muted);font-size:13px', text: 'No journal data available yet.'}));
+            } else {
+                var maxJ = journals.length > 0 ? journals[0].count : 1;
+                for (var ji = 0; ji < journals.length; ji++) {
+                    var jl = journals[ji];
+                    var jPct = Math.round((jl.count / maxJ) * 100);
+                    var jRow = el('div', {style: 'margin-bottom:6px'});
+                    var jLabel = el('div', {style: 'display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px'});
+                    var jName = el('span', {style: 'max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'}); jName.textContent = jl.journal || 'Unknown';
+                    jName.title = jl.journal || '';
+                    var jCount = el('span', {style: 'color:var(--muted);font-variant-numeric:tabular-nums'}); jCount.textContent = Number(jl.count).toLocaleString();
+                    jLabel.appendChild(jName);
+                    jLabel.appendChild(jCount);
+                    jRow.appendChild(jLabel);
+                    var jTrack = el('div', {style: 'height:4px;background:var(--border);border-radius:2px;overflow:hidden'});
+                    var jFill = el('div', {style: 'height:100%;width:' + jPct + '%;background:var(--green);border-radius:2px;transition:width 0.6s'});
+                    jTrack.appendChild(jFill);
+                    jRow.appendChild(jTrack);
+                    jrnlBox.appendChild(jRow);
+                }
+            }
+            twoCol2.appendChild(jrnlBox);
+            container.appendChild(twoCol2);
+
+            // --- Third row: Hypothesis status + Dataset tiers ---
+            var twoCol3 = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin-bottom:32px'});
+
+            // Hypothesis status
+            var hypBox = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px'});
+            var hypTitle = el('h3', {style: 'font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            hypTitle.textContent = 'Hypothesis Status';
+            hypBox.appendChild(hypTitle);
+            var hypStatuses = data.hypothesis_status || [];
+            var hypStatusColors = {proposed: 'var(--muted)', under_review: 'var(--amber)', validated: 'var(--green)', refuted: 'var(--red, #e74c3c)', published: 'var(--blue)'};
+            if (hypStatuses.length === 0) {
+                hypBox.appendChild(el('p', {style: 'color:var(--muted);font-size:13px', text: 'No hypothesis data available yet.'}));
+            } else {
+                var maxHyp = hypStatuses.length > 0 ? hypStatuses[0].count : 1;
+                for (var hi = 0; hi < hypStatuses.length; hi++) {
+                    var hs = hypStatuses[hi];
+                    var hPct = Math.round((hs.count / maxHyp) * 100);
+                    var hRow = el('div', {style: 'margin-bottom:6px'});
+                    var hLabel = el('div', {style: 'display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px'});
+                    var hName = el('span'); hName.textContent = (hs.status || 'unknown').replace(/_/g, ' ');
+                    var hCount = el('span', {style: 'color:var(--muted);font-variant-numeric:tabular-nums'}); hCount.textContent = Number(hs.count).toLocaleString();
+                    hLabel.appendChild(hName);
+                    hLabel.appendChild(hCount);
+                    hRow.appendChild(hLabel);
+                    var hTrack = el('div', {style: 'height:4px;background:var(--border);border-radius:2px;overflow:hidden'});
+                    var hFill = el('div', {style: 'height:100%;width:' + hPct + '%;background:' + (hypStatusColors[hs.status] || 'var(--muted)') + ';border-radius:2px;transition:width 0.6s'});
+                    hTrack.appendChild(hFill);
+                    hRow.appendChild(hTrack);
+                    hypBox.appendChild(hRow);
+                }
+            }
+            twoCol3.appendChild(hypBox);
+
+            // Dataset tiers
+            var tierBox = el('div', {style: 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px'});
+            var tierTitle = el('h3', {style: 'font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px'});
+            tierTitle.textContent = 'Dataset Evidence Tiers';
+            tierBox.appendChild(tierTitle);
+            var tiers = data.dataset_tiers || [];
+            var tierColors = {tier1: 'var(--green)', tier2: 'var(--amber)', tier3: 'var(--muted)'};
+            var tierLabels = {tier1: 'Tier 1 (Gold Standard)', tier2: 'Tier 2 (Published)', tier3: 'Tier 3 (Supplementary)'};
+            if (tiers.length === 0) {
+                tierBox.appendChild(el('p', {style: 'color:var(--muted);font-size:13px', text: 'No dataset tier data available yet.'}));
+            } else {
+                var tierTotal = 0;
+                for (var ti = 0; ti < tiers.length; ti++) tierTotal += tiers[ti].count;
+                for (var tj = 0; tj < tiers.length; tj++) {
+                    var tr = tiers[tj];
+                    var tPct = tierTotal > 0 ? Math.round((tr.count / tierTotal) * 100) : 0;
+                    var tRow = el('div', {style: 'margin-bottom:8px'});
+                    var tLabel = el('div', {style: 'display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px'});
+                    var tName = el('span'); tName.textContent = tierLabels[tr.tier] || tr.tier || 'Unknown';
+                    var tCount = el('span', {style: 'color:var(--muted)'}); tCount.textContent = tr.count + ' (' + tPct + '%)';
+                    tLabel.appendChild(tName);
+                    tLabel.appendChild(tCount);
+                    tRow.appendChild(tLabel);
+                    var tTrack = el('div', {style: 'height:6px;background:var(--border);border-radius:3px;overflow:hidden'});
+                    var tFill = el('div', {style: 'height:100%;width:' + tPct + '%;background:' + (tierColors[tr.tier] || 'var(--muted)') + ';border-radius:3px;transition:width 0.6s'});
+                    tTrack.appendChild(tFill);
+                    tRow.appendChild(tTrack);
+                    tierBox.appendChild(tRow);
+                }
+            }
+            twoCol3.appendChild(tierBox);
+            container.appendChild(twoCol3);
+
+        }).catch(function(err) {
+            container = clearEl('analytics-content');
+            container.appendChild(el('p', {className: 'loading', text: 'Failed to load analytics: ' + err.message}));
+        });
+    }
+
     // Section loader map
     var loaders = {
         mission: loadMission, research: loadResearch,
@@ -6781,7 +7048,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         synthesis: loadSynthesis,
         synergy: loadSynergy,
         'nim-results': loadNimResults,
-        news: loadNews
+        news: loadNews,
+        analytics: loadAnalytics
     };
 
     // SEO meta data per section for dynamic <title> and <meta description>
@@ -6831,7 +7099,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         links:       {title: 'Links — SMA Research Platform', desc: 'Curated links to SMA databases, clinical trial registries, protein interaction networks, and research tools.'},
         write:       {title: 'Evidence Writer — SMA Research Platform', desc: 'AI-assisted evidence writing for SMA research summaries and grant applications.'},
         repurposing: {title: 'Drug Repurposing — SMA Research Platform', desc: 'Drug repurposing candidates for SMA identified through computational screening and evidence analysis.'},
-        versions:    {title: 'Version History — SMA Research Platform', desc: 'Platform version history and changelog for the SMA Research Platform.'}
+        versions:    {title: 'Version History — SMA Research Platform', desc: 'Platform version history and changelog for the SMA Research Platform.'},
+        analytics:   {title: 'Platform Analytics — SMA Research Platform', desc: 'Real-time analytics dashboard showing platform stats, evidence convergence, claim distributions, top journals, and research progress for the SMA Research Platform.'}
     };
 
     // Update document title and meta description for SEO

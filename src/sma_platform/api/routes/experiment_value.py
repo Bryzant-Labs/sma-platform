@@ -1,11 +1,22 @@
-"""EVE (Expected Value of Experiment) and Assay-Ready API routes."""
+"""EVE (Expected Value of Experiment) and Assay-Ready API routes.
+
+Two scoring approaches:
+1. Hypothesis-centric EVE — scores individual hypotheses from the DB.
+2. Target-centric EV — scores targets using hardcoded impact/cost tables.
+   Answers: "If I have $50K and 3 months, which experiment should I run first?"
+"""
 
 from __future__ import annotations
 
 from fastapi import APIRouter, Path, Query
 
 from ...reasoning.assay_ready import get_assay_ready, get_assay_ready_top3
-from ...reasoning.experiment_value import score_hypotheses_eve, score_single_eve
+from ...reasoning.experiment_value import (
+    compute_experiment_value,
+    rank_all_experiments,
+    score_hypotheses_eve,
+    score_single_eve,
+)
 
 router = APIRouter()
 
@@ -43,6 +54,74 @@ async def eve_single_hypothesis(
 ):
     """Get EVE score for a single hypothesis with full breakdown."""
     return await score_single_eve(hypothesis_id)
+
+
+# ---------------------------------------------------------------------------
+# Target-centric EV scoring endpoints
+# ---------------------------------------------------------------------------
+# EV = P(success) * Scientific_Impact / (Cost_K / 10)
+# Designed for researchers deciding which experiment to run first.
+
+@router.get("/experiment-value/rankings")
+async def ev_target_rankings(
+    budget_k: float | None = Query(
+        default=None, ge=1, le=1000,
+        description="Max budget in $K — only show targets affordable within this budget",
+    ),
+    max_weeks: int | None = Query(
+        default=None, ge=1, le=52,
+        description="Max timeline in weeks — only show targets achievable within this window",
+    ),
+):
+    """Rank all targets by Expected Value of experiment.
+
+    EV = P(success) * Scientific_Impact / (Cost_K / 10)
+
+    Answers: "If I have $50K and 3 months, which experiment should I run first?"
+
+    Optionally filter by budget and/or timeline constraints. Targets are
+    ranked by EV score descending (higher = better ROI).
+    """
+    results = await rank_all_experiments(budget_k=budget_k, max_weeks=max_weeks)
+    total_cost = sum(r["breakdown"]["cost_k"] for r in results)
+    return {
+        "total": len(results),
+        "total_cost_k": total_cost,
+        "filters": {
+            "budget_k": budget_k,
+            "max_weeks": max_weeks,
+        },
+        "rankings": results,
+        "formula": "EV = P(success) * Scientific_Impact / (Cost_K / 10)",
+        "insight": (
+            "Targets are ranked by expected scientific return per dollar invested. "
+            "High EV scores indicate well-supported targets with high impact "
+            "relative to experiment cost. Use budget_k and max_weeks filters "
+            "to constrain to your available resources."
+        ),
+    }
+
+
+@router.get("/experiment-value/target/{symbol}")
+async def ev_single_target(
+    symbol: str = Path(..., description="Target gene symbol (e.g. SMN2, CORO1C, PLS3)"),
+    convergence: str | None = Query(
+        default=None,
+        description="Override convergence level: very_high, high, medium, low",
+    ),
+):
+    """Get detailed EV score for a single target with full breakdown.
+
+    EV = P(success) * Scientific_Impact / (Cost_K / 10)
+
+    If convergence is not provided, it is looked up from the convergence_scores
+    table in the database. Pass ?convergence=high to override.
+    """
+    result = await compute_experiment_value(
+        target=symbol,
+        convergence_score=convergence,
+    )
+    return result
 
 
 # ---------------------------------------------------------------------------

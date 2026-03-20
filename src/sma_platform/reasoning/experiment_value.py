@@ -1,16 +1,18 @@
-"""Expected Value of Experiment (EVE) scoring for hypotheses.
+"""Expected Value of Experiment (EVE) scoring for hypotheses and targets.
 
-For each hypothesis, calculates:
-    EVE = P(success) * Impact / (Cost + Time)
+Two complementary scoring systems:
 
-Where:
-- P(success): hypothesis confidence * target convergence score
-- Impact: therapeutic relevance (approved target = high, discovery = medium, pathway = low)
-- Cost: estimated from Lab-OS assay costs
-- Time: estimated weeks to result
+1. **Hypothesis-centric EVE** (original):
+       EVE = P(success) * Impact / (Cost_K + Time_months)
+   Scores individual hypotheses using DB-derived convergence, claim types,
+   and recommended assay costs.
 
-This enables rational prioritization of wet-lab experiments by expected
-information gain per dollar and per week invested.
+2. **Target-centric EV** (new — "Which experiment should I run first?"):
+       EV = P(success) * Scientific_Impact / (Cost_K / 10)
+   Uses hardcoded target impact scores (1-10) and cost estimates ($K) so a
+   researcher can immediately see ROI without needing hypotheses in the DB.
+   Convergence level maps to P(success):
+       very_high → 0.6, high → 0.4, medium → 0.2, low → 0.1
 
 References:
 - Expected Value of Information (EVI) framework in clinical trials
@@ -110,7 +112,50 @@ ASSAY_COSTS: dict[str, dict[str, Any]] = {
 
 
 # ---------------------------------------------------------------------------
-# Impact scoring by target characteristics
+# Target-centric scoring: hardcoded impact & cost dictionaries
+# ---------------------------------------------------------------------------
+# Scientific Impact (1-10 scale):
+#   SMN-targeting (direct mechanism) = 10
+#   Modifier genes (PLS3, NCALD) = 8
+#   Novel targets (discovery) = 6
+#   Pathway targets = 5
+
+TARGET_IMPACT: dict[str, int] = {
+    "SMN1": 10, "SMN2": 10, "SMN_PROTEIN": 10,
+    "STMN2": 9, "NMJ_MATURATION": 8,
+    "PLS3": 8, "NCALD": 8, "UBA1": 7,
+    "MTOR_PATHWAY": 7, "CORO1C": 6,
+    "ANK3": 6, "CAST": 5, "CD44": 5,
+    "CTNNA1": 5, "DNMT3B": 5, "GALNT6": 4,
+    "LDHA": 5, "LY96": 5, "NEDD4L": 5,
+    "SPATA18": 4, "SULF1": 4,
+}
+
+# Cost estimate in $K per experiment (from assay templates, 5-15K typical)
+COST_ESTIMATES: dict[str, float] = {
+    "SMN2": 8, "SMN1": 10, "STMN2": 12, "PLS3": 12,
+    "NCALD": 10, "UBA1": 7, "CORO1C": 8, "TP53": 10,
+}
+_DEFAULT_COST_K = 10.0  # Default when target not in COST_ESTIMATES
+
+# Convergence level → P(success) mapping
+CONVERGENCE_PSUCCESS: dict[str, float] = {
+    "very_high": 0.6,
+    "high": 0.4,
+    "medium": 0.2,
+    "low": 0.1,
+}
+
+# Timeline estimates in weeks (keyed by target, with default)
+TIMELINE_ESTIMATES: dict[str, int] = {
+    "SMN2": 6, "SMN1": 8, "STMN2": 8, "PLS3": 8,
+    "NCALD": 6, "UBA1": 4, "CORO1C": 6, "TP53": 10,
+}
+_DEFAULT_TIMELINE_WEEKS = 6
+
+
+# ---------------------------------------------------------------------------
+# Impact scoring by target characteristics (for hypothesis-centric EVE)
 # ---------------------------------------------------------------------------
 
 # Target types mapped to impact multiplier (0.0-1.0)
@@ -365,6 +410,197 @@ async def score_hypotheses_eve(limit: int = 50) -> list[dict[str, Any]]:
         len(results),
         results[0]["title"] if results else "N/A",
         results[0]["eve_score"] if results else 0,
+    )
+
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Target-centric EV scoring
+# ---------------------------------------------------------------------------
+# Formula: EV = P(success) * Scientific_Impact / (Cost_K / 10)
+# Higher EV = better ROI.  Designed to answer:
+# "If I have $50K and 3 months, which experiment should I run first?"
+# ---------------------------------------------------------------------------
+
+
+async def _resolve_convergence_level(symbol: str) -> tuple[str, float]:
+    """Look up the convergence level for a target symbol from the DB.
+
+    Returns (confidence_level, composite_score).  Falls back to 'low'
+    if no convergence score is stored.
+    """
+    row = await fetchrow(
+        "SELECT cs.confidence_level, cs.composite_score "
+        "FROM convergence_scores cs "
+        "JOIN targets t ON cs.target_id = t.id "
+        "WHERE UPPER(t.symbol) = $1 "
+        "ORDER BY cs.computed_at DESC LIMIT 1",
+        symbol.upper(),
+    )
+    if row and row["confidence_level"]:
+        return row["confidence_level"], float(row["composite_score"] or 0)
+
+    # Fallback: estimate from claim count
+    count_row = await fetchrow(
+        "SELECT COUNT(*) AS cnt FROM claims c "
+        "JOIN targets t ON c.subject_id = t.id "
+        "WHERE UPPER(t.symbol) = $1",
+        symbol.upper(),
+    )
+    cnt = int(count_row["cnt"]) if count_row else 0
+    if cnt >= 20:
+        return "high", 0.60
+    if cnt >= 8:
+        return "medium", 0.40
+    if cnt >= 3:
+        return "low", 0.20
+    return "low", 0.10
+
+
+async def compute_experiment_value(
+    target: str,
+    convergence_score: str | None = None,
+    confidence_level: str | None = None,
+) -> dict[str, Any]:
+    """Compute Expected Value for a single target experiment.
+
+    Parameters
+    ----------
+    target : str
+        Gene/target symbol (e.g. "SMN2", "CORO1C").
+    convergence_score : str | None
+        Override convergence level ("very_high", "high", "medium", "low").
+        If *None*, the value is looked up from the convergence_scores table.
+    confidence_level : str | None
+        Alias for *convergence_score* (accepted for backward compat).
+
+    Returns
+    -------
+    dict with EV score, breakdown, and recommendation.
+    """
+    symbol = target.upper()
+
+    # --- Resolve convergence ---
+    level_override = convergence_score or confidence_level
+    if level_override:
+        level = level_override.lower().replace(" ", "_")
+        if level not in CONVERGENCE_PSUCCESS:
+            level = "low"
+        composite = CONVERGENCE_PSUCCESS.get(level, 0.1)
+    else:
+        level, composite = await _resolve_convergence_level(symbol)
+
+    p_success = CONVERGENCE_PSUCCESS.get(level, 0.1)
+
+    # --- Impact ---
+    impact = TARGET_IMPACT.get(symbol, 5)  # default 5 for unknown targets
+
+    # --- Cost ---
+    cost_k = COST_ESTIMATES.get(symbol, _DEFAULT_COST_K)
+
+    # --- Timeline ---
+    timeline_weeks = TIMELINE_ESTIMATES.get(symbol, _DEFAULT_TIMELINE_WEEKS)
+
+    # --- EV formula ---
+    # EV = P(success) * Impact / (Cost_K / 10)
+    denominator = cost_k / 10.0
+    if denominator <= 0:
+        denominator = 0.01
+    ev_score = round(p_success * impact / denominator, 4)
+
+    # --- Interpretation ---
+    if ev_score >= 5.0:
+        priority = "HIGH PRIORITY — run this experiment first"
+        recommendation = (
+            f"{symbol} has strong evidence convergence and high scientific "
+            f"impact relative to cost. Recommended for immediate execution."
+        )
+    elif ev_score >= 2.0:
+        priority = "MEDIUM PRIORITY — strong candidate with available resources"
+        recommendation = (
+            f"{symbol} offers good ROI. Consider running if budget and "
+            f"timeline allow after higher-priority targets."
+        )
+    elif ev_score >= 1.0:
+        priority = "LOW PRIORITY — pursue if resources permit"
+        recommendation = (
+            f"{symbol} has moderate expected value. Evidence or impact "
+            f"may need strengthening before committing resources."
+        )
+    else:
+        priority = "DEFER — insufficient evidence for current investment"
+        recommendation = (
+            f"{symbol} currently shows low expected return. Gather more "
+            f"evidence or wait for convergence to improve."
+        )
+
+    return {
+        "target": symbol,
+        "ev_score": ev_score,
+        "priority": priority,
+        "recommendation": recommendation,
+        "breakdown": {
+            "p_success": p_success,
+            "convergence_level": level,
+            "convergence_composite": composite,
+            "scientific_impact": impact,
+            "cost_k": cost_k,
+            "timeline_weeks": timeline_weeks,
+        },
+        "formula": "EV = P(success) * Scientific_Impact / (Cost_K / 10)",
+        "formula_values": (
+            f"EV = {p_success} * {impact} / ({cost_k} / 10) = {ev_score}"
+        ),
+    }
+
+
+async def rank_all_experiments(
+    budget_k: float | None = None,
+    max_weeks: int | None = None,
+) -> list[dict[str, Any]]:
+    """Rank all known targets by Expected Value, optionally filtered by budget/timeline.
+
+    Parameters
+    ----------
+    budget_k : float | None
+        If set, only include targets with cost_k <= budget_k.
+    max_weeks : int | None
+        If set, only include targets with timeline_weeks <= max_weeks.
+
+    Returns
+    -------
+    list of dicts sorted by ev_score descending, each with full breakdown.
+    """
+    results: list[dict[str, Any]] = []
+
+    for symbol in TARGET_IMPACT:
+        cost_k = COST_ESTIMATES.get(symbol, _DEFAULT_COST_K)
+        timeline = TIMELINE_ESTIMATES.get(symbol, _DEFAULT_TIMELINE_WEEKS)
+
+        # Apply budget/timeline filters
+        if budget_k is not None and cost_k > budget_k:
+            continue
+        if max_weeks is not None and timeline > max_weeks:
+            continue
+
+        result = await compute_experiment_value(symbol)
+        results.append(result)
+
+    # Sort by EV descending
+    results.sort(key=lambda x: x["ev_score"], reverse=True)
+
+    # Add rank
+    for i, r in enumerate(results):
+        r["rank"] = i + 1
+
+    total_cost = sum(r["breakdown"]["cost_k"] for r in results)
+
+    logger.info(
+        "Target EV ranking complete: %d targets scored. Top: %s (EV=%.4f)",
+        len(results),
+        results[0]["target"] if results else "N/A",
+        results[0]["ev_score"] if results else 0,
     )
 
     return results
