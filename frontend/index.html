@@ -2300,13 +2300,8 @@
         <a href="/api/v2/news/feed/rss" target="_blank" rel="noopener" title="RSS Feed" style="margin-left:12px;font-size:14px;color:var(--accent);text-decoration:none">&#128225; RSS</a>
     </div>
     <p class="section-desc">Research highlights, computational discoveries, and platform updates. Comment on findings and join the discussion.</p>
-    <div class="news-filters" style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="page-btn active" id="news-filter-all" data-cat="">All</button>
-        <button class="page-btn" data-cat="discovery">Discoveries</button>
-        <button class="page-btn" data-cat="gpu_result">GPU Results</button>
-        <button class="page-btn" data-cat="hypothesis">Hypotheses</button>
-        <button class="page-btn" data-cat="data_update">Data Updates</button>
-        <button class="page-btn" data-cat="announcement">Announcements</button>
+    <div class="news-filters" style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap" id="news-filter-bar">
+        <button class="page-btn active" data-cat="">All</button>
     </div>
     <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px">
         <div class="loading" style="grid-column:1/-1;text-align:center;padding:30px">Loading news...</div>
@@ -8894,19 +8889,41 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     function loadNews() {
         if (loaded.news) return; loaded.news = true;
+        // Build category filter buttons dynamically from actual data
+        fetch(API + '/news?limit=100').then(function(r) { return r.json(); }).then(function(allPosts) {
+            var posts = allPosts.posts || allPosts;
+            if (!Array.isArray(posts)) posts = [];
+            var cats = {};
+            for (var p = 0; p < posts.length; p++) {
+                var cat = posts[p].category || 'other';
+                cats[cat] = (cats[cat] || 0) + 1;
+            }
+            var bar = document.getElementById('news-filter-bar');
+            // Update "All" count
+            bar.firstChild.textContent = 'All (' + posts.length + ')';
+            // Add buttons for categories that have posts
+            var sortedCats = Object.keys(cats).sort(function(a, b) { return cats[b] - cats[a]; });
+            for (var ci = 0; ci < sortedCats.length; ci++) {
+                var btn = document.createElement('button');
+                btn.className = 'page-btn';
+                btn.setAttribute('data-cat', sortedCats[ci]);
+                btn.textContent = sortedCats[ci].charAt(0).toUpperCase() + sortedCats[ci].slice(1).replace(/_/g, ' ') + ' (' + cats[sortedCats[ci]] + ')';
+                bar.appendChild(btn);
+            }
+            // Wire up click handlers
+            var filterBtns = bar.querySelectorAll('.page-btn');
+            for (var f = 0; f < filterBtns.length; f++) {
+                filterBtns[f].addEventListener('click', function() {
+                    var allBtns = bar.querySelectorAll('.page-btn');
+                    for (var b = 0; b < allBtns.length; b++) allBtns[b].classList.remove('active');
+                    this.classList.add('active');
+                    newsCurrentCategory = this.dataset.cat || '';
+                    newsCurrentPage = 1;
+                    fetchNewsPosts(1, newsCurrentCategory);
+                });
+            }
+        });
         fetchNewsPosts(1, '');
-
-        // Category filter buttons
-        var filterBtns = document.querySelectorAll('.news-filters .page-btn');
-        for (var f = 0; f < filterBtns.length; f++) {
-            filterBtns[f].addEventListener('click', function() {
-                for (var b = 0; b < filterBtns.length; b++) filterBtns[b].classList.remove('active');
-                this.classList.add('active');
-                newsCurrentCategory = this.dataset.cat || '';
-                newsCurrentPage = 1;
-                fetchNewsPosts(1, newsCurrentCategory);
-            });
-        }
 
         // Back button
         document.getElementById('news-back-btn').addEventListener('click', function() {
