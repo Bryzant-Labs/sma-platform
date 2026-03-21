@@ -31,6 +31,8 @@ DIFFDOCK_SELF_URL = os.environ.get("DIFFDOCK_SELF_URL", "")  # e.g. http://77.48
 DIFFDOCK_URL = DIFFDOCK_SELF_URL or DIFFDOCK_CLOUD_URL  # Self-hosted takes priority
 OPENFOLD3_URL = "https://health.api.nvidia.com/v1/biology/openfold/openfold3"
 GENMOL_URL = "https://health.api.nvidia.com/v1/biology/nvidia/genmol"
+GENMOL_GENERATE_URL = "https://health.api.nvidia.com/v1/biology/nvidia/genmol/generate"
+MOLMIM_URL = "https://health.api.nvidia.com/v1/biology/nvidia/molmim/generate"  # Alternate GenMol
 RNAPRO_URL = "https://health.api.nvidia.com/v1/biology/nvidia/rnapro"
 
 TIMEOUT = 120  # seconds — structure prediction can be slow
@@ -447,7 +449,8 @@ async def check_nim_health() -> dict:
     endpoints = {
         "diffdock": DIFFDOCK_URL,
         "openfold3": OPENFOLD3_URL,
-        "genmol": GENMOL_URL,
+        "genmol": GENMOL_GENERATE_URL,
+        "molmim": MOLMIM_URL,
         "rnapro": RNAPRO_URL,
     }
 
