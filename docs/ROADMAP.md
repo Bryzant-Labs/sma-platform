@@ -157,22 +157,33 @@
 4. **4-AP scaffold is optimal** — GenMol analogs don't improve CORO1C binding
 5. **UBA1 is highly druggable** — 5 compounds in top 25
 
+## Key Discoveries (2026-03-21 — Multi-LLM Sprint)
+
+1. **SMN→Profilin→ROCK pathway validated** — PMID 21920940 (Nölle 2011), motor neuron relevant
+2. **CORO1C downgraded to "pathway marker"** — GPT-4o assessment: passenger, not driver
+3. **SMA = circuit disease** — proprioceptive synapse loss precedes MN death (Mentis lab)
+4. **Cofilin-P → TDP-43 → SMA-ALS convergence** — novel therapeutic axis via ROCK inhibition
+5. **Fasudil: first-in-field for SMA** — ROCK inhibitor, crosses BBB, Phase 2 ALS, p-cofilin elevated in SMA
+6. **"Translational Desert" hypothesis** — actin rods block mRNA transport to NMJ
+7. **Scoring calibration**: PLS3 underranked due to novelty bias → dual-mode scoring implemented
+
 ---
 
-## Current Numbers
+## Current Numbers (updated 2026-03-21)
 
 | Metric | Count |
 |--------|-------|
-| Claims | 30,153 |
-| Hypotheses | 1,262 |
-| Sources | 6,176 |
-| Trials | 449 |
-| Targets | 21 |
-| Drugs | 16 |
+| Claims | 30,800 |
+| Hypotheses | 1,269 |
+| Sources | 6,234 |
+| Trials | 451 |
+| Targets | 58 |
+| Drugs | 17 |
 | Screening compounds | 630 |
 | MCP tools | 32 |
 | API endpoints | ~210 |
 | Synthesis cards | 6 |
+| Co-occurrence pairs | 182 |
 | GPU dockings | 1,429 (140 v1 + 378 v2.2 + 957 GenMol screen) |
 | Protein structures | 8 (AlphaFold DB complexes) |
 | Protein embeddings | 15 (ESM-2) |
