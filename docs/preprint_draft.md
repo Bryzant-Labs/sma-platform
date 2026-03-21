@@ -20,7 +20,7 @@ The author has spinal muscular atrophy (SMA) and developed the SMA Research Plat
 
 ## Abstract
 
-Spinal muscular atrophy (SMA) is caused by homozygous loss of *SMN1*, with current therapies focused on SMN2 splicing correction or gene replacement. Adult patients with long-standing denervation frequently show incomplete therapeutic responses, motivating the search for SMN-independent targets. We describe an open-source computational platform that integrates 6,176 literature sources, 30,153 extracted claims, and 1,262 mechanistic hypotheses into a structured evidence graph for SMA research. Using this platform, we conducted a systematic virtual screening campaign: DiffDock v2.2 blind docking of 630 compounds against 7 SMA-relevant protein targets (4,115 successful dockings) identified 56 positive-confidence hits. 4-Aminopyridine (4-AP) binding to coronin-1C (CORO1C) remained the strongest predicted interaction (confidence +0.251), confirmed by AutoDock Vina consensus docking (-3.98 kcal/mol). UBA1 emerged as the most druggable target (18 positive hits), while CORO1C produced the strongest individual scores (13 positive hits). Additional repurposing candidates included fomepizole (FDA-approved; CORO1C confidence +1.027, 0 prior SMA publications), riluzole (SMN2 confidence +0.201, suggesting a mechanism beyond glutamate modulation), and metformin (CORO1C confidence +0.490). STRING-DB protein interaction analysis validated the CORO1C-PLS3 functional relationship (interaction score 0.818). ESM-2 protein language model analysis revealed CORO1C as the most structurally distinct target among the 7 SMA proteins examined. A 5-dimensional convergence scoring engine, calibrated against known drug outcomes (3 approved SMA therapies), achieved Grade A calibration (89.8%), appropriately ranking established drug-target relationships. All prior clinical investigation of 4-AP in SMA assumed voltage-gated potassium channel blockade as the sole mechanism. These computational findings suggest previously unrecognized binding interactions that, if experimentally validated, could justify re-evaluation of multiple repurposing candidates through mechanistically distinct rationales. All data, code, and results are publicly available.
+Spinal muscular atrophy (SMA) is caused by homozygous loss of *SMN1*, with current therapies focused on SMN2 splicing correction or gene replacement. Adult patients with long-standing denervation frequently show incomplete therapeutic responses, motivating the search for SMN-independent targets. We describe an open-source computational platform that integrates 6,176 literature sources, 30,153 extracted claims, and 1,262 mechanistic hypotheses into a structured evidence graph for SMA research. Using this platform, we conducted a systematic virtual screening campaign: DiffDock v2.2 blind docking of 630 compounds against 7 SMA-relevant protein targets (4,115 successful dockings). An initial 5-pose screen identified 56 positive-confidence hits; subsequent 20-pose validation revealed that most initial hits did not reproduce, with riluzole (FDA-approved for ALS) as the only compound maintaining positive binding scores upon re-docking (SMN2: +0.082; UBA1: +0.023). Post-hoc analysis identified systematic scoring bias for small molecules (MW < 150 Da), which accounted for 46% of initial hits. Notably, fomepizole (initial confidence +1.027) was identified as an artifact of this bias (MW 82 Da) and additionally docks into CORO1C's F-actin binding site in an inhibitory pose -- the wrong therapeutic direction, given that CORO1C overexpression rescues SMA in zebrafish models (PMID: 27499521). The 4-AP/CORO1C interaction (+0.251, 5-pose screen) was supported by AutoDock Vina consensus docking (-3.98 kcal/mol), but has not yet undergone 20-pose validation. STRING-DB protein interaction analysis confirmed the CORO1C-PLS3 functional relationship (interaction score 0.818). ESM-2 protein language model analysis revealed CORO1C as the most structurally distinct target among the 7 SMA proteins examined. A 5-dimensional convergence scoring engine, calibrated against known drug outcomes (3 approved SMA therapies), achieved Grade A calibration (89.8%), appropriately ranking established drug-target relationships. These findings illustrate both the potential and the limitations of computational virtual screening for rare disease drug repurposing: initial screens generate candidates, but validation attrition is high, and systematic biases must be accounted for. All data, code, and results are publicly available.
 
 **Keywords:** Spinal Muscular Atrophy, CORO1C, coronin-1C, 4-aminopyridine, drug repurposing, molecular docking, DiffDock, evidence graph, virtual screening
 
@@ -112,17 +112,17 @@ All 4,115 successful compound-target dockings were ranked by confidence score. M
 
 ### 3.1 Virtual Screening Overview
 
-The expanded 4,115-docking campaign yielded 56 positive-confidence hits (1.4% positive rate), indicating high selectivity of the DiffDock v2.2 model. Confidence scores ranged from approximately -3.6 to +1.027.
+The expanded 4,115-docking campaign (5 poses per compound-target pair) yielded 56 positive-confidence hits (1.4% positive rate). Confidence scores ranged from approximately -3.6 to +1.027. As detailed in Section 3.2, subsequent 20-pose validation revealed that most of these initial hits did not reproduce.
 
-**Table 1. Top 20 compound-target pairs by DiffDock v2.2 confidence score (expanded screen).**
+**Table 1. Top 20 compound-target pairs by DiffDock v2.2 confidence score (initial 5-pose screen). See Section 3.2 for 20-pose validation results.**
 
 | Rank | Compound | Target | Confidence | Notes |
 |------|----------|--------|-----------|-------|
-| 1 | **Fomepizole** | **CORO1C** | **+1.027** | FDA-approved (antidote); 0 prior SMA papers |
-| 2 | **Hydroxyurea** | **CORO1C** | **+0.624** | Known SMN2 enhancer; new CORO1C binding |
-| 3 | **Metformin** | **CORO1C** | **+0.490** | FDA-approved (diabetes) |
-| 4 | **4-aminopyridine** | **CORO1C** | **+0.251** | Vina consensus: -3.98 kcal/mol |
-| 5 | **Riluzole** | **SMN2** | **+0.201** | ALS drug; new mechanism beyond glutamate |
+| 1 | Fomepizole | CORO1C | +1.027 | MW bias artifact (MW 82); inhibitory pose (see 3.2) |
+| 2 | Hydroxyurea | CORO1C | +0.624 | Known SMN2 enhancer; not yet 20-pose validated |
+| 3 | Metformin | CORO1C | +0.490 | FDA-approved (diabetes); not yet 20-pose validated |
+| 4 | 4-aminopyridine | CORO1C | +0.251 | Vina consensus: -3.98 kcal/mol; not yet 20-pose validated |
+| 5 | **Riluzole** | **SMN2** | **+0.201** | **Validated at 20 poses: +0.082** |
 | 6 | CHEMBL1381595 | NCALD | +0.076 | |
 | 7 | CHEMBL1328375 | CORO1C | +0.048 | |
 | 8 | CHEMBL1411542 | SMN1 | -0.067 | |
@@ -139,20 +139,41 @@ The expanded 4,115-docking campaign yielded 56 positive-confidence hits (1.4% po
 | 19 | 4-aminopyridine | SMN1 | -0.487 | |
 | 20 | 4-aminopyridine | UBA1 | -0.507 | |
 
-**Table 1a. Positive hits by target (confidence > 0.0).**
+**Table 1a. Positive hits by target (initial 5-pose screen, confidence > 0.0). Most did not validate upon 20-pose re-docking (see Section 3.2).**
 
-| Target | Positive Hits | Notes |
-|--------|--------------|-------|
+| Target | Positive Hits (5-pose) | Notes |
+|--------|----------------------|-------|
 | UBA1 | 18 | Most druggable; highest hit rate |
-| CORO1C | 13 | Strongest individual scores |
-| SMN2 | 9 | Includes riluzole (+0.201) |
+| CORO1C | 13 | Includes MW-biased artifacts; see Section 3.2 |
+| SMN2 | 9 | Riluzole validated at 20 poses (+0.082) |
 | SMN1 | 6 | |
 | NCALD | 5 | |
 | STMN2 | 3 | |
 | PLS3 | 2 | |
-| **Total** | **56** | **1.4% of 4,115 dockings** |
+| **Total** | **56** | **1.4% of 4,115 dockings; ~2% validated** |
 
-### 3.2 4-AP Multi-Target Binding Profile
+### 3.2 20-Pose Validation of Initial Hits
+
+To assess reproducibility, selected positive-confidence hits from the 5-pose screen were re-docked with 20 poses per compound-target pair. This validation step substantially reduced the candidate list.
+
+**Table 1b. 5-pose vs. 20-pose validation comparison for selected hits.**
+
+| Compound | Target | 5-Pose Confidence | 20-Pose Confidence | Validated? |
+|----------|--------|-------------------|-------------------|------------|
+| Riluzole | SMN2 | +0.201 | +0.082 | Yes |
+| Riluzole | UBA1 | (positive) | +0.023 | Yes |
+| Fomepizole | CORO1C | +1.027 | Not validated (artifact) | No -- MW bias |
+| CHEMBL hit A | various | +0.47 to +0.56 | -0.45 to -1.12 | No |
+| CHEMBL hit B | various | +0.47 to +0.56 | -0.45 to -1.12 | No |
+| CHEMBL hit C | various | +0.47 to +0.56 | -0.45 to -1.12 | No |
+
+Of the 56 initial positive-confidence hits, 26 (46%) had molecular weight below 150 Da, a range in which DiffDock confidence scoring shows systematic positive bias. This small-molecule scoring artifact inflated the initial hit count. Fomepizole (MW 82 Da, initial confidence +1.027) represents the most prominent example: its high score is attributable to molecular weight bias rather than specific binding, and structural analysis revealed it docks into CORO1C's F-actin binding site, which would inhibit rather than activate CORO1C -- the wrong therapeutic direction (see Section 4.1a).
+
+Riluzole was the only compound that maintained positive binding scores upon 20-pose re-docking. Riluzole has prior Phase 1 SMA data (PMID: 14623733) via a glutamate inhibition mechanism; the predicted SMN2 protein interaction represents a mechanistically distinct hypothesis.
+
+Three CHEMBL compounds that scored between +0.47 and +0.56 in the 5-pose screen all scored negative (-0.45 to -1.12) upon 20-pose validation, indicating that these initial hits were not reproducible.
+
+### 3.3 4-AP Multi-Target Binding Profile
 
 4-Aminopyridine demonstrated predicted binding to 5 of 7 SMA targets, with 1 positive-confidence interaction (CORO1C) and 4 additional sub-threshold but relatively high-ranking interactions:
 
@@ -170,7 +191,7 @@ The expanded 4,115-docking campaign yielded 56 positive-confidence hits (1.4% po
 
 In the initial 54-compound screen, 4-AP/CORO1C (+0.251) was the top-ranked pair. In the expanded 630-compound screen, the 4-AP/CORO1C result was confirmed and surpassed by fomepizole/CORO1C (+1.027), hydroxyurea/CORO1C (+0.624), and metformin/CORO1C (+0.490), reinforcing CORO1C as a consistent predicted binding target across structurally diverse small molecules.
 
-### 3.3 Per-Target Analysis
+### 3.4 Per-Target Analysis
 
 Target-level statistics revealed substantial variation in dockability across the 7 SMA proteins:
 
@@ -188,7 +209,7 @@ Target-level statistics revealed substantial variation in dockability across the
 
 UBA1 produced the most positive hits (18 of 56 total, 32%), confirming it as the most druggable target in the panel and consistent with its large structure (1,058 aa) presenting multiple accessible binding pockets. CORO1C, while producing fewer total hits, yielded the strongest individual confidence scores in the screen, including fomepizole (+1.027), hydroxyurea (+0.624), metformin (+0.490), and 4-AP (+0.251). SMN2 and STMN2 remained comparatively difficult docking targets, though the expanded library identified 9 and 3 positive hits respectively -- compared to 0 each in the initial 54-compound screen.
 
-### 3.4 Comparison with Approved and Failed SMA Compounds
+### 3.5 Comparison with Approved and Failed SMA Compounds
 
 The expanded screen included multiple compounds with prior clinical data or established mechanisms:
 
@@ -204,19 +225,19 @@ The expanded screen included multiple compounds with prior clinical data or esta
 | Risdiplam | Approved (oral, SMN2 splicing) | SMN2 | -1.250 |
 | Valproic acid | Failed (HDAC inhibitor) | SMN2 | -1.330 |
 
-Fomepizole (4-methylpyrazole), an FDA-approved alcohol dehydrogenase inhibitor used as an antidote for methanol and ethylene glycol poisoning, produced the strongest confidence score in the entire 4,115-docking campaign (+1.027 against CORO1C). A PubMed search for "fomepizole" AND "SMA" yields zero results, making this an entirely novel computational observation. Riluzole, approved for ALS, showed a positive SMN2 confidence (+0.201), suggesting potential protein-level interactions beyond its known glutamate-modulating mechanism. Hydroxyurea, previously studied as an SMN2 expression enhancer via fetal hemoglobin induction, showed predicted binding to CORO1C (+0.624), suggesting an additional, previously unrecognized target interaction.
+Fomepizole (4-methylpyrazole), an FDA-approved alcohol dehydrogenase inhibitor, produced the highest confidence score in the initial 5-pose screen (+1.027 against CORO1C). However, this result was subsequently identified as an artifact of small-molecule scoring bias (fomepizole MW: 82 Da; see Section 3.2) and the compound was not pursued for 20-pose validation. Riluzole, approved for ALS, was the only compound that maintained positive binding upon 20-pose validation (SMN2: +0.082; UBA1: +0.023), suggesting potential protein-level interactions beyond its known glutamate-modulating mechanism. Hydroxyurea, previously studied as an SMN2 expression enhancer via fetal hemoglobin induction, showed predicted binding to CORO1C (+0.624) in the 5-pose screen; this result has not yet been validated with 20 poses.
 
 Risdiplam's low confidence score for direct SMN2 protein binding (-1.250) is expected and consistent with its known mechanism: risdiplam acts on SMN2 pre-mRNA splicing [18], not through direct protein binding. This result serves as a negative control, demonstrating the screen's ability to discriminate between RNA-targeting and protein-targeting mechanisms.
 
-### 3.5 CORO1C as a Novel SMA-Relevant Target
+### 3.6 CORO1C as a Novel SMA-Relevant Target
 
 CORO1C (coronin-1C, UniProt Q9ULV4) is a member of the coronin family of WD-repeat proteins that regulate actin dynamics, cell motility, and vesicular trafficking [19]. CORO1C promotes Arp2/3-mediated actin polymerization and regulates cofilin-mediated actin depolymerization, placing it within the same cytoskeletal pathway as PLS3, an established SMA disease modifier that rescues SMA phenotypes through actin-dependent endocytosis at the NMJ [8].
 
-In the expanded 4,115-docking screen, CORO1C produced 13 positive-confidence hits and the strongest individual confidence scores of any target, including fomepizole (+1.027), hydroxyurea (+0.624), metformin (+0.490), and 4-AP (+0.251). The 4-AP/CORO1C interaction was further validated by AutoDock Vina consensus docking, which yielded a binding energy of -3.98 kcal/mol, providing independent computational confirmation of the predicted interaction.
+In the initial 5-pose screen, CORO1C produced 13 positive-confidence hits and the highest individual confidence scores of any target. The 4-AP/CORO1C interaction (+0.251) was supported by AutoDock Vina consensus docking (-3.98 kcal/mol). However, subsequent analysis revealed two important caveats: (1) many CORO1C hits, including the top-scoring fomepizole (+1.027), were small molecules in the MW bias zone (see Section 3.2); and (2) CORO1C overexpression rescues SMA in zebrafish (PMID: 27499521), meaning compounds that inhibit CORO1C function would be therapeutically counterproductive. Direct binding by small molecules could disrupt CORO1C's actin-regulatory function rather than enhance it.
 
-STRING-DB protein interaction analysis revealed a functional interaction between CORO1C and PLS3 with a combined score of 0.818, supporting the biological relevance of the CORO1C-PLS3 actin pathway connection in SMA. This database-derived interaction strengthens the rationale for CORO1C as an SMA-relevant target beyond the docking predictions alone.
+STRING-DB protein interaction analysis revealed a functional interaction between CORO1C and PLS3 with a combined score of 0.818, supporting CORO1C's biological relevance in SMA through the actin pathway. However, the therapeutic implication is that CORO1C expression should be increased (e.g., via HDAC inhibitors or miRNA modulation), not that direct binding ligands should be sought.
 
-### 3.6 ESM-2 Structural Analysis
+### 3.7 ESM-2 Structural Analysis
 
 ESM-2 protein embeddings (1280-dimensional) were generated for all 7 SMA targets. Embedding norms, which capture global sequence complexity, varied across the panel:
 
@@ -234,19 +255,19 @@ ESM-2 protein embeddings (1280-dimensional) were generated for all 7 SMA targets
 
 SMN1 and SMN2 produced identical embeddings (norm 7.640), consistent with their identical full-length protein sequences. CORO1C produced the lowest embedding norm (5.259) of all 7 targets, indicating a distinct position in the ESM-2 learned protein space. This distinctiveness is consistent with CORO1C's unique structural architecture: a WD-repeat beta-propeller fold that differs substantially from the Tudor domain (SMN), EF-hand (NCALD), or actin-bundling (PLS3) folds of the other SMA targets.
 
-### 3.7 UBA1 as a Druggable Secondary Target
+### 3.8 UBA1 as a Druggable Secondary Target
 
 UBA1, the ubiquitin-like modifier activating enzyme 1, emerged as the most broadly druggable target. In the expanded screen, UBA1 produced 18 positive-confidence hits -- the most of any target (32% of all 56 positive hits). This is consistent with UBA1's large structure (1,058 amino acids) presenting multiple accessible binding pockets. UBA1 dysregulation has been independently linked to SMN pathway disruption [10], and reduced UBA1 activity in SMA motor neurons has been reported as an SMN-independent disease mechanism. The identification of 18 compounds with predicted positive-confidence UBA1 binding provides candidate chemical matter for experimental investigation of UBA1-directed SMA therapy.
 
-### 3.8 Cross-Validation with DiffDock v1
+### 3.9 Cross-Validation with DiffDock v1
 
 An earlier docking campaign using DiffDock v1 (self-hosted on Vast.ai A100) tested 20 compounds against SMN2 only. The 4-AP versus SMN2 result differed between versions: +0.100 (v1) versus -0.447 (v2.2). This divergence is attributable to the different training datasets and scoring calibration between DiffDock versions (v2.2 was trained on the PLINDER dataset with updated scoring). CHEMBL1575581, the top hit in the v1 campaign (confidence -0.090), showed consistency across versions (-0.090 in v1 versus -0.070 in v2.2 against SMN2). Absolute confidence values are not directly comparable across DiffDock versions; the relative ranking within each campaign is the relevant metric.
 
-### 3.9 Vina Consensus Validation
+### 3.10 Vina Consensus Validation
 
 The 4-AP/CORO1C interaction identified by DiffDock v2.2 was independently assessed using AutoDock Vina, a physics-based docking method with a distinct scoring function. Vina predicted a binding energy of -3.98 kcal/mol for the 4-AP/CORO1C pair. While this value does not constitute strong predicted affinity (typical drug-target interactions show -6 to -12 kcal/mol), the fact that an independent docking method with a fundamentally different scoring approach also predicts a binding interaction provides a degree of computational consensus. The modest Vina energy is consistent with 4-AP's small molecular weight (94.11 Da), which limits the number of possible protein-ligand contacts.
 
-### 3.10 Evidence Convergence Scoring
+### 3.11 Evidence Convergence Scoring
 
 The platform's convergence engine scored all 21 tracked SMA targets across 5 dimensions. Known therapeutic targets (SMN1, SMN2) appropriately received the highest convergence scores, driven by high laboratory independence (many independent groups), method diversity (genetic, biochemical, animal model, and clinical evidence), and temporal consistency (25+ years of consistent evidence). Established modifier genes (PLS3, NCALD) scored in the second tier, consistent with their more recent but multi-laboratory evidence base. Calibration against known drug outcomes yielded Grade A performance (89.8% accuracy): the system reliably identifies established relationships, appropriately ranks approved therapies above failed and discontinued compounds, and correctly orders the 3 approved SMA therapies by their evidence strength.
 
@@ -254,17 +275,31 @@ The platform's convergence engine scored all 21 tracked SMA targets across 5 dim
 
 ## 4. Discussion
 
-### 4.1 Novel CORO1C Binding Predictions
+### 4.1 Validation Attrition and Honest Assessment
 
-The expanded screen identified multiple compounds with predicted CORO1C binding and no prior SMA literature support. A PubMed search for "fomepizole" AND "SMA" yields zero results; similarly, "4-aminopyridine" AND "CORO1C" yields zero results. All previous investigation of 4-AP in SMA assumed K+ channel blockade as the sole therapeutic mechanism [11, 12, 13]. The computational predictions of CORO1C binding by fomepizole (+1.027), hydroxyurea (+0.624), metformin (+0.490), and 4-AP (+0.251), if experimentally validated, would represent mechanistically distinct rationales for these compounds in SMA, linking them to the actin cytoskeletal pathway. The 4-AP/CORO1C prediction is further supported by AutoDock Vina consensus (-3.98 kcal/mol).
+The most important finding of this study is methodological: 5-pose DiffDock screening generates a substantial number of false positives that do not survive 20-pose validation. Of the 56 initial positive-confidence hits, only riluzole maintained positive binding upon re-docking, yielding a validation rate of approximately 2%. This attrition rate should inform future computational screening campaigns.
+
+The initial screen's most prominent hit, fomepizole (+1.027 against CORO1C), was identified as an artifact of systematic small-molecule scoring bias. Fomepizole has a molecular weight of 82 Da, well within the bias zone (MW < 150 Da) that accounted for 46% of all initial positive hits. Beyond the scoring bias, structural analysis revealed that fomepizole docks into CORO1C's F-actin binding site, which would inhibit CORO1C function. This is the wrong therapeutic direction: CORO1C overexpression rescues SMA phenotypes in zebrafish (PMID: 27499521), meaning CORO1C is a protective modifier that should be activated, not inhibited. This finding fundamentally reframes the CORO1C therapeutic strategy (see Section 4.1a).
+
+The three CHEMBL compounds that scored +0.47 to +0.56 in the initial screen all scored negative (-0.45 to -1.12) upon 20-pose validation, further demonstrating the unreliability of single-round screening results.
+
+Riluzole's validated binding to SMN2 (+0.082) and UBA1 (+0.023) is modest but reproducible. Riluzole has prior Phase 1 SMA data (PMID: 14623733) testing a glutamate inhibition mechanism. The predicted direct protein interactions represent a mechanistically distinct hypothesis that could warrant investigation.
+
+### 4.1a CORO1C Requires Activation, Not Direct Binding
+
+A critical literature finding emerged during post-hoc analysis: CORO1C overexpression rescues SMA in zebrafish (PMID: 27499521). This means CORO1C is a protective modifier gene, similar to PLS3. The therapeutic strategy for CORO1C should therefore focus on increasing CORO1C expression or activity, not on direct binding that could disrupt its function.
+
+This insight reframes the CORO1C docking results. Compounds that bind directly to CORO1C -- including 4-AP (+0.251), fomepizole (+1.027), and metformin (+0.490) -- may be acting as inhibitors rather than activators. Without knowing whether binding enhances or disrupts CORO1C function, positive docking confidence alone is insufficient to support a therapeutic hypothesis.
+
+Alternative approaches to CORO1C-directed therapy include: HDAC inhibitors (e.g., LBH589, SAHA/vorinostat) that may upregulate CORO1C transcription, and miR-133a-3p antagomirs that could relieve post-transcriptional suppression. These expression-level strategies bypass the direct-binding limitation entirely.
 
 ### 4.2 Biological Plausibility: The Actin Pathway Connection
 
-CORO1C's role in actin dynamics provides biological context for a potential SMA-relevant interaction. PLS3 (Plastin-3), an established SMA modifier gene, rescues SMA phenotypes through actin-dependent endocytosis at the NMJ [8]. CORO1C operates in the same actin regulatory network: it promotes Arp2/3-dependent branched actin nucleation and regulates cofilin-mediated filament turnover [19]. In our evidence graph, CORO1C and PLS3 co-occur in 3 independent publications discussing actin dynamics in SMA contexts.
+CORO1C's role in actin dynamics provides biological context for its relevance in SMA. PLS3 (Plastin-3), an established SMA modifier gene, rescues SMA phenotypes through actin-dependent endocytosis at the NMJ [8]. CORO1C operates in the same actin regulatory network: it promotes Arp2/3-dependent branched actin nucleation and regulates cofilin-mediated filament turnover [19]. In our evidence graph, CORO1C and PLS3 co-occur in 3 independent publications discussing actin dynamics in SMA contexts.
 
-STRING-DB protein interaction analysis provides independent validation of this functional relationship: CORO1C and PLS3 show a combined interaction score of 0.818 (high confidence), driven by co-expression, text-mining, and functional association evidence. This database-derived interaction score is not a product of our platform and constitutes external validation that CORO1C and PLS3 operate in a shared functional network.
+STRING-DB protein interaction analysis provides independent support for this functional relationship: CORO1C and PLS3 show a combined interaction score of 0.818 (high confidence), driven by co-expression, text-mining, and functional association evidence. This database-derived interaction score is not a product of our platform.
 
-The convergence of computational docking predictions (multiple compounds binding CORO1C), STRING-DB functional interaction data (CORO1C-PLS3 score 0.818), and the literature-derived biological relationship (CORO1C-PLS3 actin pathway) constitutes cross-modal evidence that, while not confirmatory, increases the prior probability that CORO1C interactions are biologically meaningful in SMA.
+However, as discussed in Section 4.1a, the relevance of CORO1C to SMA is better understood through the lens of expression modulation than direct compound binding. The STRING-DB and literature evidence supports CORO1C as a biologically relevant target; the question is whether docking-based approaches are the right tool to identify CORO1C-directed therapeutics.
 
 ### 4.3 Reconciling the Failed Clinical Trial
 
@@ -286,7 +321,7 @@ The virtual screening campaign was conducted using publicly available tools: NVI
 
 ### 4.6 Comparison with Existing SMA Drug Discovery Approaches
 
-Current SMA drug discovery operates primarily on RNA-targeting strategies (ASOs, small molecule splicing modifiers) or gene therapy. The only post-translational approaches in development are gene replacement (onasemnogene) and SMN protein stabilization. Few direct protein-binding approaches to SMN-independent targets have been clinically developed. If validated, the predicted CORO1C interactions would provide candidate chemical matter for a post-translational, non-SMN therapeutic strategy in SMA. The identification of multiple FDA-approved drugs (fomepizole, metformin) with predicted CORO1C binding could facilitate preclinical investigation, as safety and pharmacokinetic data already exist for these compounds.
+Current SMA drug discovery operates primarily on RNA-targeting strategies (ASOs, small molecule splicing modifiers) or gene therapy. The only post-translational approaches in development are gene replacement (onasemnogene) and SMN protein stabilization. Few direct protein-binding approaches to SMN-independent targets have been clinically developed. The high attrition rate observed in our 20-pose validation (only riluzole confirmed) illustrates the difficulty of computational screening for rare disease targets. Riluzole's validated SMN2 binding, combined with its existing Phase 1 SMA data via a different mechanism, may warrant further investigation as a repurposing candidate. For CORO1C, expression-modulation strategies (HDAC inhibitors, miRNA-based approaches) may prove more productive than direct-binding screens.
 
 ---
 
@@ -347,7 +382,8 @@ If binding is confirmed:
 - **Additional orthogonal docking** with GNINA and GOLD (AutoDock Vina consensus already completed: -3.98 kcal/mol for 4-AP/CORO1C).
 - **Extended screening** beyond 630 compounds: 10,000+ compounds (e.g., from ZINC20 or Enamine REAL) to further contextualize hit signals statistically.
 - **Binding site analysis** to identify contacting residues and their overlap with CORO1C functional domains (WD-repeat beta-propeller, unique region).
-- **Experimental validation of fomepizole/CORO1C** (+1.027): as an FDA-approved drug with established safety data, fomepizole may be the most tractable candidate for rapid in vitro binding validation.
+- **20-pose validation of remaining 5-pose hits** to complete the validation of the initial 56 candidates, including 4-AP/CORO1C.
+- **CORO1C expression screening** to identify compounds that upregulate CORO1C expression (e.g., HDAC inhibitor panel), given that CORO1C activation rather than direct binding is the therapeutic direction.
 
 ---
 
