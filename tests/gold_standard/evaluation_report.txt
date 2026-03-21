@@ -1,0 +1,16 @@
+Gold Standard Evaluation Report
+==================================================
+Total claims: 60
+Judged: 60
+
+Factual accuracy: 17/60 (28.3%)
+Partial: 42/60 (70.0%)
+Wrong: 1/60 (1.7%)
+Type correct: 49/60 (81.7%)
+Target correct: 24/60 (40.0%)
+
+Error distribution:
+  none: 36
+  overstated: 13
+  wrong_type: 10
+  hallucination: 1

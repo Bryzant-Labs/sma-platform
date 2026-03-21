@@ -1,0 +1,1082 @@
+[
+  {
+    "claim_id": "e8ef8d75-3671-496e-9a13-1de0ee3d087a",
+    "claim_type": "other",
+    "predicate": "Maternal butyrate supplementation increases birth weight in offspring.",
+    "confidence": 0.15,
+    "source_title": "Butyrate supplementation in sows promotes offspring embryonic muscle development by upregulating HDAC-mediated H3K27ac levels and myogenic gene expression.",
+    "pmid": "41692939",
+    "abstract_preview": "Butyrate, an important short-chain fatty acid, plays multiple biological roles in animal growth and development. Our previous studies have revealed that SYISL knockout in mother mice can enhance embryonic muscle development in their offspring by influencing the maternal gut microbiota and its metabo",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "overstated",
+      "notes": "Abstract discusses butyrate promoting embryonic muscle development, not specifically 'birth weight'. The title says 'embryonic muscle development' and 'myogenic gene expression', not birth weight. Claim overstates by substituting muscle development with birth weight."
+    }
+  },
+  {
+    "claim_id": "b1ed8d27-01e6-6a42-a630-b5b2f3d3e333",
+    "claim_type": "other",
+    "predicate": "Posterior spinal fusion (PSF) is a surgical procedure used for scoliosis correction in SMA2 patients.",
+    "confidence": 0.15,
+    "source_title": "Growth-friendly Technique or Posterior Spinal Fusion With T-construct Pelvic Fixation in Nonambulatory Spinal Muscular Atrophy With Severe Scoliosis.",
+    "pmid": "40391594",
+    "abstract_preview": "The surgical treatment of scoliosis in type 2 spinal muscular atrophy (SMA2) is challenging and little described in the literature due to its rarity and fragility of the patients. The aim of this study was to review the surgical strategies and outcomes in patients with SMA2 who underwent surgery for",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title and abstract clearly describe PSF as a surgical strategy for scoliosis in SMA2 patients. Claim is directly supported."
+    }
+  },
+  {
+    "claim_id": "6c0dacd6-f44e-4e4e-ad8f-58668566f43a",
+    "claim_type": "other",
+    "predicate": "Chloroxylenol (CHX) exposure during embryogenesis dramatically impacts nervous system development in zebrafish.",
+    "confidence": 0.15,
+    "source_title": "Chloroxylenol and benzethonium chloride exposure alters spinal neuron development and behavior in developing zebrafish.",
+    "pmid": "40209347",
+    "abstract_preview": "Chloroxylenol (CHX) and benzethonium chloride (BEC) are replacement compounds being used after the ban (U.S. FDA) of triclosan and triclocarban in 2016 from personal care products. These two compounds are also recommended by the World Health Organization (WHO) as disinfectants against COVID-19. Toxi",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "overstated",
+      "notes": "Title says CHX 'alters spinal neuron development and behavior in developing zebrafish'. Claim says 'dramatically impacts nervous system development' — 'dramatically' is editorializing and 'nervous system development' is broader than 'spinal neuron development'."
+    }
+  },
+  {
+    "claim_id": "e4737b10-575c-43fc-a2f1-8eeb99aab078",
+    "claim_type": "other",
+    "predicate": "Machado-Joseph disease is caused by expansion of a CAG trinucleotide repeat region within the ATXN3 gene.",
+    "confidence": 0.15,
+    "source_title": "The deubiquitinase function of ataxin-3 and its role in the pathogenesis of Machado-Joseph disease and other diseases.",
+    "pmid": "38497605",
+    "abstract_preview": "Machado-Joseph disease (MJD) is a devastating and incurable neurodegenerative disease characterised by progressive ataxia, difficulty speaking and swallowing. Consequently, affected individuals ultimately become wheelchair dependent, require constant care, and face a shortened life expectancy. The m",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Well-established scientific knowledge about MJD/ATXN3. Abstract is truncated but title references ataxin-3 and MJD pathogenesis. Marked partial because specific CAG expansion mechanism not explicitly visible in the truncated preview."
+    }
+  },
+  {
+    "claim_id": "4790cdd2-84c7-a8bc-8272-6c17081877d9",
+    "claim_type": "other",
+    "predicate": "SMN missense mutations found in humans cannot show partial function in the absence of wild-type SMN and cannot rescue a null Smn allele in mice.",
+    "confidence": 0.15,
+    "source_title": "Intragenic complementation of amino and carboxy terminal SMN missense mutations can rescue Smn null mice.",
+    "pmid": "33084884",
+    "abstract_preview": "Spinal muscular atrophy is caused by reduced levels of SMN resulting from the loss of SMN1 and reliance on SMN2 for the production of SMN. Loss of SMN entirely is embryonic lethal in mammals. There are several SMN missense mutations found in humans. These alleles do not show partial function in the ",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "overstated",
+      "notes": "Abstract says alleles 'do not show partial function in the...' (truncated). But the title says 'intragenic complementation...can rescue Smn null mice'. Claim captures only the initial premise while the paper's conclusion contradicts the absolute framing. Misleading by omitting the key complementation finding."
+    }
+  },
+  {
+    "claim_id": "16a5f8eb-dae8-7bf2-cc52-09bf69b460a6",
+    "claim_type": "biomarker",
+    "predicate": "Maximal voluntary isometric contraction (MVIC) testing shows good test-retest reliability in ambulatory adults with SMA, with an intraclass correlation coefficient of 0.98.",
+    "confidence": 0.15,
+    "source_title": "Outcome measures in a cohort of ambulatory adults with spinal muscular atrophy.",
+    "pmid": "31725909",
+    "abstract_preview": "With the advent of disease-altering therapies for spinal muscular atrophy (SMA), there is a requirement to better characterize outcome measures, particularly in milder forms of disease. Maximal voluntary isometric contraction testing and 6-minute walk test (6MWT) performed in ambulatory SMA adults a",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract mentions MVIC testing in ambulatory SMA adults. The specific ICC value of 0.98 cannot be verified from the truncated abstract but the study context is consistent. Marked partial because specific numerical value not visible."
+    }
+  },
+  {
+    "claim_id": "98d0bd84-42cf-4939-a38d-6f53f026bfd6",
+    "claim_type": "biomarker",
+    "predicate": "SMA patients with higher HFMSE scores show elevated vibratory thresholds.",
+    "confidence": 0.15,
+    "source_title": "Sensory dysfunction in SMA type 2 and 3 - adaptive mechanism or concomitant target of damage?",
+    "pmid": "39227985",
+    "abstract_preview": "The motor neuron survival protein performs numerous cellular functions; hence, spinal muscular atrophy (SMA) is considered to be a multi-organ disease with possible sensory system damage. The controversy surrounding the presence of sensory disturbances, prompted us to conduct standard electrophysiol",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract discusses sensory dysfunction in SMA. Specific correlation between HFMSE scores and vibratory thresholds not confirmable from truncated abstract. Study context is consistent."
+    }
+  },
+  {
+    "claim_id": "99bf0912-f81b-4565-a0fa-d5117b595c32",
+    "claim_type": "biomarker",
+    "predicate": "Permittivity measurement of skeletal muscle from 10 kHz to 1 MHz can be used to differentiate diseased muscle in SMA models from healthy muscle.",
+    "confidence": 0.8,
+    "source_title": "Permittivity of ex vivo healthy and diseased murine skeletal muscle from 10 kHz to 1 MHz.",
+    "pmid": "31000708",
+    "abstract_preview": "A better understanding of the permittivity property of skeletal muscle is essential for the development of new diagnostic tools and approaches for neuromuscular evaluation. However, there remain important knowledge gaps in our understanding of this property in healthy and diseased skeletal muscle, w",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "overconfident",
+      "error_category": "overstated",
+      "notes": "Title mentions permittivity of healthy and diseased murine skeletal muscle. Abstract says 'important knowledge gaps' exist. Claim states it 'can be used to differentiate' implying validated capability, but paper is exploratory. Confidence of 0.8 too high for an exploratory study."
+    }
+  },
+  {
+    "claim_id": "85f85a55-0bfd-4c21-9bae-4a2ac91db6e8",
+    "claim_type": "biomarker",
+    "predicate": "Molecular markers can be quantified for therapy monitoring and outcome prediction in subjects with disease or condition.",
+    "confidence": 0.15,
+    "source_title": "Method and kit for diagnosis, prognosis, therapy monitoring or outcome &hellip;",
+    "pmid": "CA3249281A1",
+    "abstract_preview": "An in vitro or ex vivo method of diagnosis, prognosis, therapy monitoring or outcome prediction assessment of a disease or condition in a subject by detecting and quantifying at least one molecular marker of the disease or condition contained in a biological sample of the subject, wherein the at &he",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "no",
+      "suggested_type": "other",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "This is a patent (CA3249281A1), not a research paper. The claim is extremely generic — essentially restating the patent title. Type 'biomarker' is debatable for a patent claim; 'other' more appropriate. Claim lacks any specific molecular marker or disease."
+    }
+  },
+  {
+    "claim_id": "4ddc9876-6e51-4276-b739-569b7241bc68",
+    "claim_type": "biomarker",
+    "predicate": "Female carriers of biallelic AR CAG expansions manifest Kennedy disease symptoms including chronic backache, pain, cramps, and fasciculations.",
+    "confidence": 0.15,
+    "source_title": "Kennedy disease in two sisters with biallelic CAG expansions of the androgen receptor gene.",
+    "pmid": "34922802",
+    "abstract_preview": "We present a retrospective 21-year follow-up of two sisters with X-linked biallelic CAG expansions in the androgen receptor (AR) gene causing Kennedy disease. Two sisters inherited CAG expansions from their mother who was a carrier and their father who had Kennedy disease. Genetic testing revealed a",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "no",
+      "suggested_type": "other",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "Abstract clearly describes two sisters with biallelic AR CAG expansions who have Kennedy disease. Claim supported. But 'biomarker' is wrong type — this is a clinical/genetic observation about disease manifestation, not a biomarker finding."
+    }
+  },
+  {
+    "claim_id": "66c4a879-a4e7-410a-888d-5d76640fce39",
+    "claim_type": "drug_efficacy",
+    "predicate": "Anti-ADAMTS1 antibody treatment improves diaphragm muscle function in mdx mice.",
+    "confidence": 0.15,
+    "source_title": "An anti-ADAMTS1 treatment relieved muscle dysfunction and fibrosis in dystrophic mice.",
+    "pmid": "34175316",
+    "abstract_preview": "Duchenne Muscular Dystrophy (DMD) is caused by mutations in the dystrophin gene, accompanied by aberrant extracellular matrix synthesis and muscle damage. ADAMTS1 metalloproteinase was reported increased in dystrophin-deficient mdx mouse. The aim of this study was to explore the role of ADAMTS1 in m",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title says anti-ADAMTS1 'relieved muscle dysfunction and fibrosis in dystrophic mice'. Claim specifies 'diaphragm muscle function' which is more specific than what the truncated abstract shows. Diaphragm specificity not verifiable from preview."
+    }
+  },
+  {
+    "claim_id": "dcf4ad7b-513d-1647-8303-1d42518b43de",
+    "claim_type": "drug_efficacy",
+    "predicate": "Disease-modifying therapies for SMA, when administered early, have shown improved outcomes.",
+    "confidence": 0.15,
+    "source_title": "Newborn screening programs for spinal muscular atrophy worldwide in 2023.",
+    "pmid": "39973463",
+    "abstract_preview": "Spinal muscular atrophy is a rare, genetic neuromuscular disorder. Disease-modifying therapies, when administered early, have shown improved outcomes, leading to the implementation of numerous newborn screening programs for spinal muscular atrophy. The aim of this study was to evaluate the progress ",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Claim is almost verbatim from abstract: 'Disease-modifying therapies, when administered early, have shown improved outcomes'. Direct extraction, clearly supported."
+    }
+  },
+  {
+    "claim_id": "e4b184b6-6963-4c2e-b520-6b4f93aeb8cf",
+    "claim_type": "drug_efficacy",
+    "predicate": "Thiamet G (TMG), an OGA inhibitor, restores OGA activity and normalizes O-GlcNAc profile in mouse cortex.",
+    "confidence": 0.15,
+    "source_title": "Enhancing protein O-GlcNAcylation in down syndrome mice mitigates memory dysfunctions through the rescue of mitochondrial bioenergetics, stress responses and pathological markers.",
+    "pmid": "40684658",
+    "abstract_preview": "Disturbances of the single sugar modification of proteins, O-GlcNAc, have been identified as a potential connection between disrupted brain metabolism and intellectual decay. In Alzheimer disease (AD), the reduced uptake of glucose in the brain results in aberrant O-GlcNAc cycling contributing to re",
+    "human_judgment": {
+      "factually_correct": "no",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "hallucination",
+      "notes": "Major error: Thiamet G (TMG) is an OGA INHIBITOR, meaning it BLOCKS OGA activity to INCREASE O-GlcNAcylation. The claim says it 'restores OGA activity' which is the opposite of its mechanism. The paper is about enhancing O-GlcNAcylation in Down syndrome mice. Claim fundamentally misrepresents the mechanism."
+    }
+  },
+  {
+    "claim_id": "f226e7f7-020b-34a1-da79-626a033ea9bd",
+    "claim_type": "drug_efficacy",
+    "predicate": "Pharmacological inhibition of HDAC6 using ricolinostat reduces myocardial fibrotic protein accumulation and improves cardiac function in CKD.",
+    "confidence": 0.15,
+    "source_title": "Chronic kidney disease activates the HDAC6-inflammatory axis in the heart and contributes to myocardial remodeling in mice: inhibition of HDAC6 alleviates chronic kidney disease-induced myocardial remodeling.",
+    "pmid": "38771318",
+    "abstract_preview": "Chronic kidney disease (CKD) adversely affects the heart. The underlying mechanism and the interplay between the kidney and the heart are still obscure. We examined the cardiac effect using the unilateral ureteral obstruction (UUO)-induced CKD pre-clinical model in mice. Echocardiography, histopatho",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title states 'inhibition of HDAC6 alleviates CKD-induced myocardial remodeling'. Claim's specifics about ricolinostat and fibrotic protein accumulation not fully verifiable from truncated abstract, but overall direction supported."
+    }
+  },
+  {
+    "claim_id": "2411fe89-accf-498d-a6cf-fb8d7d5ef9e4",
+    "claim_type": "drug_efficacy",
+    "predicate": "Upregulation of miR-146a with pre-miR-146a restores normal expression levels of GFAP, S100B, HMGB1, Cx43, and vimentin in mSOD1 astrocytes.",
+    "confidence": 0.15,
+    "source_title": "Recovery of Depleted miR-146a in ALS Cortical Astrocytes Reverts Cell Aberrancies and Prevents Paracrine Pathogenicity on Microglia and Motor Neurons.",
+    "pmid": "33968923",
+    "abstract_preview": "Reactive astrocytes in Amyotrophic Lateral Sclerosis (ALS) change their molecular expression pattern and release toxic factors that contribute to neurodegeneration and microglial activation. We and others identified a dysregulated inflammatory miRNA profile in ALS patients and in mice models suggest",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title says 'Recovery of Depleted miR-146a in ALS Cortical Astrocytes Reverts Cell Aberrancies'. Specific markers (GFAP, S100B, HMGB1, Cx43, vimentin) plausible but not confirmable from truncated abstract. General direction supported."
+    }
+  },
+  {
+    "claim_id": "68d9ce79-d109-4f8b-a15a-55f3aa226c13",
+    "claim_type": "pathway_membership",
+    "predicate": "Exosomes participate in brain homeostasis through intercellular communication between neurons and surrounding cells.",
+    "confidence": 0.15,
+    "source_title": "Exosomes in Ageing and Motor Neurone Disease: Biogenesis, Uptake Mechanisms, Modifications in Disease and Uses in the Development of Biomarkers and Therapeutics.",
+    "pmid": "34831153",
+    "abstract_preview": "Intercellular communication between neurons and their surrounding cells occurs through the secretion of soluble molecules or release of vesicles such as exosomes into the extracellular space, participating in brain homeostasis. Under neuro-degenerative conditions associated with ageing, such as amyo",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract directly states: 'Intercellular communication between neurons and their surrounding cells occurs through...release of vesicles such as exosomes into the extracellular space, participating in brain homeostasis.' Claim is nearly verbatim."
+    }
+  },
+  {
+    "claim_id": "75c52e70-63e9-41c4-b1a3-1922b1f3cffc",
+    "claim_type": "pathway_membership",
+    "predicate": "SR Ca2+ release mediated by RyR1 is a trigger for periodic elevation in cytoplasmic Ca2+ levels during hibernation.",
+    "confidence": 0.15,
+    "source_title": "Priority Strategy of Intracellular Ca<sup>2+</sup> Homeostasis in Skeletal Muscle Fibers During the Multiple Stresses of Hibernation.",
+    "pmid": "31877883",
+    "abstract_preview": "<b>:</b> Intracellular calcium (Ca<sup>2+</sup>) homeostasis plays a vital role in the preservation of skeletal muscle. In view of the well-maintained skeletal muscle found in Daurian ground squirrels (<i>Spermophilus dauricus</i>) during hibernation, we hypothesized that hibernators possess unique ",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract discusses intracellular Ca2+ homeostasis in skeletal muscle during hibernation. Specific claim about RyR1-mediated SR Ca2+ release plausible but not confirmable from truncated abstract."
+    }
+  },
+  {
+    "claim_id": "0cb21e36-1629-0ff3-a469-aa4249dcfc70",
+    "claim_type": "pathway_membership",
+    "predicate": "Inhibition of S1pr1 or decreased S1P levels suppress NFκB signaling in Müller glia.",
+    "confidence": 0.15,
+    "source_title": "Sphingosine-1-Phosphate Signaling through Müller Glia Regulates Neuroprotection, Accumulation of Immune Cells, and Neuronal Regeneration in the Rodent Retina.",
+    "pmid": "40925674",
+    "abstract_preview": "The purpose of this study was to investigate how Sphingosine-1-phosphate (S1P) signaling regulates glial phenotype, neuroprotection, and reprogramming of Müller glia (MG) into neurogenic MG-derived progenitor cells (MGPCs) in the adult male and female mouse retina. We found that S1P-related genes we",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract discusses S1P signaling in Mueller glia regulating neuroprotection and regeneration. Specific NFkB suppression via S1pr1 inhibition is plausible but not confirmable from truncated abstract."
+    }
+  },
+  {
+    "claim_id": "f4a62782-7e53-4abe-b708-cf40aa787f17",
+    "claim_type": "pathway_membership",
+    "predicate": "Mutant AR expression causes depolarization of the mitochondrial membrane in neuronal cells.",
+    "confidence": 0.92,
+    "source_title": "Mitochondrial abnormalities in spinal and bulbar muscular atrophy.",
+    "pmid": "18824496",
+    "abstract_preview": "Spinal and bulbar muscular atrophy (SBMA) is a motor neuron disease caused by polyglutamine expansion mutation in the androgen receptor (AR). We investigated whether the mutant protein alters mitochondrial function. We found that constitutive and doxycycline-induced expression of the mutant AR in MN",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract says 'We found that constitutive and doxycycline-induced expression of the mutant AR in MN...' and title is about mitochondrial abnormalities in SBMA. Mitochondrial membrane depolarization is a standard mitochondrial abnormality. Well-supported."
+    }
+  },
+  {
+    "claim_id": "defc2c16-58cf-bed5-9d45-0b23e26b3cbb",
+    "claim_type": "pathway_membership",
+    "predicate": "NCALD regulates adult neurogenesis in the hippocampus possibly via a MAP3K10-JNK pathway.",
+    "confidence": 0.15,
+    "source_title": "Neurocalcin Delta Knockout Impairs Adult Neurogenesis Whereas Half Reduction Is Not Pathological.",
+    "pmid": "30853885",
+    "abstract_preview": "Neurocalcin delta (NCALD) is a brain-enriched neuronal calcium sensor and its reduction acts protective against spinal muscular atrophy (SMA). However, the physiological function of NCALD and implications of NCALD reduction are still elusive. Here, we analyzed the ubiquitous <i>Ncald</i> knockout in",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title says NCALD knockout impairs adult neurogenesis. The MAP3K10-JNK pathway detail not confirmable from truncated abstract. General finding about NCALD and neurogenesis supported."
+    }
+  },
+  {
+    "claim_id": "8957b188-e46a-ecbf-526d-a39b5729123f",
+    "claim_type": "gene_expression",
+    "predicate": "TRADD and JUND gene expression are dysregulated in SMA patients and are restored toward normal levels after 10 months of nusinersen treatment.",
+    "confidence": 0.15,
+    "source_title": "An early Transcriptomic Investigation in Adult Patients with Spinal Muscular Atrophy Under Treatment with Nusinersen.",
+    "pmid": "39325116",
+    "abstract_preview": "Spinal muscular atrophy (SMA) is a rare degenerative disorder with loss of motor neurons caused by mutations in the SMN1 gene. Nusinersen, an antisense oligonucleotide, was approved for SMA treatment to compensate the deficit of the encoded protein SMN by modulating the pre-mRNA splicing of SMN2, th",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract describes transcriptomic investigation of SMA patients under nusinersen treatment. Specific genes (TRADD, JUND) and 10-month timeframe not confirmable from truncated abstract but study context is consistent."
+    }
+  },
+  {
+    "claim_id": "75985079-1f74-4379-a024-c1a07c298f93",
+    "claim_type": "gene_expression",
+    "predicate": "LETM1 (leucine zipper-EF-hand containing transmembrane protein 1) activity and protein expression levels are up-regulated in skeletal muscle during hibernation.",
+    "confidence": 0.15,
+    "source_title": "Priority Strategy of Intracellular Ca<sup>2+</sup> Homeostasis in Skeletal Muscle Fibers During the Multiple Stresses of Hibernation.",
+    "pmid": "31877883",
+    "abstract_preview": "<b>:</b> Intracellular calcium (Ca<sup>2+</sup>) homeostasis plays a vital role in the preservation of skeletal muscle. In view of the well-maintained skeletal muscle found in Daurian ground squirrels (<i>Spermophilus dauricus</i>) during hibernation, we hypothesized that hibernators possess unique ",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "LETM1 is a mitochondrial Ca2+ transporter plausible in Ca2+ homeostasis during hibernation. Truncated abstract does not mention LETM1 specifically. Study context consistent but specific claim unverifiable from preview."
+    }
+  },
+  {
+    "claim_id": "d46eb21a-fe77-472c-83fa-78fc3c650e8a",
+    "claim_type": "gene_expression",
+    "predicate": "Vimentin is an intermediate filament protein expressed in mesenchymal cells and is synthesized during myogenesis and muscle tissue regeneration.",
+    "confidence": 0.15,
+    "source_title": "Vimentin and Desmin Intermediate Filaments Maintain Mitochondrial Membrane Potential.",
+    "pmid": "39647830",
+    "abstract_preview": "Intermediate filaments (IFs) represented by a diverse range of proteins, are one of the three main cytoskeleton components in different types of animal cells. IFs provide mechanical strength to cells and help position the nucleus and organelles in the cell. Desmin is an IF protein typical of muscle ",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract discusses intermediate filaments; title mentions both vimentin and desmin. Vimentin as mesenchymal IF is established knowledge. Specific claims about myogenesis/regeneration not fully visible in truncated abstract."
+    }
+  },
+  {
+    "claim_id": "43d2ac1b-3334-42e1-9e75-bc8be71b65a7",
+    "claim_type": "gene_expression",
+    "predicate": "Microglia subset Mic2 expresses markers associated with spinal cord repair and is predominantly distributed in white matter, particularly in dorsal regions of injured spinal cord.",
+    "confidence": 0.15,
+    "source_title": "Integrating single-cell RNA sequencing and spatial multi-omics reveals the molecular signature of regeneration after spinal cord injury.",
+    "pmid": "41121424",
+    "abstract_preview": "A certain degree of self-repair is initiated following spinal cord injury (SCI). Although intraneuronal regeneration and a supportive growth environment are limited, they serve as the foundation for functional recovery after SCI. In this study, we conducted single-cell RNA sequencing combined with s",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract describes scRNA-seq and spatial multi-omics of SCI regeneration. Mic2 subset finding plausible for spatial transcriptomics study but specifics not confirmable from truncated abstract."
+    }
+  },
+  {
+    "claim_id": "8a94e772-1b6e-4a6c-8055-e4c15df8dc79",
+    "claim_type": "gene_expression",
+    "predicate": "Valproic acid elevates SMN protein levels through SMN2 promoter activation.",
+    "confidence": 0.9,
+    "source_title": "Multiple therapeutic effects of valproic acid in spinal muscular atrophy model mice.",
+    "pmid": "18649067",
+    "abstract_preview": "Spinal muscular atrophy (SMA) is a progressive disease involving the degeneration of motor neurons with no currently available treatment. While valproic acid (VPA) is a potential treatment for SMA, its therapeutic mechanisms are still controversial. In this study, we investigated the mechanisms of a",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "overconfident",
+      "error_category": "overstated",
+      "notes": "Abstract explicitly states VPA's 'therapeutic mechanisms are still controversial'. Claim states VPA elevates SMN protein through SMN2 promoter activation as definitive fact. Confidence 0.9 too high given stated controversy."
+    }
+  },
+  {
+    "claim_id": "28b6e418-47c8-49d5-ae7f-5f5a8d2d3846",
+    "claim_type": "neuroprotection",
+    "predicate": "Allicin treatment reduces neuroinflammation in SOD1G93A mice.",
+    "confidence": 0.15,
+    "source_title": "Allicin improves motor neuron survival in amyotrophic lateral sclerosis by reducing neuroinflammation and modulating gut microbiota.",
+    "pmid": "41723979",
+    "abstract_preview": "Amyotrophic lateral sclerosis (ALS) is a fatal neurodegenerative disease characterized by the progressive loss of motor neurons (MNs). Allicin, a defensive molecule in garlic with anti-inflammatory and gut microbiota-modulating properties, has shown therapeutic potential in animal models of various ",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title directly states: 'Allicin improves motor neuron survival in ALS by reducing neuroinflammation and modulating gut microbiota.' Well-supported."
+    }
+  },
+  {
+    "claim_id": "7b6042d6-87d9-99a1-8a51-2fa5ffeb448f",
+    "claim_type": "neuroprotection",
+    "predicate": "Short-chain fatty acids restore blood-brain barrier structure damaged by fluoride exposure.",
+    "confidence": 0.15,
+    "source_title": "Short-chain fatty acids alleviated fluoride-induced neuroinflammation via the gut-brain axis in rats.",
+    "pmid": "41360344",
+    "abstract_preview": "Neuroinflammation is a hallmark of central nervous system injury caused by fluorosis; however, the regulatory relationship between intestinal microbial and fluoride-induced neuroinflammation remains unclear. Here, we aimed to evaluate the alleviating effect of short-chain fatty acids (SCFAs) on fluo",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "no",
+      "suggested_type": "other",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "overstated",
+      "notes": "Abstract discusses SCFAs alleviating fluoride-induced neuroinflammation via gut-brain axis. Claim specifically says 'restore blood-brain barrier structure' which is more specific than visible in abstract. Type 'neuroprotection' debatable for gut-brain axis modulation."
+    }
+  },
+  {
+    "claim_id": "c99f9fb3-e5a5-d026-a3f9-3e5ae20c35f9",
+    "claim_type": "neuroprotection",
+    "predicate": "Early treatment before 6 weeks of age (median 34.5 days of life) is associated with improved motor neuron outcomes in SMA.",
+    "confidence": 0.15,
+    "source_title": "Newborn Screening for Spinal Muscular Atrophy in New York State: Clinical Outcomes From the First 3 Years.",
+    "pmid": "35835557",
+    "abstract_preview": "Spinal muscular atrophy (SMA) was added to the Recommended Uniform Screening Panel in July 2018 largely on the basis of the availability and efficacy of newly approved disease-modifying therapies. New York State (NYS) started universal newborn screening for SMA in October 2018. The authors report th",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "no",
+      "suggested_type": "drug_efficacy",
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "Abstract discusses NBS for SMA and early treatment outcomes. Specific numbers (6 weeks, 34.5 days) not verifiable from truncated abstract. Type should be 'drug_efficacy' or 'clinical_outcome' not 'neuroprotection' — this is about treatment timing."
+    }
+  },
+  {
+    "claim_id": "18bfd301-6646-4026-aa80-51b5c65dc29e",
+    "claim_type": "neuroprotection",
+    "predicate": "Blocking DPR synthesis reduces STING activation in C9ORF72 mice.",
+    "confidence": 0.15,
+    "source_title": "Blocking RAN translation without altering repeat RNAs rescues <i>C9ORF72</i>-related ALS and FTD phenotypes.",
+    "pmid": "41643021",
+    "abstract_preview": "GGGGCC (G<sub>4</sub>C<sub>2</sub>) repeat expansion in <i>C9ORF72</i> is the most common genetic cause of amyotrophic lateral sclerosis (ALS) and frontotemporal dementia (FTD). Toxicity is thought to result from the accumulation of either repeat RNAs and/or dipeptide repeat proteins (DPRs) translat",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract discusses DPRs from RAN translation in C9ORF72-related ALS/FTD. Title says blocking RAN translation rescues phenotypes. Specific STING activation detail plausible but not confirmed in truncated abstract."
+    }
+  },
+  {
+    "claim_id": "1f98b13c-85e2-4983-8c22-041053f07568",
+    "claim_type": "neuroprotection",
+    "predicate": "Hibernating bear serum increases total protein content in cultured human skeletal muscle cells.",
+    "confidence": 0.15,
+    "source_title": "Supplementing cultured human myotubes with hibernating bear serum results in increased protein content by modulating Akt/FOXO3a signaling.",
+    "pmid": "35077510",
+    "abstract_preview": "Hibernating bears remain in their dens for 5-7 months during winter and survive without eating or drinking while staying inactive. However, they maintain their physical functions with minimal skeletal muscle atrophy and metabolic dysfunction. In bears, resistance to skeletal muscle atrophy during hi",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "no",
+      "suggested_type": "other",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "Title directly states: 'Supplementing cultured human myotubes with hibernating bear serum results in increased protein content.' Well-supported. But 'neuroprotection' is wrong type — this is about skeletal muscle protein content, not neuroprotection."
+    }
+  },
+  {
+    "claim_id": "434ff3bb-4b02-473d-bb76-13b787ab1b79",
+    "claim_type": "motor_function",
+    "predicate": "ActRIIB/myostatin inhibition does not rescue motor unit loss in tibialis anterior muscle of SMA mice.",
+    "confidence": 0.93,
+    "source_title": "Activin Receptor Type IIB Inhibition Improves Muscle Phenotype and Function in a Mouse Model of Spinal Muscular Atrophy.",
+    "pmid": "27870893",
+    "abstract_preview": "Spinal muscular atrophy (SMA) is a devastating neurodegenerative disorder that causes progressive muscle atrophy and weakness. Using adeno-associated virus-mediated gene transfer, we evaluated the potential to improve skeletal muscle weakness via systemic, postnatal inhibition of either myostatin or",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title says ActRIIB inhibition 'Improves Muscle Phenotype and Function' in SMA mice. Claim states it 'does not rescue motor unit loss' — plausible as a nuanced negative finding within the study but not verifiable from truncated abstract."
+    }
+  },
+  {
+    "claim_id": "84f50e30-e373-b91f-57e4-cdde18039960",
+    "claim_type": "motor_function",
+    "predicate": "31.1% (19/61) of SMA type 1 patients showed improvement by ≥2 points in HINE-2 motor milestones after six months of nusinersen treatment.",
+    "confidence": 0.15,
+    "source_title": "Evaluation of Children with SMA Type 1 Under Treatment with Nusinersen within the Expanded Access Program in Germany.",
+    "pmid": "29689734",
+    "abstract_preview": "Spinal muscular atrophy (SMA) is a neuromuscular disorder characterized by muscle weakness and muscle atrophy. Nusinersen acts as a splicing modifier and has recently been approved for intrathecal treatment of SMA. Prior to approval, nusinersen was provided to patients with SMA type 1 in Germany wit",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract describes evaluation of SMA type 1 patients under nusinersen in Germany's expanded access program. Specific numbers (31.1%, 19/61, HINE-2, 6 months) plausible but not verifiable from truncated abstract."
+    }
+  },
+  {
+    "claim_id": "2705df73-247f-49f0-89e8-6b2866dac9ac",
+    "claim_type": "motor_function",
+    "predicate": "Two years of daily electrical stimulation of permanently denervated quadriceps muscles restores contractility and restores muscle organization in cauda equinae-injured patients.",
+    "confidence": 0.15,
+    "source_title": "Electrical stimulation of injured nerves promotes recovery in animals and humans.",
+    "pmid": "39709530",
+    "abstract_preview": "The frequent poor functional outcomes after delayed surgical repair of injured human peripheral nerves results in progressive downregulation of growth-associated genes in parallel with reduced neuronal regenerative capacity under each of the experimental conditions of chronic axotomy of neurones tha",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "overstated",
+      "notes": "Title says electrical stimulation 'promotes recovery'. Claim makes very specific statements (two years, daily, permanently denervated quadriceps, cauda equinae) not verifiable from truncated abstract. May come from a cited reference rather than the paper's own findings."
+    }
+  },
+  {
+    "claim_id": "6828ff47-713e-43c9-ab18-da5e47b30b08",
+    "claim_type": "motor_function",
+    "predicate": "Affected paralysé mice (par/par) develop progressive generalized muscle weakness and lack of coordination, becoming almost completely paralyzed by PN16-18 with death occurring at this timepoint.",
+    "confidence": 0.95,
+    "source_title": "The paralysé mouse mutant: a new animal model of anterior horn motor neuron degeneration.",
+    "pmid": "8642395",
+    "abstract_preview": "The survival and morphometric characteristics of lumbar spinal motoneurons were examined in the paralysé mouse mutant. Affected (par/par) mice can be first recognized at approximately postnatal day (PN) 7 to 8 and are characterized by their smaller-than-normal body size, a progressive generalized mu",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "overconfident",
+      "error_category": "overstated",
+      "notes": "Abstract confirms par/par mice have 'progressive generalized mu...' (truncated). PN16-18 death timepoint not verifiable from preview which only mentions PN7-8 recognition. Confidence 0.95 too high for unverifiable timeline claims."
+    }
+  },
+  {
+    "claim_id": "7166f0d3-9567-4676-b629-70fc0f9d7058",
+    "claim_type": "motor_function",
+    "predicate": "Zilucoplan enables minimal symptoms expression in 55.6% of AChR-positive generalized myasthenia gravis patients at week 48 of treatment.",
+    "confidence": 0.15,
+    "source_title": "Early real-life experience on Zilucoplan for generalized myasthenia gravis: ZILU25 multicenter observational study.",
+    "pmid": "41314023",
+    "abstract_preview": "Generalized Myasthenia gravis (gMG) is a rare chronic autoimmune disease affecting the postsynaptic membrane of the neuromuscular junction. New treatment options, such as the C5 inhibitors, are growing with promising results. In this study we investigated the real-world use of Zilucoplan for AChR-po",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract describes real-world Zilucoplan study for AChR-positive gMG. Specific percentage (55.6%) and timepoint (week 48) not confirmable from truncated abstract but study context consistent."
+    }
+  },
+  {
+    "claim_id": "afd4bc8f-83ef-4dcb-ac2b-3b3be7742eca",
+    "claim_type": "protein_interaction",
+    "predicate": "Stabilized ACTG1 binds to p53 and facilitates its nuclear translocation.",
+    "confidence": 0.9,
+    "source_title": "OTUD6A drives dopaminergic neuronal degeneration of Parkinson's disease through deubiquitinating ACTG1 in neuronal cells.",
+    "pmid": "41685148",
+    "abstract_preview": "Parkinson's disease (PD) is a severe neurodegenerative disorder characterized by the progressive loss of dopaminergic neurons. Emerging evidence suggests that deubiquitinating enzymes (DUBs), which regulate protein homeostasis through the cleavage of ubiquitin chains, play critical roles in PD patho",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "overconfident",
+      "error_category": "none",
+      "notes": "Abstract discusses OTUD6A deubiquitinating ACTG1 in PD. Claim about stabilized ACTG1 binding p53 plausible but not verifiable from truncated abstract. Confidence 0.9 too high for unverifiable details."
+    }
+  },
+  {
+    "claim_id": "b2a36832-b1ec-41e4-8bbb-531d33d3cd71",
+    "claim_type": "protein_interaction",
+    "predicate": "K739 shows stronger SENP1 binding compared to K725 in deSUMOylation.",
+    "confidence": 0.15,
+    "source_title": "K739 is preferentially targeted over K725 in the deSUMOylation process of neuronal nitric oxide synthase.",
+    "pmid": "40979190",
+    "abstract_preview": "Neuronal nitric oxide synthase (nNOS) produces nitric oxide (NO) in neurons, essential for learning and memory, but excessive activity causes oxidative/nitrosative stress, contributing to neuropsychiatric disorders. nNOS activation is regulated by calcium-activated calmodulin (CaM) binding and SUMO1",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title directly states: 'K739 is preferentially targeted over K725 in deSUMOylation of nNOS.' Claim restates this as 'stronger SENP1 binding' — reasonable interpretation. Well-supported."
+    }
+  },
+  {
+    "claim_id": "46c423b9-4a9d-46c4-80a8-834a4f9374da",
+    "claim_type": "protein_interaction",
+    "predicate": "TDP-43 is an RNA/DNA-binding protein primarily localized in the nucleus that performs essential functions in pre-mRNA splicing, mRNA transport, and the stabilization and localized translation of mRNA.",
+    "confidence": 0.15,
+    "source_title": "TDP-43 in neurodegeneration and cancer: Decoding the mechanism of mRNA localization and translation.",
+    "pmid": "41631213",
+    "abstract_preview": "The localization and translation of mRNAs play crucial roles in maintaining cellular phenotype and function, with RNA-binding protein (RBP) contributing significantly to these processes. TAR DNA-binding protein of 43 kDa (TDP-43) is an RNA/DNA-binding protein that is primarily localized in the nucle",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "no",
+      "suggested_type": "other",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "Abstract directly states TDP-43 is an RNA/DNA-binding protein primarily localized in the nucleus. Claim nearly verbatim. But 'protein_interaction' is not ideal — describes TDP-43's general functions, not a specific protein-protein interaction."
+    }
+  },
+  {
+    "claim_id": "d25b7e99-b570-3303-b99f-d7edb5c3efb6",
+    "claim_type": "protein_interaction",
+    "predicate": "TRIM46 enrichment at the proximal axon is not required for efficient axonal TAU sorting in SH-SY5Y-derived neurons.",
+    "confidence": 0.15,
+    "source_title": "Axonal TAU Sorting Requires the C-terminus of TAU but is Independent of ANKG and TRIM46 Enrichment at the AIS.",
+    "pmid": "33556457",
+    "abstract_preview": "Somatodendritic missorting of the axonal protein TAU is a hallmark of Alzheimer's disease and related tauopathies. Rodent primary neurons and iPSC-derived neurons are used for studying mechanisms of neuronal polarity, including TAU trafficking. However, these models are expensive, time-consuming, an",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title directly states: 'Axonal TAU Sorting is Independent of ANKG and TRIM46 Enrichment at the AIS.' Claim restates this for TRIM46 in SH-SY5Y neurons. Well-supported."
+    }
+  },
+  {
+    "claim_id": "6493bba9-c16e-4030-8c81-bc60e9b1c6a2",
+    "claim_type": "protein_interaction",
+    "predicate": "TDP-43 M337V shows reduced binding to the translation initiation factor Poly(A)-binding protein (PABP).",
+    "confidence": 0.15,
+    "source_title": "An ALS-linked mutation in TDP-43 disrupts normal protein interactions in the motor neuron response to oxidative stress.",
+    "pmid": "32800996",
+    "abstract_preview": "TDP-43 pathology is a key feature of amyotrophic lateral sclerosis (ALS), but the mechanisms linking TDP-43 to altered cellular function and neurodegeneration remain unclear. We have recently described a mouse model in which human wild-type or mutant TDP-43 are expressed at low levels and where alte",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title says TDP-43 mutation 'disrupts normal protein interactions'. Specific M337V-PABP interaction plausible but not confirmable from truncated abstract. General theme supported."
+    }
+  },
+  {
+    "claim_id": "c1bd6b3b-d8fc-2764-c71f-53ea24ae715e",
+    "claim_type": "drug_target",
+    "predicate": "The intronic splicing silencer N1 (ISS-N1) is a target for antisense oligonucleotide therapy (Spinraza) that corrects SMN2 exon 7 splicing.",
+    "confidence": 0.15,
+    "source_title": "RNA in spinal muscular atrophy: therapeutic implications of targeting.",
+    "pmid": "32538213",
+    "abstract_preview": "Spinal muscular atrophy (SMA) is caused by low levels of the Survival Motor Neuron (SMN) protein due to deletions of or mutations in the <i>SMN1</i> gene. Humans carry another nearly identical gene, <i>SMN2</i>, which mostly produces a truncated and less stable protein SMNΔ7 due to predominant skipp",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Well-established SMA biology. Nusinersen (Spinraza) targets ISS-N1 to correct SMN2 exon 7 splicing. Paper about RNA targeting in SMA therapy is consistent. Well-supported."
+    }
+  },
+  {
+    "claim_id": "673879ac-f0a1-8d14-043b-75a5aaae920a",
+    "claim_type": "drug_target",
+    "predicate": "CORO1A is a potential therapeutic target for ALS.",
+    "confidence": 0.15,
+    "source_title": "Increased expression of coronin-1a in amyotrophic lateral sclerosis: a potential diagnostic biomarker and therapeutic target.",
+    "pmid": "35648369",
+    "abstract_preview": "Amyotrophic lateral sclerosis (ALS) is the most common motor neuron disease. At present, no definite ALS biomarkers are available. In this study, exosomes from the plasma of patients with ALS and healthy controls were extracted, and differentially expressed exosomal proteins were compared. Among the",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title directly states CORO1A (coronin-1a) is 'a potential diagnostic biomarker and therapeutic target' for ALS. Claim accurately extracts this."
+    }
+  },
+  {
+    "claim_id": "b8fabfe7-67bf-41ac-b335-a2da5e48747e",
+    "claim_type": "drug_target",
+    "predicate": "LOTUS is a promising therapeutic target for ALS.",
+    "confidence": 0.15,
+    "source_title": "Lateral olfactory tract usher substance (LOTUS), an endogenous Nogo receptor antagonist, ameliorates disease progression in amyotrophic lateral sclerosis model mice.",
+    "pmid": "38097540",
+    "abstract_preview": "Nogo-Nogo receptor 1 (NgR1) signaling is significantly implicated in neurodegeneration in amyotrophic lateral sclerosis (ALS). We previously showed that lateral olfactory tract usher substance (LOTUS) is an endogenous antagonist of NgR1 that prevents all myelin-associated inhibitors (MAIs), includin",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "overstated",
+      "notes": "Title says LOTUS ameliorates ALS disease progression. Claim calls it 'a promising therapeutic target' — LOTUS is actually an endogenous NgR1 antagonist (a therapeutic molecule), not a 'target'. Slightly mischaracterized."
+    }
+  },
+  {
+    "claim_id": "33a836bf-96da-47d7-9258-7fcbdf335915",
+    "claim_type": "drug_target",
+    "predicate": "Delandistrogene moxeparvovec is a gene transfer therapy designed for targeted expression of SRP-9001 dystrophin protein.",
+    "confidence": 0.15,
+    "source_title": "Expression of SRP-9001 dystrophin and stabilization of motor function up to 2 years post-treatment with delandistrogene moxeparvovec gene therapy in individuals with Duchenne muscular dystrophy.",
+    "pmid": "37497476",
+    "abstract_preview": "<b>Introduction:</b> Delandistrogene moxeparvovec (SRP-9001) is an investigational gene transfer therapy designed for targeted expression of SRP-9001 dystrophin protein, a shortened dystrophin retaining key functional domains of the wild-type protein. <b>Methods:</b> This Phase 2, double-blind, two-",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "no",
+      "suggested_type": "drug_efficacy",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "Abstract verbatim: 'Delandistrogene moxeparvovec (SRP-9001) is an investigational gene transfer therapy designed for targeted expression of SRP-9001 dystrophin protein.' Claim well-supported but 'drug_target' is wrong — describes a drug/therapy, not a drug target."
+    }
+  },
+  {
+    "claim_id": "1e6baaa5-7e50-4629-b3ee-5d5bdbbe7664",
+    "claim_type": "drug_target",
+    "predicate": "Adeno-associated viral vectors (AAV) can be used for gene delivery in iPSCs, but optimization of viral vector serotype, viral concentration, and transduction timing is required for efficient transduction.",
+    "confidence": 0.15,
+    "source_title": "The Potential of Induced Pluripotent Stem Cells to Test Gene Therapy Approaches for Neuromuscular and Motor Neuron Disorders.",
+    "pmid": "33937264",
+    "abstract_preview": "The reprogramming of somatic cells into induced pluripotent stem cells (iPSCs) represents a major advance for the development of human disease models. The emerging of this technique fostered the concept of \"disease in a dish,\" which consists into the generation of patient-specific models <i>in vitro",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "no",
+      "suggested_type": "other",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "Abstract discusses iPSC models for gene therapy. AAV optimization claim plausible within review context but specific details not confirmable. Type 'drug_target' is wrong — this is a methodology observation."
+    }
+  },
+  {
+    "claim_id": "30cba7d0-dec8-892d-0bf3-46e753246b06",
+    "claim_type": "safety",
+    "predicate": "L-Citrulline at 15 g daily is safe and well tolerated in post-polio syndrome patients during 24-week treatment.",
+    "confidence": 0.15,
+    "source_title": "Treatment with L-Citrulline in patients with post-polio syndrome: A single center, randomized, double blind, placebo-controlled trial.",
+    "pmid": "34711479",
+    "abstract_preview": "This single-centered, randomized, double-blind, placebo-controlled study reports the results of L-Citrulline treatment for 24 weeks in patients with post-polio syndrome (PPS). Twenty-nine patients were randomized and assigned into receiving a treatment of 15 g L-Citrulline or placebo. The primary en",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract confirms 15g L-Citrulline for 24 weeks in PPS patients in an RCT. Safety/tolerability conclusion not visible in truncated abstract. Study context consistent but specific safety finding not confirmable."
+    }
+  },
+  {
+    "claim_id": "b82a18f9-a11e-92fc-8998-f52e186e9529",
+    "claim_type": "safety",
+    "predicate": "Male patients with SMA receiving risdiplam demonstrated sufficient sperm production to achieve pregnancy.",
+    "confidence": 0.15,
+    "source_title": "Summary of Research: Fertility Outcomes in Risdiplam-Treated Male Patients with Spinal Muscular Atrophy: A Multicenter Case Series.",
+    "pmid": "41085915",
+    "abstract_preview": "This Summary of Research summarizes a previously published original article, \"Fertility Outcomes in Risdiplam-Treated Male Patients with Spinal Muscular Atrophy: A Multicenter Case Series.\" Risdiplam (EVRYSDI<sup>®</sup>) is a medication approved for the treatment of spinal muscular atrophy (SMA), a",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title directly addresses fertility outcomes in risdiplam-treated male SMA patients. Specific claim about pregnancy achievement is a reasonable inference but not confirmed in truncated abstract."
+    }
+  },
+  {
+    "claim_id": "b937a3aa-9123-618e-276a-d29e4d9e2310",
+    "claim_type": "safety",
+    "predicate": "Hepatotoxicity is a known risk associated with onasemnogene abeparvovec that can be mitigated with prophylactic prednisolone.",
+    "confidence": 0.15,
+    "source_title": "Onasemnogene Abeparvovec: A Review in Spinal Muscular Atrophy.",
+    "pmid": "35960489",
+    "abstract_preview": "Onasemnogene abeparvovec (Zolgensma<sup>®</sup>) is a gene therapy approved for the treatment of spinal muscular atrophy (SMA). Administered as a one-time intravenous infusion, onasemnogene abeparvovec uses the adeno-associated virus vector to deliver a functional copy of the human survival motor ne",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Well-established clinical knowledge. Hepatotoxicity is a known risk of Zolgensma and prophylactic corticosteroids are standard practice. Well-supported."
+    }
+  },
+  {
+    "claim_id": "edf71a70-0aaa-4b28-9457-05ce034ce540",
+    "claim_type": "safety",
+    "predicate": "Tofersen demonstrates no serious adverse events in SOD1-ALS patients receiving monthly intrathecal administration.",
+    "confidence": 0.15,
+    "source_title": "Treating SOD1-ALS with tofersen results in nonprogressive chronic ALS-a case series from Iceland.",
+    "pmid": "41670738",
+    "abstract_preview": "Amyotrophic lateral sclerosis (ALS) is a progressive neurodegenerative disorder. We describe four patients with hereditary ALS caused by the p.Gly94Ser SOD1 mutation who were treated monthly with the intrathecal antisense oligonucleotide tofersen in a clinical setting at Landspitali University Hospi",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "overstated",
+      "notes": "Abstract describes 4 SOD1-ALS patients treated monthly with tofersen. Claim of 'no serious adverse events' not verifiable from truncated abstract. Small case series (n=4) — blanket safety claim potentially overstated."
+    }
+  },
+  {
+    "claim_id": "00f71af1-2d63-32de-7ac0-96858f361755",
+    "claim_type": "safety",
+    "predicate": "The safety profile of OAV101 IT in treatment-experienced SMA patients is consistent with its safety profile in treatment-naïve patients.",
+    "confidence": 0.15,
+    "source_title": "Intrathecal onasemnogene abeparvovec for treatment-experienced patients with spinal muscular atrophy: a phase 3b, open-label trial.",
+    "pmid": "41360995",
+    "abstract_preview": "Intrathecal onasemnogene abeparvovec (OAV101 IT) may enable a one-time gene transfer therapy, addressing an unmet need across the broader spinal muscular atrophy (SMA) population. STRENGTH ( NCT05386680 ) was a 52-week, phase 3b, single-arm, open-label, multicenter study evaluating OAV101 IT in part",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract describes STRENGTH trial evaluating OAV101 IT in treatment-experienced SMA patients. Safety profile comparison not confirmable from truncated abstract but study context is consistent."
+    }
+  },
+  {
+    "claim_id": "ac1c82c2-249a-4080-bbca-e06fbaf26e9c",
+    "claim_type": "splicing_event",
+    "predicate": "Reduced ribosome availability impairs the translation of specific transcripts during neuroepithelial development.",
+    "confidence": 0.15,
+    "source_title": "A programmed decline in ribosome levels governs human early neurodevelopment.",
+    "pmid": "40760247",
+    "abstract_preview": "Many neurodevelopmental defects are linked to genes involved in housekeeping functions, such as those encoding ribosome biogenesis factors. How reductions in ribosome biogenesis can result in tissue- and developmental-specific defects remains unclear. Here we describe variants in the ribosome biogen",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "no",
+      "suggested_type": "gene_expression",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "Abstract discusses ribosome biogenesis reductions causing tissue-specific neurodevelopmental defects. Claim consistent with paper's theme. But type 'splicing_event' is wrong — this is about ribosome levels and translation, not splicing."
+    }
+  },
+  {
+    "claim_id": "745e4b19-8206-2b4e-510a-7b6157137268",
+    "claim_type": "splicing_event",
+    "predicate": "Risdiplam functions as an SMN2 pre-mRNA splicing modifier.",
+    "confidence": 0.15,
+    "source_title": "Risdiplam: A Review in Spinal Muscular Atrophy.",
+    "pmid": "35284988",
+    "abstract_preview": "Risdiplam (Evrysdi<sup>®</sup>) is the first oral drug developed to treat spinal muscular atrophy (SMA) and is approved in multiple countries worldwide. It is approved for the treatment of SMA in patients aged ≥ 2 months in the USA and the EU, with this approval further specified in the EU for the t",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Well-established. Risdiplam is an SMN2 pre-mRNA splicing modifier — this is its mechanism of action. Well-supported."
+    }
+  },
+  {
+    "claim_id": "e2b025c0-2bec-7818-a782-c74d034b015f",
+    "claim_type": "splicing_event",
+    "predicate": "SMN2 transcripts are often truncated because the spliceosome is unable to efficiently recognize exon 7.",
+    "confidence": 0.15,
+    "source_title": "Heat increases full-length SMN splicing: promise for splice-augmenting therapies for SMA.",
+    "pmid": "35088120",
+    "abstract_preview": "Spinal muscular atrophy (SMA) is a debilitating neurodegenerative pediatric disease characterized by low levels of the survival motor protein (SMN). Humans have two SMN genes that produce identical SMN proteins, but they differ at a key nucleotide in exon 7 that induces differential mRNA splicing. S",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "overstated",
+      "notes": "Abstract says SMN genes differ at a key nucleotide in exon 7 inducing differential splicing. Claim says 'spliceosome is unable to efficiently recognize exon 7' — oversimplification. The actual mechanism involves a C-to-T transition weakening an exonic splicing enhancer."
+    }
+  },
+  {
+    "claim_id": "594185bc-8a5e-4e15-b5b3-3753a423d876",
+    "claim_type": "splicing_event",
+    "predicate": "TNF-α induces epigenetic silencing of SM22α transcription via EZH2-mediated H3K27 methylation at the SM22α promoter.",
+    "confidence": 0.15,
+    "source_title": "CKII-SIRT1-SM22α loop evokes a self-limited inflammatory response in vascular smooth muscle cells.",
+    "pmid": "28419207",
+    "abstract_preview": "Sirtuin 1 (SIRT1) inhibits nuclear factor kappa B (NF-κB) activity in response to the inflammatory cytokine tumour necrosis factor alpha (TNF-α). Smooth muscle (SM) 22α is a phosphorylation-regulated suppressor of IKK-IκBα-NF-κB signalling cascades in vascular smooth muscle cells (VSMCs). Sm22α knoc",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "no",
+      "suggested_type": "gene_expression",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "Abstract discusses TNF-alpha, SIRT1, SM22alpha in VSMCs. EZH2-mediated H3K27 methylation claim plausible but not confirmable from truncated abstract. Type 'splicing_event' is wrong — this describes epigenetic silencing via histone methylation."
+    }
+  },
+  {
+    "claim_id": "18c9ec26-54c1-414f-9ca4-ac9efa24abc3",
+    "claim_type": "splicing_event",
+    "predicate": "Valproic acid restores correct splicing of SMN2 pre-messenger RNA.",
+    "confidence": 0.85,
+    "source_title": "Multiple therapeutic effects of valproic acid in spinal muscular atrophy model mice.",
+    "pmid": "18649067",
+    "abstract_preview": "Spinal muscular atrophy (SMA) is a progressive disease involving the degeneration of motor neurons with no currently available treatment. While valproic acid (VPA) is a potential treatment for SMA, its therapeutic mechanisms are still controversial. In this study, we investigated the mechanisms of a",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "overconfident",
+      "error_category": "overstated",
+      "notes": "Abstract explicitly says VPA's 'therapeutic mechanisms are still controversial'. Claim states VPA 'restores correct splicing' as definitive fact. Confidence 0.85 too high for a controversial mechanism."
+    }
+  },
+  {
+    "claim_id": "e69c8af7-19ca-470a-a584-961cf07e019c",
+    "claim_type": "survival",
+    "predicate": "SMA mice transgenic for α-COP have significantly extended survival compared to non-transgenic littermates.",
+    "confidence": 0.95,
+    "source_title": "Interaction between alpha-COP and SMN ameliorates disease phenotype in a mouse model of spinal muscular atrophy.",
+    "pmid": "31060774",
+    "abstract_preview": "We report that expression of the α-COP protein rescues disease phenotype in a severe mouse model of Spinal Muscular Atrophy (SMA). Lentiviral particles expressing α-COP were injected directly into the testes of genetically pure mouse strain of interest resulting in infection of the spermatagonial st",
+    "human_judgment": {
+      "factually_correct": "yes",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Abstract directly states: 'expression of alpha-COP protein rescues disease phenotype in a severe mouse model of SMA.' Extended survival strongly implied by disease rescue. Well-supported."
+    }
+  },
+  {
+    "claim_id": "a69f4cb9-294c-429f-94c9-3e235ee3813f",
+    "claim_type": "survival",
+    "predicate": "Pyruvate treatment prolongs average lifespan in G93A SOD1 transgenic mice by 12.3 days (10.5%).",
+    "confidence": 0.95,
+    "source_title": "Pyruvate slows disease progression in a G93A SOD1 mutant transgenic mouse model.",
+    "pmid": "17174029",
+    "abstract_preview": "Amyotrophic lateral sclerosis (ALS) is a progressive neurodegenerative disease caused by selective motor neuron death, and currently no effective treatment is available for ALS. In this study, we investigated the neuroprotective effects of pyruvate, which acts as an anti-oxidant and as an energy sou",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "no",
+      "confidence_assessment": "overconfident",
+      "error_category": "none",
+      "notes": "Title says pyruvate 'slows disease progression' in G93A SOD1 mice. General finding supported. Specific numbers (12.3 days, 10.5%) not verifiable from truncated abstract. Confidence 0.95 high for precise numbers from a potentially small study."
+    }
+  },
+  {
+    "claim_id": "d76de138-5eb0-4eba-b46b-5abd98590d13",
+    "claim_type": "survival",
+    "predicate": "New therapeutic drugs for SMA have substantially prolonged life expectancy in patients with the disease.",
+    "confidence": 0.15,
+    "source_title": "New Therapeutics Options for Pediatric Neuromuscular Disorders.",
+    "pmid": "33330280",
+    "abstract_preview": "Neuromuscular disorders (NMDs) of Childhood onset are a genetically heterogeneous group of diseases affecting the anterior horn cell, the peripheral nerve, the neuromuscular junction, or the muscle. For many decades, treatment of NMDs has been exclusively symptomatic. But this has changed fundamenta",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "overstated",
+      "notes": "Abstract discusses new therapeutics for pediatric NMDs. Claim about 'substantially prolonged life expectancy' is a strong statement not directly made in the truncated abstract, which says treatment has changed fundamentally."
+    }
+  },
+  {
+    "claim_id": "8f3e1fec-b98e-4ec7-bee2-9c1e34aee85e",
+    "claim_type": "survival",
+    "predicate": "TCF3-TRIB2-NRF2 axis co-expression is associated with poorer overall survival in hepatoblastoma.",
+    "confidence": 0.15,
+    "source_title": "TCF3 activates super-enhancer-driven TRIB2 overexpression to suppress ferroptosis and promote hepatoblastoma proliferation.",
+    "pmid": "41462308",
+    "abstract_preview": "Hepatoblastoma (HB) is the most common pediatric liver malignancy with an increasing incidence. However, the functional roles of 3D chromatin organization, epigenetic regulatory factors, and transcriptional reprogramming in HB pathogenesis remain poorly understood. ​Integrated multi-omics analyses o",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "no",
+      "suggested_type": "other",
+      "target_correct": "no",
+      "confidence_assessment": "correct",
+      "error_category": "wrong_type",
+      "notes": "Abstract discusses TCF3-TRIB2 in hepatoblastoma. NRF2 involvement not confirmable from truncated abstract. Type 'survival' in SMA platform context typically refers to neuromuscular disease — this is cancer survival, wrong domain."
+    }
+  },
+  {
+    "claim_id": "0dceb2c8-f80f-ebda-7939-9c771615ff5d",
+    "claim_type": "survival",
+    "predicate": "CCL5 knockdown improves lifespan in SMNΔ7 mice.",
+    "confidence": 0.15,
+    "source_title": "IL-1ra and CCL5, but not IL-10, are promising targets for treating SMA astrocyte-driven pathology.",
+    "pmid": "39673131",
+    "abstract_preview": "Spinal muscular atrophy (SMA) is a pediatric genetic disorder characterized by the loss of spinal cord motor neurons (MNs). Although the mechanisms underlying MN loss are not clear, current data suggest that glial cells contribute to disease pathology. We have previously found that SMA astrocytes dr",
+    "human_judgment": {
+      "factually_correct": "partial",
+      "type_correct": "yes",
+      "suggested_type": null,
+      "target_correct": "yes",
+      "confidence_assessment": "correct",
+      "error_category": "none",
+      "notes": "Title identifies CCL5 as promising target for treating SMA astrocyte-driven pathology. Specific survival improvement in SMND7 mice plausible but not confirmable from truncated abstract."
+    }
+  }
+]

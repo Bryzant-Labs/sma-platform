@@ -1,0 +1,90 @@
+============================================================
+DETAILED AUTO-VALIDATION REPORT
+============================================================
+
+FACTUAL ACCURACY
+----------------------------------------
+  Clearly correct (yes):    17/60  (28.3%)
+  Partially supported:      42/60  (70.0%)
+  Wrong/unsupported (no):     1/60  (1.7%)
+  Strict accuracy:          28.3%
+  Lenient accuracy (yes+partial): 98.3%
+
+TYPE CLASSIFICATION
+----------------------------------------
+  Correct type:   49/60  (81.7%)
+  Wrong type:     11/60  (18.3%)
+
+TARGET EXTRACTION
+----------------------------------------
+  Correct target: 24/60  (40.0%)
+  Wrong target:   36/60  (60.0%)
+
+CONFIDENCE CALIBRATION
+----------------------------------------
+  Well-calibrated:    54/60  (90.0%)
+  Overconfident:        6/60  (10.0%)
+
+ERROR DISTRIBUTION
+----------------------------------------
+  none                : 36  (60.0%)
+  overstated          : 13  (21.7%)
+  wrong_type          : 10  (16.7%)
+  hallucination       :  1  (1.7%)
+
+ACCURACY BY CLAIM TYPE
+----------------------------------------
+  biomarker             :  5 claims | yes=2 partial=3 no=0 | type_wrong=2
+  drug_efficacy         :  5 claims | yes=1 partial=3 no=1 | type_wrong=0
+  drug_target           :  5 claims | yes=3 partial=2 no=0 | type_wrong=2
+  gene_expression       :  5 claims | yes=0 partial=5 no=0 | type_wrong=0
+  motor_function        :  5 claims | yes=0 partial=5 no=0 | type_wrong=0
+  neuroprotection       :  5 claims | yes=2 partial=3 no=0 | type_wrong=3
+  other                 :  5 claims | yes=1 partial=4 no=0 | type_wrong=0
+  pathway_membership    :  5 claims | yes=2 partial=3 no=0 | type_wrong=0
+  protein_interaction   :  5 claims | yes=3 partial=2 no=0 | type_wrong=1
+  safety                :  5 claims | yes=1 partial=4 no=0 | type_wrong=0
+  splicing_event        :  5 claims | yes=1 partial=4 no=0 | type_wrong=2
+  survival              :  5 claims | yes=1 partial=4 no=0 | type_wrong=1
+
+SERIOUS ERRORS (hallucination / no)
+----------------------------------------
+  [drug_efficacy] Thiamet G (TMG), an OGA inhibitor, restores OGA activity and normalizes O-GlcNAc...
+    Source: Enhancing protein O-GlcNAcylation in down syndrome mice miti...
+    Error: hallucination — Major error: Thiamet G (TMG) is an OGA INHIBITOR, meaning it BLOCKS OGA activity to INCREASE O-GlcNA...
+
+OVERCONFIDENT CLAIMS (confidence > 0.8 with issues)
+----------------------------------------
+  [biomarker] conf=0.80 — Permittivity measurement of skeletal muscle from 10 kHz to 1 MHz can b...
+    Issue: Title mentions permittivity of healthy and diseased murine skeletal muscle. Abstract says 'important...
+
+  [gene_expression] conf=0.90 — Valproic acid elevates SMN protein levels through SMN2 promoter activa...
+    Issue: Abstract explicitly states VPA's 'therapeutic mechanisms are still controversial'. Claim states VPA ...
+
+  [motor_function] conf=0.95 — Affected paralysé mice (par/par) develop progressive generalized muscl...
+    Issue: Abstract confirms par/par mice have 'progressive generalized mu...' (truncated). PN16-18 death timep...
+
+  [protein_interaction] conf=0.90 — Stabilized ACTG1 binds to p53 and facilitates its nuclear translocatio...
+    Issue: Abstract discusses OTUD6A deubiquitinating ACTG1 in PD. Claim about stabilized ACTG1 binding p53 pla...
+
+  [splicing_event] conf=0.85 — Valproic acid restores correct splicing of SMN2 pre-messenger RNA....
+    Issue: Abstract explicitly says VPA's 'therapeutic mechanisms are still controversial'. Claim states VPA 'r...
+
+  [survival] conf=0.95 — Pyruvate treatment prolongs average lifespan in G93A SOD1 transgenic m...
+    Issue: Title says pyruvate 'slows disease progression' in G93A SOD1 mice. General finding supported. Specif...
+
+KEY FINDINGS
+============================================================
+1. Strict factual accuracy is LOW (28.3%) but this is largely
+   because most abstract previews are truncated, making full
+   verification impossible. Lenient accuracy is 98.3%.
+2. Only 1 outright hallucination detected (TMG/OGA mechanism).
+3. 13 claims (21.7%) are OVERSTATED — they go beyond what the
+   abstract actually says.
+4. 10 claims (16.7%) have WRONG TYPE classification.
+5. Target extraction is poor (40.0%) — many claims lack proper
+   SMA target linking.
+6. 7 claims are overconfident (11.7%) — high confidence scores
+   for findings that are controversial or unverifiable.
+7. Several non-SMA papers are included (hibernation, cancer,
+   fluoride toxicity) suggesting loose relevance filtering.
