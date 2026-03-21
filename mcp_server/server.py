@@ -1388,6 +1388,52 @@ async def get_repurposing_candidates(
 
 
 # ---------------------------------------------------------------------------
+# PMID Verification Tool
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+async def verify_pmid(pmid: str) -> str:
+    """Verify a PubMed ID (PMID) against the NCBI database.
+
+    Use this EVERY TIME a Codex/LLM research query returns a PMID.
+    LLMs hallucinate ~11% of PMIDs. This tool checks if the PMID exists
+    and returns the actual paper title.
+
+    Args:
+        pmid: The PubMed ID to verify (e.g., "21920940").
+    """
+    import re
+
+    pmid = re.sub(r"\D", "", pmid.strip())
+    if not pmid or len(pmid) < 7:
+        return f"Invalid PMID format: '{pmid}'. Must be 7-9 digits."
+
+    try:
+        url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={pmid}&retmode=json"
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url)
+            data = r.json()
+
+        result = data.get("result", {}).get(pmid, {})
+        title = result.get("title", "")
+        source = result.get("source", "")
+        pubdate = result.get("pubdate", "")
+
+        if not title or "cannot" in title.lower():
+            return f"PMID {pmid}: NOT FOUND — this PMID does not exist in PubMed. Likely HALLUCINATED."
+
+        return (
+            f"PMID {pmid}: VERIFIED\n"
+            f"Title: {title}\n"
+            f"Journal: {source}\n"
+            f"Date: {pubdate}"
+        )
+    except Exception as e:
+        return f"PMID {pmid}: VERIFICATION ERROR — {e}"
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
