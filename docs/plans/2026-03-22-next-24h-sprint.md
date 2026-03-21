@@ -235,9 +235,172 @@ At the end of this sprint:
 
 ---
 
+---
+
+## Heavy Compute Blocks (20 GPU-intensive sprints)
+
+### Block 15: Fasudil Docking Campaign (DiffDock v2.2)
+- 5 ROCK pathway compounds × 7 SMA targets = 35 dockings @ 20 poses each
+- Convert all SMILES to SDF via RDKit before submission
+- Compare: Fasudil vs Y-27632 vs Ripasudil binding profiles
+- Validate: does Fasudil bind ROCK2 with higher confidence than random compounds?
+- GPU cost: ~$0 (NIM credits) | Compute: ~1h
+
+### Block 16: Large-Scale Virtual Screening (1000+ compounds)
+- Screen ChEMBL compounds with BBB penetration + CNS-MPO against ROCK2
+- Pipeline: RDKit filter → SDF generation → DiffDock v2.2 → rank by confidence
+- Compare with ML proxy predictions (already have 4,116 training dockings)
+- Target: identify 10 novel ROCK2 binders beyond Fasudil
+- GPU cost: ~$0-10 NIM | Compute: ~4h
+
+### Block 17: ESM-2 Embeddings for ALL 60 Targets
+- Current: 15 proteins embedded. Need all 60.
+- Run ESM-2 650M on Vast.ai A100 for new targets (PFN1, CFL2, ROCK2, RIPK1, SARM1 + 40 others)
+- Build full 60×60 similarity matrix
+- Identify structural clusters (actin cluster? apoptosis cluster? splicing cluster?)
+- GPU cost: ~$0.10 | Compute: 5 min on A100
+
+### Block 18: Boltz-2 Structure Prediction — Actin Pathway
+- Predict: PFN1, CFL2, ROCK2, LIMK1, LIMK2 protein structures
+- Compare: AlphaFold vs Boltz-2 confidence scores
+- Identify: binding pockets for drug design
+- Model: SMN-PFN1 interaction complex (if Boltz-2 supports complexes)
+- GPU cost: ~$0.50 on Vast.ai A100 | Compute: 15 min
+
+### Block 19: OpenMM Molecular Dynamics — Fasudil/ROCK2
+- Simulate: Fasudil bound to ROCK2 active site (100ns MD)
+- Measure: binding stability, key interactions, conformational changes
+- Compare: with Y-27632 binding for selectivity insight
+- Requires: CUDA OpenMM on A100 (conda env needed)
+- GPU cost: ~$45 for 100ns on A100 | Compute: ~12h
+
+### Block 20: SpliceAI v2 — Full SMN2 Locus Scan
+- Current: 252 variants scored in exon 7 region
+- Expand: scan entire SMN2 gene (all introns + exons)
+- Identify: deep intronic variants that affect splicing
+- Cross-reference: with known pathogenic variants from ClinVar
+- GPU cost: ~$0.20 | Compute: 30 min
+
+### Block 21: GenMol De Novo Molecule Generation — ROCK2 Focused
+- Generate: 1000 novel molecules optimized for ROCK2 binding
+- Scaffold: start from Fasudil structure, optimize for BBB + selectivity
+- Filter: Lipinski, BBB, CNS-MPO, PAINS
+- Dock top 100 with DiffDock for validation
+- GPU cost: ~$0 NIM | Compute: 2h
+
+### Block 22: FAISS Vector Index Rebuild
+- Current: 30K claims + 6K abstracts indexed
+- Rebuild with 31K claims + expanded corpus
+- Add: hypothesis text to index (1,271 entries)
+- Add: research direction descriptions (22 entries)
+- Improves: semantic search quality for all queries
+- GPU cost: $0 (CPU) | Compute: 5 min
+
+### Block 23: RNA Structure Prediction — SMN2 Pre-mRNA
+- When RNAPro NIM comes online:
+  - Predict 3D structure of SMN2 intron 7 (ISS-N1 region)
+  - Model nusinersen binding geometry
+  - Identify alternative ASO binding sites
+  - Predict structural effect of C6T change on exon 7 folding
+- GPU cost: ~$0 NIM | Compute: depends on sequence length
+
+### Block 24: Contact Map Prediction — Full SMA Interactome
+- Run ESM-2 contact prediction for all known SMA protein interactions
+- Currently: 5 contact maps (UBA1-SMN1 strongest at 0.072)
+- Expand to all 60 targets × 60 targets = 3,600 potential pairs
+- Filter for high-confidence contacts (>0.05)
+- Build interaction heatmap
+- GPU cost: ~$1 on A100 | Compute: 2h
+
+### Block 25: Fine-Tune ESM-2 on SMA Proteins
+- Create SMA-specific protein dataset: 60 target sequences + homologs
+- Fine-tune ESM-2 650M with masked language modeling
+- Test: does SMA-specific fine-tuning improve variant effect prediction?
+- BioNeMo Recipes for training configuration
+- GPU cost: ~$50-100 on Vast.ai A100 | Compute: 4-8h
+
+### Block 26: Cas-OFFinder Expansion — All New CRISPR Guides
+- Current: 19 guides, 2,631 off-targets
+- Design new guides for: CFL2 promoter, ROCK2 active site, RIPK1 kinase domain
+- Run Cas-OFFinder on hg38 for each
+- Rank by specificity and therapeutic relevance
+- GPU cost: ~$0.10 | Compute: 20 min
+
+### Block 27: Multi-Target Docking Campaign
+- Dock Fasudil against ALL 60 targets (not just 7)
+- Identify unexpected binding partners
+- Previous discovery: 4-AP bound CORO1C (unexpected)
+- Could Fasudil bind targets beyond ROCK2?
+- GPU cost: ~$0 NIM | Compute: 3h for 60 dockings
+
+### Block 28: Protein Language Model Variant Scoring
+- Use ESM-2 to score all missense variants in SMN1/SMN2/PFN1/CFL2
+- Identify: which mutations are most destabilizing?
+- Compare with ClinVar pathogenicity annotations
+- Build: variant effect prediction for SMA modifier genes
+- GPU cost: ~$0.20 | Compute: 1h
+
+### Block 29: Billion-Molecule Pre-Screening
+- Use ML docking proxy (RandomForest, trained on 4,116 DiffDock results)
+- Screen: ZINC database subset (10M+ molecules)
+- Filter for BBB + drug-like + predicted ROCK2 binding
+- Top 1000 → full DiffDock validation
+- GPU cost: $0 (ML proxy on CPU) | Compute: 4h for 10M
+
+### Block 30: AlphaFold Multimer — SMA Protein Complexes
+- Predict: SMN-Gemin2 complex, SMN-PFN1 complex, PLS3-actin bundle
+- Use AlphaFold Multimer or OpenFold3 when available
+- Map: drug binding sites at protein-protein interfaces
+- This is where designed protein binders (Proteina-Complexa) would go
+- GPU cost: ~$5-20 on A100 | Compute: 2-4h per complex
+
+### Block 31: Digital Twin Temporal Simulation
+- Upgrade current digital twin: add actin pathway dynamics
+- Model: SMN restoration → how fast do actin rods clear?
+- Model: Fasudil treatment → timeline of p-cofilin reduction
+- Model: combination (Risdiplam + Fasudil) → predicted synergy curve
+- GPU cost: $0 (mathematical model) | Compute: minutes
+
+### Block 32: Nextflow Pipeline for Reproducible GPU Jobs
+- Build: Nextflow pipeline orchestrating all GPU jobs
+- Stages: SpliceAI → ESM-2 → DiffDock → Boltz-2 → Analysis
+- Containerized: use sma-gpu-toolkit Docker image
+- Reproducible: same input → same output, every time
+- Deploy to Vast.ai via dstack
+- GPU cost: $0 (pipeline setup) | Compute: depends on jobs
+
+### Block 33: GEO Dataset Reprocessing Pipeline
+- Build STAR + featureCounts pipeline for raw SMA RNA-seq
+- Process: GSE87281 (n=101), GSE152717 (n=9), GSE104394 (n=6)
+- Output: gene-level count matrices with gene symbols
+- Enable: our 6 GSEA gene sets to run on real data
+- GPU cost: ~$5-10 on Vast.ai | Compute: 4-8h per dataset
+
+### Block 34: Spatial Transcriptomics Simulation
+- No real Slide-seq/MERFISH SMA data available yet
+- Build: simulated spatial dataset based on our spinal cord zone model
+- 6 zones × 60 targets × SMA vs control expression
+- Test: can our platform detect zone-specific drug penetration patterns?
+- GPU cost: $0 (simulation) | Compute: 1h
+
+---
+
+## Total Estimated GPU Budget for All 34 Blocks
+
+| Category | Blocks | Est. Cost |
+|----------|--------|-----------|
+| NIM API (DiffDock, GenMol) | 15,16,21,23,27 | $0-10 (credits) |
+| Vast.ai A100 (ESM-2, Boltz-2, SpliceAI) | 17,18,20,24,26,28 | $5-10 |
+| Vast.ai A100 (MD, fine-tuning, RNA-seq) | 19,25,33 | $100-160 |
+| CPU only | 22,29,31,32,34 | $0 |
+| AlphaFold Multimer | 30 | $5-20 |
+| **TOTAL** | **34 blocks** | **$110-200** |
+
+---
+
 ## Anti-Patterns
 - NO Gemini for factual claims (use ONLY for broad synthesis)
-- NO costs/pricing in any document
+- NO costs/pricing in any document sent to researchers
 - NO celebrating before verification
 - NO "first-in-field" claims without prior art check
 - NO pushing to GitHub without history review
