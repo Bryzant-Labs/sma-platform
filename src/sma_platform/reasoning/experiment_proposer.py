@@ -432,12 +432,12 @@ async def propose_experiment(hypothesis_id: str) -> dict[str, Any]:
     platform_sources = []
     if target_symbol:
         sources = await fetch(
-            """SELECT DISTINCT s.title, s.external_id as pmid, s.publication_date
+            """SELECT DISTINCT s.title, s.external_id as pmid, s.pub_date
                FROM sources s
                INNER JOIN evidence e ON e.source_id = s.id
                INNER JOIN claims c ON e.claim_id = c.id
                WHERE c.subject_id = $1
-               ORDER BY s.publication_date DESC NULLS LAST
+               ORDER BY s.pub_date DESC NULLS LAST
                LIMIT 5""",
             target_id,
         ) if target_id else []
