@@ -31,21 +31,34 @@ async def list_scores(
         le=1.0,
         description="Filter: only return targets with composite_score >= this value.",
     ),
+    mode: str = Query(
+        default="discovery",
+        description="Scoring mode: 'discovery' (novelty-weighted) or 'clinical' (evidence-weighted).",
+    ),
 ):
     """Score and rank all targets by composite prioritization score.
+
+    Supports two scoring modes:
+    - **discovery** (default): Boosts novel/emerging targets. Good for finding new leads.
+    - **clinical**: Weights established evidence. Good for prioritizing validated targets.
 
     Returns cached scores if available (persist across restarts).
     Use POST /scores/refresh to recompute.
     """
-    results = await get_cached_scores()
-    if results is None:
-        results = await score_all_targets()
+    if mode == "clinical":
+        # Clinical mode always computes fresh (no cache for alternate weights)
+        results = await score_all_targets(mode="clinical")
+    else:
+        results = await get_cached_scores()
+        if results is None:
+            results = await score_all_targets(mode="discovery")
 
     if min_score is not None:
         results = [r for r in results if r["composite_score"] >= min_score]
 
     return {
         "count": len(results),
+        "mode": mode,
         "targets": results,
     }
 

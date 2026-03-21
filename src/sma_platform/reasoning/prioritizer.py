@@ -31,16 +31,31 @@ logger = logging.getLogger(__name__)
 # Weights (must sum to 1.0)
 # ---------------------------------------------------------------------------
 
-WEIGHTS: dict[str, float] = {
-    "evidence_volume": 0.08,         # reduced — being well-known shouldn't dominate
-    "evidence_quality": 0.18,        # high-quality evidence matters
-    "biological_coherence": 0.15,    # diverse evidence types = strong target
-    "source_independence": 0.10,     # reduced — fewer papers ≠ less important
-    "interventionability": 0.15,     # can we actually drug this?
-    "translational_readiness": 0.10, # existing drugs/trials
-    "network_centrality": 0.09,     # pathway connectivity
-    "novelty_discovery": 0.15,       # NEW — emerging/unconventional targets boosted
+SCORING_MODES: dict[str, dict[str, float]] = {
+    "discovery": {
+        "evidence_volume": 0.08,         # reduced — being well-known shouldn't dominate
+        "evidence_quality": 0.18,        # high-quality evidence matters
+        "biological_coherence": 0.15,    # diverse evidence types = strong target
+        "source_independence": 0.10,     # reduced — fewer papers ≠ less important
+        "interventionability": 0.15,     # can we actually drug this?
+        "translational_readiness": 0.10, # existing drugs/trials
+        "network_centrality": 0.09,     # pathway connectivity
+        "novelty_discovery": 0.15,       # emerging/unconventional targets boosted
+    },
+    "clinical": {
+        "evidence_volume": 0.20,         # strong evidence base matters most
+        "evidence_quality": 0.20,        # high-quality evidence matters
+        "biological_coherence": 0.12,    # diverse evidence types
+        "source_independence": 0.18,     # independent replication = trust
+        "interventionability": 0.12,     # can we drug this?
+        "translational_readiness": 0.10, # existing drugs/trials
+        "network_centrality": 0.03,     # less important for clinical ranking
+        "novelty_discovery": 0.05,       # novelty is irrelevant for clinical priority
+    },
 }
+
+# Default mode — discovery is the original behavior
+WEIGHTS: dict[str, float] = SCORING_MODES["discovery"]
 
 # The 12 valid claim_type values defined in the schema.
 _TOTAL_CLAIM_TYPES = 12
@@ -350,8 +365,13 @@ async def score_target(target_id: str) -> dict[str, Any]:
     }
 
 
-async def score_all_targets() -> list[dict[str, Any]]:
-    """Score all targets and return sorted by composite_score descending."""
+async def score_all_targets(mode: str = "discovery") -> list[dict[str, Any]]:
+    """Score all targets and return sorted by composite_score descending.
+
+    Args:
+        mode: "discovery" (default, novelty-weighted) or "clinical" (evidence-weighted).
+    """
+    weights = SCORING_MODES.get(mode, SCORING_MODES["discovery"])
     targets = await fetch("SELECT id FROM targets ORDER BY symbol")
     results: list[dict[str, Any]] = []
 
@@ -389,7 +409,7 @@ async def score_all_targets() -> list[dict[str, Any]]:
             "novelty_discovery": novelty,
         }
 
-        composite = _clamp(sum(WEIGHTS[d] * dimensions[d] for d in WEIGHTS))
+        composite = _clamp(sum(weights[d] * dimensions[d] for d in weights))
 
         claim_count_val = await fetchval(
             "SELECT COUNT(*) FROM claims WHERE subject_id = $1",
