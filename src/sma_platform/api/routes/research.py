@@ -256,6 +256,27 @@ RESEARCH_DIRECTIONS = [
         "researcher": "Novel — microbiome-neuroscience intersection",
         "collaborators": [],
     },
+    {
+        "id": "necroptosis-sma",
+        "title": "Necroptosis & Axon Degeneration in SMA",
+        "category": "querdenker_sprint",
+        "description": (
+            "Necroptosis (RIPK1/RIPK3/MLKL pathway) is activated in SMA motor neurons, Schwann cells, "
+            "and skeletal muscle. Martinez-Espana (SMA Europe 2026) showed 4-AP prevents motoneuron "
+            "deafferentation via necroptotic mechanisms. SARM1 (axon degeneration master regulator) "
+            "may cooperate with necroptosis. Necrostatin-1 shows mixed results in SMA mice. "
+            "RIPK1 inhibitors in Phase 2 for Alzheimer's. SARM1 inhibitors in trials for neuropathy. "
+            "Combination of necroptosis inhibitor + SMN therapy could address downstream damage."
+        ),
+        "connected_targets": ["RIPK1", "SARM1", "CASP3", "TP53", "BCL2"],
+        "key_concepts": [
+            "necroptosis", "RIPK1", "RIPK3", "MLKL", "SARM1",
+            "necrostatin-1", "axon degeneration", "NAD+ depletion",
+            "4-aminopyridine", "deafferentation", "combination therapy",
+        ],
+        "researcher": "Laura Martinez-Espana (Lleida, Spain)",
+        "collaborators": [],
+    },
 ]
 
 DIRECTION_MAP = {d["id"]: d for d in RESEARCH_DIRECTIONS}
