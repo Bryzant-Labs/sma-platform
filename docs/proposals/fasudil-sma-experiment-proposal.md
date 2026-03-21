@@ -19,7 +19,7 @@ CFL2 hyperphosphorylation → actin-cofilin rod formation → TDP-43 aggregation
 
 | Evidence | Source | Type |
 |----------|--------|------|
-| SMN interacts directly with PFN1 in motor neurons | PMID 26401655 | Co-IP, MN validated |
+| SMN interacts directly with PFN1 in motor neurons | PMID 21920940 | Co-IP, MN validated |
 | ROCK1/ROCK2 elevated in SMNΔ7 mouse muscle | Published studies | Animal model |
 | Phospho-cofilin elevated in SMA models + patient fibroblasts | Published studies | Human + animal |
 | CFL2 2.9x upregulated in SMA iPSC-MN | GSE69175 | Transcriptomic |
@@ -123,7 +123,7 @@ CFL2 hyperphosphorylation → actin-cofilin rod formation → TDP-43 aggregation
 
 ## References
 
-- PMID 26401655 — SMN-PFN1 interaction in motor neurons
+- PMID 21920940 — SMN-PFN1 interaction in motor neurons
 - PMID 33986363 — Actin-cofilin rods in SMA (Walter 2021)
 - NCT03792490 — Fasudil Phase 2 in ALS
 - GSE69175 — CFL2 2.9x up in SMA iPSC-MN
