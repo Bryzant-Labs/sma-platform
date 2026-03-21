@@ -154,6 +154,87 @@ At the end of this sprint:
 - [ ] All findings verified (0% PMID hallucination)
 - [ ] Git pushed to GitHub (clean history)
 
+---
+
+## Extended Blocks (10 additional research sprints — Prof Level)
+
+### Block 5: SMA Patient Stratification Engine
+- Build computational model: SMN2 copy number + modifier genes → predicted severity
+- Input: SMN2 copies (2-4), PLS3 status, NCALD, NAIP, age of onset
+- Output: predicted trajectory, recommended monitoring interval
+- Cross-validate against published natural history cohorts (Mercuri, De Vivo)
+- Deliverable: stratification algorithm with calibration metrics
+
+### Block 6: Drug Combination Optimizer
+- Systematic scoring of all 21 drugs × 21 drugs for combination potential
+- Criteria: mechanism complementarity, BBB penetration, safety overlap, clinical feasibility
+- Special focus: Risdiplam + Fasudil, Nusinersen + 4-AP, Gene therapy + ROCK inhibitor
+- Model drug-drug interactions from ChEMBL bioactivity overlap
+- Deliverable: ranked combination table with mechanistic rationale per pair
+
+### Block 7: Automated Literature Monitor
+- Build daily alert system: new PubMed papers matching our 60 targets
+- Auto-classify: which target, which claim type, SMA relevance score
+- Auto-ingest papers above threshold
+- Weekly digest email/notification for key findings
+- Deliverable: automated pipeline replacing manual ingestion
+
+### Block 8: Wet Lab Experiment Registry
+- Create structured database of proposed experiments from our platform
+- Track: hypothesis → proposed experiment → status → result → conclusion
+- Link back to platform hypotheses and claims
+- Fasudil iPSC-MN is experiment #1, BDNF synergy is #2
+- Deliverable: experiment tracking system with Go/No-Go gates
+
+### Block 9: Patient-Facing Evidence Summaries
+- Write lay-language summaries of top 10 targets
+- Explain: what this gene does, why it matters for SMA, what therapies exist
+- Tone: accurate but accessible to SMA families
+- Multilingual: English + German (for SMA Europe community)
+- Deliverable: patient-facing section on sma-research.info
+
+### Block 10: Bayesian Model Upgrade
+- Current: Grade A (89.8%) calibrated against 227 drug outcomes
+- Upgrade: incorporate new drug outcomes from 2025-2026 clinical trials
+- Add: time-to-event modeling (not just success/failure)
+- Add: uncertainty intervals on every prediction
+- Deliverable: Grade A+ model with temporal predictions
+
+### Block 11: Protein Structure Analysis Pipeline
+- When OpenFold3/RNAPro come back online:
+  - Predict SMN2 pre-mRNA 3D structure (ISS-N1 site)
+  - Predict SMN-Gemin complex structure
+  - Predict PFN1-actin interaction structure
+  - Dock Fasudil into ROCK2 crystal structure (PDB available)
+- Deliverable: structural biology section on platform
+
+### Block 12: HuggingFace Dataset V2
+- Update SMAResearch/sma-evidence-graph with sprint data
+- Add: new targets (PFN1, CFL2, ROCK2, RIPK1, SARM1)
+- Add: new hypotheses (Fasudil, Translational Desert, 4-AP validation)
+- Add: transport vulnerability model results
+- Add: GSEA gene sets as separate dataset
+- Deliverable: published HuggingFace dataset update
+
+### Block 13: SMA News Aggregator
+- Build RSS/API aggregator for:
+  - PubMed new SMA papers (daily)
+  - ClinicalTrials.gov new/updated SMA trials (weekly)
+  - bioRxiv/medRxiv SMA preprints (daily)
+  - FDA/EMA regulatory decisions on SMA drugs (monthly)
+- Auto-post summaries to platform news section
+- Deliverable: always-current news feed
+
+### Block 14: Collaboration Network Map
+- Build visual network of SMA researchers and their connections
+- Data: co-authorship from our 6,325 sources
+- Show: who collaborates with whom, which labs work on which targets
+- Identify: potential collaboration partners for specific hypotheses
+- Special: map Simon's network (Mentis, Capogrosso, Pellizzoni, Wirth, Hallermann)
+- Deliverable: interactive collaboration graph on platform
+
+---
+
 ## Anti-Patterns
 - NO Gemini for factual claims (use ONLY for broad synthesis)
 - NO costs/pricing in any document
