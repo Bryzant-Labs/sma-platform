@@ -1748,10 +1748,24 @@
 
 <section class="section" id="comparative">
     <div class="section-header"><h2 class="section-title">Cross-Species Comparative</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="comparative-count"></span></div>
-    <p class="section-desc">Conservation mapping of SMA-relevant targets across 5 model organisms — axolotl, zebrafish, naked mole rat, C. elegans, Drosophila. Organisms with natural regeneration or motor neuron resilience reveal potential therapeutic pathways. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/comparative.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">Conservation mapping of SMA-relevant targets across model organisms. Click any species card for details, click any heatmap cell to see the ortholog. Organisms with natural regeneration or motor neuron resilience reveal therapeutic pathways. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/comparative.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source &rarr;</a></p>
     <div class="species-grid" id="species-grid"><div class="loading" style="grid-column:1/-1;text-align:center;padding:30px">Loading species data...</div></div>
-    <h3 style="font-size:14px;margin:24px 0 12px;font-weight:600">Conservation Heatmap</h3>
+    <div id="species-detail" style="display:none;margin:16px 0;background:var(--panel);border:1px solid var(--line);padding:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h3 id="species-detail-title" style="font-size:16px;margin:0"></h3>
+            <button id="species-detail-close" class="page-btn" style="padding:4px 12px;font-size:11px">Close</button>
+        </div>
+        <p id="species-detail-desc" style="font-size:12px;color:var(--text-secondary);margin-bottom:12px"></p>
+        <div class="table-wrap"><table><thead><tr>
+            <th>Human Gene</th><th>Ortholog</th><th>Conservation</th><th>Gene ID</th><th>Links</th>
+        </tr></thead>
+        <tbody id="species-detail-body"></tbody></table></div>
+    </div>
+    <h3 style="font-size:14px;margin:24px 0 12px;font-weight:600">Conservation Heatmap <span style="font-size:11px;color:var(--muted);font-weight:400">(click cells for details)</span></h3>
     <div class="table-wrap" id="heatmap-wrap"><div class="loading" style="padding:30px;text-align:center">Loading heatmap...</div></div>
+    <div id="ortholog-detail" style="display:none;margin:16px 0;background:var(--panel);border:1px solid var(--line);padding:16px">
+        <div id="ortholog-detail-content" style="font-size:12px;line-height:1.8"></div>
+    </div>
 </section>
 
 <section class="section" id="directions">
@@ -6011,19 +6025,65 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 if (!targetSpecies[sym]) targetSpecies[sym] = {};
                 targetSpecies[sym][sp] = data[i];
             }
-            // Species cards
+            // Species cards — CLICKABLE
             var grid = clearEl('species-grid');
             var speciesList = Object.keys(speciesCounts).sort(function(a,b) { return speciesCounts[b] - speciesCounts[a]; });
             for (var si = 0; si < speciesList.length; si++) {
                 var sp = speciesList[si];
                 var info = SPECIES_INFO[sp] || {common: sp, desc: ''};
                 var card = el('div', {className: 'species-card'});
+                card.style.cursor = 'pointer';
+                card.style.transition = 'border-color 0.2s';
                 card.appendChild(el('div', {className: 'species-card-name', text: info.common}));
                 card.appendChild(el('div', {className: 'species-card-common', text: sp}));
-                card.appendChild(el('div', {className: 'species-card-count', text: String(speciesCounts[sp])}));
+                card.appendChild(el('div', {className: 'species-card-count', text: String(speciesCounts[sp]) + ' orthologs'}));
                 card.appendChild(el('div', {style: 'font-size:11px;color:var(--text-secondary);margin-top:4px', text: info.desc}));
+                card.appendChild(el('div', {style: 'font-size:10px;color:var(--accent);margin-top:6px', text: 'Click for details \u2192'}));
+                (function(species, speciesInfo, allData) {
+                    card.addEventListener('click', function() {
+                        var detail = document.getElementById('species-detail');
+                        detail.style.display = 'block';
+                        document.getElementById('species-detail-title').textContent = speciesInfo.common + ' (' + species + ')';
+                        document.getElementById('species-detail-desc').textContent = speciesInfo.desc + ' \u2014 ' + speciesCounts[species] + ' conserved orthologs found for SMA targets.';
+                        var body = clearEl('species-detail-body');
+                        for (var k = 0; k < allData.length; k++) {
+                            if (allData[k].species !== species) continue;
+                            var o = allData[k];
+                            var row = document.createElement('tr');
+                            row.appendChild(td(o.human_symbol || '?', 'mono', 'font-weight:700'));
+                            row.appendChild(td(o.ortholog_symbol || '?', 'mono'));
+                            var score = o.conservation_score;
+                            var scoreCls = score >= 0.7 ? 'badge-green' : score >= 0.3 ? 'badge-amber' : 'badge-gray';
+                            row.appendChild(tdBadge(score != null ? (score * 100).toFixed(0) + '%' : '?', scoreCls));
+                            row.appendChild(td(o.ortholog_gene_id ? String(o.ortholog_gene_id) : '-', 'mono', 'font-size:11px'));
+                            var linkTd = document.createElement('td');
+                            if (o.ortholog_gene_id) {
+                                var ncbiLink = document.createElement('a');
+                                ncbiLink.textContent = 'NCBI';
+                                ncbiLink.href = 'https://www.ncbi.nlm.nih.gov/gene/' + o.ortholog_gene_id;
+                                ncbiLink.target = '_blank';
+                                ncbiLink.rel = 'noopener';
+                                ncbiLink.style.cssText = 'color:var(--accent);font-size:11px;text-decoration:none;margin-right:8px';
+                                linkTd.appendChild(ncbiLink);
+                            }
+                            var uniLink = document.createElement('a');
+                            uniLink.textContent = 'UniProt';
+                            uniLink.href = 'https://www.uniprot.org/uniprot/?query=' + encodeURIComponent(o.ortholog_symbol || o.human_symbol) + '+' + encodeURIComponent(species);
+                            uniLink.target = '_blank';
+                            uniLink.rel = 'noopener';
+                            uniLink.style.cssText = 'color:var(--accent);font-size:11px;text-decoration:none';
+                            linkTd.appendChild(uniLink);
+                            row.appendChild(linkTd);
+                            body.appendChild(row);
+                        }
+                        detail.scrollIntoView({behavior: 'smooth', block: 'start'});
+                    });
+                })(sp, info, data);
                 grid.appendChild(card);
             }
+            document.getElementById('species-detail-close').addEventListener('click', function() {
+                document.getElementById('species-detail').style.display = 'none';
+            });
             // Conservation heatmap
             var heatWrap = clearEl('heatmap-wrap');
             var table = el('table', {className: 'heatmap-table'});
@@ -6048,7 +6108,51 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                         var score = orth.conservation_score;
                         var cls = score >= 0.7 ? 'heatmap-yes' : score >= 0.3 ? 'heatmap-partial' : 'heatmap-no';
                         var cell = el('span', {className: 'heatmap-cell ' + cls, text: score != null ? (score * 100).toFixed(0) : '?'});
-                        cell.title = (orth.ortholog_symbol || '?') + ' (' + speciesList[sj] + ')';
+                        cell.title = 'Click: ' + (orth.ortholog_symbol || '?') + ' (' + speciesList[sj] + ')';
+                        cell.style.cursor = 'pointer';
+                        (function(orthData, humanSym, speciesName) {
+                            cell.addEventListener('click', function() {
+                                var detailDiv = document.getElementById('ortholog-detail');
+                                detailDiv.style.display = 'block';
+                                var content = clearEl('ortholog-detail-content');
+                                var info = [
+                                    'Human gene: ' + humanSym,
+                                    'Ortholog: ' + (orthData.ortholog_symbol || '?') + ' in ' + speciesName,
+                                    'Conservation score: ' + (orthData.conservation_score != null ? (orthData.conservation_score * 100).toFixed(1) + '%' : 'unknown'),
+                                    'Gene ID: ' + (orthData.ortholog_gene_id || 'N/A'),
+                                ];
+                                for (var ii = 0; ii < info.length; ii++) {
+                                    var p = document.createElement('div');
+                                    p.textContent = info[ii];
+                                    p.style.cssText = 'font-family:"JetBrains Mono",monospace;margin-bottom:2px';
+                                    content.appendChild(p);
+                                }
+                                var links = document.createElement('div');
+                                links.style.cssText = 'margin-top:8px;display:flex;gap:12px';
+                                if (orthData.ortholog_gene_id) {
+                                    var a = document.createElement('a');
+                                    a.textContent = 'View on NCBI Gene';
+                                    a.href = 'https://www.ncbi.nlm.nih.gov/gene/' + orthData.ortholog_gene_id;
+                                    a.target = '_blank'; a.rel = 'noopener';
+                                    a.style.cssText = 'color:var(--accent);text-decoration:none;font-weight:600';
+                                    links.appendChild(a);
+                                }
+                                var a2 = document.createElement('a');
+                                a2.textContent = 'Search STRING-DB';
+                                a2.href = 'https://string-db.org/network/' + encodeURIComponent(orthData.ortholog_symbol || humanSym);
+                                a2.target = '_blank'; a2.rel = 'noopener';
+                                a2.style.cssText = 'color:var(--accent);text-decoration:none;font-weight:600';
+                                links.appendChild(a2);
+                                var a3 = document.createElement('a');
+                                a3.textContent = 'PubMed: ' + humanSym + ' + ' + speciesName.split(' ')[0];
+                                a3.href = 'https://pubmed.ncbi.nlm.nih.gov/?term=' + encodeURIComponent(humanSym + ' ' + speciesName);
+                                a3.target = '_blank'; a3.rel = 'noopener';
+                                a3.style.cssText = 'color:var(--accent);text-decoration:none;font-weight:600';
+                                links.appendChild(a3);
+                                content.appendChild(links);
+                                detailDiv.scrollIntoView({behavior: 'smooth'});
+                            });
+                        })(orth, targets[ti], speciesList[sj]);
                         cellTd.appendChild(cell);
                     } else {
                         cellTd.appendChild(el('span', {className: 'heatmap-cell heatmap-no', text: '-'}));
