@@ -45,3 +45,11 @@ htmlcov/
 docs/outreach-emails-draft.md
 docs/email_professor.md
 docs/*email*
+
+# Private meeting/collaboration docs — never commit
+docs/proposals/simon-*
+docs/presentations/simon-*
+docs/meeting-prep-simon*
+docs/presentation-simon*
+docs/proposals/*-collaboration*
+docs/private/
