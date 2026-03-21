@@ -153,6 +153,48 @@ RESEARCH_DIRECTIONS = [
         "researcher": "Marco Capogrosso (University of Pittsburgh)",
         "collaborators": ["ESPACE Europe consortium", "Christian Simon (Leipzig)"],
     },
+    {
+        "id": "proprioceptive-circuit",
+        "title": "Proprioceptive Circuit Dysfunction",
+        "category": "circuit_biology",
+        "description": (
+            "SMA is increasingly recognized as a circuit disease, not just motor neuron death. "
+            "Mentis lab (Columbia) showed Ia afferent synapse loss on motor neurons precedes motor neuron "
+            "degeneration. DRG neuron dysfunction, disrupted sensory-motor connectivity, and proprioceptive "
+            "innervation specificity loss contribute to motor circuit failure. Motor neuron counting varies "
+            "0-80% across labs — methodology problems confound disease understanding. Therapeutic window "
+            "may be larger than thought if circuit rescue happens before cell death."
+        ),
+        "connected_targets": ["SMN1", "SMN2", "STMN2", "NMJ_MATURATION", "BDNF"],
+        "key_concepts": [
+            "proprioception", "Ia afferent", "DRG neuron", "sensory-motor circuit",
+            "Mentis lab", "non-cell-autonomous", "circuit disease", "motor neuron counting",
+            "NMJ vulnerability", "glial contribution",
+        ],
+        "researcher": "George Mentis (Columbia University)",
+        "collaborators": ["Christian Simon (Leipzig)", "Prof. Schoeneberg"],
+    },
+    {
+        "id": "actin-rock-cofilin-pathway",
+        "title": "Actin-ROCK-Cofilin Pathway / Fasudil",
+        "category": "drug_repurposing",
+        "description": (
+            "SMN directly interacts with Profilin 1 (PFN1) in motor neurons (PMID 26401655). "
+            "Pathway: SMN→PFN1→RhoA→ROCK→LIMK→CFL2→actin-cofilin rods→TDP-43 aggregation. "
+            "ROCK1/2 elevated in SMNΔ7 mice, phospho-cofilin elevated in SMA models + patient fibroblasts. "
+            "Fasudil (ROCK inhibitor, approved in Japan/China for stroke) crosses BBB, Phase 2 in ALS "
+            "(NCT03792490). Nobody has tested ROCK inhibitors in SMA — first-in-field opportunity. "
+            "MDI-117740 (LIMK inhibitor, published 2025) is more specific alternative."
+        ),
+        "connected_targets": ["PFN1", "CFL2", "ROCK2", "CORO1C", "PLS3", "TARDBP"],
+        "key_concepts": [
+            "Fasudil", "ROCK inhibitor", "cofilin phosphorylation", "actin-cofilin rods",
+            "TDP-43", "LIMK", "MDI-117740", "profilin", "SMA-ALS convergence",
+            "drug repurposing", "BBB penetration",
+        ],
+        "researcher": "Novel — no lab currently pursuing this",
+        "collaborators": [],
+    },
 ]
 
 DIRECTION_MAP = {d["id"]: d for d in RESEARCH_DIRECTIONS}
