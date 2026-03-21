@@ -73,6 +73,43 @@ A systematic analysis of all 56 positive hits from the expanded 4,116-compound s
 
 The corrected analysis is available at: `/home/bryzant/sma-platform/gpu/results/10k_screen/corrected_analysis.json`
 
+### Corrected Assessment After 20-Pose Validation
+
+**Date:** March 21, 2026
+
+The full 4,116-compound DiffDock campaign produced 56 initial positive hits. To distinguish genuine binding predictions from scoring artifacts, all 56 hits were re-docked with 20 poses per compound-target pair (instead of the default 1 pose). This is a standard validation step: if a compound-target pair scores positively across multiple independent docking poses, the prediction is more likely to reflect a real binding interaction rather than a single favorable stochastic pose.
+
+**Result: Only riluzole was validated.**
+
+| Compound | Target | Initial Score | 20-Pose Result | Status |
+|----------|--------|--------------|----------------|--------|
+| Riluzole | SMN2 | +0.082 | Positive across multiple poses | **Validated** |
+| Riluzole | UBA1 | +0.023 | Weakly positive | Tentatively supported |
+| Fomepizole | CORO1C | +1.027 | Not reproduced at 20 poses | **Artifact** (MW bias) |
+| CHEMBL compounds | Various | Various | Not reproduced at 20 poses | **Not validated** |
+| 4-AP | CORO1C | +0.251 | Consensus confirmed (Vina + DiffDock agree) | Binding plausible, but therapeutically counterproductive (see CORO1C direction correction above) |
+
+**Key conclusions:**
+
+1. **Riluzole is the only validated hit from the 4,116-compound campaign.** Its binding to SMN2 protein (+0.082 at 20 poses) and tentative binding to UBA1 (+0.023) were reproduced. Riluzole is FDA-approved, has existing Phase 1 data in SMA (PMID: 14623733), and operates through a mechanism distinct from its known glutamate inhibition. Riluzole SPR validation remains Priority 1.
+
+2. **Fomepizole is a confirmed artifact.** The initial +1.027 score was entirely driven by the small-molecule scoring bias documented above (MW 82.1, 6 heavy atoms). At 20 poses, the score did not reproduce. Fomepizole should not be pursued further for SMA.
+
+3. **CHEMBL compound hits were not reproduced.** The remaining positive hits from the initial screen did not survive 20-pose validation. These should be considered false positives.
+
+4. **The small-molecule scoring bias is a confirmed systematic problem.** Compounds with MW < 150 Da are overrepresented among initial hits and underrepresented among validated hits. All future DiffDock screens should apply MW filtering as a mandatory post-processing step.
+
+5. **The CORO1C therapeutic strategy has shifted from small-molecule inhibition to expression enhancement.** Because CORO1C overexpression is protective in SMA (PMID 27499521), the correct approach is to increase CORO1C expression rather than bind to it with small molecules. The new priority experiment is HDAC inhibitor treatment followed by CORO1C expression measurement (qRT-PCR) in SMA-relevant cell lines. The miR-133a-3p/CORO1C regulatory axis (PMID 39278098) provides a specific mechanistic target for this approach.
+
+**Updated experimental priorities:**
+
+| Priority | Experiment | Rationale |
+|----------|-----------|-----------|
+| 1 | Riluzole SPR (SMN2 + UBA1 binding) | Only validated hit; FDA-approved; existing clinical data |
+| 2 | HDAC inhibitor treatment followed by CORO1C expression measurement (qRT-PCR) | Tests whether epigenetic activation can upregulate the protective CORO1C modifier |
+| 3 | CORO1C IHC in SMA mouse (L1 vs L5 segments) | Establishes baseline expression in vulnerable vs resistant motor neurons |
+| 4 | Orthogonal docking consensus (Vina + GNINA) | Computational; provides additional confidence for riluzole-SMN2 prediction |
+
 ---
 
 ## Computational Milestones Completed
