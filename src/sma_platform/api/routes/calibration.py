@@ -10,13 +10,18 @@ against known drug outcomes (approved vs failed) from the drug_outcomes table.
 
 M5 Uncertainty Quantification endpoints provide Wilson score confidence
 intervals and uncertainty grades (A-D) for every target prediction.
+
+A4 Prospective Backtesting endpoints simulate running the prioritizer at
+past dates and compare its rankings against subsequently discovered outcomes.
 """
 
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException
+from dateutil.relativedelta import relativedelta
+from fastapi import APIRouter, HTTPException, Query
 
 from ...reasoning.confidence_calibrator import (
     calibrate_hypotheses,
@@ -34,6 +39,12 @@ from ...reasoning.uncertainty_engine import (
     compute_all_uncertainties as uq_compute_all,
     compute_target_uncertainty as uq_compute_target,
     get_uncertainty_report as uq_get_report,
+)
+from ...reasoning.prospective_backtest import (
+    backtest_at_cutoff,
+    compare_predictions_to_outcomes,
+    get_backtest_report,
+    run_temporal_backtest,
 )
 
 logger = logging.getLogger(__name__)
@@ -214,3 +225,108 @@ async def uncertainty_target(target_symbol: str):
     except Exception as e:
         logger.error("Uncertainty computation failed for %s: %s", target_symbol, e, exc_info=True)
         raise HTTPException(500, detail="Uncertainty computation failed: %s" % str(e))
+
+# =========================================================================
+# A4 Prospective Backtesting — would our predictions have been right?
+# =========================================================================
+
+@router.get("/calibration/backtest")
+async def backtest_lookback(
+    months: int = Query(
+        default=6,
+        ge=1,
+        le=60,
+        description="Lookback period in months. The cutoff date is NOW minus this many months.",
+    ),
+):
+    """Run a prospective backtest with the given lookback period.
+
+    Simulates running the convergence engine at (now - months) and compares
+    what it would have predicted against outcomes discovered since then.
+
+    Example: GET /calibration/backtest?months=6
+    Simulates: "If we had scored targets 6 months ago, would the top-ranked
+    targets have had positive outcomes since then?"
+
+    Returns: prediction accuracy, precision@5, precision@10, rank correlation,
+    per-target matched predictions, and interpretation.
+    """
+    try:
+        now = datetime.now(timezone.utc)
+        cutoff = now - relativedelta(months=months)
+        result = await compare_predictions_to_outcomes(cutoff, now)
+        return result
+    except Exception as e:
+        logger.error("Backtest (months=%d) failed: %s", months, e, exc_info=True)
+        raise HTTPException(500, detail="Backtest failed: %s" % str(e))
+
+
+@router.get("/calibration/backtest/temporal")
+async def backtest_temporal(
+    step_months: int = Query(
+        default=3,
+        ge=1,
+        le=24,
+        description="Months between each backtest timepoint.",
+    ),
+):
+    """Full temporal backtest curve.
+
+    Automatically determines the data range and runs backtests at multiple
+    timepoints (every step_months months). Shows how predictive accuracy
+    evolves over time as more evidence accumulates.
+
+    Returns: per-timepoint accuracy, temporal accuracy curve, rank stability
+    for each target, and an overall grade (A-D).
+    """
+    try:
+        result = await get_backtest_report()
+        return result
+    except Exception as e:
+        logger.error("Temporal backtest failed: %s", e, exc_info=True)
+        raise HTTPException(500, detail="Temporal backtest failed: %s" % str(e))
+
+
+@router.get("/calibration/backtest/report")
+async def backtest_full_report():
+    """Full prospective backtest report (alias for /backtest/temporal).
+
+    Comprehensive assessment including: temporal accuracy curve, midpoint
+    comparison, recent predictions, rank stability, and overall grade.
+    This is the primary endpoint for audit item A4.
+    """
+    try:
+        return await get_backtest_report()
+    except Exception as e:
+        logger.error("Backtest report failed: %s", e, exc_info=True)
+        raise HTTPException(500, detail="Backtest report failed: %s" % str(e))
+
+
+@router.get("/calibration/backtest/at/{cutoff_date}")
+async def backtest_at_date(cutoff_date: str):
+    """Run convergence scoring at a specific historical cutoff date.
+
+    Simulates what the convergence engine would have produced if run
+    at the given date, using only claims created before that date.
+
+    Path parameter: cutoff_date in YYYY-MM-DD format.
+
+    Returns: ranked targets with convergence scores, claim counts,
+    and dimension breakdowns.
+    """
+    try:
+        cutoff = datetime.strptime(cutoff_date, "%Y-%m-%d").replace(
+            tzinfo=timezone.utc
+        )
+    except ValueError:
+        raise HTTPException(
+            400, detail="Invalid date format. Use YYYY-MM-DD."
+        )
+
+    try:
+        result = await backtest_at_cutoff(cutoff)
+        return result
+    except Exception as e:
+        logger.error("Backtest at %s failed: %s", cutoff_date, e, exc_info=True)
+        raise HTTPException(500, detail="Backtest failed: %s" % str(e))
+
