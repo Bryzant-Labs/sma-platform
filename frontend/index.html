@@ -2242,10 +2242,18 @@
 
 <section class="section" id="gpu-results">
     <div class="section-header"><h2 class="section-title">GPU Computational Results</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span></div>
-    <p class="section-desc">Gold-standard computational predictions from SpliceAI, ESM-2, and Cas-OFFinder running on A100 GPUs. Every result is traceable to its tool version, parameters, and input data.</p>
+    <p class="section-desc">Gold-standard computational predictions from DiffDock, SpliceAI, ESM-2, and Cas-OFFinder. Every result is traceable to its tool version, parameters, and input data. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/gpu" style="color:var(--accent);text-decoration:none;font-weight:600">View GPU scripts on GitHub &rarr;</a></p>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Molecular Docking (DiffDock v2.2 NIM)</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">DiffDock v2.2 | Corso et al. 2023, ICLR | NVIDIA NIM</span> <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/ingestion/adapters/nvidia_nims.py" style="color:var(--accent);font-size:10px;margin-left:8px;text-decoration:none">Source &rarr;</a></p>
+    <div id="gpu-docking-summary" class="screen-summary"><div class="loading">Loading docking results...</div></div>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Compound</th><th>Target</th><th>Confidence</th><th>Poses</th><th>Assessment</th><th>Details</th>
+    </tr></thead>
+    <tbody id="gpu-docking-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
 
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">SpliceAI Splice Scores</h3>
-    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">SpliceAI v1.3.1 | Jaganathan et al. 2019, Cell</span></p>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">SpliceAI v1.3.1 | Jaganathan et al. 2019, Cell</span> <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/gpu/scripts" style="color:var(--accent);font-size:10px;margin-left:8px;text-decoration:none">Source &rarr;</a></p>
     <div id="gpu-splice-summary" class="screen-summary"><div class="loading">Loading splice scores...</div></div>
     <div class="table-wrap"><table><thead><tr>
         <th>#</th><th>Chrom</th><th>Position</th><th>Ref</th><th>Alt</th><th>Max Delta</th><th>AG</th><th>AL</th><th>DG</th><th>DL</th><th>Impact</th>
@@ -2253,11 +2261,11 @@
     <tbody id="gpu-splice-body"><tr><td colspan="11" class="loading">Loading...</td></tr></tbody></table></div>
 
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">ESM-2 Protein Embeddings</h3>
-    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">ESM-2 650M | Lin et al. 2023, Science</span></p>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">ESM-2 650M | Lin et al. 2023, Science</span> <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/gpu/scripts" style="color:var(--accent);font-size:10px;margin-left:8px;text-decoration:none">Source &rarr;</a></p>
     <div id="gpu-esm2-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px"><div class="loading">Loading ESM-2 embeddings...</div></div>
 
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">CRISPR Off-Target Safety</h3>
-    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">Cas-OFFinder 3.0 | Bae et al. 2014 | hg38 genome</span></p>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">Cas-OFFinder 3.0 | Bae et al. 2014 | hg38 genome</span> <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/gpu/scripts" style="color:var(--accent);font-size:10px;margin-left:8px;text-decoration:none">Source &rarr;</a></p>
     <div id="gpu-offtarget-summary" class="screen-summary"><div class="loading">Loading off-target data...</div></div>
     <div class="table-wrap"><table><thead><tr>
         <th>Mismatches</th><th>Count</th><th>Risk Level</th><th>Percentage</th>
@@ -8509,6 +8517,124 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // ============ GPU Computational Results ============
     function loadGpuResults() {
         if (loaded.gpuResults) return; loaded.gpuResults = true;
+
+        // --- DiffDock Molecular Docking ---
+        fetch(API + '/screen/compounds/results').then(function(r) { return r.json(); }).then(function(data) {
+            var results = data.results || data || [];
+            var summary = clearEl('gpu-docking-summary');
+            var totalDockings = results.length;
+            var positiveHits = results.filter(function(r) { return r.confidence > 0; }).length;
+            var topConf = results.length > 0 ? Math.max.apply(null, results.map(function(r) { return r.confidence || -999; })) : 0;
+            var targets = [];
+            results.forEach(function(r) { if (r.target && targets.indexOf(r.target) === -1) targets.push(r.target); });
+
+            var dockStats = [
+                {val: totalDockings, label: 'Total Dockings', cls: ''},
+                {val: positiveHits, label: 'Positive Confidence', cls: positiveHits > 0 ? 'highlight' : ''},
+                {val: topConf.toFixed(3), label: 'Best Confidence', cls: topConf > 0 ? 'highlight' : ''},
+                {val: targets.length, label: 'Targets Screened', cls: ''}
+            ];
+            for (var s = 0; s < dockStats.length; s++) {
+                var card = el('div', {className: 'screen-stat'});
+                card.appendChild(el('div', {className: 'screen-stat-val' + (dockStats[s].cls ? ' ' + dockStats[s].cls : ''), text: String(dockStats[s].val)}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: dockStats[s].label}));
+                summary.appendChild(card);
+            }
+
+            var body = clearEl('gpu-docking-body');
+            var sorted = results.slice().sort(function(a, b) { return (b.confidence || -999) - (a.confidence || -999); });
+            var shown = sorted.slice(0, 25);
+            for (var i = 0; i < shown.length; i++) {
+                var r = shown[i];
+                var conf = r.confidence || 0;
+                var confCls = conf > 0 ? 'badge-green' : conf > -1 ? 'badge-amber' : 'badge-gray';
+                var assessment = conf > 0.1 ? 'STRONG HIT' : conf > 0 ? 'POSITIVE' : conf > -1 ? 'WEAK' : 'NO BINDING';
+                var assCls = conf > 0.1 ? 'badge-green' : conf > 0 ? 'badge-blue' : 'badge-gray';
+
+                var row = el('tr');
+                row.style.cursor = 'pointer';
+                row.appendChild(td(String(i + 1), 'mono'));
+                row.appendChild(td(r.compound_name || r.compound || 'Unknown'));
+                row.appendChild(td(r.target || 'Unknown'));
+                row.appendChild(tdBadge(conf.toFixed(3), confCls));
+                row.appendChild(td(String(r.poses || r.num_poses || 'N/A'), 'mono'));
+                row.appendChild(tdBadge(assessment, assCls));
+
+                var detailTd = document.createElement('td');
+                var detailBtn = document.createElement('button');
+                detailBtn.textContent = 'Expand';
+                detailBtn.className = 'page-btn';
+                detailBtn.style.cssText = 'padding:2px 8px;font-size:10px';
+                detailTd.appendChild(detailBtn);
+                row.appendChild(detailTd);
+
+                (function(rowEl, result) {
+                    var expanded = false;
+                    var detailRow = null;
+                    detailBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (expanded && detailRow) {
+                            detailRow.remove();
+                            detailRow = null;
+                            expanded = false;
+                            this.textContent = 'Expand';
+                            return;
+                        }
+                        detailRow = document.createElement('tr');
+                        var detailCell = document.createElement('td');
+                        detailCell.colSpan = 7;
+                        detailCell.style.cssText = 'background:var(--panel);padding:16px;font-size:12px;line-height:1.6';
+
+                        var info = [];
+                        if (result.smiles) info.push('SMILES: ' + result.smiles);
+                        if (result.molecular_weight) info.push('MW: ' + result.molecular_weight + ' Da');
+                        if (result.method) info.push('Method: ' + result.method);
+                        if (result.target_pocket) info.push('Pocket: ' + result.target_pocket);
+                        info.push('Confidence interpretation: ' + (conf > 0.1 ? 'Strong predicted binding — worth experimental validation' : conf > 0 ? 'Weak positive — may bind, requires higher-pose validation' : 'No significant binding predicted'));
+
+                        for (var k = 0; k < info.length; k++) {
+                            var p = document.createElement('div');
+                            p.textContent = info[k];
+                            p.style.cssText = 'margin-bottom:4px;font-family:"JetBrains Mono",monospace;font-size:11px';
+                            detailCell.appendChild(p);
+                        }
+
+                        var links = document.createElement('div');
+                        links.style.cssText = 'margin-top:8px;display:flex;gap:12px';
+                        if (result.compound_name) {
+                            var chembl = document.createElement('a');
+                            chembl.textContent = 'Search ChEMBL';
+                            chembl.href = 'https://www.ebi.ac.uk/chembl/compound_report_card/' + (result.chembl_id || '');
+                            chembl.target = '_blank';
+                            chembl.rel = 'noopener';
+                            chembl.style.cssText = 'color:var(--accent);font-size:11px;text-decoration:none';
+                            if (result.chembl_id) links.appendChild(chembl);
+                        }
+                        var pubchem = document.createElement('a');
+                        pubchem.textContent = 'Search PubChem';
+                        pubchem.href = 'https://pubchem.ncbi.nlm.nih.gov/#query=' + encodeURIComponent(result.compound_name || result.compound || '');
+                        pubchem.target = '_blank';
+                        pubchem.rel = 'noopener';
+                        pubchem.style.cssText = 'color:var(--accent);font-size:11px;text-decoration:none';
+                        links.appendChild(pubchem);
+                        detailCell.appendChild(links);
+
+                        detailRow.appendChild(detailCell);
+                        rowEl.parentNode.insertBefore(detailRow, rowEl.nextSibling);
+                        expanded = true;
+                        this.textContent = 'Collapse';
+                    });
+                })(row, r);
+
+                body.appendChild(row);
+            }
+            if (shown.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No docking results available yet. Run DiffDock via NVIDIA NIM to populate.'})]));
+            }
+        }).catch(function(e) {
+            clearEl('gpu-docking-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Docking results not available: ' + e.message})]));
+            clearEl('gpu-docking-body').appendChild(el('tr', null, [el('td', {colSpan: 7, text: 'Error loading docking data'})]));
+        });
 
         // --- SpliceAI Splice Scores ---
         fetch(API + '/gpu/splice-summary').then(function(r) { return r.json(); }).then(function(data) {
