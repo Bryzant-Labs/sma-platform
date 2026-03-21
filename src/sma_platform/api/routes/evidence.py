@@ -131,7 +131,8 @@ async def list_claims(
     where_clause = " WHERE " + " AND ".join(wheres) if wheres else ""
 
     if enriched:
-        base = """SELECT c.id, c.claim_type, c.subject_id, c.subject_type,
+        base = """SELECT DISTINCT ON (c.id)
+                         c.id, c.claim_type, c.subject_id, c.subject_type,
                          c.predicate, c.object_id, c.object_type, c.value,
                          c.confidence, c.metadata, c.created_at,
                          s.title AS source_title, s.external_id AS source_pmid,
@@ -151,10 +152,19 @@ async def list_claims(
     params.append(offset)
     offset_idx = idx
 
-    rows = await fetch(
-        base + where_clause + f" ORDER BY c.confidence DESC LIMIT ${limit_idx} OFFSET ${offset_idx}",
-        *params,
-    )
+    if enriched:
+        # DISTINCT ON requires matching ORDER BY prefix; wrap in subquery
+        # so pagination applies to deduplicated claims, not raw joined rows.
+        rows = await fetch(
+            f"SELECT * FROM ({base}{where_clause} ORDER BY c.id) sub"
+            f" ORDER BY confidence DESC LIMIT ${limit_idx} OFFSET ${offset_idx}",
+            *params,
+        )
+    else:
+        rows = await fetch(
+            base + where_clause + f" ORDER BY c.confidence DESC LIMIT ${limit_idx} OFFSET ${offset_idx}",
+            *params,
+        )
     return [dict(r) for r in rows]
 
 

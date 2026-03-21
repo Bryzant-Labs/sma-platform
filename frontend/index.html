@@ -5036,7 +5036,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }
         if (screeningScoreFilter) {
             var minQed = parseFloat(screeningScoreFilter);
-            result = result.filter(function(c) { return (c.qed || 0) > minQed; });
+            result = result.filter(function(c) { return (c.estimated_qed || 0) > minQed; });
         }
         return result;
     }
@@ -5054,11 +5054,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 el('td', {className: 'smiles-cell', text: c.smiles, title: c.smiles}),
                 td(String(c.mw), 'mono'),
                 td(String(c.logp), 'mono'),
-                tdBadge(String(c.qed), c.qed >= 0.5 ? 'badge-green' : 'badge-gray'),
-                tdBadge(String(c.cns_mpo) + '/6', c.cns_mpo >= 4 ? 'badge-green' : c.cns_mpo >= 3 ? 'badge-amber' : 'badge-gray'),
-                tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
+                tdBadge(String(c.estimated_qed), c.estimated_qed >= 0.5 ? 'badge-green' : 'badge-gray'),
+                tdBadge(String(c.estimated_cns_mpo) + '/6', c.estimated_cns_mpo >= 4 ? 'badge-green' : c.estimated_cns_mpo >= 3 ? 'badge-amber' : 'badge-gray'),
+                tdBadge(c.estimated_bbb_permeable ? 'YES' : 'no', c.estimated_bbb_permeable ? 'badge-green' : 'badge-gray'),
                 tdBadge(c.lipinski_pass ? 'PASS' : 'fail', c.lipinski_pass ? 'badge-green' : 'badge-red'),
-                tdBadge(c.pains_alert ? 'ALERT' : 'clean', c.pains_alert ? 'badge-red' : 'badge-green'),
+                tdBadge(c.pains_alert_estimated ? 'ALERT' : 'clean', c.pains_alert_estimated ? 'badge-red' : 'badge-green'),
                 td(c.best_pchembl ? String(c.best_pchembl) : '-', 'mono')
             ]));
         }

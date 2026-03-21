@@ -238,4 +238,19 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=500, detail="index.html not found")
         raise HTTPException(status_code=404, detail="Not found")
 
+    @app.get("/{section}/{rest:path}")
+    async def serve_section_deep(section: str, rest: str):
+        """Serve index.html for deep-linked SPA routes like /news/{slug}.
+
+        Handles multi-segment paths under known SPA sections so that
+        URLs shared via RSS, social media, etc. resolve correctly
+        instead of returning 404.
+        """
+        if section in SECTION_SLUGS:
+            index = _static_dir / "index.html"
+            if index.exists():
+                return FileResponse(str(index), media_type="text/html")
+            raise HTTPException(status_code=500, detail="index.html not found")
+        raise HTTPException(status_code=404, detail="Not found")
+
     return app

@@ -21,7 +21,14 @@ class SmilesInput(BaseModel):
 
 @router.get("/screen/compounds/results")
 async def get_screening_results():
-    """Return cached screening results from the molecule_screenings table (no auth needed)."""
+    """Return cached screening results from the molecule_screenings table (no auth needed).
+
+    Note: estimated_qed, estimated_cns_mpo, estimated_bbb_permeable, and
+    pains_alert_estimated in the top_10 list are heuristic approximations
+    derived from pchembl_value, molecular weight, and aLogP -- **not** RDKit-computed
+    values.  Use /screen/smiles with a SMILES string for accurate per-compound
+    QED and PAINS analysis when RDKit is available.
+    """
     total = await fetchval("SELECT count(*) FROM molecule_screenings") or 0
     if total == 0:
         return {
@@ -58,10 +65,15 @@ async def get_screening_results():
     result["top_10"] = []
     for r in top_10:
         d = dict(r)
-        d["qed"] = round(d.get("best_pchembl", 0) / 10, 2) if d.get("best_pchembl") else 0
-        d["cns_mpo"] = 4 if (d.get("mw") or 999) <= 450 and 0 <= (d.get("logp") or 99) <= 3 else 2
-        d["bbb_permeable"] = (d.get("mw") or 999) <= 450 and 0 <= (d.get("logp") or 99) <= 3
-        d["pains_alert"] = False
+        # These values are heuristic estimates, NOT RDKit-computed.
+        # Use /screen/smiles for accurate per-compound analysis.
+        d["estimated_qed"] = round(d.get("best_pchembl", 0) / 10, 2) if d.get("best_pchembl") else 0
+        d["estimated_qed_note"] = "Estimated from pchembl_value/10, not RDKit-computed QED"
+        d["estimated_cns_mpo"] = 4 if (d.get("mw") or 999) <= 450 and 0 <= (d.get("logp") or 99) <= 3 else 2
+        d["estimated_cns_mpo_note"] = "Heuristic from MW/LogP thresholds, not full CNS MPO calculation"
+        d["estimated_bbb_permeable"] = (d.get("mw") or 999) <= 450 and 0 <= (d.get("logp") or 99) <= 3
+        d["pains_alert_estimated"] = False
+        d["pains_alert_note"] = "No PAINS substructure search performed; assumes clean. Use /screen/smiles for actual PAINS check"
         if d.get("mw"):
             d["mw"] = round(d["mw"], 1)
         if d.get("logp"):
