@@ -77,8 +77,8 @@ async def dock_compound(req: DockRequest):
         if req.pdb_content:
             protein_pdb = req.pdb_content
         else:
-            # Download AlphaFold structure for target
-            import urllib.request
+            # Download AlphaFold structure for target (async, non-blocking)
+            import httpx as _httpx
             # Map target names to UniProt IDs
             target_uniprot = {
                 "SMN2": "Q16637", "SMN1": "Q16637",
@@ -91,8 +91,10 @@ async def dock_compound(req: DockRequest):
                 raise HTTPException(400, f"Unknown target: {req.target}")
 
             url = f"https://alphafold.ebi.ac.uk/files/AF-{uniprot_id}-F1-model_v6.pdb"
-            with urllib.request.urlopen(url) as resp:
-                protein_pdb = resp.read().decode()
+            async with _httpx.AsyncClient(timeout=30) as client:
+                resp = await client.get(url)
+                resp.raise_for_status()
+                protein_pdb = resp.text
 
         result = await diffdock_dock_smiles(
             protein_pdb=protein_pdb,
@@ -153,7 +155,6 @@ async def generate_molecules(req: GenMolRequest):
         result = await genmol_generate(
             scaffold_smiles=req.scaffold_smiles,
             num_molecules=req.num_molecules,
-            mode=req.mode,
         )
         return {
             "tool": "GenMol v1.0 NIM",

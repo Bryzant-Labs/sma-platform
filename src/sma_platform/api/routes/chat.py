@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import logging
+import time
 import uuid
+from collections import defaultdict
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from ...reasoning.research_assistant import chat
@@ -15,6 +17,27 @@ router = APIRouter()
 
 MAX_HISTORY = 10
 
+# ---------------------------------------------------------------------------
+# In-memory rate limiter for chat endpoint
+# ---------------------------------------------------------------------------
+_chat_rate: dict[str, list[float]] = defaultdict(list)
+CHAT_RATE_LIMIT = 10  # max requests per minute per IP
+_CHAT_RATE_WINDOW = 60  # seconds
+
+
+async def _check_chat_rate(request: Request) -> None:
+    """Raise 429 if the client exceeds the chat rate limit."""
+    ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    _chat_rate[ip] = [t for t in _chat_rate[ip] if now - t < _CHAT_RATE_WINDOW]
+    if len(_chat_rate[ip]) >= CHAT_RATE_LIMIT:
+        raise HTTPException(429, "Rate limit exceeded")
+    _chat_rate[ip].append(now)
+
+
+# ---------------------------------------------------------------------------
+# Request / response models
+# ---------------------------------------------------------------------------
 
 class ChatMessage(BaseModel):
     role: str = Field(..., pattern="^(user|assistant)$")
@@ -28,12 +51,14 @@ class ChatRequest(BaseModel):
 
 
 @router.post("/chat")
-async def chat_endpoint(req: ChatRequest):
+async def chat_endpoint(req: ChatRequest, request: Request):
     """Multi-turn conversational research assistant.
 
     Send a message with optional conversation history. The server is stateless —
     conversation context is maintained by the client sending previous exchanges.
     """
+    await _check_chat_rate(request)
+
     history = req.history[-MAX_HISTORY:] if req.history else []
     conversation_id = req.conversation_id or str(uuid.uuid4())
 

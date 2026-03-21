@@ -65,8 +65,8 @@ async def _ensure_tables() -> None:
     try:
         await execute_script(_TABLES_SQL)
         _tables_ensured = True
-    except Exception:
-        # Tables likely already exist
+    except Exception as e:
+        logger.warning("_ensure_tables error (tables may already exist): %s", e)
         _tables_ensured = True
 
 
@@ -242,29 +242,39 @@ async def list_posts(
     """List published news posts, newest first, with pagination."""
     await _ensure_tables()
 
-    conditions = ["published = TRUE"]
+    conditions = ["p.published = TRUE"]
     params: list[Any] = []
     idx = 1
 
     if category:
-        conditions.append(f"category = ${idx}")
+        conditions.append(f"p.category = ${idx}")
         params.append(category)
         idx += 1
 
     if featured is not None:
-        conditions.append(f"featured = ${idx}")
+        conditions.append(f"p.featured = ${idx}")
         params.append(featured)
         idx += 1
 
     where = " AND ".join(conditions)
 
-    total = await fetchval(f"SELECT COUNT(*) FROM news_posts WHERE {where}", *params)
+    total = await fetchval(
+        f"SELECT COUNT(*) FROM news_posts p WHERE {where}", *params
+    )
     total = int(total) if total else 0
 
     offset = (page - 1) * per_page
     rows = await fetch(
-        f"SELECT id, title, slug, content, category, tags, author, featured, published, created_at, updated_at "
-        f"FROM news_posts WHERE {where} ORDER BY created_at DESC LIMIT ${idx} OFFSET ${idx + 1}",
+        f"SELECT p.id, p.title, p.slug, p.content, p.category, p.tags, p.author, "
+        f"p.featured, p.published, p.created_at, p.updated_at, "
+        f"COALESCE(cc.cnt, 0) AS comment_count "
+        f"FROM news_posts p "
+        f"LEFT JOIN ("
+        f"  SELECT post_id, COUNT(*) AS cnt FROM news_comments "
+        f"  WHERE approved = TRUE GROUP BY post_id"
+        f") cc ON cc.post_id = p.id "
+        f"WHERE {where} "
+        f"ORDER BY p.created_at DESC LIMIT ${idx} OFFSET ${idx + 1}",
         *params, per_page, offset,
     )
 
@@ -274,12 +284,7 @@ async def list_posts(
         # Add excerpt (first 200 chars of content)
         raw_content = post.get("content", "")
         post["excerpt"] = raw_content[:200] + ("..." if len(raw_content) > 200 else "")
-        # Count approved comments
-        comment_count = await fetchval(
-            "SELECT COUNT(*) FROM news_comments WHERE post_id = $1::uuid AND approved = TRUE",
-            row["id"],
-        )
-        post["comment_count"] = int(comment_count) if comment_count else 0
+        post["comment_count"] = int(row["comment_count"]) if row["comment_count"] else 0
         posts.append(post)
 
     return {
