@@ -27,28 +27,103 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 GENE_ALIASES: dict[str, list[str]] = {
-    "SMN1": ["SMN1", "survival motor neuron 1", "SMN gene", "5q13"],
-    "SMN2": ["SMN2", "survival motor neuron 2", "SMN2 copy"],
-    "PLS3": ["PLS3", "plastin 3", "plastin-3", "T-plastin"],
-    "STMN2": ["STMN2", "stathmin-2", "stathmin 2", "SCG10"],
-    "NCALD": ["NCALD", "neurocalcin delta", "neurocalcin-delta"],
-    "UBA1": ["UBA1", "ubiquitin-activating enzyme", "UAE1"],
-    "CORO1C": ["CORO1C", "coronin-1C", "coronin 1C"],
-    "NAIP": ["NAIP", "neuronal apoptosis inhibitory"],
-    "NEDD4L": ["NEDD4L", "NEDD4-like"],
+    # --- Core SMA genes ---
+    "SMN1": [
+        "SMN1", "survival motor neuron 1", "SMN gene", "5q13",
+        "SMN", "survival motor neuron", "survival motor neuron protein",
+        "gemin", "gemin1", "gems", "full-length SMN", "FL-SMN",
+        "snRNP", "snRNP assembly", "spliceosome", "spliceosomal",
+    ],
+    "SMN2": [
+        "SMN2", "survival motor neuron 2", "SMN2 copy",
+        "delta7 SMN", "SMN-delta7", "SMNdelta7", "SMNc", "centromeric SMN",
+    ],
     "SMN_PROTEIN": ["SMN protein", "SMN complex", "survival motor neuron protein"],
-    # Discovery targets
-    "CD44": ["CD44", "CD44 antigen"],
+    # --- Established modifier genes ---
+    "PLS3": [
+        "PLS3", "plastin 3", "plastin-3", "T-plastin", "plastin",
+        "actin dynamics", "actin cytoskeleton", "F-actin", "endocytosis",
+    ],
+    "STMN2": [
+        "STMN2", "stathmin-2", "stathmin 2", "SCG10",
+        "stathmin", "stathmin2",
+    ],
+    "NCALD": [
+        "NCALD", "neurocalcin delta", "neurocalcin-delta", "neurocalcin",
+        "calcium signaling", "calcium homeostasis", "calcium channel",
+        "intracellular calcium",
+    ],
+    "UBA1": [
+        "UBA1", "ubiquitin-activating enzyme", "UAE1", "UBE1",
+        "ubiquitin", "ubiquitin proteasome", "ubiquitin-proteasome system",
+        "UPS", "ubiquitin proteasome pathway", "ubiquitin ligase",
+        "proteasome", "proteasomal degradation",
+    ],
+    "CORO1C": [
+        "CORO1C", "coronin-1C", "coronin 1C", "coronin",
+        "Rho GTPase", "ROCK", "Rho/ROCK", "Rho kinase",
+    ],
+    "NAIP": ["NAIP", "neuronal apoptosis inhibitory"],
+    "NEDD4L": ["NEDD4L", "NEDD4-like", "NEDD4-2", "NEDD4.2"],
+    # --- Discovery targets (omics convergence) ---
+    "CD44": ["CD44", "CD44 antigen", "HERMES"],
     "SULF1": ["SULF1", "sulfatase 1", "HSULF-1"],
-    "DNMT3B": ["DNMT3B", "DNA methyltransferase 3B"],
+    "DNMT3B": ["DNMT3B", "DNA methyltransferase 3B", "DNMT3beta"],
     "ANK3": ["ANK3", "ankyrin-G", "ankyrin 3", "ankyrin-3"],
     "LY96": ["LY96", "MD-2", "MD2", "lymphocyte antigen 96"],
     "SPATA18": ["SPATA18", "MIEAP"],
-    "LDHA": ["LDHA", "LDH-A", "lactate dehydrogenase A"],
+    "LDHA": ["LDHA", "LDH-A", "lactate dehydrogenase A", "lactate dehydrogenase"],
     "CAST": ["CAST", "calpastatin"],
     "CTNNA1": ["CTNNA1", "alpha-catenin", "alpha catenin", "catenin alpha-1"],
-    "MTOR_PATHWAY": ["mTOR pathway", "mammalian target of rapamycin", "mTOR signaling"],
-    "NMJ_MATURATION": ["neuromuscular junction", "NMJ maturation"],
+    # --- Pathways ---
+    "MTOR_PATHWAY": [
+        "mTOR pathway", "mammalian target of rapamycin", "mTOR signaling",
+        "mTOR", "autophagy", "PI3K/AKT", "PI3K-AKT", "PI3K/AKT/mTOR",
+        "AKT pathway",
+    ],
+    "NMJ_MATURATION": ["neuromuscular junction", "NMJ maturation", "NMJ"],
+    # --- Apoptosis / cell death ---
+    "TP53": ["p53", "TP53", "tumor protein p53"],
+    "BCL2": ["BCL-2", "BCL2", "B-cell lymphoma 2"],
+    "BCL2L1": ["BCLXL", "BCL-XL", "BCL2L1"],
+    "CASP3": ["caspase-3", "caspase 3", "CASP3"],
+    "CASP9": ["caspase-9", "caspase 9", "CASP9"],
+    # --- RNA-binding / neurodegeneration ---
+    "FUS": ["FUS", "fused in sarcoma"],
+    "TARDBP": ["TDP-43", "TDP43", "TARDBP"],
+    "SETX": ["senataxin", "SETX"],
+    "ZPR1": ["ZPR1", "zinc finger protein ZPR1"],
+    "TMEM41B": ["stasimon", "TMEM41B"],
+    # --- ER stress / UPR ---
+    "HTRA2": [
+        "HTRA2", "Omi", "ER stress", "endoplasmic reticulum stress",
+        "unfolded protein response", "UPR",
+    ],
+    # --- Signaling pathways ---
+    "MAPK_PATHWAY": ["MAPK", "ERK", "ERK1/2", "RAS-MAPK", "RAS/MAPK"],
+    "JNK_PATHWAY": ["JNK", "JNK pathway", "c-Jun"],
+    "NOTCH_PATHWAY": ["Notch", "Notch signaling", "Notch pathway"],
+    "WNT_PATHWAY": ["WNT", "WNT signaling", "WNT pathway", "beta-catenin"],
+    "HDAC_PATHWAY": [
+        "HDAC inhibitor", "HDAC", "histone deacetylase",
+        "valproic acid", "VPA",
+    ],
+    # --- Growth factors / trophic ---
+    "MSTN": ["myostatin", "GDF-8", "GDF8"],
+    "FST": ["follistatin", "activin"],
+    "BDNF": ["BDNF", "brain-derived neurotrophic factor"],
+    "CNTF": ["CNTF", "ciliary neurotrophic factor"],
+    "GDNF": ["GDNF", "glial cell-derived neurotrophic factor"],
+    "IGF1": ["IGF-1", "IGF1", "insulin-like growth factor"],
+    # --- NMJ structural ---
+    "AGRN": ["agrin", "AGRN"],
+    "MUSK": ["MuSK", "MUSK"],
+    "LRPN4": ["LRPN4"],
+    "RAPSN": ["rapsyn", "RAPSN"],
+    "CHRNA1": ["acetylcholine receptor", "AChR", "nicotinic receptor"],
+    # --- Biomarkers ---
+    "NEFL": ["neurofilament", "neurofilament light", "NfL", "NfL light chain"],
+    "NEFH": ["phosphorylated neurofilament", "pNfH", "NEFH"],
 }
 
 DRUG_ALIASES: dict[str, list[str]] = {

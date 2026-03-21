@@ -1,11 +1,13 @@
 """Experiment Design & Dead-End Predictor API routes.
 
 Endpoints:
-- GET /experiment/suggest/{target_symbol} — gap analysis + assay suggestions
-- GET /experiment/gaps                    — all targets with evidence gaps
-- GET /dead-ends/patterns                 — known failure patterns
-- GET /dead-ends/risks                    — risk for all active hypotheses
-- GET /dead-ends/hypothesis/{id}          — single hypothesis risk assessment
+- GET /experiment/suggest/{target_symbol}       — gap analysis + assay suggestions
+- GET /experiment/gaps                          — all targets with evidence gaps
+- GET /experiments/propose/{hypothesis_id}      — propose experiment for one hypothesis
+- GET /experiments/propose/batch                — batch propose for a tier
+- GET /dead-ends/patterns                       — known failure patterns
+- GET /dead-ends/risks                          — risk for all active hypotheses
+- GET /dead-ends/hypothesis/{id}                — single hypothesis risk assessment
 """
 
 from __future__ import annotations
@@ -22,6 +24,10 @@ from ...reasoning.dead_end_predictor import (
 from ...reasoning.experiment_designer import (
     all_evidence_gaps,
     suggest_experiments,
+)
+from ...reasoning.experiment_proposer import (
+    batch_propose,
+    propose_experiment,
 )
 
 logger = logging.getLogger(__name__)
@@ -61,6 +67,49 @@ async def evidence_gaps(
         "showing": min(limit, total),
         "targets": results[:limit],
     }
+
+
+# ---------------------------------------------------------------------------
+# Hypothesis-to-Experiment Proposer
+# ---------------------------------------------------------------------------
+
+@router.get("/experiments/propose/batch")
+async def propose_batch(
+    tier: str = Query(default="A", description="Hypothesis tier: A, B, C, or all"),
+):
+    """Batch-generate experimental proposals for all hypotheses in a tier.
+
+    Converts prioritized hypotheses into concrete experimental proposals
+    with assays, model systems, readouts, go/no-go criteria, timelines,
+    reagents, and relevant literature.
+
+    Tier A = top 5 high-conviction, Tier B = 6-15, Tier C = rest.
+    """
+    result = await batch_propose(tier=tier)
+    if result.get("error"):
+        raise HTTPException(status_code=400, detail=result["error"])
+    return result
+
+
+@router.get("/experiments/propose/{hypothesis_id}")
+async def propose_for_hypothesis(hypothesis_id: str):
+    """Generate a concrete experimental proposal for a single hypothesis.
+
+    Analyzes the hypothesis type (binding, expression, drug efficacy,
+    splicing) and returns a structured proposal including:
+    - Suggested assay (SPR, Western, qRT-PCR, iPSC-MN, mouse model)
+    - Model system (cell line, organoid, animal model)
+    - Primary readout (binding Kd, expression fold-change, survival)
+    - Go/no-go threshold
+    - Estimated timeline and cost
+    - Required reagents/antibodies
+    - Relevant prior experiments in the literature
+    - Step-by-step escalation path
+    """
+    result = await propose_experiment(hypothesis_id)
+    if result.get("error"):
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
 
 
 # ---------------------------------------------------------------------------

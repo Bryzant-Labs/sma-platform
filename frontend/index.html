@@ -4145,8 +4145,134 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             }
             card.appendChild(dimDiv);
             if (qDiv) card.appendChild(qDiv);
+            // Suggest Experiment button
+            var suggestBtn = el('button', {className: 'hyp-suggest-btn', text: 'Suggest Experiment'});
+            suggestBtn.setAttribute('style', 'margin-top:8px;padding:5px 12px;font-size:11px;font-weight:600;color:#fff;background:#6366f1;border:none;border-radius:3px;cursor:pointer');
+            (function(hid) {
+                suggestBtn.addEventListener('click', function(evt) {
+                    evt.stopPropagation();
+                    showExperimentProposal(hid);
+                });
+            })(h.hypothesis_id || h.id);
+            card.appendChild(suggestBtn);
             wrap.appendChild(card);
         }
+    }
+
+    // === Experiment Proposal Modal ===
+    function showExperimentProposal(hypothesisId) {
+        var modal = document.getElementById('exp-proposal-modal');
+        var content = document.getElementById('exp-proposal-content');
+        modal.style.display = '';
+        content.innerHTML = '<div class="loading">Generating proposal...</div>';
+
+        document.getElementById('exp-modal-close').onclick = function() { modal.style.display = 'none'; };
+        modal.addEventListener('click', function(e) { if (e.target === modal) modal.style.display = 'none'; });
+
+        fetch(API + '/experiments/propose/' + hypothesisId).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.detail || data.error) {
+                content.innerHTML = '<div style="color:var(--muted);padding:20px">Error: ' + (data.detail || data.error) + '</div>';
+                return;
+            }
+            var p = data.proposal || {};
+            var goNogo = p.go_nogo_criteria || {};
+            var html = '';
+            html += '<div style="margin-bottom:12px">';
+            html += '<span style="font-size:12px;padding:2px 8px;border-radius:3px;font-weight:600;color:#fff;background:' + (data.priority === 'high' ? '#16a34a' : data.priority === 'medium' ? '#d97706' : '#6b7280') + '">' + (data.priority || '').toUpperCase() + ' PRIORITY</span>';
+            html += ' <span style="font-size:11px;color:var(--muted);margin-left:8px">' + (data.experiment_category || '').replace(/_/g, ' ') + '</span>';
+            if (data.target_symbol) html += ' <span style="font-size:11px;padding:2px 6px;background:#2563eb1a;color:#2563eb;border-radius:2px;margin-left:4px">' + data.target_symbol + '</span>';
+            html += '</div>';
+            html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px">' + (data.hypothesis_title || '') + '</div>';
+            html += '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">' + (data.priority_note || '') + '</div>';
+
+            // Suggested Assay
+            html += '<div style="background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:12px;margin-bottom:12px">';
+            html += '<div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">SUGGESTED ASSAY</div>';
+            html += '<div style="font-size:13px;font-weight:600;margin-bottom:4px">' + (p.suggested_assay || '') + '</div>';
+            html += '<div style="font-size:11px;color:var(--muted)">' + (p.assay_rationale || '') + '</div>';
+            html += '</div>';
+
+            // Readouts
+            html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
+            html += '<div style="background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px">';
+            html += '<div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:4px">PRIMARY READOUT</div>';
+            html += '<div style="font-size:12px">' + (p.primary_readout || '') + '</div>';
+            html += '</div>';
+            html += '<div style="background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px">';
+            html += '<div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:4px">TIMELINE & COST</div>';
+            html += '<div style="font-size:12px">' + (p.estimated_timeline_weeks || '?') + ' weeks &middot; $' + ((p.estimated_cost_usd || 0).toLocaleString()) + '</div>';
+            html += '</div>';
+            html += '</div>';
+
+            // Model Systems
+            if (p.model_systems && p.model_systems.length > 0) {
+                html += '<div style="margin-bottom:12px">';
+                html += '<div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">MODEL SYSTEMS</div>';
+                for (var mi = 0; mi < p.model_systems.length; mi++) {
+                    var ms = p.model_systems[mi];
+                    html += '<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--line)">';
+                    html += '<span style="font-weight:600">[' + (ms.tier || '').toUpperCase() + ']</span> ' + ms.name;
+                    html += ' <span style="color:var(--muted)">($' + (ms.cost_usd || 0).toLocaleString() + ', ' + (ms.time_weeks || '?') + 'w)</span>';
+                    html += '</div>';
+                }
+                html += '</div>';
+            }
+
+            // Go/No-Go
+            html += '<div style="background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:12px;margin-bottom:12px">';
+            html += '<div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px">GO / NO-GO CRITERIA</div>';
+            html += '<div style="font-size:11px;margin-bottom:4px"><span style="color:#16a34a;font-weight:600">GO:</span> ' + (goNogo.go || '') + '</div>';
+            html += '<div style="font-size:11px;margin-bottom:4px"><span style="color:#dc2626;font-weight:600">NO-GO:</span> ' + (goNogo.no_go || '') + '</div>';
+            html += '<div style="font-size:11px"><span style="color:#d97706;font-weight:600">BORDERLINE:</span> ' + (goNogo.borderline || '') + '</div>';
+            html += '</div>';
+
+            // Escalation Path
+            var esc = data.escalation_path || [];
+            if (esc.length > 0) {
+                html += '<div style="margin-bottom:12px">';
+                html += '<div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px">ESCALATION PATH</div>';
+                for (var ei = 0; ei < esc.length; ei++) {
+                    var step = esc[ei];
+                    html += '<div style="font-size:11px;padding:3px 0;display:flex;gap:8px;align-items:baseline">';
+                    html += '<span style="font-weight:700;color:var(--accent);min-width:20px">S' + step.step + '</span>';
+                    html += '<span style="flex:1">' + step.assay + '</span>';
+                    html += '<span style="color:var(--muted);white-space:nowrap">$' + (step.cost_usd || 0).toLocaleString() + ' / ' + step.time_weeks + 'w</span>';
+                    html += '</div>';
+                    html += '<div style="font-size:10px;color:var(--muted);padding-left:28px;margin-bottom:2px">Gate: ' + step.gate + '</div>';
+                }
+                html += '</div>';
+            }
+
+            // Reagents
+            var reag = p.required_reagents || [];
+            if (reag.length > 0) {
+                html += '<details style="margin-bottom:12px">';
+                html += '<summary style="font-size:11px;font-weight:700;color:var(--text);cursor:pointer">REQUIRED REAGENTS (' + reag.length + ')</summary>';
+                html += '<ul style="font-size:11px;margin:4px 0 0 16px;padding:0">';
+                for (var ri = 0; ri < reag.length; ri++) html += '<li style="margin-bottom:2px">' + reag[ri] + '</li>';
+                html += '</ul></details>';
+            }
+
+            // Literature
+            var lit = data.relevant_literature || [];
+            if (lit.length > 0) {
+                html += '<details>';
+                html += '<summary style="font-size:11px;font-weight:700;color:var(--text);cursor:pointer">RELEVANT LITERATURE (' + lit.length + ')</summary>';
+                html += '<ul style="font-size:11px;margin:4px 0 0 16px;padding:0">';
+                for (var li2 = 0; li2 < lit.length; li2++) {
+                    var ref = lit[li2];
+                    html += '<li style="margin-bottom:3px">';
+                    if (ref.pmid) html += '<a href="https://pubmed.ncbi.nlm.nih.gov/' + ref.pmid + '/" target="_blank" rel="noopener" style="color:var(--accent)">PMID:' + ref.pmid + '</a> ';
+                    html += (ref.title || '') + ' <span style="color:var(--muted)">(' + (ref.relevance || '') + ')</span>';
+                    html += '</li>';
+                }
+                html += '</ul></details>';
+            }
+
+            content.innerHTML = html;
+        }).catch(function(err) {
+            content.innerHTML = '<div style="color:#dc2626;padding:20px">Failed to generate proposal: ' + err.message + '</div>';
+        });
     }
 
     // === Shared prediction card builder ===
@@ -10300,5 +10426,14 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     });
 })();
 </script>
+
+<!-- Experiment Proposal Modal -->
+<div id="exp-proposal-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;overflow-y:auto">
+    <div style="max-width:700px;margin:40px auto;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:24px;position:relative">
+        <button id="exp-modal-close" style="position:absolute;top:12px;right:16px;font-size:20px;background:none;border:none;color:var(--muted);cursor:pointer">&times;</button>
+        <h3 style="margin:0 0 16px;font-size:16px;color:var(--text)">Experimental Proposal</h3>
+        <div id="exp-proposal-content"><div class="loading">Generating proposal...</div></div>
+    </div>
+</div>
 </body>
 </html>
