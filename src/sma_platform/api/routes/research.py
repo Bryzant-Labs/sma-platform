@@ -195,6 +195,67 @@ RESEARCH_DIRECTIONS = [
         "researcher": "Novel — no lab currently pursuing this",
         "collaborators": [],
     },
+    {
+        "id": "sma-accelerated-aging",
+        "title": "Accelerated Aging & Senescence in SMA",
+        "category": "querdenker_sprint",
+        "description": (
+            "Do SMA patients on therapy face accelerated cellular aging? Chronic SMN deficiency "
+            "may activate senescence pathways (p16/p21), SASP, and mitochondrial dysfunction — all "
+            "hallmarks of aging. Senolytics (dasatinib + quercetin) could reduce senescent cell "
+            "burden. The mTOR pathway is dysregulated in SMA and is a central aging regulator. "
+            "As more SMA patients survive into adulthood, understanding long-term cellular effects "
+            "becomes critical."
+        ),
+        "connected_targets": ["MTOR_PATHWAY", "TP53", "BCL2", "CASP3"],
+        "key_concepts": [
+            "cellular senescence", "SASP", "senolytics", "telomere",
+            "mTOR", "aging hallmarks", "dasatinib", "quercetin",
+            "mitochondrial dysfunction", "proteostasis",
+        ],
+        "researcher": "Novel — intersection of aging biology and SMA",
+        "collaborators": [],
+    },
+    {
+        "id": "epigenetic-editing-smn2",
+        "title": "Epigenetic Editing of SMN2",
+        "category": "querdenker_sprint",
+        "description": (
+            "Beyond HDAC inhibitors: permanently alter SMN2 expression via targeted epigenetic "
+            "editing. dCas9-p300 could activate the SMN2 promoter without DNA cuts. DNA methylation "
+            "at the SMN2 locus may suppress expression — DNMT inhibitors could reverse this. "
+            "EZH2 (H3K27me3) and DOT1L (H3K79me2) may regulate SMN2 chromatin state. Non-coding "
+            "RNAs (lncRNAs, circRNAs) provide additional regulatory layers."
+        ),
+        "connected_targets": ["SMN2", "HDAC_PATHWAY", "DNMT3B"],
+        "key_concepts": [
+            "epigenetic editing", "dCas9-p300", "DNA methylation", "DNMT inhibitor",
+            "EZH2", "H3K27me3", "lncRNA", "circRNA", "chromatin remodeling",
+            "5-azacytidine", "permanent SMN2 activation",
+        ],
+        "researcher": "Novel — epigenome engineering for SMA",
+        "collaborators": [],
+    },
+    {
+        "id": "gut-brain-axis-sma",
+        "title": "Gut-Brain Axis & Microbiome in SMA",
+        "category": "querdenker_sprint",
+        "description": (
+            "The gut microbiome influences neuroinflammation and neurotrophic factor production. "
+            "SMA is increasingly recognized as a multisystem disease affecting GI tract. Butyrate "
+            "(microbial metabolite) is a natural HDAC inhibitor that could increase SMN levels. "
+            "Engineered probiotics could deliver SMN-enhancing compounds locally. SMA mouse models "
+            "show GI dysfunction — is the microbiome altered?"
+        ),
+        "connected_targets": ["HDAC_PATHWAY", "SMN2", "BDNF", "IGF1"],
+        "key_concepts": [
+            "gut-brain axis", "microbiome", "butyrate", "HDAC inhibitor",
+            "engineered probiotics", "GI dysfunction", "neuroinflammation",
+            "fecal transplant", "short-chain fatty acids",
+        ],
+        "researcher": "Novel — microbiome-neuroscience intersection",
+        "collaborators": [],
+    },
 ]
 
 DIRECTION_MAP = {d["id"]: d for d in RESEARCH_DIRECTIONS}
