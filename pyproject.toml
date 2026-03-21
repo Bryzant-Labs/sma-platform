@@ -53,6 +53,9 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+markers = [
+    "integration: marks tests that require external services",
+]
 
 [tool.mypy]
 python_version = "3.11"
