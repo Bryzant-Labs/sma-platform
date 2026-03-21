@@ -454,10 +454,18 @@ async def check_nim_health() -> dict:
     async with httpx.AsyncClient(timeout=10) as client:
         for name, url in endpoints.items():
             try:
+                # NIM cloud endpoints only accept POST, not GET.
+                # A 405 (Method Not Allowed) on GET means the endpoint EXISTS and is alive.
+                # A 422 (Unprocessable Entity) on POST with empty body also means alive.
                 resp = await client.get(url, headers=_headers())
+                code = resp.status_code
+                # 405 = endpoint exists but rejects GET → healthy (use POST)
+                # 200 = unexpected for POST-only endpoint but OK
+                # 401/403 = auth issue but endpoint exists
+                is_alive = code in (200, 405, 422, 401, 403)
                 results[name] = {
-                    "status": "healthy" if resp.status_code == 200 else "unhealthy",
-                    "code": resp.status_code,
+                    "status": "healthy" if is_alive else "unhealthy",
+                    "code": code,
                 }
             except Exception as e:
                 results[name] = {"status": "unreachable", "error": str(e)}
