@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMA Research Platform — Evidence-Driven Target Discovery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================
+           CSS CUSTOM PROPERTIES
+           ========================================= */
+        :root {
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-alt: #162032;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #38bdf8;
+            --accent-green: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-red: #f87171;
+            --accent-purple: #a78bfa;
+            --border: #334155;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        /* =========================================
+           RESET & BASE
+           ========================================= */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow-x: hidden; }
+        html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+
+        /* =========================================
+           SLIDE LAYOUT
+           ========================================= */
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-inner {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(2rem, 5vw, 5rem);
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* =========================================
+           PROGRESS BAR
+           ========================================= */
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+
+        /* =========================================
+           SLIDE COUNTER
+           ========================================= */
+        .slide-number {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 2rem;
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            z-index: 100;
+        }
+
+        /* =========================================
+           TYPOGRAPHY
+           ========================================= */
+        .slide-title {
+            font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .slide-subtitle {
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .hero-meta {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-family: var(--mono);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6em;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        ul li strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .highlight-green { color: var(--accent-green); }
+        .highlight-amber { color: var(--accent-amber); }
+        .highlight-red { color: var(--accent-red); }
+        .highlight-purple { color: var(--accent-purple); }
+
+        /* =========================================
+           CALLOUT / QUOTE
+           ========================================= */
+        .callout {
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent);
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            border-radius: 0 6px 6px 0;
+            font-size: clamp(0.85rem, 1.3vw, 1rem);
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .callout-important {
+            border-left-color: var(--accent-amber);
+            background: rgba(251, 191, 36, 0.06);
+        }
+
+        /* =========================================
+           TABLES
+           ========================================= */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+        }
+
+        th {
+            text-align: left;
+            padding: 0.6rem 1rem;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        /* =========================================
+           TIER BADGES
+           ========================================= */
+        .tier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .tier-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .tier-card .tier-label {
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .tier-card .tier-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .tier-validated .tier-label { color: var(--accent-green); }
+        .tier-validated { border-color: rgba(52, 211, 153, 0.3); }
+        .tier-computational .tier-label { color: var(--accent); }
+        .tier-computational { border-color: rgba(56, 189, 248, 0.3); }
+        .tier-hypothesis .tier-label { color: var(--accent-amber); }
+        .tier-hypothesis { border-color: rgba(251, 191, 36, 0.3); }
+        .tier-exploratory .tier-label { color: var(--accent-purple); }
+        .tier-exploratory { border-color: rgba(167, 139, 250, 0.3); }
+
+        /* =========================================
+           NUMBERED LIST (for final slides)
+           ========================================= */
+        ol.steps {
+            list-style: none;
+            counter-reset: step;
+            padding: 0;
+        }
+
+        ol.steps li {
+            counter-increment: step;
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 1.25rem;
+            font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+            color: var(--text-secondary);
+        }
+
+        ol.steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        ol.steps li strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* =========================================
+           LINK
+           ========================================= */
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================
+           TWO COLUMN
+           ========================================= */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+            .tier-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* =========================================
+           KEYBOARD HINT
+           ========================================= */
+        .nav-hint {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 2rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--mono);
+            z-index: 100;
+            opacity: 0.6;
+        }
+
+        kbd {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 0.1rem 0.4rem;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+        }
+
+        /* =========================================
+           DATA BADGE (inline stat)
+           ========================================= */
+        .stat-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .stat-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem 1.25rem;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-family: var(--mono);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+
+        /* =========================================
+           SEPARATOR
+           ========================================= */
+        .sep {
+            width: 60px;
+            height: 2px;
+            background: var(--accent);
+            margin: 1.5rem 0;
+            opacity: 0.5;
+        }
+
+        /* =========================================
+           PRINT
+           ========================================= */
+        @media print {
+            html { scroll-snap-type: none; }
+            .slide { height: auto; min-height: 100vh; page-break-after: always; }
+            .progress, .slide-number, .nav-hint { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="slide-number" id="slideNumber">1 / 10</div>
+<div class="nav-hint"><kbd>Space</kbd> or <kbd>Arrow Down</kbd> to advance</div>
+
+<!-- ================================================
+     SLIDE 1 — TITLE
+     ================================================ -->
+<section class="slide" id="slide-1">
+    <div class="slide-inner">
+        <div class="hero-title">SMA Research Platform</div>
+        <div class="hero-subtitle">Evidence-Driven Target Discovery</div>
+        <div class="sep"></div>
+        <div class="hero-meta">Christian Fischer &nbsp;|&nbsp; March 2026</div>
+        <div style="margin-top: 1.5rem;">
+            <a href="https://sma-research.info" style="font-family: var(--mono); font-size: 0.85rem;">sma-research.info</a>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     SLIDE 2 — WHAT WE BUILT
+     ================================================ -->
+<section class="slide" id="slide-2">
+    <div class="slide-inner">
+        <div class="slide-title">What We Built</div>
+        <div class="slide-subtitle">An open-source evidence graph for SMA target discovery</div>
+
+        <div class="stat-row">
+            <div class="stat-item">
+                <div class="stat-value">6,176</div>
+                <div class="stat-label">Sources</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">~30,000</div>
+                <div class="stat-label">AI-Extracted Claims</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">Grade A</div>
+                <div class="stat-label">Calibration (89.8%)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">449</div>
+                <div class="stat-label">Clinical Trials</div>
+            </div>
+        </div>
+
+        <ul style="margin-top: 1.5rem;">
+            <li><strong>Sources:</strong> PubMed, bioRxiv, Google Patents, ClinicalTrials.gov, GEO datasets</li>
+            <li><strong>Claim extraction:</strong> Claude Sonnet with confidence scoring per claim</li>
+            <li><strong>Calibration:</strong> back-tested against 227 known drug outcomes</li>
+            <li><strong>Open access:</strong> AGPL-3.0, HuggingFace dataset, public API</li>
+        </ul>
+
+        <div style="margin-top: 1rem;">
+            <a href="https://sma-research.info" style="font-family: var(--mono); font-size: 0.85rem;">sma-research.info</a>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     SLIDE 3 — EVIDENCE TIERS
+     ================================================ -->
+<section class="slide" id="slide-3">
+    <div class="slide-inner">
+        <div class="slide-title">Evidence Tiers</div>
+        <div class="slide-subtitle">Every piece of data is labeled with its evidence level</div>
+
+        <div class="tier-grid">
+            <div class="tier-card tier-validated">
+                <div class="tier-label">Validated</div>
+                <div class="tier-desc">Wet-lab confirmed results, published clinical data, replicated findings</div>
+            </div>
+            <div class="tier-card tier-computational">
+                <div class="tier-label">Computational</div>
+                <div class="tier-desc">DiffDock docking, ESM-2 embeddings, SpliceAI predictions &mdash; needs wet-lab confirmation</div>
+            </div>
+            <div class="tier-card tier-hypothesis">
+                <div class="tier-label">Hypothesis</div>
+                <div class="tier-desc">AI-generated, evidence-supported but untested. Includes testable prediction + suggested assay</div>
+            </div>
+            <div class="tier-card tier-exploratory">
+                <div class="tier-label">Exploratory</div>
+                <div class="tier-desc">Early signals, single-source observations, requires independent replication</div>
+            </div>
+        </div>
+
+        <div class="callout">
+            No claim is presented without its evidence tier, source, and confidence score. Computational predictions are never equated with validated results.
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     SLIDE 4 — CORO1C — THE KEY FINDING
+     ================================================ -->
+<section class="slide" id="slide-4">
+    <div class="slide-inner">
+        <div class="slide-title">CORO1C &mdash; Coordinated Actin Pathway Response</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Gene</th>
+                    <th>Change in SMA Motor Neurons</th>
+                    <th>Function</th>
+                    <th>Source</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong style="color: var(--accent);">CORO1C</strong></td>
+                    <td>1.6x upregulated (q=0.027)</td>
+                    <td>Actin dynamics, branching</td>
+                    <td>GSE69175</td>
+                </tr>
+                <tr>
+                    <td><strong>PLS3</strong></td>
+                    <td>~4x upregulated</td>
+                    <td>Actin bundling, modifier</td>
+                    <td>GSE69175</td>
+                </tr>
+                <tr>
+                    <td><strong>UBA1</strong></td>
+                    <td>~2x upregulated</td>
+                    <td>Ubiquitin activation</td>
+                    <td>GSE69175</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 0.75rem; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; font-size: 12px; color: #94a3b8;">
+            <strong style="color: #ef4444;">Caveat:</strong> GSE69175 has only n=2 per group. Requires replication in larger datasets before drawing conclusions.
+        </div>
+        <ul style="margin-top: 0.75rem;">
+            <li><strong>CORO1C overexpression rescues SMA in zebrafish</strong> (Wirth Lab, PMID 27499521)</li>
+            <li>PLS3-CORO1C interaction: STRING-DB confidence <span class="highlight">0.818</span></li>
+            <li>SMA motor neurons may be attempting to compensate via CORO1C &mdash; needs larger dataset confirmation</li>
+            <li>ESM-2 analysis: CORO1C is a structural outlier among SMA targets</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ================================================
+     SLIDE 5 — THE UNTESTED HYPOTHESIS
+     ================================================ -->
+<section class="slide" id="slide-5">
+    <div class="slide-inner">
+        <div class="slide-title">The Untested Hypothesis</div>
+
+        <div class="callout callout-important">
+            Nobody has measured CORO1C expression after HDAC inhibitor treatment in SMA cells.
+        </div>
+
+        <ul style="margin-top: 1.25rem;">
+            <li><strong>LBH589 (panobinostat)</strong> produces ~10-fold SMN increase in SMA fibroblasts</li>
+            <li><strong>miR-133a-3p directly represses CORO1C</strong> (PMID 25518741)</li>
+            <li>HDAC inhibitors modulate miRNA expression profiles</li>
+            <li>If HDAC inhibitors also upregulate CORO1C: <strong>dual therapeutic mechanism</strong> (SMN + modifier)</li>
+        </ul>
+
+        <div class="sep"></div>
+
+        <div style="margin-top: 0.5rem;">
+            <div class="slide-subtitle" style="margin-bottom: 0.5rem;">Proposed experiment</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Cells</td><td>SMA patient fibroblasts</td></tr>
+                    <tr><td>Treatment</td><td>LBH589 or vorinostat (HDAC inhibitor)</td></tr>
+                    <tr><td>Readout</td><td>qRT-PCR: CORO1C, PLS3, SMN2, miR-133a-3p</td></tr>
+                    <tr><td>Go/No-Go</td><td>CORO1C fold-change &gt; 1.5 after treatment</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     SLIDE 6 — RILUZOLE
+     ================================================ -->
+<section class="slide" id="slide-6">
+    <div class="slide-inner">
+        <div class="slide-title">Riluzole &mdash; Validated Computational Hit</div>
+        <div class="slide-subtitle">The only compound that survived 20-pose DiffDock validation against SMN2</div>
+
+        <div class="two-col">
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>DiffDock confidence</td><td><span class="highlight">+0.082</span> (20 poses)</td></tr>
+                        <tr><td>FDA status</td><td>Approved (ALS)</td></tr>
+                        <tr><td>SMA trial data</td><td>Phase 1 exists</td></tr>
+                        <tr><td>Evidence tier</td><td>COMPUTATIONAL</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <ul>
+                    <li><strong>New mechanism:</strong> direct SMN2 protein binding (computational prediction)</li>
+                    <li><strong>Prior trial tested glutamate pathway</strong> &mdash; different mechanism entirely</li>
+                    <li>Needs SPR/ITC validation to confirm binding</li>
+                    <li>If confirmed: repurposing candidate with existing safety data</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="callout" style="margin-top: 1.25rem;">
+            DiffDock is a computational prediction tool. A positive confidence score indicates predicted binding affinity, but requires biophysical validation (SPR or ITC) before any biological conclusions.
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     SLIDE 7 — L1 VS L5
+     ================================================ -->
+<section class="slide" id="slide-7">
+    <div class="slide-inner">
+        <div class="slide-title">L1 vs L5 &mdash; Selective Vulnerability</div>
+        <div class="slide-subtitle">Does CORO1C expression differ between vulnerable and resistant motor neuron populations?</div>
+
+        <div class="two-col">
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Segment</th>
+                            <th>Vulnerability</th>
+                            <th>CORO1C?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>L1</strong> (proximal)</td>
+                            <td><span class="highlight-red">Vulnerable &mdash; neurons die</span></td>
+                            <td>Unknown</td>
+                        </tr>
+                        <tr>
+                            <td><strong>L5</strong> (distal)</td>
+                            <td><span class="highlight-green">Resistant &mdash; neurons survive</span></td>
+                            <td>Unknown</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <ul>
+                    <li><strong>IHC with anti-CORO1C antibody</strong> in SMN-delta-7 mouse spinal cord</li>
+                    <li>Compare L1 vs L5 motor neuron staining</li>
+                    <li>If CORO1C is higher in L5: explains part of selective vulnerability</li>
+                    <li>Connects modifier biology to segment-specific survival</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="callout" style="margin-top: 1.25rem;">
+            This experiment directly links CORO1C modifier biology to the selective vulnerability question &mdash; why do some motor neurons die while others survive?
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     SLIDE 8 — WHAT WE NEED
+     ================================================ -->
+<section class="slide" id="slide-8">
+    <div class="slide-inner">
+        <div class="slide-title">What We Need</div>
+        <div class="slide-subtitle">Three focused experiments, each with clear Go/No-Go criteria</div>
+
+        <ol class="steps">
+            <li>
+                <strong>SMA mouse tissue for CORO1C IHC</strong><br>
+                <span style="color: var(--text-secondary);">SMN-delta-7 spinal cord, L1 vs L5 segments. Anti-CORO1C antibody staining to test differential expression in vulnerable vs resistant motor neurons.</span>
+            </li>
+            <li>
+                <strong>SMA fibroblasts for HDAC &rarr; CORO1C qRT-PCR</strong><br>
+                <span style="color: var(--text-secondary);">Treat SMA patient fibroblasts with LBH589 or vorinostat. Measure CORO1C, PLS3, SMN2, miR-133a-3p. Go/No-Go: CORO1C fold-change &gt; 1.5.</span>
+            </li>
+            <li>
+                <strong>SPR access for riluzole / SMN2 binding validation</strong><br>
+                <span style="color: var(--text-secondary);">Surface plasmon resonance to confirm or refute computational DiffDock prediction. Purified SMN2 protein + riluzole titration.</span>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<!-- ================================================
+     SLIDE 9 — OPEN SCIENCE
+     ================================================ -->
+<section class="slide" id="slide-9">
+    <div class="slide-inner">
+        <div class="slide-title">Open Science</div>
+        <div class="slide-subtitle">Everything is publicly accessible and reproducible</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Resource</th>
+                    <th>Access</th>
+                    <th>License</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Source Code</td>
+                    <td><a href="https://github.com/Bryzant-Labs/sma-platform">GitHub</a></td>
+                    <td>AGPL-3.0</td>
+                </tr>
+                <tr>
+                    <td>Evidence Dataset</td>
+                    <td><a href="https://huggingface.co/datasets/SMAResearch/sma-evidence-graph">HuggingFace</a></td>
+                    <td>Open</td>
+                </tr>
+                <tr>
+                    <td>API</td>
+                    <td><a href="https://sma-research.info/api/v2">sma-research.info/api/v2</a></td>
+                    <td>Public</td>
+                </tr>
+                <tr>
+                    <td>MCP Server</td>
+                    <td>32 tools for programmatic access</td>
+                    <td>AGPL-3.0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="sep"></div>
+
+        <ul>
+            <li>Built by someone who has SMA</li>
+            <li>Every assertion traceable to a source with evidence tier</li>
+            <li>No proprietary lock-in &mdash; all data exportable</li>
+            <li>Daily automated pipeline: PubMed, bioRxiv, ClinicalTrials.gov</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ================================================
+     SLIDE 10 — NEXT STEPS
+     ================================================ -->
+<section class="slide" id="slide-10">
+    <div class="slide-inner">
+        <div class="slide-title">Next Steps</div>
+        <div class="slide-subtitle">3 focused tracks with clear Go/No-Go gates</div>
+
+        <table style="margin-bottom: 1.5rem;">
+            <thead>
+                <tr>
+                    <th>Track</th>
+                    <th>Experiment</th>
+                    <th>Go/No-Go Gate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="highlight">1</span></td>
+                    <td><strong>Riluzole &rarr; SMN2 SPR</strong></td>
+                    <td>K<sub>d</sub> detectable by SPR (&lt; 100 &mu;M)</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">2</span></td>
+                    <td><strong>HDAC &rarr; CORO1C expression</strong></td>
+                    <td>CORO1C fold-change &gt; 1.5 after treatment</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">3</span></td>
+                    <td><strong>CORO1C IHC in L1 vs L5</strong></td>
+                    <td>Differential staining between segments</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout">
+            Each track is independent. Failure on one does not block the others. Results from any track feed back into the evidence graph for re-scoring.
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+            <div style="color: var(--text-muted); font-size: 0.85rem; font-family: var(--mono);">
+                Christian Fischer &nbsp;&middot;&nbsp; <a href="https://sma-research.info">sma-research.info</a> &nbsp;&middot;&nbsp; March 2026
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     JAVASCRIPT — Navigation + Progress
+     ================================================ -->
+<script>
+(function() {
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    const progressBar = document.getElementById('progress');
+    const slideNumber = document.getElementById('slideNumber');
+
+    function updateProgress() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+        progressBar.style.width = pct + '%';
+
+        // Determine current slide
+        let current = 1;
+        slides.forEach((slide, i) => {
+            const rect = slide.getBoundingClientRect();
+            if (rect.top <= window.innerHeight * 0.5) {
+                current = i + 1;
+            }
+        });
+        slideNumber.textContent = current + ' / ' + total;
+    }
+
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+    updateProgress();
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        const currentScroll = window.scrollY;
+        let currentIndex = 0;
+
+        slides.forEach((slide, i) => {
+            if (slide.offsetTop <= currentScroll + 10) {
+                currentIndex = i;
+            }
+        });
+
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+            e.preventDefault();
+            if (currentIndex < total - 1) {
+                slides[currentIndex + 1].scrollIntoView({ behavior: 'smooth' });
+            }
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+            e.preventDefault();
+            if (currentIndex > 0) {
+                slides[currentIndex - 1].scrollIntoView({ behavior: 'smooth' });
+            }
+        } else if (e.key === 'Home') {
+            e.preventDefault();
+            slides[0].scrollIntoView({ behavior: 'smooth' });
+        } else if (e.key === 'End') {
+            e.preventDefault();
+            slides[total - 1].scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+})();
+</script>
+
+</body>
+</html>
