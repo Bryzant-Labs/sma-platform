@@ -437,13 +437,17 @@ These are interesting but not essential for scientific credibility:
 - [ ] Scale to 1000+ molecules
 - [ ] Compare with our existing 378 DiffDock v2.2 results
 
-### 12.4 Proteina-Complexa — Protein Binder Design (NEW MODALITY)
+### 12.4 Proteina-Complexa — Protein Binder Design + Open Dataset (NEW MODALITY)
 - [ ] Assess availability (NIM API vs self-hosted on Vast.ai)
 - [ ] Create protein_binder_design.py module
 - [ ] Add POST /binder/design endpoint
 - [ ] Design first binders: SMN2 protein, SMN-p53 interface
 - [ ] Add "Protein Binder Design" as new Research Direction
 - [ ] Validate top designs with structural analysis
+- [ ] **NEW**: Query Proteina-Complexa open dataset (millions of AI-predicted protein complexes)
+- [ ] **NEW**: Lookup SMA-relevant complexes: SMN-Gemin, PLS3-actin, NCALD-calmodulin, CORO1C-Arp2/3
+- [ ] **NEW**: Use complex structures to improve modifier interaction hypotheses
+- [ ] **NEW**: Cross-reference with our 105 ESM-2 similarity pairs for structural validation
 
 ### 12.5 BioNeMo Recipes — ESM-2 Fine-Tuning
 - [ ] Install BioNeMo Recipes
@@ -465,6 +469,68 @@ These are interesting but not essential for scientific credibility:
 - [ ] Add POST /agent/drug-discovery endpoint
 - [ ] Auto-create news posts for significant findings
 - [ ] Connect to MCP server for external AI agent access
+
+---
+
+## Phase 13: Platform Maturity — Observability & Internal Infrastructure (PLANNED)
+
+> Identified gap analysis (2026-03-21): The platform has strong modules but lacks the operational
+> layer to measure, optimize, and orchestrate them as a system. These items address the transition
+> from "collection of good modules" to "compute-native research platform."
+
+### 13.1 Agent & Pipeline Observability (BIGGEST SOFTWARE GAP)
+
+Currently: zero visibility into agent costs, latency, success rates, or tool efficiency.
+We don't know which claim extraction batch costs how much, or which hypothesis generation
+run produces the best output per dollar.
+
+- [ ] Add OpenTelemetry instrumentation to daily pipeline (13 stages)
+- [ ] Track per-stage: duration, token count, API cost, error rate
+- [ ] Track per-agent: claim extractor, hypothesis generator, convergence agent, discovery agent
+- [ ] Add `pipeline_metrics` table (stage, run_id, duration_ms, tokens_in, tokens_out, cost_usd, errors)
+- [ ] Add GET /api/v2/metrics/pipeline endpoint (last N runs, cost breakdown)
+- [ ] Add GET /api/v2/metrics/agents endpoint (per-agent efficiency)
+- [ ] Frontend: Pipeline Health dashboard (cost per run, trend chart, error spikes)
+- [ ] Evaluate NeMo Agent Toolkit for deeper agent intelligence/optimization (when multi-agent workloads justify it)
+- [ ] Set cost alerts: flag when daily pipeline exceeds $X threshold
+
+**Why this matters:** Without observability, we're optimizing blind. The daily pipeline runs
+13 stages using Claude Haiku/Sonnet + FAISS + PostgreSQL — we should know what each stage
+costs and whether it's producing value. Evidence: we already burned unknowing amounts on
+claim extraction without knowing precision/recall until the gold-standard audit.
+
+### 13.2 MCP as Internal Research Backbone (ARCHITECTURE UPGRADE)
+
+Currently: MCP serves as external connector (32 tools for Claude Desktop/Code).
+Missing: MCP as the internal orchestration layer for GPU jobs, experiments, and model registry.
+
+- [ ] `gpu-queue-mcp`: Submit GPU jobs (Vast.ai/NIM), check status, retrieve artifacts, cost tracking
+- [ ] `experiment-registry-mcp`: Gold-standard sets, benchmark runs, reproducibility packages, lab readouts
+- [ ] `model-registry-mcp`: Which model version, which benchmark score, which cost profile (ESM-2, SpliceAI, DiffDock, Claude versions)
+- [ ] Refactor existing MCP tools to use these internal MCPs as backends
+- [ ] Add provenance tracking: every result links back to model version + input data version
+- [ ] Standardize all tool interfaces: consistent input/output schemas across all MCPs
+
+**Why this matters:** When Phase 12.7 (Agentic Drug Discovery) orchestrates GenMol → DiffDock → RNAPro,
+it needs a clean tool fabric, not ad-hoc API calls. MCP as backbone means every tool is
+discoverable, versionable, and auditable. This is the difference between "we ran DiffDock" and
+"DiffDock v2.2 NIM, run #347, input: 4-AP SMILES, output: confidence +0.251, cost: $0, duration: 2.3s."
+
+### 13.3 Standardized Model Serving (WHEN SCALING)
+
+> Lower priority than 13.1 and 13.2. Only relevant when we move beyond NIM API + Vast.ai burst.
+
+Currently: NIM API for some models, Vast.ai on-demand for others, local CPU for lightweight.
+No unified serving layer.
+
+- [ ] Evaluate vLLM vs NIM for self-hosted models (when NIM free credits expire or latency matters)
+- [ ] Define standard serving API contract (OpenAI-compatible) for all model endpoints
+- [ ] Create model routing config: which model → which backend (NIM API vs self-hosted vs Vast.ai)
+- [ ] Document cost/latency tradeoffs per model per backend
+- [ ] Only build if: NIM costs become significant OR we need guaranteed latency for always-on agents
+
+**Why this is lower priority:** NIM API is currently free (credits) and Vast.ai burst is $0.78 total
+spend so far. Standardized serving matters when we scale to 10K+ compound screening or persistent agents.
 
 ---
 

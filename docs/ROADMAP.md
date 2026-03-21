@@ -134,6 +134,19 @@
 | Lab-OS Integration | PLANNED | LIMS/ELN connectivity |
 | Federated analytics | PLANNED | Multi-site collaboration |
 
+### M9: Platform Maturity — Observability & Infrastructure (Target: Q2-Q3 2026)
+
+> From "collection of good modules" to "compute-native research platform."
+> Details: `MILESTONES_ROADMAP.md` → Phase 13
+
+| Deliverable | Status | Description |
+|------------|--------|-------------|
+| Agent & pipeline observability | PLANNED | OpenTelemetry, cost/latency/error tracking per stage |
+| Pipeline metrics API + dashboard | PLANNED | GET /metrics/pipeline, trend charts, cost alerts |
+| MCP internal backbone (gpu-queue, experiment-registry, model-registry) | PLANNED | MCP as orchestration layer, not just external connector |
+| Provenance tracking | PLANNED | Every result → model version + input data version |
+| Standardized model serving | PLANNED | Only when NIM costs or latency become issues |
+
 ---
 
 ## Key Discoveries (2026-03-16)
