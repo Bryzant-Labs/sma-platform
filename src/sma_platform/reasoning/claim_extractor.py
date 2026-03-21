@@ -22,6 +22,29 @@ from ..core.database import execute, fetch, fetchrow
 
 logger = logging.getLogger(__name__)
 
+# Keywords that indicate SMA relevance in a paper abstract.
+# Used as a post-extraction filter to reject claims from unrelated papers.
+SMA_KEYWORDS = {
+    "spinal muscular atrophy", "sma type", "sma i", "sma ii", "sma iii", "sma iv",
+    "smn1", "smn2", "smn protein", "survival motor neuron",
+    "motor neuron", "motor neurone", "motoneuron", "anterior horn",
+    "neuromuscular", "neuromuscular junction", "nmj",
+    "nusinersen", "spinraza", "risdiplam", "evrysdi",
+    "onasemnogene", "zolgensma", "branaplam",
+    "amyotrophy", "muscular atrophy",
+}
+
+def _abstract_is_sma_relevant(abstract: str, title: str = "") -> bool:
+    """Check if an abstract is relevant to SMA/neuromuscular disease.
+
+    Returns True if any SMA keyword is found in the title or abstract.
+    This filters out papers about unrelated diseases (cancer, diabetes,
+    bear hibernation, etc.) that occasionally appear in search results.
+    """
+    text = f"{title} {abstract}".lower()
+    return any(kw in text for kw in SMA_KEYWORDS)
+
+
 VALID_CLAIM_TYPES = {
     "gene_expression", "protein_interaction", "pathway_membership",
     "drug_target", "drug_efficacy", "biomarker", "splicing_event",
@@ -44,7 +67,6 @@ TYPE_MAP = {
 # Known aliases for SMA-relevant targets.
 # Keys are uppercased labels the LLM may produce; values are canonical DB symbols.
 TARGET_ALIASES: dict[str, str] = {
-    "SMN": "SMN_PROTEIN",
     "SMN PROTEIN": "SMN_PROTEIN",
     "SURVIVAL MOTOR NEURON": "SMN1",
     "SURVIVAL MOTOR NEURON 1": "SMN1",
@@ -90,6 +112,121 @@ TARGET_ALIASES: dict[str, str] = {
     "ALPHA-CATENIN": "CTNNA1",
     "ALPHA CATENIN": "CTNNA1",
     "CATENIN ALPHA-1": "CTNNA1",
+    # Additional gene name aliases for improved linking
+    "SMN": "SMN1",
+    "SURVIVAL MOTOR NEURON PROTEIN": "SMN1",
+    "GEMIN": "SMN1",
+    "GEMIN1": "SMN1",
+    "GEMS": "SMN1",
+    "FULL-LENGTH SMN": "SMN1",
+    "FL-SMN": "SMN1",
+    "DELTA7 SMN": "SMN2",
+    "SMN-DELTA7": "SMN2",
+    "SMNDELTA7": "SMN2",
+    "SMNC": "SMN2",
+    "CENTROMERIC SMN": "SMN2",
+    "STASIMON": "TMEM41B",
+    "TMEM41B": "TMEM41B",
+    "HTRA2": "HTRA2",
+    "OMI": "HTRA2",
+    "ZPR1": "ZPR1",
+    "ZINC FINGER PROTEIN": "ZPR1",
+    "SENATAXIN": "SETX",
+    "FUS": "FUS",
+    "FUSED IN SARCOMA": "FUS",
+    "TDP-43": "TARDBP",
+    "TDP43": "TARDBP",
+    "TARDBP": "TARDBP",
+    "P53": "TP53",
+    "TP53": "TP53",
+    "BCL-2": "BCL2",
+    "BCL2": "BCL2",
+    "BCLXL": "BCL2L1",
+    "BCL-XL": "BCL2L1",
+    "CASPASE-3": "CASP3",
+    "CASPASE 3": "CASP3",
+    "CASP3": "CASP3",
+    "CASPASE-9": "CASP9",
+    "CASPASE 9": "CASP9",
+    "SNRNP": "SMN1",
+    "SNRNP ASSEMBLY": "SMN1",
+    "SPLICEOSOME": "SMN1",
+    "SPLICEOSOMAL": "SMN1",
+    # Pathway-level aliases — link pathway mentions to their key SMA-relevant gene
+    "UBIQUITIN PROTEASOME": "UBA1",
+    "UBIQUITIN-PROTEASOME SYSTEM": "UBA1",
+    "UPS": "UBA1",
+    "UBIQUITIN PROTEASOME PATHWAY": "UBA1",
+    "UBIQUITIN LIGASE": "UBA1",
+    "PROTEASOME": "UBA1",
+    "PROTEASOMAL DEGRADATION": "UBA1",
+    "AUTOPHAGY": "MTOR_PATHWAY",
+    "PI3K/AKT": "MTOR_PATHWAY",
+    "PI3K-AKT": "MTOR_PATHWAY",
+    "PI3K/AKT/MTOR": "MTOR_PATHWAY",
+    "AKT PATHWAY": "MTOR_PATHWAY",
+    "MAPK": "MAPK_PATHWAY",
+    "ERK": "MAPK_PATHWAY",
+    "ERK1/2": "MAPK_PATHWAY",
+    "RAS-MAPK": "MAPK_PATHWAY",
+    "RAS/MAPK": "MAPK_PATHWAY",
+    "RHO GTPASE": "CORO1C",
+    "ROCK": "CORO1C",
+    "RHO/ROCK": "CORO1C",
+    "RHO KINASE": "CORO1C",
+    "ACTIN DYNAMICS": "PLS3",
+    "ACTIN CYTOSKELETON": "PLS3",
+    "F-ACTIN": "PLS3",
+    "ENDOCYTOSIS": "PLS3",
+    "CALCIUM SIGNALING": "NCALD",
+    "CALCIUM HOMEOSTASIS": "NCALD",
+    "CALCIUM CHANNEL": "NCALD",
+    "INTRACELLULAR CALCIUM": "NCALD",
+    "ER STRESS": "HTRA2",
+    "ENDOPLASMIC RETICULUM STRESS": "HTRA2",
+    "UNFOLDED PROTEIN RESPONSE": "HTRA2",
+    "UPR": "HTRA2",
+    "JNK": "JNK_PATHWAY",
+    "JNK PATHWAY": "JNK_PATHWAY",
+    "C-JUN": "JNK_PATHWAY",
+    "NOTCH": "NOTCH_PATHWAY",
+    "NOTCH SIGNALING": "NOTCH_PATHWAY",
+    "NOTCH PATHWAY": "NOTCH_PATHWAY",
+    "WNT": "WNT_PATHWAY",
+    "WNT SIGNALING": "WNT_PATHWAY",
+    "WNT PATHWAY": "WNT_PATHWAY",
+    "BETA-CATENIN": "WNT_PATHWAY",
+    "MYOSTATIN": "MSTN",
+    "GDF-8": "MSTN",
+    "GDF8": "MSTN",
+    "FOLLISTATIN": "FST",
+    "ACTIVIN": "FST",
+    "AGRIN": "AGRN",
+    "MUSK": "MUSK",
+    "LRPN4": "LRPN4",
+    "RAPSYN": "RAPSN",
+    "ACETYLCHOLINE RECEPTOR": "CHRNA1",
+    "ACHR": "CHRNA1",
+    "NICOTINIC RECEPTOR": "CHRNA1",
+    "BDNF": "BDNF",
+    "BRAIN-DERIVED NEUROTROPHIC FACTOR": "BDNF",
+    "CNTF": "CNTF",
+    "CILIARY NEUROTROPHIC FACTOR": "CNTF",
+    "GDNF": "GDNF",
+    "IGF-1": "IGF1",
+    "IGF1": "IGF1",
+    "INSULIN-LIKE GROWTH FACTOR": "IGF1",
+    "HDAC INHIBITOR": "HDAC_PATHWAY",
+    "HDAC": "HDAC_PATHWAY",
+    "HISTONE DEACETYLASE": "HDAC_PATHWAY",
+    "VALPROIC ACID": "HDAC_PATHWAY",
+    "VPA": "HDAC_PATHWAY",
+    "NEUROFILAMENT": "NEFL",
+    "NEUROFILAMENT LIGHT": "NEFL",
+    "NFL": "NEFL",
+    "NFL LIGHT CHAIN": "NEFL",
+    "PHOSPHORYLATED NEUROFILAMENT": "NEFH",
+    "PNFH": "NEFH",
 }
 
 # Drug names → their primary mechanism-of-action target.
@@ -100,9 +237,29 @@ DRUG_TARGET_MAP: dict[str, str] = {
     "RISDIPLAM": "SMN2",
     "EVRYSDI": "SMN2",
     "BRANAPLAM": "SMN2",
+    "LMI070": "SMN2",
     "ONASEMNOGENE": "SMN1",
     "ONASEMNOGENE ABEPARVOVEC": "SMN1",
     "ZOLGENSMA": "SMN1",
+    "AVXS-101": "SMN1",
+    "VALPROIC ACID": "HDAC_PATHWAY",
+    "VPA": "HDAC_PATHWAY",
+    "SODIUM BUTYRATE": "HDAC_PATHWAY",
+    "TRICHOSTATIN A": "HDAC_PATHWAY",
+    "TSA": "HDAC_PATHWAY",
+    "SUBEROYLANILIDE HYDROXAMIC ACID": "HDAC_PATHWAY",
+    "SAHA": "HDAC_PATHWAY",
+    "VORINOSTAT": "HDAC_PATHWAY",
+    "CELECOXIB": "TP53",
+    "RILUZOLE": "SMN2",
+    "OLESOXIME": "SMN_PROTEIN",
+    "4-AMINOPYRIDINE": "CORO1C",
+    "4-AP": "CORO1C",
+    "DALFAMPRIDINE": "CORO1C",
+    "RELDESEMTIV": "TNNT3",
+    "CK-2127107": "TNNT3",
+    "APITEGROMAB": "MSTN",
+    "SRK-015": "MSTN",
 }
 
 
@@ -146,12 +303,27 @@ async def _resolve_target_id(label: str) -> str | None:
 EXTRACTION_PROMPT = """You are a biomedical research analyst specializing in Spinal Muscular Atrophy (SMA).
 
 Given the following paper abstract, extract structured claims. Each claim should be:
-- A single factual assertion from the abstract
+- A single factual assertion that is DIRECTLY STATED in the abstract — never infer or extrapolate beyond what the authors wrote
 - Relevant to SMA biology, treatment, or targets
 - Specific enough to be verified or refuted
 
+CRITICAL — Hedging and Evidence Strength:
+- Preserve the authors' hedging language. If they say "may", "suggests", "is associated with", or "appears to", your predicate MUST use the same cautious phrasing.
+- NEVER upgrade tentative findings to definitive statements. For example, do NOT convert "X may regulate Y" into "X regulates Y".
+- Include the evidence context in the predicate. Append one of these qualifiers when applicable:
+  * "(demonstrated in vitro)" for cell culture experiments
+  * "(observed in mouse model)" for animal studies
+  * "(clinical trial result)" for human trial data
+  * "(computational prediction)" for bioinformatics-only findings
+  * "(observed in patient cohort)" for observational human studies
+- If a claim type is ambiguous, prefer the more specific type (e.g., "splicing_event" over "gene_expression" if splicing is mentioned).
+
+SMA Relevance:
+- Only extract claims that are directly relevant to SMA, motor neurons, SMN protein biology, or neuromuscular disease.
+- If the abstract is NOT about SMA or neuromuscular disease, return an empty array [].
+
 For each claim, provide:
-- predicate: The factual assertion (1-2 sentences)
+- predicate: The factual assertion using the authors' exact hedging language, with evidence context qualifier (1-2 sentences)
 - claim_type: One of [gene_expression, protein_interaction, pathway_membership, drug_target, drug_efficacy, biomarker, splicing_event, neuroprotection, motor_function, survival, safety, other]
 - confidence: Your confidence the abstract supports this claim (0.0-1.0)
 - subject: The primary entity (gene symbol, drug name, pathway, or "SMA")
@@ -182,6 +354,11 @@ async def extract_claims_from_abstract(
 
     if not abstract or len(abstract.strip()) < 50:
         logger.info("Abstract too short for %s, skipping", source_id)
+        return []
+
+    # SMA relevance gate — reject papers about unrelated diseases
+    if not _abstract_is_sma_relevant(abstract, title or ""):
+        logger.info("Skipping non-SMA paper %s: %s", source_id, (title or "")[:80])
         return []
 
     prompt = EXTRACTION_PROMPT.format(
@@ -266,6 +443,12 @@ async def process_source(source_id: str) -> int:
             subject_type = claim.get("subject_type", "disease")
             subject_id = await _resolve_target_id(subject)
 
+            # If subject is a drug name, map to its MOA target
+            if subject_id is None and subject:
+                drug_target_sym = DRUG_TARGET_MAP.get(subject.strip().upper())
+                if drug_target_sym:
+                    subject_id = await _resolve_target_id(drug_target_sym)
+
             # If subject didn't resolve, try related_targets from the LLM
             if subject_id is None:
                 for rt in claim.get("related_targets", []):
@@ -273,12 +456,34 @@ async def process_source(source_id: str) -> int:
                     if subject_id:
                         break
 
+            # If still not resolved, scan predicate + excerpt text for known aliases
+            if subject_id is None:
+                scan_text = f"{predicate} {claim.get('excerpt', '')}".upper()
+                # Check target aliases in scan text (longest first to avoid partial matches)
+                for alias in sorted(TARGET_ALIASES.keys(), key=len, reverse=True):
+                    if alias in scan_text:
+                        subject_id = await _resolve_target_id(TARGET_ALIASES[alias])
+                        if subject_id:
+                            break
+                # Check drug names in scan text
+                if subject_id is None:
+                    for drug_name, target_sym in DRUG_TARGET_MAP.items():
+                        if drug_name in scan_text:
+                            subject_id = await _resolve_target_id(target_sym)
+                            if subject_id:
+                                break
+
             # Resolve object to a target ID if possible
             obj = claim.get("object")
             object_type = claim.get("object_type")
             object_id = None
             if obj:
                 object_id = await _resolve_target_id(obj)
+                # If object is a drug, try drug→target mapping
+                if object_id is None:
+                    drug_target_sym = DRUG_TARGET_MAP.get(obj.strip().upper())
+                    if drug_target_sym:
+                        object_id = await _resolve_target_id(drug_target_sym)
 
             # Insert claim and retrieve its ID atomically via RETURNING
             claim_row = await fetchrow(
@@ -337,12 +542,22 @@ async def relink_all_claims() -> dict:
     # Pre-load all target symbols for predicate scanning
     all_targets = await fetch("SELECT id, symbol, name FROM targets")
     target_lookup = {dict(t)["symbol"]: str(dict(t)["id"]) for t in all_targets}
-    # Build reverse alias map: alias → target_id
+    # Build reverse alias map: alias → target_id (sorted by length desc for longest-match-first)
     alias_to_id: dict[str, str] = {}
     for alias, symbol in TARGET_ALIASES.items():
         tid = target_lookup.get(symbol)
         if tid:
             alias_to_id[alias] = tid
+    sorted_aliases = sorted(alias_to_id.keys(), key=len, reverse=True)
+
+    # Pre-load evidence excerpts for each claim to use in text scanning
+    evidence_rows = await fetch(
+        "SELECT claim_id, excerpt FROM evidence WHERE claim_id IN (SELECT id FROM claims WHERE subject_id IS NULL)",
+    )
+    claim_excerpts: dict[str, str] = {}
+    for erow in evidence_rows:
+        erow = dict(erow)
+        claim_excerpts[str(erow["claim_id"])] = erow.get("excerpt", "")
 
     claims_checked = 0
     claims_updated = 0
@@ -380,27 +595,29 @@ async def relink_all_claims() -> dict:
                 if subject_id:
                     break
 
-        # If still not resolved, scan predicate text for target symbols/aliases
-        if subject_id is None and predicate:
-            pred_upper = predicate.upper()
-            # Check exact target symbols in predicate
-            for symbol, tid in target_lookup.items():
-                if symbol in pred_upper:
-                    subject_id = tid
-                    break
-            # Check aliases in predicate
-            if subject_id is None:
-                for alias, tid in alias_to_id.items():
-                    if alias in pred_upper:
+        # If still not resolved, scan predicate + excerpt text for target symbols/aliases
+        if subject_id is None:
+            excerpt_text = claim_excerpts.get(str(row["id"]), "")
+            scan_text = f"{predicate} {excerpt_text}".upper()
+            if scan_text.strip():
+                # Check exact target symbols in text
+                for symbol, tid in target_lookup.items():
+                    if symbol in scan_text:
                         subject_id = tid
                         break
-            # Check drug names in predicate → MOA target
-            if subject_id is None:
-                for drug_name, target_sym in DRUG_TARGET_MAP.items():
-                    if drug_name in pred_upper:
-                        subject_id = target_lookup.get(target_sym)
-                        if subject_id:
+                # Check aliases in text (longest first to avoid partial matches)
+                if subject_id is None:
+                    for alias in sorted_aliases:
+                        if alias in scan_text:
+                            subject_id = alias_to_id[alias]
                             break
+                # Check drug names in text → MOA target
+                if subject_id is None:
+                    for drug_name, target_sym in DRUG_TARGET_MAP.items():
+                        if drug_name in scan_text:
+                            subject_id = target_lookup.get(target_sym)
+                            if subject_id:
+                                break
 
         # Try to resolve object_id
         object_id = None
