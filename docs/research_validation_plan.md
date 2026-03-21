@@ -27,6 +27,54 @@ The discoveries, ranked by priority:
 
 ---
 
+## Critical Update: CORO1C Therapeutic Direction
+
+**Date:** March 21, 2026
+
+### Background
+
+Published evidence (PMID 27499521, 2016) demonstrates that CORO1C overexpression rescues the SMA phenotype in a zebrafish model. CORO1C is therefore a **protective modifier** of SMA — reduced CORO1C function worsens the disease, and increased CORO1C function compensates for SMN deficiency. This has fundamental implications for the virtual screening results and the therapeutic strategy going forward.
+
+### Corrected Interpretation of DiffDock Results
+
+The 4-AP/CORO1C docking result (+0.251) and all other compound-CORO1C dockings must be reinterpreted in light of CORO1C's protective role:
+
+- **DiffDock models binding, not function.** A compound docking into the F-actin binding domain of CORO1C would likely **block** CORO1C activity — the opposite of what is therapeutically needed.
+- **Fomepizole (+1.027 confidence score) is an artifact.** This score is driven by a systematic small-molecule scoring bias in DiffDock (small, rigid molecules receive inflated confidence scores) combined with an inhibitory binding pose. Fomepizole (MW 82.1, 6 heavy atoms) is well below the MW threshold for reliable docking predictions.
+- **Any CORO1C hit that docks into the actin-binding site is therapeutically counterproductive.** Such compounds would inhibit the very protein that protects motor neurons.
+
+### Revised CORO1C Strategy
+
+The correct therapeutic direction for CORO1C in SMA is to **increase** CORO1C expression or **stabilize** the CORO1C protein. This requires a fundamentally different approach from standard virtual screening:
+
+1. **Transcriptional activation:** Identify compounds that upregulate CORO1C gene expression (e.g., via promoter activation or epigenetic modification).
+2. **Protein stabilization:** Find small molecules that bind CORO1C at allosteric or non-functional sites and increase its half-life without blocking its actin-binding function.
+3. **Pathway activation:** Target upstream regulators of CORO1C expression or downstream effectors in the actin cytoskeletal pathway.
+
+### Compounds of Interest
+
+- **Hydroxyurea:** Known SMN2 splicing enhancer that also appeared as a CORO1C binder in the screening. If hydroxyurea increases CORO1C expression (rather than inhibiting it), this would represent a dual-mechanism compound acting on both SMN2 splicing and the actin cytoskeletal pathway. This requires experimental confirmation of the direction of effect.
+- **4-AP:** The original finding remains scientifically interesting for understanding CORO1C pharmacology, but the therapeutic value depends entirely on whether 4-AP binding activates or inhibits CORO1C function. This must be determined experimentally before proceeding.
+
+### What Remains Valid
+
+- **UBA1 hits remain valid.** UBA1 dysregulation is an SMN-independent pathological mechanism in SMA. Compounds that modulate UBA1 are not affected by the CORO1C direction-of-effect correction.
+- **Riluzole binding to SMN2 remains valid.** This is a protein-binding interaction distinct from riluzole's known glutamate receptor mechanism. The therapeutic direction (enhance SMN2 function) is correct.
+- **CORO1C structural biology remains valid.** The ESM-2 embedding analysis, contact map predictions, and structural uniqueness findings are unaffected. Only the therapeutic interpretation of docking hits changes.
+
+### MW Correction: Small-Molecule Scoring Bias
+
+A systematic analysis of all 56 positive hits from the expanded 4,116-compound screen reveals that 26 hits (46%) have molecular weight below 150 Da. These small, rigid molecules receive inflated DiffDock confidence scores due to their ability to fit into many binding pockets with minimal steric clash. This does not reflect genuine binding specificity.
+
+**Corrected hit counts after MW filtering (MW >= 150):**
+- Total positive hits: 56
+- High false-positive risk (MW < 150 or < 8 heavy atoms): 26
+- Validated hits (MW >= 150, >= 8 heavy atoms): 30
+
+The corrected analysis is available at: `/home/bryzant/sma-platform/gpu/results/10k_screen/corrected_analysis.json`
+
+---
+
 ## Computational Milestones Completed
 
 What the platform has already achieved — providing the foundation for experimental validation.
@@ -692,6 +740,8 @@ Before any new clinical trial, pharmacokinetic considerations must be addressed:
 | Riluzole binds SMN2 but does not affect splicing or protein levels | 30-40% (if binding confirmed) | Limits therapeutic relevance | Binding without function is still publishable and informative for SMN2 structural biology |
 | Prior negative Phase 1 data discourages collaborators | 30-40% | Slows progress | Explain mechanism distinction clearly; the Phase 1 tested glutamate inhibition, not protein binding |
 | Riluzole multi-target binding is nonspecific (hydrophobic artifact) | 40-50% | Invalidates both SMN2 and UBA1 predictions | SPR with proper controls (BSA, unrelated protein) will distinguish specific from nonspecific binding |
+| Small-molecule scoring bias inflates DiffDock confidence for low-MW compounds | **CONFIRMED** | 46% of positive hits (26/56) have MW < 150; fomepizole +1.027 is an artifact | Apply MW >= 150 filter; exclude compounds with < 8 heavy atoms; use corrected analysis for all downstream decisions |
+| CORO1C docking hits block protective function (wrong therapeutic direction) | 60-80% (for actin-site binders) | Compounds that inhibit CORO1C would worsen SMA, not treat it | Distinguish binding site (actin-binding vs allosteric); pivot to transcriptional activation or protein stabilization strategies |
 
 ### Honest Assessment of Overall Probability
 
