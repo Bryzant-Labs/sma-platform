@@ -61,6 +61,12 @@ AXON_TYPES = [
     AxonType("corticospinal_tract", 500, 10, True,
              "Upper motor neuron from cortex to spinal cord",
              0.8),
+    AxonType("phrenic_motor_neuron", 350, 10, True,
+             "Phrenic nerve C3-C5 to diaphragm — respiratory failure in severe SMA",
+             0.95),
+    AxonType("intercostal_motor_neuron", 150, 6, True,
+             "Intercostal nerve T1-T12 to rib muscles — breathing support",
+             0.85),
 ]
 
 
