@@ -173,17 +173,20 @@
 
 | Metric | Count |
 |--------|-------|
-| Claims | 30,800 |
-| Hypotheses | 1,269 |
-| Sources | 6,234 |
+| Claims | 30,989 |
+| Hypotheses | 1,271 |
+| Sources | 6,325 |
 | Trials | 451 |
-| Targets | 58 |
-| Drugs | 17 |
+| Targets | 60 |
+| Drugs | 21 |
 | Screening compounds | 630 |
-| MCP tools | 32 |
+| MCP tools | 33 (incl. verify_pmid) |
 | API endpoints | ~210 |
+| Research directions | 22 |
 | Synthesis cards | 6 |
-| Co-occurrence pairs | 182 |
+| Co-occurrence pairs | 184 |
+| Transitive bridges | 200 |
+| News posts | 11 |
 | GPU dockings | 1,429 (140 v1 + 378 v2.2 + 957 GenMol screen) |
 | Protein structures | 8 (AlphaFold DB complexes) |
 | Protein embeddings | 15 (ESM-2) |
