@@ -75,7 +75,7 @@ async def trigger_pubmed_ingestion(days_back: int = Query(default=7, ge=1, le=36
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
         "pubmed", "daily_sma_search", len(papers), new_count, updated_count,
-        json.dumps(errors[:10]) if errors else None, duration,
+        errors[:10] if errors else None, duration,
     )
 
     return {
@@ -128,7 +128,7 @@ async def trigger_biorxiv_ingestion(days_back: int = Query(default=7, ge=1, le=9
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
         "biorxiv", "sma_preprint_scan", len(preprints), new_count, updated_count,
-        json.dumps(errors[:10]) if errors else None, duration,
+        errors[:10] if errors else None, duration,
     )
 
     return {
@@ -186,7 +186,7 @@ async def trigger_trials_ingestion():
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
         "clinicaltrials", "all_sma_trials", len(trials), new_count, updated_count,
-        json.dumps(errors[:10]) if errors else None, duration,
+        errors[:10] if errors else None, duration,
     )
 
     return {
@@ -274,7 +274,7 @@ async def trigger_trial_results_ingestion():
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
         "clinicaltrials_results", "sma_trial_results", len(trial_results), new_count, updated_count,
-        json.dumps(errors[:10]) if errors else None, duration,
+        errors[:10] if errors else None, duration,
     )
 
     return {
@@ -363,7 +363,7 @@ async def trigger_patent_ingestion(
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
         "patents", "sma_patents", len(all_patents), new_count, updated_count,
-        json.dumps(errors[:10]) if errors else None, duration,
+        errors[:10] if errors else None, duration,
     )
 
     return {
@@ -440,7 +440,7 @@ async def trigger_structure_ingestion():
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
         "alphafold", "sma_structures", len(alphafold.SMA_PROTEINS), updated_count, 0,
-        json.dumps(errors[:10]) if errors else None, duration,
+        errors[:10] if errors else None, duration,
     )
 
     return {
@@ -668,7 +668,7 @@ async def trigger_compound_ingestion(limit_per_target: int = Query(default=50, g
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
         "chembl", "sma_bioactivities", compound_edges, compound_edges, 0,
-        json.dumps(errors[:10]) if errors else None, duration,
+        errors[:10] if errors else None, duration,
     )
 
     return {
@@ -796,7 +796,7 @@ async def trigger_protein_ingestion():
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
         "uniprot", "protein_annotations", protein_count, go_edges + pathway_edges, 0,
-        json.dumps(errors[:10]) if errors else None, duration,
+        errors[:10] if errors else None, duration,
     )
 
     return {
