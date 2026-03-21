@@ -1,9 +1,10 @@
 # Simon Meeting — Week of March 30, 2026
 # 30-Minute Presentation Outline
 
-> **Audience**: Christian Simon (PhD student, Leipzig), Prof. Schoeneberg
-> **Goal**: Show scientific credibility, get feedback on Fasudil proposal
-> **Strategy**: Lead with HIS priorities, then our novel findings
+> **Audience**: Christian Simon (Carl-Ludwig-Institute, Leipzig) — rising PI, first author in Brain 2025
+> **His network**: Mentis (Columbia), Capogrosso (Pittsburgh), Pellizzoni, Sumner, Wirth, Hallermann
+> **Goal**: Establish collaboration, propose joint Fasudil experiment
+> **Strategy**: Show we understand HIS proprioceptive work (PMID 39982868), then connect to our actin pathway
 
 ---
 
@@ -13,12 +14,14 @@
 
 ## Section A: Your Priorities Addressed (8 min)
 
-### Slide 2: Proprioceptive Circuit Support (3 min)
-- NEW: Proprioceptive Circuit research direction on platform
-- Mentis lab (Columbia) evidence integrated
-- Ia afferent synapse loss precedes MN death
-- Platform now tracks circuit disease perspective
-- **Ask**: Which specific proprioceptive markers should we add?
+### Slide 2: Your Brain 2025 Paper — Computational Extensions (4 min)
+- Reference HIS paper: PMID 39982868 "Proprioceptive synaptic dysfunction in mice AND humans"
+- Show: we ingested this work, built proprioceptive circuit research direction
+- Platform can computationally extend his findings:
+  - Which genes are co-dysregulated with proprioceptive markers?
+  - Cross-paper synthesis: what other targets connect to Ia afferents?
+  - Evidence gap: what's missing to translate from mouse to therapy?
+- **Ask**: What computational analysis would be most useful for his next paper?
 
 ### Slide 3: Motor Neuron Counting Problem (2 min)
 - Literature confirms: 0-80% variation across labs
@@ -73,14 +76,15 @@
 - Demo: /ask endpoint (conversational search)
 - Demo: GPU Results (DiffDock, now clickable)
 
-## Section D: Discussion (4 min)
+## Section D: Collaboration Proposal (4 min)
 
-### Slide 10: What We Need
-1. iPSC-MN access for Fasudil experiment
-2. Proprioceptive circuit data recommendations
-3. Feedback on Translational Desert hypothesis
-4. Connection to Hallermann lab (electrophysiology)
-5. Your list of "what would convince you this is real"
+### Slide 10: Joint Research Opportunities
+1. **Fasudil in your iPSC-MN** — does actin rod clearance improve proprioceptive synapse function?
+2. **Computational support for your next paper** — we can run analysis pipelines, literature synthesis
+3. **Hallermann electrophysiology** — can we measure bioelectric changes after Fasudil?
+4. **Connection to Capogrosso** — spinal cord stimulation + ROCK inhibition as combination?
+5. **Sowoidnich's MN counting** — integrate her automated method as platform gold standard?
+6. Your Wirth connection — could validate CORO1C/PLS3 pathway findings in her lab
 
 ---
 
