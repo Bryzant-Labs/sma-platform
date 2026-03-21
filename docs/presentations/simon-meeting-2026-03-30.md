@@ -95,10 +95,16 @@
 - Querdenker directions (aging, epigenetic editing, gut-brain)
 - DiffDock validation story (fomepizole artifact, MW bias)
 - PMID verification methodology
+- Ruwald + Sowoidnich won BOTH poster prizes at SMA Europe Congress
 
-## Do NOT Present
+## Do NOT Present (keep internal)
+- H1 SMN→PFN1→TDP-43 (too correlative, GPT-4o: 3/5)
+- H3 SMA-ALS convergence (too speculative, 3/5)
+- H5 ZPR1 modifier (embarrassing, 2/5)
+- H7 4-AP dual mechanism (needs experiments, 3/5)
+- YAP1 (no published SMA evidence)
 - Cost/pricing of anything
 - Marketing language
-- Unvalidated claims
 - Features that don't work yet (NVIDIA NIMs are down)
-- The 12 commits or "24h sprint" narrative (they don't care about our process)
+- The sprint narrative (they don't care about our process)
+- Confidence scores without context (professors distrust AI scoring)
