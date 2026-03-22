@@ -792,6 +792,88 @@
             .pipeline-phase:last-child { border-bottom: none; }
             .pipeline-arrow { display: none; }
         }
+
+        /* ===== Discovery Pipeline Visualization ===== */
+        .discovery-pipeline { margin: 40px 0 32px; }
+        .discovery-pipeline-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
+        .discovery-pipeline-title { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .dp-refresh-btn { background: none; border: 1px solid var(--line); padding: 4px 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--muted); cursor: pointer; font-family: inherit; }
+        .dp-refresh-btn:hover { background: var(--bg); color: var(--text); border-color: var(--text); }
+        .dp-grid {
+            display: grid;
+            grid-template-columns: 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr;
+            gap: 0;
+            border: 1px solid var(--line);
+            background: var(--line);
+            overflow: hidden;
+        }
+        .dp-node {
+            background: var(--panel);
+            padding: 16px 14px 14px;
+            cursor: pointer;
+            position: relative;
+            transition: border-color 0.2s, background 0.2s;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .dp-node:hover { background: var(--blue-bg); }
+        .dp-node:hover .dp-node-name { color: var(--accent); }
+        .dp-separator {
+            background: var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1px;
+        }
+        .dp-node-icon { font-size: 18px; margin-bottom: 2px; line-height: 1; }
+        .dp-node-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text); transition: color 0.2s; }
+        .dp-node-count { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; line-height: 1.2; margin: 2px 0; }
+        .dp-node-desc { font-size: 10px; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+        .dp-node-status { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; border-radius: 50%; }
+        .dp-status-green { background: #22c55e; box-shadow: 0 0 0 2px #dcfce7; }
+        .dp-status-amber { background: #f59e0b; box-shadow: 0 0 0 2px #fef3c7; }
+        .dp-status-gray { background: #9ca3af; box-shadow: 0 0 0 2px #f3f4f6; }
+
+        /* Pulsing animation for "active" nodes */
+        @keyframes dp-pulse {
+            0% { box-shadow: 0 0 0 2px #dcfce7; }
+            50% { box-shadow: 0 0 0 4px #bbf7d0; }
+            100% { box-shadow: 0 0 0 2px #dcfce7; }
+        }
+        .dp-node.dp-active { background: var(--green-bg); border-left: 3px solid var(--green); }
+        .dp-node.dp-active .dp-node-status { animation: dp-pulse 2s ease-in-out infinite; }
+
+        /* Connector arrows between cards */
+        .dp-arrow {
+            background: var(--panel);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 2px;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 300;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Mobile: vertical stack */
+        @media (max-width: 900px) {
+            .dp-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .dp-arrow {
+                padding: 6px 16px;
+                font-size: 16px;
+                transform: rotate(90deg);
+            }
+        }
+        @media (max-width: 600px) {
+            .dp-node { padding: 12px; }
+            .dp-node-count { font-size: 13px; }
+        }
     </style>
 </head>
 <body>
@@ -918,6 +1000,98 @@
         </div>
     </div>
     <div id="freshness-badge" class="freshness-badge" style="display:none"></div>
+
+    <!-- ===== Discovery Pipeline Visualization ===== -->
+    <div class="discovery-pipeline">
+        <div class="discovery-pipeline-header">
+            <div class="discovery-pipeline-title">Discovery Pipeline</div>
+            <button class="dp-refresh-btn" id="dp-refresh-btn" onclick="refreshDiscoveryPipeline()">&#8635; Refresh</button>
+        </div>
+        <div class="dp-grid" id="dp-grid">
+            <!-- Step 1: Literature -->
+            <div class="dp-node dp-active" id="dp-sources" onclick="showSection('sources')" title="Browse all literature sources">
+                <div class="dp-node-status dp-status-green"></div>
+                <div class="dp-node-icon">&#128218;</div>
+                <div class="dp-node-name">Literature</div>
+                <div class="dp-node-count" id="dp-count-sources">...</div>
+                <div class="dp-node-desc">PubMed, bioRxiv, Patents &mdash; daily automated ingestion</div>
+            </div>
+            <div class="dp-arrow">&#8250;</div>
+            <!-- Step 2: Claims -->
+            <div class="dp-node dp-active" id="dp-claims" onclick="showSection('claims')" title="Browse extracted claims">
+                <div class="dp-node-status dp-status-green"></div>
+                <div class="dp-node-icon">&#128196;</div>
+                <div class="dp-node-name">Claims</div>
+                <div class="dp-node-count" id="dp-count-claims">...</div>
+                <div class="dp-node-desc">LLM-extracted assertions with quality filtering</div>
+            </div>
+            <div class="dp-arrow">&#8250;</div>
+            <!-- Step 3: Targets -->
+            <div class="dp-node dp-active" id="dp-targets" onclick="showSection('targets')" title="Browse molecular targets">
+                <div class="dp-node-status dp-status-green"></div>
+                <div class="dp-node-icon">&#127919;</div>
+                <div class="dp-node-name">Targets</div>
+                <div class="dp-node-count" id="dp-count-targets">...</div>
+                <div class="dp-node-desc">Genes, proteins, pathways scored across 5 dimensions</div>
+            </div>
+            <div class="dp-arrow">&#8250;</div>
+            <!-- Step 4: Convergence -->
+            <div class="dp-node dp-active" id="dp-convergence" onclick="showSection('convergence')" title="View evidence convergence">
+                <div class="dp-node-status dp-status-green"></div>
+                <div class="dp-node-icon">&#128200;</div>
+                <div class="dp-node-name">Convergence</div>
+                <div class="dp-node-count" id="dp-count-convergence">Grade A</div>
+                <div class="dp-node-desc">Multi-dimensional evidence scoring &mdash; 89.8% calibration</div>
+            </div>
+            <div class="dp-arrow">&#8250;</div>
+            <!-- Step 5: Hypotheses -->
+            <div class="dp-node dp-active" id="dp-hypotheses" onclick="showSection('hypotheses')" title="Browse prioritized hypotheses">
+                <div class="dp-node-status dp-status-green"></div>
+                <div class="dp-node-icon">&#128161;</div>
+                <div class="dp-node-name">Hypotheses</div>
+                <div class="dp-node-count" id="dp-count-hypotheses">...</div>
+                <div class="dp-node-desc">Prioritized Tier A/B/C with experiment proposals</div>
+            </div>
+            <div class="dp-arrow">&#8250;</div>
+            <!-- Step 6: Virtual Screening -->
+            <div class="dp-node dp-active" id="dp-screening" onclick="showSection('screening')" title="View virtual screening results">
+                <div class="dp-node-status dp-status-green"></div>
+                <div class="dp-node-icon">&#128300;</div>
+                <div class="dp-node-name">Screening</div>
+                <div class="dp-node-count" id="dp-count-screening">4,116</div>
+                <div class="dp-node-desc">DiffDock v2.2 + RDKit molecular analysis</div>
+            </div>
+            <div class="dp-arrow">&#8250;</div>
+            <!-- Step 7: Candidates -->
+            <div class="dp-node dp-active" id="dp-candidates" onclick="showSection('candidates')" title="Browse drug candidates">
+                <div class="dp-node-status dp-status-green"></div>
+                <div class="dp-node-icon">&#128138;</div>
+                <div class="dp-node-name">Candidates</div>
+                <div class="dp-node-count" id="dp-count-candidates">795</div>
+                <div class="dp-node-desc">Drug-likeness, BBB penetration, PAINS filtered</div>
+            </div>
+            <div class="dp-arrow">&#8250;</div>
+            <!-- Step 8: NIM Compute -->
+            <div class="dp-node dp-active" id="dp-nim" onclick="showSection('gpu-results')" title="View NIM compute results">
+                <div class="dp-node-status dp-status-green"></div>
+                <div class="dp-node-icon">&#9881;&#65039;</div>
+                <div class="dp-node-name">NIM Compute</div>
+                <div class="dp-node-count" id="dp-count-nim">11 NIMs</div>
+                <div class="dp-node-desc">DiffDock, AlphaFold2, ESMfold, RFdiffusion, GenMol</div>
+            </div>
+            <div class="dp-arrow">&#8250;</div>
+            <!-- Step 9: Experiment Design -->
+            <div class="dp-node dp-active" id="dp-translate" onclick="showSection('translate')" title="View translation pipeline">
+                <div class="dp-node-status dp-status-amber"></div>
+                <div class="dp-node-icon">&#128300;</div>
+                <div class="dp-node-name">Experiments</div>
+                <div class="dp-node-count" id="dp-count-translate">5-Level</div>
+                <div class="dp-node-desc">Computational &rarr; Biochemical &rarr; Cell &rarr; Animal &rarr; Clinical</div>
+            </div>
+        </div>
+    </div>
+    <!-- ===== End Discovery Pipeline ===== -->
+
     <div class="mission-stats" id="mission-stats">
         <div class="mission-stat"><div class="mission-stat-val" id="m-sources">...</div><div class="mission-stat-label">Sources</div></div>
         <div class="mission-stat"><div class="mission-stat-val" id="m-claims">...</div><div class="mission-stat-label">Claims</div></div>
@@ -2977,6 +3151,29 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         if (row) row.classList.toggle('open');
     }
 
+    // ============ Discovery Pipeline helpers ============
+    function updateDiscoveryPipelineFromStats(d) {
+        var dpSrc = document.getElementById('dp-count-sources');
+        if (dpSrc) dpSrc.textContent = d.sources ? (d.sources).toLocaleString() : '...';
+        var dpCl = document.getElementById('dp-count-claims');
+        if (dpCl) dpCl.textContent = d.claims ? (d.claims).toLocaleString() : '...';
+        var dpTg = document.getElementById('dp-count-targets');
+        if (dpTg) dpTg.textContent = d.targets ? (d.targets).toLocaleString() : '...';
+        var dpHy = document.getElementById('dp-count-hypotheses');
+        if (dpHy) dpHy.textContent = d.hypotheses ? (d.hypotheses).toLocaleString() : '...';
+    }
+
+    function refreshDiscoveryPipeline() {
+        var btn = document.getElementById('dp-refresh-btn');
+        if (btn) { btn.textContent = '...'; btn.disabled = true; }
+        fetch(API + '/stats').then(function(r) { return r.json(); }).then(function(d) {
+            updateDiscoveryPipelineFromStats(d);
+            if (btn) { btn.textContent = '\u21BB Refresh'; btn.disabled = false; }
+        }).catch(function() {
+            if (btn) { btn.textContent = '\u21BB Refresh'; btn.disabled = false; }
+        });
+    }
+
     // ============ Stats (always load) ============
     fetch(API + '/stats').then(function(r) { return r.json(); }).then(function(d) {
         var row = clearEl('stats-row');
@@ -2995,6 +3192,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var mt = document.getElementById('m-targets'); if(mt) mt.textContent = (d.targets||0).toLocaleString();
         var mr = document.getElementById('m-trials'); if(mr) mr.textContent = (d.trials||0).toLocaleString();
         var md = document.getElementById('m-drugs'); if(md) md.textContent = (d.drugs||0).toLocaleString();
+        // Update discovery pipeline node counts
+        updateDiscoveryPipelineFromStats(d);
     });
     // Extended stats from pipeline endpoint
     fetch(API + '/stats/pipeline').then(function(r) { return r.json(); }).then(function(d) {
