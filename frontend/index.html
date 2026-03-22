@@ -907,6 +907,7 @@
             <a href="/graph" class="nav-link" data-section="graph">Graph</a>
             <a href="/trials" class="nav-link" data-section="trials">Trials</a>
             <a href="/synthesis" class="nav-link" data-section="synthesis">Synthesis</a>
+            <a href="/structures" class="nav-link" data-section="structures">Structures</a>
             <a href="/comparative" class="nav-link" data-section="comparative">Species</a>
         </div>
     </span>
@@ -2620,6 +2621,39 @@
             </div>
         </div>
     </div>
+</section>
+
+
+<section class="section" id="structures">
+    <div class="section-header"><h2 class="section-title">Protein Structures</h2><span style="font-size:10px;padding:2px 8px;background:#0891b21a;color:#0891b2;font-weight:600;margin-left:8px;vertical-align:middle">STRUCTURAL</span><span class="section-count" id="structures-count"></span></div>
+    <p class="section-desc">
+        AlphaFold2 and ESMfold predicted 3D structures for all SMA research targets. Each structure is scored by pLDDT (predicted Local Distance Difference Test) — a per-residue confidence metric: <strong style="color:#16a34a">green (&ge;85)</strong> = high confidence, well-ordered; <strong style="color:#d97606">amber (&ge;70)</strong> = moderate confidence; <strong style="color:#6b7280">gray (&lt;70)</strong> = low confidence, likely disordered. High-confidence structures are most suitable for structure-based drug design and docking. Click any row for AlphaFold DB / UniProt links and linked discovery data.
+        <br><br>
+        <strong>Why this matters for SMA drug design:</strong> Three-dimensional protein structure directly determines which pockets small molecules can bind. Before computational structure prediction, only ~10% of proteins had experimentally solved structures. AlphaFold v6 and ESMfold now provide high-accuracy models for nearly all human proteins, enabling virtual screening and binder design even for targets without crystallographic data.
+    </p>
+    <p style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5"><em>Structures predicted via AlphaFold DB v6 (EMBL-EBI), ESMfold v1 (NVIDIA NIM), and Boltz-2 (Chai Discovery). pLDDT scores from predicted structures. Pre-existing PDB structures retain original experimental resolution.</em></p>
+    <div id="structures-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px"></div>
+    <div id="structures-filter-bar" style="display:none;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+            <input type="text" id="structures-search" placeholder="Search symbol, UniProt ID..."
+                   style="width:100%;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+        </div>
+        <select id="structures-source-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All sources</option>
+            <option value="AlphaFold">AlphaFold DB</option>
+            <option value="ESMfold">ESMfold NIM</option>
+        </select>
+        <select id="structures-plddt-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text)">
+            <option value="">All confidence</option>
+            <option value="85">High (&ge;85)</option>
+            <option value="70">Moderate (&ge;70)</option>
+        </select>
+        <span id="structures-filter-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Symbol</th><th>UniProt</th><th>Source</th><th>pLDDT</th><th>Residues</th><th>Druggability</th><th>Binders</th><th>Molecules</th><th>Links</th>
+    </tr></thead>
+    <tbody id="structures-body"><tr><td colspan="9" class="loading">Loading structures...</td></tr></tbody></table></div>
 </section>
 
 <section class="section" id="synthesis">
@@ -9875,6 +9909,186 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     // ============ Cross-Paper Synthesis ============
+
+    function loadStructures() {
+        if (loaded.structures) return; loaded.structures = true;
+        fetch(API + '/structures/stats').then(function(r) { return r.json(); }).then(function(stats) {
+            var sumDiv = clearEl('structures-summary');
+            var items = [
+                {val: String(stats.total_targets || 0), label: 'Targets Structured'},
+                {val: String(stats.alphafold_count || 0), label: 'AlphaFold DB'},
+                {val: String(stats.esmfold_count || 0), label: 'ESMfold NIM'},
+                {val: String(stats.high_confidence || 0), label: 'High Confidence'},
+                {val: String(stats.moderate_confidence || 0), label: 'Moderate Confidence'},
+                {val: String(stats.low_confidence || 0), label: 'Low Confidence'},
+            ];
+            for (var si = 0; si < items.length; si++) {
+                var card = el('div', {className: 'screen-stat'});
+                card.appendChild(el('div', {className: 'screen-stat-val', text: items[si].val}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: items[si].label}));
+                sumDiv.appendChild(card);
+            }
+            var cntEl = document.getElementById('structures-count');
+            if (cntEl) cntEl.textContent = (stats.total_targets || 0) + ' structures';
+        }).catch(function() {});
+
+        fetch(API + '/structures?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+            var allRows = data || [];
+
+            // Filter bar
+            var filterBar = document.getElementById('structures-filter-bar');
+            if (filterBar) filterBar.style.display = 'flex';
+
+            function renderRows(rows) {
+                var body = clearEl('structures-body');
+                var cntEl2 = document.getElementById('structures-filter-count');
+                if (cntEl2) cntEl2.textContent = rows.length + ' of ' + allRows.length;
+                if (rows.length === 0) {
+                    body.appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'No structures match filter.'})]));
+                    return;
+                }
+                for (var i = 0; i < rows.length; i++) {
+                    (function(s) {
+                        var plddt = s.plddt;
+                        var plddt_color = plddt === null ? '#9ca3af' : (plddt >= 85 ? '#16a34a' : (plddt >= 70 ? '#d97706' : '#9ca3af'));
+                        var plddt_text = plddt !== null ? plddt.toFixed(1) : 'N/A';
+
+                        var binders_text = s.designed_binders > 0 ? String(s.designed_binders) : '\u2014';
+                        var mols_text = s.designed_molecules > 0 ? String(s.designed_molecules) : '\u2014';
+
+                        var plddt_td = el('td');
+                        var plddt_span = el('span');
+                        plddt_span.style.cssText = 'font-weight:700;color:' + plddt_color + ';font-family:var(--mono);font-size:12px';
+                        plddt_span.textContent = plddt_text;
+                        plddt_td.appendChild(plddt_span);
+
+                        var drugg_color = plddt === null ? '#9ca3af' : (plddt >= 85 ? '#16a34a' : (plddt >= 70 ? '#d97706' : '#9ca3af'));
+                        var drugg_td = el('td');
+                        var drugg_span = el('span');
+                        drugg_span.style.cssText = 'font-size:11px;color:' + drugg_color;
+                        drugg_span.textContent = s.druggability || '\u2014';
+                        drugg_td.appendChild(drugg_span);
+
+                        // Links cell
+                        var links_td = el('td');
+                        links_td.style.whiteSpace = 'nowrap';
+                        if (s.alphafold_url) {
+                            var afLink = el('a');
+                            afLink.href = s.alphafold_url;
+                            afLink.target = '_blank';
+                            afLink.rel = 'noopener';
+                            afLink.style.cssText = 'font-size:11px;color:var(--accent);margin-right:8px;text-decoration:none';
+                            afLink.textContent = 'AF';
+                            links_td.appendChild(afLink);
+                        }
+                        if (s.uniprot_url) {
+                            var uniLink = el('a');
+                            uniLink.href = s.uniprot_url;
+                            uniLink.target = '_blank';
+                            uniLink.rel = 'noopener';
+                            uniLink.style.cssText = 'font-size:11px;color:var(--accent);text-decoration:none';
+                            uniLink.textContent = 'UniProt';
+                            links_td.appendChild(uniLink);
+                        }
+
+                        var row = el('tr', {className: 'adv-row'});
+                        var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
+                        var sym_td = el('td');
+                        sym_td.style.fontWeight = '700';
+                        sym_td.style.fontFamily = 'var(--mono)';
+                        sym_td.style.fontSize = '12px';
+                        sym_td.insertBefore(toggleSpan, sym_td.firstChild);
+                        sym_td.appendChild(document.createTextNode(s.symbol));
+                        row.appendChild(sym_td);
+                        row.appendChild(td(s.uniprot_id || '\u2014', 'mono', 'font-size:11px'));
+                        row.appendChild(td(s.method_label || s.source, null, 'font-size:11px'));
+                        row.appendChild(plddt_td);
+                        row.appendChild(td(s.residue_count ? s.residue_count.toLocaleString() : '\u2014', 'mono'));
+                        row.appendChild(drugg_td);
+                        row.appendChild(td(binders_text, s.designed_binders > 0 ? 'mono' : null, s.designed_binders > 0 ? 'color:#0891b2;font-weight:700' : 'color:var(--muted)'));
+                        row.appendChild(td(mols_text, s.designed_molecules > 0 ? 'mono' : null, s.designed_molecules > 0 ? 'color:#0891b2;font-weight:700' : 'color:var(--muted)'));
+                        row.appendChild(links_td);
+
+                        // Detail row
+                        var detailRow = el('tr', {className: 'adv-row-detail'});
+                        var detailTd = el('td'); detailTd.colSpan = 9;
+                        var detInner = el('div', {className: 'adv-detail-inner'});
+                        var fields = [
+                            ['Symbol', s.symbol],
+                            ['UniProt ID', s.uniprot_id || '\u2014'],
+                            ['Full Source', s.source || '\u2014'],
+                            ['pLDDT Score', plddt !== null ? plddt.toFixed(1) : 'N/A'],
+                            ['Residues', s.residue_count ? s.residue_count.toLocaleString() : '\u2014'],
+                            ['Druggability', s.druggability || '\u2014'],
+                            ['Designed Binders', s.designed_binders > 0 ? String(s.designed_binders) : 'None'],
+                            ['Generated Molecules', s.designed_molecules > 0 ? String(s.designed_molecules) : 'None'],
+                        ];
+                        for (var fi = 0; fi < fields.length; fi++) {
+                            var fieldRow = el('div', {className: 'adv-detail-row'});
+                            var lbl = el('span', {className: 'adv-detail-label', text: fields[fi][0] + ': '});
+                            fieldRow.appendChild(lbl);
+                            fieldRow.appendChild(document.createTextNode(fields[fi][1]));
+                            detInner.appendChild(fieldRow);
+                        }
+                        // Link row
+                        if (s.alphafold_url || s.uniprot_url) {
+                            var linkFieldRow = el('div', {className: 'adv-detail-row'});
+                            var linkLbl = el('span', {className: 'adv-detail-label', text: 'Links: '});
+                            linkFieldRow.appendChild(linkLbl);
+                            if (s.alphafold_url) {
+                                var afLink2 = el('a'); afLink2.href = s.alphafold_url; afLink2.target = '_blank'; afLink2.rel = 'noopener';
+                                afLink2.textContent = 'AlphaFold DB \u2197';
+                                afLink2.style.cssText = 'color:var(--accent);margin-right:12px';
+                                linkFieldRow.appendChild(afLink2);
+                            }
+                            if (s.uniprot_url) {
+                                var uniLink2 = el('a'); uniLink2.href = s.uniprot_url; uniLink2.target = '_blank'; uniLink2.rel = 'noopener';
+                                uniLink2.textContent = 'UniProt \u2197';
+                                uniLink2.style.cssText = 'color:var(--accent)';
+                                linkFieldRow.appendChild(uniLink2);
+                            }
+                            detInner.appendChild(linkFieldRow);
+                        }
+                        detailTd.appendChild(detInner);
+                        detailRow.appendChild(detailTd);
+                        var body2 = document.getElementById('structures-body');
+                        if (body2) { body2.appendChild(row); body2.appendChild(detailRow); }
+                        row.addEventListener('click', function() {
+                            row.classList.toggle('open');
+                            detailRow.classList.toggle('open');
+                        });
+                    })(allRows[i]);
+                }
+            }
+
+            renderRows(allRows);
+
+            // Filter logic
+            function applyFilters() {
+                var q = (document.getElementById('structures-search') || {}).value || '';
+                q = q.toLowerCase();
+                var srcFilter = (document.getElementById('structures-source-filter') || {}).value || '';
+                var plddtMin = parseFloat((document.getElementById('structures-plddt-filter') || {}).value || '0') || 0;
+                var filtered = allRows.filter(function(s) {
+                    if (q && (s.symbol || '').toLowerCase().indexOf(q) < 0 && (s.uniprot_id || '').toLowerCase().indexOf(q) < 0) return false;
+                    if (srcFilter && (s.source || '').indexOf(srcFilter) < 0) return false;
+                    if (plddtMin > 0 && (s.plddt === null || s.plddt < plddtMin)) return false;
+                    return true;
+                });
+                renderRows(filtered);
+            }
+            var sSearch = document.getElementById('structures-search');
+            var sSrc = document.getElementById('structures-source-filter');
+            var sPlddt = document.getElementById('structures-plddt-filter');
+            if (sSearch) sSearch.addEventListener('input', applyFilters);
+            if (sSrc) sSrc.addEventListener('change', applyFilters);
+            if (sPlddt) sPlddt.addEventListener('change', applyFilters);
+
+        }).catch(function(e) {
+            clearEl('structures-body').appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'Error loading structures: ' + (e.message || e)})]));
+        });
+    }
+
     function loadSynthesis() {
         if (loaded.synthesis) return; loaded.synthesis = true;
 
@@ -11726,7 +11940,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         dualtarget: loadDualTarget, twin: loadDigitalTwin,
         labos: loadLabOs, federated: loadFederated, translate: loadTranslation,
         'gpu-results': loadGpuResults,
-        synthesis: loadSynthesis,
+        structures: loadStructures, synthesis: loadSynthesis,
         synergy: loadSynergy,
         'nim-results': loadNimResults,
         news: loadNews,
@@ -11775,6 +11989,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         federated:   {title: 'Federated Analysis — SMA Research Platform', desc: 'Federated learning and cross-institutional data analysis for SMA research.'},
         translate:   {title: 'Translation — SMA Research Platform', desc: 'Translational research pipeline from bench to bedside for SMA therapeutics.'},
         'gpu-results': {title: 'GPU Results — SMA Research Platform', desc: 'GPU-accelerated computation results for molecular docking, CRISPR off-target analysis, and MD simulations.'},
+        structures:    {title: 'Protein Structures — SMA Research Platform', desc: '55 predicted 3D structures for SMA research targets via AlphaFold DB v6 and ESMfold NIM. pLDDT confidence scores, druggability assessment, binder design counts, and links to AlphaFold DB and UniProt.'},
         synthesis:     {title: 'Cross-Paper Synthesis — SMA Research Platform', desc: 'Non-obvious connections across thousands of curated SMA claims. Co-occurring targets, shared mechanisms, temporal reinforcements, contradictions, and surprise connections from cross-paper analysis.'},
         synergy:       {title: 'Synergy Predictions — SMA Research Platform', desc: 'AI-predicted drug-target synergy scores combining docking affinity, literature evidence, pathway overlap, and claim support for SMA therapeutic combinations.'},
         'nim-results': {title: 'NIM Docking Results — SMA Research Platform', desc: '700 compound-target docking predictions via NVIDIA NIM DiffDock v2.2 API. Structure-based virtual screening for SMA drug candidates.'},
