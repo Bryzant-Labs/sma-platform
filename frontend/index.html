@@ -14226,7 +14226,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         window.showSection = function(section) {
             origShowSection.apply(this, arguments);
             if (section === 'screening') { // observeScreeningBody(); // DISABLED: SmilesDrawer not rendering }
-            if (section === 'gpu-results') { // observeGpuMolecules(); // DISABLED: SmilesDrawer not rendering, using table view instead observeForStructures('gpu-structures-body'); }
+            if (section === "gpu-results") { observeForStructures("gpu-structures-body"); }
             if (section === 'structures') { observeForStructures('structures-body'); }
         };
     }
