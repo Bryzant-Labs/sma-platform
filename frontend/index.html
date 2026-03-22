@@ -690,7 +690,7 @@
         /* Screening tab */
         .screen-summary { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
         .screen-stat { background: var(--panel); border: 1px solid var(--line); padding: 16px; text-align: center; }
-        .screen-stat-val { font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+        .screen-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; }
         .screen-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-top: 4px; }
         .screen-stat-val.highlight { color: var(--green); }
         .compound-row td { font-size: 12px; }
@@ -2460,7 +2460,7 @@
 </section>
 
 <section class="section" id="mdsim">
-    <div class="section-header"><h2 class="section-title">MD Simulations</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
+    <div class="section-header"><h2 class="section-title">MD Simulations <span style="font-size:11px;font-weight:400;color:var(--muted)">(coming soon)</span></h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
     <p class="section-desc">Agent C &mdash; Molecular Dynamics simulation code generator. Generates ready-to-run OpenMM Python scripts for SMA-relevant protein simulations: SMN oligomerization, hnRNP A1-ISS-N1 binding, risdiplam mechanism, NCALD calcium dynamics, PLS3 actin bundling, SMN-Gemin2 stability.</p>
     <div class="table-wrap"><table><thead><tr>
         <th>Simulation</th><th>Target</th><th>Type</th><th>PDB</th><th>Atoms</th><th>Time (ns)</th><th>GPU Hours</th>
@@ -8259,9 +8259,17 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     function loadCrispr() {
         if (loaded.crispr) return; loaded.crispr = true;
-        fetch(API + '/crispr/guides?max_guides=30').then(function(r) { return r.json(); }).then(function(data) {
-            var strategies = data.strategies || [];
-            var allGuides = data.all_guides || [];
+        // Fetch both strategies and guides in parallel (new API uses separate endpoints)
+        Promise.all([
+            fetch(API + '/crispr/strategies').then(function(r) { return r.json(); }),
+            fetch(API + '/crispr/guides?limit=30').then(function(r) { return r.json(); })
+        ]).then(function(results) {
+            var strategiesData = results[0];
+            var guidesData = results[1];
+            var strategies = strategiesData.strategies || [];
+            // API returns data.guides (not data.all_guides)
+            var allGuides = guidesData.guides || [];
+
             var container = clearEl('crispr-strategies');
             var grid = el('div', {className: 'screen-summary'});
             grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px';
@@ -8271,45 +8279,52 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
                     var title = el('div');
                     title.appendChild(toggle);
-                    var titleText = document.createTextNode(' ' + st.strategy);
+                    // API field: st.name (not st.strategy)
+                    var titleText = document.createTextNode(' ' + (st.name || st.strategy || 'Strategy'));
                     title.appendChild(titleText);
                     title.style.cssText = 'font-weight:700;font-size:13px;margin-bottom:8px';
                     card.appendChild(title);
-                    var rat = el('div', {text: st.rationale});
+                    var rat = el('div', {text: st.description || st.rationale || ''});
                     rat.style.cssText = 'font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:8px';
                     card.appendChild(rat);
-                    var cnt = el('div', {text: st.guide_count + ' guides found \u2014 click to expand'});
+                    var mechDiv = el('div', {text: st.mechanism ? 'Mechanism: ' + st.mechanism : ''});
+                    mechDiv.style.cssText = 'font-size:10px;color:var(--text-secondary);margin-bottom:6px';
+                    card.appendChild(mechDiv);
+                    var cnt = el('div', {text: (st.guide_count || 0) + ' guides found \u2014 click to expand'});
                     cnt.style.cssText = 'font-size:11px;font-weight:600;color:var(--accent)';
                     card.appendChild(cnt);
 
                     // Build expandable detail with guide list
                     var detail = el('div', {className: 'adv-detail'});
-                    // Match guides to this strategy by region/strategy name
+                    // Match guides to this strategy by strategy_id or target_region
                     var strategyGuides = [];
                     for (var g = 0; g < allGuides.length; g++) {
                         var gd = allGuides[g];
-                        if (gd.region && st.strategy && gd.region.toLowerCase().indexOf(st.strategy.toLowerCase().split(' ')[0].replace('crispri', '').replace('crispra', '')) >= 0) {
+                        if (gd.strategy_id === st.id || (gd.region && st.target_region && gd.region === st.target_region)) {
                             strategyGuides.push(gd);
                         }
                     }
-                    // If no match by region, show first N guides proportional to guide_count
+                    // Fallback: slice proportionally if no direct match
                     if (strategyGuides.length === 0 && st.guide_count > 0) {
-                        var start = 0;
+                        var start2 = 0;
                         for (var prev = 0; prev < idx; prev++) {
-                            start += (strategies[prev].guide_count || 0);
+                            start2 += (strategies[prev].guide_count || 0);
                         }
-                        strategyGuides = allGuides.slice(start, start + st.guide_count);
+                        strategyGuides = allGuides.slice(start2, start2 + st.guide_count);
                     }
                     if (strategyGuides.length > 0) {
                         for (var gi = 0; gi < strategyGuides.length; gi++) {
                             var guide = strategyGuides[gi];
+                            // API field: gc_pct (not gc_content); metadata.specificity_score
+                            var gcVal = guide.gc_pct != null ? guide.gc_pct : guide.gc_content;
+                            var specVal = (guide.metadata && guide.metadata.specificity_score != null) ? guide.metadata.specificity_score : guide.specificity_score;
                             var row = el('div', {className: 'adv-detail-inner'});
                             row.style.cssText = 'padding:8px;margin-bottom:6px;background:var(--bg);border:1px solid var(--line)';
                             var seqDiv = el('div');
                             var seqLabel = el('span', {className: 'adv-detail-label', text: 'Sequence:'});
-                            var seqVal = el('span', {className: 'adv-guide-seq', text: guide.sequence || '-'});
+                            var seqVal2 = el('span', {className: 'adv-guide-seq', text: guide.sequence || '-'});
                             seqDiv.appendChild(seqLabel);
-                            seqDiv.appendChild(seqVal);
+                            seqDiv.appendChild(seqVal2);
                             row.appendChild(seqDiv);
                             var pamDiv = el('div', {className: 'adv-detail-row'});
                             pamDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'PAM:'}));
@@ -8321,20 +8336,22 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                             row.appendChild(strandDiv);
                             var gcDiv = el('div', {className: 'adv-detail-row'});
                             gcDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'GC Content:'}));
-                            gcDiv.appendChild(document.createTextNode(guide.gc_content ? (guide.gc_content * 100).toFixed(0) + '%' : '-'));
+                            gcDiv.appendChild(document.createTextNode(gcVal != null ? (gcVal * 100).toFixed(0) + '%' : '-'));
                             row.appendChild(gcDiv);
                             var onDiv = el('div', {className: 'adv-detail-row'});
                             onDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'On-Target:'}));
-                            onDiv.appendChild(document.createTextNode(guide.on_target_score ? guide.on_target_score.toFixed(3) : '-'));
+                            onDiv.appendChild(document.createTextNode(guide.on_target_score != null ? guide.on_target_score.toFixed(3) : '-'));
                             row.appendChild(onDiv);
-                            var specDiv = el('div', {className: 'adv-detail-row'});
-                            specDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'Specificity:'}));
-                            specDiv.appendChild(document.createTextNode(guide.specificity_score ? guide.specificity_score.toFixed(3) : '-'));
-                            row.appendChild(specDiv);
-                            if (guide.overlapping_motifs && guide.overlapping_motifs.length > 0) {
+                            var specDiv2 = el('div', {className: 'adv-detail-row'});
+                            specDiv2.appendChild(el('span', {className: 'adv-detail-label', text: 'Specificity:'}));
+                            specDiv2.appendChild(document.createTextNode(specVal != null ? Number(specVal).toFixed(3) : '-'));
+                            row.appendChild(specDiv2);
+                            // API field: guide.motifs (not overlapping_motifs)
+                            var motifArr = guide.motifs || guide.overlapping_motifs || [];
+                            if (motifArr.length > 0) {
                                 var motDiv = el('div', {className: 'adv-detail-row'});
                                 motDiv.appendChild(el('span', {className: 'adv-detail-label', text: 'Motifs:'}));
-                                motDiv.appendChild(document.createTextNode(guide.overlapping_motifs.join(', ')));
+                                motDiv.appendChild(document.createTextNode(motifArr.join(', ')));
                                 row.appendChild(motDiv);
                             }
                             detail.appendChild(row);
@@ -8348,38 +8365,25 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     card.addEventListener('click', function() {
                         card.classList.toggle('open');
                         detail.classList.toggle('open');
-                        cnt.textContent = st.guide_count + ' guides found' + (detail.classList.contains('open') ? '' : ' \u2014 click to expand');
+                        cnt.textContent = (st.guide_count || 0) + ' guides found' + (detail.classList.contains('open') ? '' : ' \u2014 click to expand');
                     });
                     grid.appendChild(card);
                 })(strategies[s], s);
             }
             container.appendChild(grid);
 
-            var motifContainer = clearEl('crispr-motifs');
-            var motifs = data.motifs || {};
-            var motifGrid = el('div');
-            motifGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px';
-            var motifNames = Object.keys(motifs);
-            for (var m = 0; m < motifNames.length; m++) {
-                var mn = motifNames[m];
-                var mi = motifs[mn];
-                var mc = el('div');
-                mc.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:12px;font-size:11px';
-                mc.appendChild(el('div', {text: mn, className: 'font-weight:700'}));
-                mc.firstChild.style.cssText = 'font-weight:700;font-size:12px;margin-bottom:4px';
-                mc.appendChild(el('div', {text: mi.region + ' [' + mi.start + '-' + mi.end + '] — ' + mi.role}));
-                mc.lastChild.style.cssText = 'color:var(--muted);margin-bottom:4px';
-                mc.appendChild(el('div', {text: mi.note}));
-                mc.lastChild.style.cssText = 'color:var(--text-secondary);line-height:1.5';
-                motifGrid.appendChild(mc);
-            }
-            motifContainer.appendChild(motifGrid);
+            // Motifs section: not provided by new API, clear gracefully
+            var motifContainer = document.getElementById('crispr-motifs');
+            if (motifContainer) { motifContainer.textContent = ''; }
 
+            // Guides table: use allGuides (from data.guides), fix field names
             var body = clearEl('crispr-body');
-            var guides = data.all_guides || [];
-            for (var i = 0; i < Math.min(guides.length, 30); i++) {
-                var g = guides[i];
-                var motifList = (g.overlapping_motifs || []).join(', ');
+            for (var i = 0; i < Math.min(allGuides.length, 30); i++) {
+                var g = allGuides[i];
+                // gc_pct (was gc_content), motifs (was overlapping_motifs)
+                var gcPct = g.gc_pct != null ? g.gc_pct : g.gc_content;
+                var motifList = (g.motifs || g.overlapping_motifs || []).join(', ');
+                var specScore = (g.metadata && g.metadata.specificity_score != null) ? g.metadata.specificity_score : (g.specificity_score || 0);
                 body.appendChild(el('tr', null, [
                     td(String(i + 1), 'mono'),
                     tdBadge(motifList || g.region, motifList ? 'badge-blue' : 'badge-gray'),
@@ -8387,14 +8391,13 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     td(g.pam, 'mono'),
                     td(g.strand, 'mono'),
                     td(g.region),
-                    td((g.gc_content * 100).toFixed(0) + '%', 'mono'),
-                    td(g.on_target_score.toFixed(2), 'mono', 'font-weight:700'),
-                    td(g.specificity_score.toFixed(2), 'mono')
+                    td(gcPct != null ? (gcPct * 100).toFixed(0) + '%' : '-', 'mono'),
+                    td(g.on_target_score != null ? g.on_target_score.toFixed(2) : '-', 'mono', 'font-weight:700'),
+                    td(Number(specScore).toFixed(2), 'mono')
                 ]));
             }
         });
     }
-
     function loadAav() {
         if (loaded.aav) return; loaded.aav = true;
         fetch(API + '/aav/evaluate?cargo=SMN1_cDNA').then(function(r) { return r.json(); }).then(function(data) {
@@ -8829,7 +8832,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     function loadPrime() {
         if (loaded.prime) return; loaded.prime = true;
-        fetch(API + '/prime-editing/feasibility').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/prime-edit/feasibility').then(function(r) { return r.json(); }).then(function(data) {
             var designsDiv = clearEl('prime-designs');
             var designs = data.designs || [];
             var grid = el('div');
@@ -12050,14 +12053,14 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var end = Math.min(start + PER_PAGE, nimResultsData.length);
         for (var i = start; i < end; i++) {
             var d = nimResultsData[i];
-            var conf = d.confidence != null ? Number(d.confidence).toFixed(3) : '-';
+            var conf = d.best_confidence != null ? Number(d.best_confidence).toFixed(3) : (d.confidence != null ? Number(d.confidence).toFixed(3) : '-');
             var energy = d.binding_energy != null ? Number(d.binding_energy).toFixed(2) : (d.score != null ? Number(d.score).toFixed(2) : '-');
             var poseRank = d.pose_rank != null ? String(d.pose_rank) : (d.rank != null ? String(d.rank) : '-');
             var status = d.status || 'completed';
             var statusCls2 = status === 'completed' ? 'badge-green' : status === 'running' ? 'badge-amber' : status === 'failed' ? 'badge-red' : 'badge-gray';
             body.appendChild(el('tr', null, [
                 td(String(i + 1), 'mono'),
-                td(d.compound || d.compound_name || d.ligand || '', '', 'font-weight:600'),
+                td(d.drug || d.compound || d.compound_name || d.ligand || '', '', 'font-weight:600'),
                 td(d.target || d.target_name || d.receptor || ''),
                 td(conf, 'mono'),
                 td(energy, 'mono'),
@@ -12077,7 +12080,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         statusBar.appendChild(statusBadge);
 
         // Try to load results from GPU jobs endpoint
-        fetch(API + '/nim-batch/results?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/nims/extended-docking?limit=300').then(function(r) { return r.json(); }).then(function(data) {
             var results = data.results || [];
 
             // Update status bar
@@ -12089,7 +12092,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 statusBar.appendChild(badge2);
                 setText('nim-results-count', data.total + ' dockings');
             } else {
-                var pendingBadge = el('span', {text: 'No docking results yet'});
+                var pendingBadge = el('span', {text: 'No docking results found'});
                 pendingBadge.style.cssText = 'display:inline-block;padding:6px 16px;font-size:12px;font-weight:600;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber)';
                 statusBar.appendChild(pendingBadge);
             }
