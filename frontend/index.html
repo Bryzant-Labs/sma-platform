@@ -4506,6 +4506,23 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         document.getElementById('claims-f-q').addEventListener('keydown', function(e) {
             if (e.key === 'Enter') applyClaimFilters();
         });
+        // Check URL hash for target filter (e.g. /claims#SMN2)
+        if (window.location.hash) {
+            var hashTarget = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+            if (hashTarget) {
+                var targetSel = document.getElementById('claims-f-target');
+                if (targetSel) {
+                    // Wait briefly for dropdown options to populate
+                    setTimeout(function() {
+                        targetSel.value = hashTarget;
+                        claimsFilters.target = hashTarget;
+                        fetchClaimsPage();
+                        window.location.hash = '';
+                    }, 300);
+                    return;
+                }
+            }
+        }
         fetchClaimsPage();
     }
 
@@ -4885,7 +4902,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     showSection('claims');
                     setTimeout(function() {
                         var sel = document.getElementById('claims-f-target');
-                        if (sel) { sel.value = decodeURIComponent(sym); if (typeof applyClaimFilters === 'function') applyClaimFilters(); }
+                        if (sel) { sel.value = decodeURIComponent(sym); sel.dispatchEvent(new Event('change')); }
                     }, 500);
                 }
             });
@@ -5436,7 +5453,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         if (loaded.convergence) return; loaded.convergence = true;
 
         // Fetch convergence scores table
-        fetch(API + '/convergence/scores?limit=50').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/convergence/scores?limit=100').then(function(r) { return r.json(); }).then(function(data) {
             var countEl = document.getElementById('convergence-count');
             var targets = data.targets || [];
             countEl.textContent = targets.length + ' targets scored';
@@ -7866,7 +7883,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 for (var ci = 0; ci < byTarget.length; ci++) {
                     var pct = Math.round(100 * byTarget[ci].count / stats.total);
                     var barW = Math.max(2, Math.round(100 * byTarget[ci].count / maxCount));
-                    chartHtml += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;cursor:pointer" onclick="document.getElementById('mol-filter-target').value='' + byTarget[ci].target_symbol + '';document.getElementById('mol-filter-target').dispatchEvent(new Event('change'))">'
+                    chartHtml += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;cursor:pointer" onclick="document.getElementById(\'mol-filter-target\').value=\'' + byTarget[ci].target_symbol + '\';document.getElementById(\'mol-filter-target\').dispatchEvent(new Event(\'change\'))">'
                         + '<span style="font-family:var(--mono);font-size:10px;width:60px;text-align:right;color:var(--text)">' + byTarget[ci].target_symbol + '</span>'
                         + '<div style="flex:1;height:14px;background:var(--panel);border-radius:2px;overflow:hidden"><div style="width:' + barW + '%;height:100%;background:var(--accent);border-radius:2px"></div></div>'
                         + '<span style="font-family:var(--mono);font-size:10px;color:var(--muted);width:40px">' + byTarget[ci].count + '</span>'
@@ -11628,7 +11645,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }
 
         // Co-occurrences
-        fetch(API + '/synthesis/cooccurrences?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/synthesis/cooccurrences?limit=50').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.cooccurrences || data.results || data;
             if (!Array.isArray(items)) items = [];
             var body = clearEl('synthesis-cooc-body');
@@ -11655,7 +11672,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
 
         // Shared mechanisms
-        fetch(API + '/synthesis/shared-mechanisms?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/synthesis/shared-mechanisms?limit=50').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.mechanisms || data.results || data;
             if (!Array.isArray(items)) items = [];
             var body = clearEl('synthesis-mech-body');
@@ -11680,7 +11697,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
 
         // Synthesis cards
-        fetch(API + '/synthesis/cards?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/synthesis/cards?limit=50').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.cards || data.results || data;
             if (!Array.isArray(items)) items = [];
             var grid = clearEl('synthesis-cards-grid');
@@ -11725,7 +11742,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
 
         // Temporal reinforcements
-        fetch(API + '/synthesis/temporal?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/synthesis/temporal?limit=50').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.temporal || data.reinforcements || data.results || data;
             if (!Array.isArray(items)) items = [];
             var body = clearEl('synthesis-temporal-body');
@@ -11799,7 +11816,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
 
         // Contradictions
-        fetch(API + '/synthesis/contradictions?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/synthesis/contradictions?limit=50').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.contradictions || data.conflicts || data.results || data;
             if (!Array.isArray(items)) items = [];
             var body = clearEl('synthesis-contradictions-body');
@@ -11845,7 +11862,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
 
         // Surprise connections
-        fetch(API + '/synthesis/surprise?limit=20').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/synthesis/surprise?limit=50').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.surprises || data.surprise || data.connections || data.results || data;
             if (!Array.isArray(items)) items = [];
             var body = clearEl('synthesis-surprise-body');
@@ -11937,7 +11954,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function loadSynergy() {
         if (loaded.synergy) return; loaded.synergy = true;
 
-        fetch(API + '/nim-batch/synergy?limit=30').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/synergy/predictions?limit=30').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.predictions || data.results || data;
             if (!Array.isArray(items)) items = [];
             if (items.length === 0) {
@@ -13921,6 +13938,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             for (var n = 0; n < allT.length; n++) allT[n].classList.remove('open');
         }
     });
+
+    // Expose showSection globally for onclick handlers and other scripts
+    window.showSection = showSection;
 })();
 </script>
 
