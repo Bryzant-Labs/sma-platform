@@ -66,7 +66,36 @@ async def list_drugs(
                END, name LIMIT $1 OFFSET $2""",
             limit, offset,
         )
-    return [dict(r) for r in rows]
+    # Enrich each drug with clinical trial count
+    drugs_list = [dict(r) for r in rows]
+    for drug in drugs_list:
+        search_terms = [drug["name"]]
+        brands = drug.get("brand_names")
+        if brands:
+            if isinstance(brands, str):
+                try:
+                    brands = json.loads(brands)
+                except (json.JSONDecodeError, TypeError):
+                    brands = []
+            if isinstance(brands, list):
+                search_terms.extend([b.lower() for b in brands if b])
+        # Count matching trials via interventions (jsonb) or title
+        seen_ncts: set[str] = set()
+        for term in search_terms:
+            if not term:
+                continue
+            pattern = f"%{term}%"
+            trial_rows = await fetch(
+                """SELECT nct_id FROM trials
+                   WHERE LOWER(CAST(interventions AS TEXT)) LIKE $1
+                      OR LOWER(title) LIKE $2
+                   LIMIT 200""",
+                pattern, pattern,
+            )
+            for tr in trial_rows:
+                seen_ncts.add(tr["nct_id"])
+        drug["clinical_trials"] = len(seen_ncts)
+    return drugs_list
 
 
 @router.get("/drugs/{drug_id}")
@@ -74,7 +103,34 @@ async def get_drug(drug_id: UUID):
     row = await fetchrow("SELECT * FROM drugs WHERE id = $1", drug_id)
     if not row:
         raise HTTPException(404, "Drug not found")
-    return dict(row)
+    drug = dict(row)
+    # Enrich with clinical trial count
+    search_terms = [drug["name"]]
+    brands = drug.get("brand_names")
+    if brands:
+        if isinstance(brands, str):
+            try:
+                brands = json.loads(brands)
+            except (json.JSONDecodeError, TypeError):
+                brands = []
+        if isinstance(brands, list):
+            search_terms.extend([b.lower() for b in brands if b])
+    seen_ncts: set[str] = set()
+    for term in search_terms:
+        if not term:
+            continue
+        pattern = f"%{term}%"
+        trial_rows = await fetch(
+            """SELECT nct_id FROM trials
+               WHERE LOWER(CAST(interventions AS TEXT)) LIKE $1
+                  OR LOWER(title) LIKE $2
+               LIMIT 200""",
+            pattern, pattern,
+        )
+        for tr in trial_rows:
+            seen_ncts.add(tr["nct_id"])
+    drug["clinical_trials"] = len(seen_ncts)
+    return drug
 
 
 @router.get("/drugs/name/{name}")

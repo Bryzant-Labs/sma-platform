@@ -314,7 +314,7 @@ async def predict_drug_target_synergy(limit: int = 20) -> list[dict[str, Any]]:
             "approval_status": d.get("approval_status") or "",
             "mechanism": d.get("mechanism") or "",
         }
-        # Parse the targets field (stored as JSON array string)
+        # Parse the targets field (stored as UUID array in DB)
         raw_targets = d.get("targets")
         if raw_targets:
             if isinstance(raw_targets, str):
@@ -323,7 +323,8 @@ async def predict_drug_target_synergy(limit: int = 20) -> list[dict[str, Any]]:
                 except (json.JSONDecodeError, TypeError):
                     raw_targets = []
             if isinstance(raw_targets, list):
-                drug_targets_map[name] = [t.lower() for t in raw_targets if t]
+                # targets column contains UUIDs -- store as strings, resolve to symbols below
+                drug_targets_map[name] = [str(t).lower() for t in raw_targets if t]
 
     target_ids: dict[str, str] = {}     # symbol_lower -> id
     target_info: dict[str, dict] = {}   # symbol_lower -> {name, target_type}
@@ -338,6 +339,16 @@ async def predict_drug_target_synergy(limit: int = 20) -> list[dict[str, Any]]:
             "name": d.get("name") or "",
             "target_type": d.get("target_type") or "",
         }
+
+    # Resolve drug target UUIDs to symbols (drug_targets_map currently holds UUID strings)
+    target_id_to_symbol = {v: k for k, v in target_ids.items()}
+    for drug_name in list(drug_targets_map.keys()):
+        resolved = []
+        for uuid_str in drug_targets_map[drug_name]:
+            sym = target_id_to_symbol.get(uuid_str)
+            if sym:
+                resolved.append(sym)
+        drug_targets_map[drug_name] = resolved
 
     drug_names = list(drug_ids.keys())
     target_symbols = list(target_ids.keys())
