@@ -11916,11 +11916,17 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var pipe = clearEl('growth-pipeline');
         fetch(API + '/stats/pipeline').then(function(r) { return r.json(); }).then(function(data) {
             pipe = clearEl('growth-pipeline');
+            var runs = data.recent_runs || [];
+            var lastRun = runs.length > 0 ? runs[0] : null;
+            var lastRunTime = lastRun && lastRun.run_at ? lastRun.run_at.replace('T', ' ').substring(0, 16) + ' UTC' : '—';
+            var lastRunSources = lastRun ? lastRun.items_found : null;
+            var ext = data.extended_stats || {};
             var pipeGrid = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px'});
             var pipeItems = [
-                { label: 'Daily ingestion (sources)', value: data.daily_ingestion_count !== undefined ? data.daily_ingestion_count : data.daily_sources_ingested },
-                { label: 'Claim extraction rate', value: data.claim_extraction_rate !== undefined ? data.claim_extraction_rate : data.claims_per_source },
-                { label: 'Last pipeline run', value: data.last_run || data.last_pipeline_run || data.updated_at }
+                { label: 'Sources in last run', value: lastRunSources !== null ? String(lastRunSources) : '—' },
+                { label: 'Graph edges', value: ext.graph_edges !== undefined ? Number(ext.graph_edges).toLocaleString() : '—' },
+                { label: 'Drug outcomes tracked', value: ext.drug_outcomes !== undefined ? String(ext.drug_outcomes) : '—' },
+                { label: 'Last pipeline run', value: lastRunTime }
             ];
             for (var pi = 0; pi < pipeItems.length; pi++) {
                 var pitem = pipeItems[pi];
@@ -11928,31 +11934,17 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var plbl = el('div', {style: 'font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px'});
                 plbl.textContent = pitem.label;
                 var pval = el('div', {style: 'font-size:16px;font-weight:600;color:var(--text)'});
-                pval.textContent = pitem.value !== undefined && pitem.value !== null ? String(pitem.value) : '—';
+                pval.textContent = pitem.value;
                 pcard.appendChild(plbl);
                 pcard.appendChild(pval);
                 pipeGrid.appendChild(pcard);
             }
             pipe.appendChild(pipeGrid);
         }).catch(function() {
-            pipe = clearEl('growth-pipeline');
-            var pipeGrid = el('div', {style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px'});
-            var fallbackItems = [
-                { label: 'Daily ingestion (sources)', value: '~50–100 per run' },
-                { label: 'Claim extraction rate', value: '~2 claims/abstract' },
-                { label: 'Last pipeline run', value: 'See /api/v2/stats' }
-            ];
-            for (var fi = 0; fi < fallbackItems.length; fi++) {
-                var fc = el('div', {style: 'background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px'});
-                var fl = el('div', {style: 'font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px'});
-                fl.textContent = fallbackItems[fi].label;
-                var fv = el('div', {style: 'font-size:14px;color:var(--text-secondary)'});
-                fv.textContent = fallbackItems[fi].value;
-                fc.appendChild(fl);
-                fc.appendChild(fv);
-                pipeGrid.appendChild(fc);
-            }
-            pipe.appendChild(pipeGrid);
+            var pipeFallback = clearEl('growth-pipeline');
+            var pipeNote = el('p', {style: 'font-size:12px;color:var(--muted)'});
+            pipeNote.textContent = 'Pipeline stats unavailable. See /api/v2/stats/pipeline for raw data.';
+            pipeFallback.appendChild(pipeNote);
         });
 
         // --- Computational Resources ---
