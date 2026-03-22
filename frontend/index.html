@@ -277,6 +277,10 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- 2D Molecule Rendering -->
+    <script src="https://unpkg.com/smiles-drawer@2.1.7/dist/smiles-drawer.min.js"></script>
+    <!-- 3D Protein Structure Viewer -->
+    <script src="https://unpkg.com/ngl@2.3.0/dist/ngl.js"></script>
     <style>
         :root {
             --bg: #fafafa;
@@ -374,6 +378,70 @@
         .badge-teal { background: #e0f7f5; color: #0d9488; }
         .badge-indigo { background: #e8eaf6; color: #3949ab; }
         .badge-orange { background: #fff3e0; color: #e65100; }
+
+        /* ===== Pathway Diagram ===== */
+        .pathway-diagram { display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start; margin: 24px 0; }
+        .pathway-main-col { display: flex; flex-direction: column; align-items: center; min-width: 260px; flex: 1; max-width: 380px; }
+        .pathway-branch-col { display: flex; flex-direction: column; align-items: center; min-width: 220px; flex: 0 0 auto; max-width: 300px; }
+        .pathway-branch-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; }
+        .pnode {
+            width: 100%; border: 2px solid var(--line); background: var(--panel);
+            padding: 12px 16px; cursor: pointer; transition: border-color 0.18s, box-shadow 0.18s;
+            position: relative;
+        }
+        .pnode:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(26,86,219,0.10); }
+        .pnode.pnode-path { border-color: #dc2626; background: #fff5f5; }
+        .pnode.pnode-path:hover { border-color: #991b1b; }
+        .pnode.pnode-key { border-color: #b45309; background: var(--amber-bg); }
+        .pnode.pnode-outcome { border-color: #991b1b; background: var(--red-bg); }
+        .pnode.pnode-upstream { border-color: #1e40af; background: var(--blue-bg); }
+        .pnode-symbol { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text); }
+        .pnode-name { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+        .pnode-status { display: inline-block; font-size: 10px; font-weight: 600; padding: 1px 7px; margin-top: 5px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .pnode-status-up { background: var(--red-bg); color: var(--red); }
+        .pnode-status-down { background: var(--green-bg); color: var(--green); }
+        .pnode-status-activated { background: var(--amber-bg); color: var(--amber); }
+        .pnode-status-inactive { background: var(--gray-bg); color: var(--gray); }
+        .pnode-claims { font-size: 11px; color: var(--muted); margin-top: 5px; font-family: 'JetBrains Mono', monospace; }
+        .pnode-drugs { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 7px; }
+        .pnode-drug-pill {
+            font-size: 10px; font-weight: 600; padding: 2px 8px; background: #fef2f2; color: #991b1b;
+            border: 1px solid #fecaca; cursor: pointer; text-transform: none; letter-spacing: 0;
+            transition: background 0.15s;
+        }
+        .pnode-drug-pill:hover { background: #fee2e2; }
+        .pnode-drug-pill.pill-green { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+        .pnode-drug-pill.pill-green:hover { background: #dcfce7; }
+        .pathway-arrow { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 2px 0; user-select: none; }
+        .pathway-arrow-line { width: 2px; height: 16px; background: var(--text); }
+        .pathway-arrow-head { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 9px solid var(--text); }
+        .pathway-arrow.arrow-red .pathway-arrow-line { background: #dc2626; }
+        .pathway-arrow.arrow-red .pathway-arrow-head { border-top-color: #dc2626; }
+        .pathway-inhibitor { display: flex; align-items: center; gap: 8px; width: 100%; padding: 3px 0; }
+        .pathway-inhibitor-line { flex: 1; height: 1px; border-top: 2px dashed #dc2626; }
+        .pathway-inhibitor-stop { font-size: 13px; color: #dc2626; font-weight: 700; }
+        .pathway-inhibitor-drugs { display: flex; gap: 4px; flex-wrap: wrap; }
+        .pathway-inhibitor-drug {
+            font-size: 10px; font-weight: 700; padding: 2px 7px; background: #fef2f2;
+            color: #991b1b; border: 1px solid #fecaca; cursor: pointer;
+        }
+        .pathway-inhibitor-drug:hover { background: #fee2e2; }
+        .pathway-detail-panel {
+            background: var(--panel); border: 2px solid var(--accent);
+            padding: 20px 24px; margin: 20px 0;
+            animation: fadeIn 0.18s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        .pathway-detail-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .pathway-detail-meta { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+        .pathway-detail-claims { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+        .pathway-close-btn { float: right; background: none; border: none; font-size: 14px; cursor: pointer; color: var(--muted); padding: 2px 6px; }
+        .pathway-close-btn:hover { color: var(--text); }
+        .pathway-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; font-size: 11px; }
+        .pathway-legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+        .pathway-legend-swatch { width: 14px; height: 14px; border: 2px solid; }
+        .pathway-stream-count { font-size: 10px; font-weight: 700; padding: 2px 7px; background: var(--blue-bg); color: var(--blue); white-space: nowrap; }
+
         .filter-tabs { display: flex; gap: 0; margin-bottom: 12px; border: 1px solid var(--line); background: var(--panel); width: fit-content; }
         .filter-tab {
             padding: 6px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase;
@@ -651,6 +719,24 @@
         .compound-row td { font-size: 12px; }
         .smiles-cell { font-family: 'JetBrains Mono', monospace; font-size: 10px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
 
+        /* 2D Molecule Structure Canvas */
+        .mol-canvas-wrap { display: inline-block; background: #1e293b; border: 1px solid #334155; border-radius: 4px; overflow: hidden; vertical-align: middle; }
+        .mol-canvas-wrap canvas { display: block; }
+        .mol-canvas-placeholder { width: 200px; height: 150px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #64748b; font-family: 'JetBrains Mono', monospace; }
+
+        /* NGL 3D Structure Viewer Modal */
+        #ngl-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; }
+        #ngl-modal.open { display: flex; }
+        #ngl-modal-inner { background: #0f172a; border: 1px solid #334155; border-radius: 8px; width: 90%; max-width: 900px; max-height: 90vh; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+        #ngl-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #334155; flex-shrink: 0; }
+        #ngl-modal-title { font-size: 14px; font-weight: 600; color: #e2e8f0; font-family: 'JetBrains Mono', monospace; }
+        #ngl-modal-close { background: none; border: none; color: #64748b; font-size: 22px; cursor: pointer; line-height: 1; padding: 0; }
+        #ngl-modal-close:hover { color: #e2e8f0; }
+        #ngl-viewport { flex: 1; min-height: 500px; background: #0f172a; }
+        #ngl-modal-footer { padding: 8px 16px; border-top: 1px solid #334155; font-size: 11px; color: #64748b; flex-shrink: 0; }
+        .view3d-btn { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; font-size: 11px; background: #1e3a5f; color: #60a5fa; border: 1px solid #1e40af; border-radius: 3px; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+        .view3d-btn:hover { background: #1e40af; color: #fff; }
+
         /* Knowledge Graph */
         #graph-canvas { width: 100%; height: 85vh; min-height: 700px; max-height: 1200px; background: #0f172a; border: 1px solid var(--line); position: relative; overflow: hidden; border-radius: 4px; }
         .graph-legend { display: flex; gap: 8px 16px; flex-wrap: wrap; margin-top: 8px; padding: 8px 14px; background: var(--panel); border: 1px solid var(--line); font-size: 10px; color: var(--text-secondary); border-radius: 4px; }
@@ -903,6 +989,7 @@
     <span class="nav-dropdown-wrap">
         <span class="nav-dropdown-trigger" data-dropdown="discovery">Discovery <span class="dd-arrow">&#9662;</span></span>
         <div class="nav-dropdown-menu" id="dd-discovery">
+            <a href="/pathway" class="nav-link" data-section="pathway" style="font-weight:700;color:#dc2626">Pathway Map</a>
             <a href="/targets" class="nav-link" data-section="targets">Targets</a>
             <a href="/graph" class="nav-link" data-section="graph">Graph</a>
             <a href="/trials" class="nav-link" data-section="trials">Trials</a>
@@ -1741,6 +1828,198 @@
     <p class="section-desc">Evidence-grounded, falsifiable predictions generated from convergence scoring across 5 dimensions: Volume, Lab Independence, Method Diversity, Temporal Trend, and Replication. All scoring weights are <a href="https://github.com/Bryzant-Labs/sma-platform/blob/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent)">open source on GitHub</a>. Each card links every claim to its source paper.</p>
     <div id="predictions-filters" style="margin-bottom:16px;display:none"></div>
     <div id="predictions-content"><div class="loading" style="padding:40px;text-align:center">Loading prediction cards...</div></div>
+</section>
+
+<section class="section" id="pathway">
+    <div class="section-header">
+        <h2 class="section-title">ROCK-LIMK-Cofilin-Actin Rod Axis</h2>
+        <span style="font-size:10px;padding:2px 8px;background:#dc26261a;color:#dc2626;font-weight:600;margin-left:8px;vertical-align:middle">STRONGEST CONVERGENCE</span>
+        <span class="section-count">5 / 6 research streams</span>
+    </div>
+    <p class="section-desc">
+        The platform's highest-confidence mechanistic finding: SMN protein loss triggers a cascade through the actin dynamics axis — PFN1 dysregulation activates ROCK2, which through LIMK1 locks Cofilin (CFL2) in its inactive phosphorylated state, causing toxic actin-cofilin rods that block axonal transport and ultimately destroy the neuromuscular junction. A parallel apoptotic branch via p38/MAPK14 activates p53-mediated motor neuron death. Both axes are druggable with existing compounds. Click any node for evidence details and live claim counts.
+    </p>
+
+    <!-- Legend -->
+    <div class="pathway-legend">
+        <div class="pathway-legend-item"><div class="pathway-legend-swatch" style="border-color:#dc2626;background:#fff5f5"></div>Pathological node</div>
+        <div class="pathway-legend-item"><div class="pathway-legend-swatch" style="border-color:#1e40af;background:var(--blue-bg)"></div>Upstream cause (SMN loss)</div>
+        <div class="pathway-legend-item"><div class="pathway-legend-swatch" style="border-color:#b45309;background:var(--amber-bg)"></div>Key effector (cofilin)</div>
+        <div class="pathway-legend-item"><div class="pathway-legend-swatch" style="border-color:#991b1b;background:var(--red-bg)"></div>Terminal outcome</div>
+        <div class="pathway-legend-item" style="border-left:2px dashed #dc2626;padding-left:8px">&#x26D4; Drug inhibitor</div>
+    </div>
+
+    <!-- Detail panel (hidden by default) -->
+    <div id="pathway-detail" style="display:none"></div>
+
+    <!-- Main diagram layout -->
+    <div class="pathway-diagram">
+
+        <!-- LEFT: Main ROCK-LIMK-Cofilin axis -->
+        <div class="pathway-main-col">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:10px;align-self:flex-start">Main Actin Dynamics Axis</div>
+
+            <div class="pnode pnode-upstream" id="pn-SMN1" onclick="pathwayNodeClick('SMN1','SMN1 / SMN Protein','Upstream cause: SMN protein loss (causal gene)','SMN1 deletion causes depletion of the SMN protein complex, which is essential for snRNP biogenesis and motor neuron survival. This is the root cause of all downstream pathway dysregulation in SMA. The loss of SMN directly perturbs actin dynamics by reducing the SMN-profilin interaction.','Absent / Depleted',['SMN1','SMN2'])">
+                <div class="pnode-symbol">SMN1 / SMN Protein</div>
+                <div class="pnode-name">Survival Motor Neuron — causal gene of SMA</div>
+                <div><span class="pnode-status pnode-status-down">Absent / Depleted</span></div>
+                <div class="pnode-claims" id="pn-claims-SMN1">&#x2014;</div>
+            </div>
+
+            <div class="pathway-arrow"><div class="pathway-arrow-line"></div><div class="pathway-arrow-head"></div></div>
+
+            <div class="pnode pnode-path" id="pn-PFN1" onclick="pathwayNodeClick('PFN1','PFN1 — Profilin-1','Dysregulated actin nucleation factor — SMA-ALS convergence','PFN1 is a key actin monomer-binding protein required for filament nucleation. In SMA motor neurons, SMN directly binds profilin and loss of this interaction disrupts actin dynamics. Critically, PFN1 mutations cause familial ALS — making this a SMA-ALS cross-disease convergence point identified across 3 independent GEO datasets (GSE69175, GSE108094, GSE208629) and the Cross-Paper Synthesis engine.','Dysregulated',['ROCK2'])">
+                <div class="pnode-symbol">PFN1</div>
+                <div class="pnode-name">Profilin-1 — actin dynamics regulator</div>
+                <div><span class="pnode-status pnode-status-up">Dysregulated</span></div>
+                <div class="pnode-claims" id="pn-claims-PFN1">&#x2014;</div>
+                <div class="pnode-drugs"><span style="font-size:10px;color:var(--muted);font-style:italic">SMA-ALS convergence node</span></div>
+            </div>
+
+            <div class="pathway-arrow arrow-red"><div class="pathway-arrow-line"></div><div class="pathway-arrow-head"></div></div>
+
+            <div class="pnode pnode-path" id="pn-ROCK2" onclick="pathwayNodeClick('ROCK2','ROCK2 — Rho-associated protein kinase 2','Hyperactivated Rho-kinase — primary druggable node','ROCK2 is hyperactivated downstream of Rho-GTPase signaling when PFN1 and actin dynamics are perturbed by SMN loss. It is the first clinically actionable node: fasudil (FDA-approved for cerebral vasospasm in Japan/Korea) directly inhibits ROCK2. Belumosudil (FDA-approved for chronic GvHD) is more selective for ROCK2. DiffDock docking campaign confirmed binding poses for both. 15 binders were designed via RFdiffusion + ProteinMPNN.','Hyperactivated',['ROCK2','LIMK1'])">
+                <div class="pnode-symbol">ROCK2</div>
+                <div class="pnode-name">Rho-associated protein kinase 2</div>
+                <div><span class="pnode-status pnode-status-activated">Hyperactivated</span></div>
+                <div class="pnode-claims" id="pn-claims-ROCK2">&#x2014;</div>
+                <div class="pnode-drugs">
+                    <span class="pnode-drug-pill" onclick="event.stopPropagation();showSection('drugs')">Fasudil</span>
+                    <span class="pnode-drug-pill" onclick="event.stopPropagation();showSection('drugs')">Belumosudil</span>
+                </div>
+            </div>
+            <div class="pathway-inhibitor">
+                <div class="pathway-inhibitor-line"></div>
+                <div class="pathway-inhibitor-stop">&#x26D4;</div>
+                <div class="pathway-inhibitor-drugs">
+                    <span class="pathway-inhibitor-drug" onclick="showSection('drugs')">Fasudil</span>
+                    <span class="pathway-inhibitor-drug" onclick="showSection('drugs')">Belumosudil</span>
+                </div>
+            </div>
+
+            <div class="pathway-arrow arrow-red"><div class="pathway-arrow-line"></div><div class="pathway-arrow-head"></div></div>
+
+            <div class="pnode pnode-path" id="pn-LIMK1" onclick="pathwayNodeClick('LIMK1','LIMK1 — LIM domain kinase 1','Hyperactivated downstream of ROCK2 — phosphorylates cofilin at Ser3','LIMK1 is the direct downstream effector of ROCK2. It phosphorylates cofilin at Serine-3, rendering it unable to sever actin filaments. This is the mechanistic step that converts upstream kinase hyperactivation into physical actin cytoskeleton pathology. MDI-117740 is a selective LIMK1/2 inhibitor in preclinical development. 15 binders were designed for LIMK1 in the GPU compute campaign.','Hyperactivated',['LIMK1','CFL2'])">
+                <div class="pnode-symbol">LIMK1</div>
+                <div class="pnode-name">LIM domain kinase 1 — cofilin kinase</div>
+                <div><span class="pnode-status pnode-status-activated">Hyperactivated</span></div>
+                <div class="pnode-claims" id="pn-claims-LIMK1">&#x2014;</div>
+                <div class="pnode-drugs">
+                    <span class="pnode-drug-pill" onclick="event.stopPropagation();showSection('drugs')">MDI-117740</span>
+                </div>
+            </div>
+            <div class="pathway-inhibitor">
+                <div class="pathway-inhibitor-line"></div>
+                <div class="pathway-inhibitor-stop">&#x26D4;</div>
+                <div class="pathway-inhibitor-drugs">
+                    <span class="pathway-inhibitor-drug" onclick="showSection('drugs')">MDI-117740</span>
+                </div>
+            </div>
+
+            <div class="pathway-arrow arrow-red"><div class="pathway-arrow-line"></div><div class="pathway-arrow-head"></div></div>
+
+            <div class="pnode pnode-key" id="pn-CFL2" onclick="pathwayNodeClick('CFL2','CFL2 — Cofilin-2 (muscle/neuron isoform)','Phosphorylated at Ser3 (inactive) — actin rod initiator','When LIMK1 is hyperactivated, cofilin-2 (the muscle/neuron isoform) is phosphorylated at Ser3 and becomes unable to sever actin filaments. Instead, phospho-cofilin accumulates with F-actin to form toxic actin-cofilin rods. This is the central mechanistic step linking upstream kinase dysregulation to physical pathology. Cofilin reactivation (dephosphorylation by SSH1 phosphatase) represents a potential rescue mechanism.','Phosphorylated (inactive)',['CFL2'])">
+                <div class="pnode-symbol">CFL2</div>
+                <div class="pnode-name">Cofilin-2 — actin-severing protein</div>
+                <div><span class="pnode-status pnode-status-inactive">Phospho-Ser3 (inactive)</span></div>
+                <div class="pnode-claims" id="pn-claims-CFL2">&#x2014;</div>
+            </div>
+
+            <div class="pathway-arrow arrow-red"><div class="pathway-arrow-line"></div><div class="pathway-arrow-head"></div></div>
+
+            <div class="pnode pnode-path" id="pn-actin-rods" onclick="pathwayNodeClick('CORO1C','Actin-Cofilin Rods + CORO1C','Toxic cytoplasmic actin-cofilin rod formation','Inactive phospho-cofilin accumulates with F-actin to form toxic cytoplasmic rods that physically block axonal transport. CORO1C (coronin-1C), which normally caps and disassembles actin rod structures, is independently dysregulated in SMA — accelerating rod formation and persistence. Rod formation is reversible in early stages, representing a potential therapeutic window.','Formed',['CORO1C','CFL2'])">
+                <div class="pnode-symbol">Actin-Cofilin Rods</div>
+                <div class="pnode-name">Toxic cytoplasmic actin aggregates — CORO1C dysregulated</div>
+                <div><span class="pnode-status pnode-status-up">Formed in SMA motor neurons</span></div>
+                <div class="pnode-claims" id="pn-claims-CORO1C">&#x2014;</div>
+            </div>
+
+            <div class="pathway-arrow arrow-red"><div class="pathway-arrow-line"></div><div class="pathway-arrow-head"></div></div>
+
+            <div class="pnode pnode-path" id="pn-transport" onclick="pathwayNodeClick('STMN2','Axonal Transport Block','Bidirectional axonal transport physically obstructed by actin rods','Actin-cofilin rods block retrograde and anterograde transport of mitochondria, synaptic vesicles, neurotrophic factors, and organelles. Stathmin-2 (STMN2) — a critical axonal growth and maintenance factor independently downregulated in SMA — compounds this failure. STMN2 downregulation was independently confirmed in TDP-43 pathology (ALS convergence). The combined transport failure accelerates NMJ denervation.','Blocked',['STMN2'])">
+                <div class="pnode-symbol">Axonal Transport Block</div>
+                <div class="pnode-name">STMN2 &#x2193; — bidirectional transport failure</div>
+                <div><span class="pnode-status pnode-status-up">Blocked</span></div>
+                <div class="pnode-claims" id="pn-claims-STMN2">&#x2014;</div>
+            </div>
+
+            <div class="pathway-arrow arrow-red"><div class="pathway-arrow-line"></div><div class="pathway-arrow-head"></div></div>
+
+            <div class="pnode pnode-outcome" id="pn-nmj" onclick="pathwayNodeClick('NMJ Maturation','NMJ Failure — Motor Neuron Death','Terminal outcome: NMJ denervation and progressive motor neuron loss','Actin rod-mediated transport block and STMN2 failure cause progressive NMJ denervation. NMJ maturation is tracked as an independent target in the platform — its disruption in SMA is confirmed by multiple independent labs. Combined with the parallel p53 apoptotic cascade from MAPK14, this produces the irreversible motor neuron death that causes SMA disease phenotype.','Denervated',['NMJ Maturation'])">
+                <div class="pnode-symbol">NMJ Failure &#x2192; Motor Neuron Death</div>
+                <div class="pnode-name">Neuromuscular junction denervation — SMA disease endpoint</div>
+                <div><span class="pnode-status pnode-status-up">Progressive — disease endpoint</span></div>
+                <div class="pnode-claims" id="pn-claims-NMJ">&#x2014;</div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Parallel apoptotic branch -->
+        <div class="pathway-branch-col">
+            <div class="pathway-branch-label">Parallel Apoptotic Branch</div>
+
+            <div class="pnode pnode-path" id="pn-MAPK14" onclick="pathwayNodeClick('MAPK14','MAPK14 — p38 MAP kinase','Stress-activated kinase — parallel SMN-independent apoptotic route','MAPK14 (p38-alpha) is activated by the cellular stress induced by SMN depletion: oxidative stress, ER stress, and actin cytoskeleton disruption all feed into p38 activation. Activated p38 de-represses p53 through MDM2 phosphorylation and p21 upregulation. MW150 is a selective p38-alpha inhibitor. The virtual screening Thiadiazole Champion compound showed strong predicted binding to MAPK14. 15 binders were designed for MAPK14 via RFdiffusion.','Activated',['MAPK14','TP53'])">
+                <div class="pnode-symbol">MAPK14 / p38</div>
+                <div class="pnode-name">p38 MAP kinase — stress sensor</div>
+                <div><span class="pnode-status pnode-status-activated">Activated</span></div>
+                <div class="pnode-claims" id="pn-claims-MAPK14">&#x2014;</div>
+                <div class="pnode-drugs">
+                    <span class="pnode-drug-pill" onclick="event.stopPropagation();showSection('drugs')">MW150</span>
+                    <span class="pnode-drug-pill" onclick="event.stopPropagation();showSection('screening')">Thiadiazole</span>
+                </div>
+            </div>
+            <div class="pathway-inhibitor">
+                <div class="pathway-inhibitor-line"></div>
+                <div class="pathway-inhibitor-stop">&#x26D4;</div>
+                <div class="pathway-inhibitor-drugs">
+                    <span class="pathway-inhibitor-drug" onclick="showSection('drugs')">MW150</span>
+                    <span class="pathway-inhibitor-drug" onclick="showSection('screening')">Thiadiazole</span>
+                </div>
+            </div>
+
+            <div class="pathway-arrow arrow-red"><div class="pathway-arrow-line"></div><div class="pathway-arrow-head"></div></div>
+
+            <div class="pnode pnode-path" id="pn-TP53" onclick="pathwayNodeClick('TP53','TP53 — p53 tumor suppressor','De-repressed p53 activates intrinsic apoptosis in motor neurons','In healthy motor neurons, p53 is held in check by MDM2. When MAPK14/p38 is activated by SMN deficiency, it phosphorylates and inactivates MDM2, releasing p53. De-repressed p53 activates BAX, cytochrome-c release, Apaf-1 apoptosome formation, and Caspase-9/3 cascade. Pifithrin-alpha (PFT-alpha) is a p53 transcriptional inhibitor with neuroprotective effects in SMA model neurons. This gap in the platform was flagged by Dr. Simon and has since been addressed with targeted claim extraction.','De-repressed',['TP53'])">
+                <div class="pnode-symbol">TP53 / p53</div>
+                <div class="pnode-name">Tumor protein p53 — apoptosis gatekeeper</div>
+                <div><span class="pnode-status pnode-status-up">De-repressed</span></div>
+                <div class="pnode-claims" id="pn-claims-TP53">&#x2014;</div>
+                <div class="pnode-drugs">
+                    <span class="pnode-drug-pill pill-green" onclick="event.stopPropagation();showSection('drugs')">Pifithrin-&#x03B1;</span>
+                </div>
+            </div>
+            <div class="pathway-inhibitor">
+                <div class="pathway-inhibitor-line"></div>
+                <div class="pathway-inhibitor-stop">&#x26D4;</div>
+                <div class="pathway-inhibitor-drugs">
+                    <span class="pathway-inhibitor-drug" style="background:#f0fdf4;color:#15803d;border-color:#bbf7d0" onclick="showSection('drugs')">Pifithrin-&#x03B1;</span>
+                </div>
+            </div>
+
+            <div class="pathway-arrow arrow-red"><div class="pathway-arrow-line"></div><div class="pathway-arrow-head"></div></div>
+
+            <div class="pnode pnode-outcome">
+                <div class="pnode-symbol">Motor Neuron Apoptosis</div>
+                <div class="pnode-name">BAX / Caspase-9 / Caspase-3 cascade</div>
+                <div><span class="pnode-status pnode-status-up">Irreversible cell death</span></div>
+            </div>
+
+            <!-- Convergence evidence summary -->
+            <div style="margin-top:24px;background:var(--blue-bg);border:1px solid var(--line);padding:14px 16px;font-size:11px;line-height:1.8;color:var(--text-secondary)">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--blue);margin-bottom:8px">Evidence Convergence: 5 / 6 Streams</div>
+                <div>&#x2705; GEO omics — 3 datasets, 3 independent labs</div>
+                <div>&#x2705; DiffDock docking — ROCK2, MAPK14, LIMK1</div>
+                <div>&#x2705; Cross-paper synthesis — 12+ independent publications</div>
+                <div>&#x2705; Cross-disease ALS/SMA — PFN1 convergence</div>
+                <div>&#x2705; Digital twin — actin dynamics compartment modelled</div>
+                <div style="color:var(--muted)">&#x26AA; Wet-lab validation — pending</div>
+                <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+                    <button onclick="showSection('convergence')" style="font-size:10px;font-weight:600;padding:4px 10px;background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue);cursor:pointer">Convergence Scores &#x2192;</button>
+                    <button onclick="showSection('nim-results')" style="font-size:10px;font-weight:600;padding:4px 10px;background:var(--panel);color:var(--text-secondary);border:1px solid var(--line);cursor:pointer">Docking Results &#x2192;</button>
+                    <button onclick="showSection('dualtarget')" style="font-size:10px;font-weight:600;padding:4px 10px;background:var(--panel);color:var(--text-secondary);border:1px solid var(--line);cursor:pointer">Dual Target &#x2192;</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <section class="section" id="convergence">
@@ -10139,10 +10418,13 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var mscore = m.score != null ? Number(m.score).toFixed(3) : '-';
                 var mscoreCls = m.score >= 0.6 ? 'badge-green' : m.score >= 0.4 ? 'badge-amber' : 'badge-gray';
                 var msmiles = (m.smiles || '').length > 30 ? m.smiles.substring(0,30) + '...' : (m.smiles || '-');
+                var smilesTd = td(msmiles, 'mono', 'font-size:10px;max-width:200px');
+                // Store full SMILES in title for 2D canvas renderer
+                if (m.smiles) smilesTd.setAttribute('title', m.smiles);
                 body.appendChild(el('tr', null, [
                     td(String(mi+1), 'mono'),
                     tdBadge(m.target || 'SMN2', 'badge-blue'),
-                    td(msmiles, 'mono', 'font-size:10px;max-width:200px'),
+                    smilesTd,
                     tdBadge(mscore, mscoreCls),
                     td((m.scaffold_smiles || '').length > 20 ? m.scaffold_smiles.substring(0,20) + '...' : (m.scaffold_smiles || '-'), 'mono', 'font-size:10px'),
                     td(m.method || 'MolMIM', '', 'font-size:10px')
@@ -12680,6 +12962,308 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     });
 })();
 </script>
+
+<!-- ===== 2D MOLECULE RENDERING (SmilesDrawer) + 3D VIEWER (NGL) ===== -->
+<script>
+(function() {
+    'use strict';
+
+    // ── SmilesDrawer global instance (dark-theme) ────────────────────────────
+    var sdDrawer = null;
+    function getSmilesDrawer() {
+        if (!sdDrawer && window.SmilesDrawer) {
+            sdDrawer = new SmilesDrawer.Drawer({
+                width: 200,
+                height: 150,
+                bondThickness: 1.2,
+                shortBondWidth: 0.85,
+                atomVisualization: 'default',
+                fontSizeLarge: 6,
+                fontSizeSmall: 4,
+                padding: 20,
+                terminalCarbons: false,
+                explicitHydrogens: false,
+                compactDrawing: true,
+                themes: {
+                    dark: {
+                        C: '#e2e8f0', O: '#f87171', N: '#60a5fa', F: '#4ade80',
+                        CL: '#86efac', BR: '#fdba74', I: '#c084fc', P: '#fbbf24',
+                        S: '#fde047', B: '#fb923c', SI: '#a78bfa', H: '#94a3b8',
+                        BACKGROUND: '#1e293b'
+                    }
+                }
+            });
+        }
+        return sdDrawer;
+    }
+
+    // ── Render a SMILES string into a <canvas> element ───────────────────────
+    function renderSmiles(smiles, canvas) {
+        var drawer = getSmilesDrawer();
+        if (!drawer || !smiles || !canvas) return;
+        try {
+            SmilesDrawer.parse(smiles, function(tree) {
+                drawer.draw(tree, canvas, 'dark');
+            }, function() { /* parse error — leave blank */ });
+        } catch(e) { /* silently skip invalid SMILES */ }
+    }
+
+    // ── Create a canvas wrapped in the dark container ────────────────────────
+    function makeMolCanvas(smiles, width, height) {
+        width = width || 200; height = height || 150;
+        var wrap = document.createElement('div');
+        wrap.className = 'mol-canvas-wrap';
+        wrap.style.width = width + 'px';
+        wrap.style.height = height + 'px';
+        var canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.style.width = width + 'px'; canvas.style.height = height + 'px';
+        canvas.dataset.smiles = smiles || '';
+        wrap.appendChild(canvas);
+        return { wrap: wrap, canvas: canvas };
+    }
+
+    // ── IntersectionObserver for lazy rendering ──────────────────────────────
+    var molObserver = null;
+    function getMolObserver() {
+        if (!molObserver && window.IntersectionObserver) {
+            molObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        var c = entry.target;
+                        if (c.dataset.smiles && !c.dataset.rendered) {
+                            c.dataset.rendered = '1';
+                            renderSmiles(c.dataset.smiles, c);
+                        }
+                        molObserver.unobserve(c);
+                    }
+                });
+            }, { rootMargin: '200px' });
+        }
+        return molObserver;
+    }
+
+    // Public: register canvas for lazy render
+    window.registerMolCanvas = function(canvas) {
+        var obs = getMolObserver();
+        if (obs) { obs.observe(canvas); }
+        else { renderSmiles(canvas.dataset.smiles, canvas); }
+    };
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // NGL 3D Protein Structure Viewer
+    // ──────────────────────────────────────────────────────────────────────────
+    var nglStage = null;
+
+    function ensureNglStage() {
+        if (nglStage) return nglStage;
+        if (!window.NGL) return null;
+        var viewport = document.getElementById('ngl-viewport');
+        if (!viewport) return null;
+        nglStage = new NGL.Stage('ngl-viewport', {
+            backgroundColor: '#0f172a',
+            ambientIntensity: 0.4
+        });
+        window.addEventListener('resize', function() { if (nglStage) nglStage.handleResize(); });
+        return nglStage;
+    }
+
+    window.openNglViewer = function(uniprotId, label, pdbUrl) {
+        var modal = document.getElementById('ngl-modal');
+        var titleEl = document.getElementById('ngl-modal-title');
+        var footerEl = document.getElementById('ngl-modal-footer');
+        if (!modal) return;
+        if (titleEl) titleEl.textContent = (label || uniprotId || 'Protein') + ' — 3D Structure';
+        // Build AlphaFold URL if none provided
+        var url = pdbUrl;
+        if (!url && uniprotId) {
+            url = 'https://alphafold.ebi.ac.uk/files/AF-' + uniprotId + '-F1-model_v4.cif';
+        }
+        if (!url) { alert('No structure URL available for this target.'); return; }
+        if (footerEl) footerEl.textContent = 'Loading ' + url + ' ...';
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        var stage = ensureNglStage();
+        if (!stage) {
+            if (footerEl) footerEl.textContent = 'NGL Viewer not loaded — try refreshing.';
+            return;
+        }
+        stage.removeAllComponents();
+        var ext = url.indexOf('.cif') !== -1 ? 'cif' : 'pdb';
+        stage.loadFile(url, { ext: ext, name: label || uniprotId }).then(function(o) {
+            o.addRepresentation('cartoon', { colorScheme: 'bfactor', opacity: 1.0 });
+            o.addRepresentation('surface', { opacity: 0.08 });
+            o.autoView();
+            if (footerEl) footerEl.textContent = 'Source: ' + url + ' \u2022 Drag to rotate \u2022 Scroll to zoom \u2022 Right-drag to pan';
+        }).catch(function(err) {
+            if (footerEl) footerEl.textContent = 'Failed to load structure: ' + (err.message || err);
+        });
+    };
+
+    // Close NGL modal
+    document.addEventListener('DOMContentLoaded', function() {
+        var closeBtn = document.getElementById('ngl-modal-close');
+        var modal = document.getElementById('ngl-modal');
+        function closeNgl() {
+            if (modal) modal.classList.remove('open');
+            document.body.style.overflow = '';
+            if (nglStage) nglStage.removeAllComponents();
+        }
+        if (closeBtn) closeBtn.addEventListener('click', closeNgl);
+        if (modal) modal.addEventListener('click', function(e) { if (e.target === modal) closeNgl(); });
+        // ESC key
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeNgl(); });
+    });
+
+    // ── Patch structure table rows with 3D view buttons ──────────────────────
+    function patchStructureRow(row) {
+        if (row.dataset.nglPatched) return;
+        row.dataset.nglPatched = '1';
+        var tds = row.querySelectorAll('td');
+        if (!tds.length) return;
+        // GPU structures table: #, Target, UniProt, Method, pLDDT, Residues, Source, PDB
+        var targetTd = tds[1]; var uniprotTd = tds[2];
+        if (!targetTd || !uniprotTd) return;
+        var targetName = (targetTd.textContent || '').trim();
+        var uniprotId = (uniprotTd.textContent || '').trim().replace(/[^A-Z0-9]/gi, '');
+        if (!uniprotId || uniprotId === '-') return;
+        var lastTd = tds[tds.length - 1];
+        var btn = document.createElement('button');
+        btn.className = 'view3d-btn';
+        btn.title = 'View 3D structure via AlphaFold';
+        btn.innerHTML = '&#9674; 3D';
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            window.openNglViewer(uniprotId, targetName, null);
+        });
+        if (lastTd) lastTd.appendChild(btn);
+    }
+
+    function observeForStructures(tbodyId) {
+        var tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+        tbody.querySelectorAll('tr').forEach(patchStructureRow);
+        new MutationObserver(function(muts) {
+            muts.forEach(function(m) {
+                m.addedNodes.forEach(function(n) { if (n.nodeType === 1 && n.tagName === 'TR') patchStructureRow(n); });
+            });
+        }).observe(tbody, { childList: true });
+    }
+
+    // ── Patch screening expand rows to include a 2D molecule canvas ──────────
+    function patchExpandCell(cell) {
+        if (cell.dataset.sdExpand) return;
+        cell.dataset.sdExpand = '1';
+        // Find the monospace SMILES span inside the expand cell
+        var monoSpan = cell.querySelector('span[style*="monospace"]');
+        if (!monoSpan) return;
+        var smiles = monoSpan.textContent.trim();
+        if (!smiles) return;
+        var mc = makeMolCanvas(smiles, 200, 150);
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'margin-top:12px;margin-bottom:4px';
+        var lbl = document.createElement('div');
+        lbl.style.cssText = 'font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px';
+        lbl.textContent = '2D Structure';
+        wrap.appendChild(lbl);
+        wrap.appendChild(mc.wrap);
+        // Insert before the SMILES text section
+        var smilesDivParent = monoSpan.closest('div');
+        if (smilesDivParent && smilesDivParent.parentNode) {
+            smilesDivParent.parentNode.insertBefore(wrap, smilesDivParent);
+        } else {
+            cell.appendChild(wrap);
+        }
+        window.registerMolCanvas(mc.canvas);
+    }
+
+    function observeScreeningBody() {
+        var tbody = document.getElementById('screening-body');
+        if (!tbody) return;
+        new MutationObserver(function(muts) {
+            muts.forEach(function(m) {
+                m.addedNodes.forEach(function(n) {
+                    if (n.nodeType !== 1 || n.tagName !== 'TR') return;
+                    if (n.className && n.className.indexOf('expand-row') !== -1) {
+                        var cell = n.querySelector('td.expand-cell');
+                        if (cell) patchExpandCell(cell);
+                    }
+                });
+            });
+        }).observe(tbody, { childList: true });
+    }
+
+    // ── GPU molecules table: replace SMILES text cell with canvas ────────────
+    function patchGpuMolRow(row) {
+        if (row.dataset.sdDone) return;
+        row.dataset.sdDone = '1';
+        var tds = row.querySelectorAll('td');
+        // #, Target, SMILES, Score, Scaffold, Method
+        if (tds.length < 3) return;
+        var smilesTd = tds[2];
+        var smiles = (smilesTd.getAttribute('title') || smilesTd.textContent || '').trim();
+        // The full smiles is stored as title on the td (set truncated as text)
+        // Let's try both
+        if (!smiles || smiles === '-') return;
+        // If it looks truncated (ends with ...) skip (not reliable)
+        smilesTd.textContent = '';
+        smilesTd.style.maxWidth = '210px';
+        smilesTd.style.verticalAlign = 'middle';
+        var mc = makeMolCanvas(smiles, 200, 150);
+        smilesTd.appendChild(mc.wrap);
+        window.registerMolCanvas(mc.canvas);
+    }
+
+    function observeGpuMolecules() {
+        var tbody = document.getElementById('gpu-molecules-body');
+        if (!tbody) return;
+        tbody.querySelectorAll('tr').forEach(patchGpuMolRow);
+        new MutationObserver(function(muts) {
+            muts.forEach(function(m) {
+                m.addedNodes.forEach(function(n) { if (n.nodeType === 1 && n.tagName === 'TR') patchGpuMolRow(n); });
+            });
+        }).observe(tbody, { childList: true });
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    function init() {
+        observeScreeningBody();
+        observeGpuMolecules();
+        observeForStructures('gpu-structures-body');
+        observeForStructures('structures-body');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    // Re-hook when SPA navigates to relevant sections
+    var origShowSection = window.showSection;
+    if (typeof origShowSection === 'function') {
+        window.showSection = function(section) {
+            origShowSection.apply(this, arguments);
+            if (section === 'screening') { observeScreeningBody(); }
+            if (section === 'gpu-results') { observeGpuMolecules(); observeForStructures('gpu-structures-body'); }
+            if (section === 'structures') { observeForStructures('structures-body'); }
+        };
+    }
+
+})();
+</script>
+
+<!-- NGL 3D Protein Structure Viewer Modal -->
+<div id="ngl-modal">
+    <div id="ngl-modal-inner">
+        <div id="ngl-modal-header">
+            <span id="ngl-modal-title">Protein Structure</span>
+            <button id="ngl-modal-close" title="Close">&times;</button>
+        </div>
+        <div id="ngl-viewport"></div>
+        <div id="ngl-modal-footer">Drag to rotate &bull; Scroll to zoom &bull; Right-drag to pan &bull; Structure via AlphaFold DB / RCSB PDB</div>
+    </div>
+</div>
 
 <!-- Experiment Proposal Modal -->
 <div id="exp-proposal-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;overflow-y:auto">
