@@ -14044,7 +14044,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         // Build AlphaFold URL if none provided
         var url = pdbUrl;
         if (!url && uniprotId) {
-            url = 'https://alphafold.ebi.ac.uk/files/AF-' + uniprotId + '-F1-model_v4.cif';
+            url = '/pdb/' + (label || uniprotId).split(' ')[0] + '_' + uniprotId + '.pdb';
         }
         if (!url) { alert('No structure URL available for this target.'); return; }
         if (footerEl) footerEl.textContent = 'Loading ' + url + ' ...';
