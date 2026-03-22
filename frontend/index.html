@@ -1878,11 +1878,45 @@
 <section class="section" id="priority">
     <div class="section-header"><h2 class="section-title">Target Priority Engine v2</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="priority-count"></span></div>
     <p class="section-desc">Multi-criteria decision engine integrating 6 data dimensions: evidence convergence (25%), druggability via DiffDock screening (20%), ESM-2 structural uniqueness (15%), clinical validation from drug outcomes (15%), cross-species conservation (10%), and target novelty (15%). <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/target_prioritizer_v2.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
-    <div id="priority-filter-bar" style="display:none;margin:0 0 12px 0">
-        <input type="text" id="priority-search" placeholder="Search target name or symbol..."
-               style="width:100%;max-width:360px;padding:6px 10px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;box-sizing:border-box">
+    <div id="priority-filter-bar" style="display:none;margin:0 0 12px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <div style="display:flex;flex-direction:column;gap:3px">
+            <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Search</label>
+            <input type="text" id="priority-search" placeholder="Target name or symbol..."
+                   style="padding:4px 8px;border:1px solid var(--line);font-size:12px;background:var(--bg);color:var(--text);border-radius:3px;width:160px;font-family:inherit">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+            <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Tier</label>
+            <select id="priority-tier-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                <option value="">All tiers</option>
+                <option value="tier_1">Tier 1 — Actionable</option>
+                <option value="tier_2">Tier 2 — Promising</option>
+                <option value="tier_3">Tier 3 — Exploratory</option>
+                <option value="tier_4">Tier 4 — Insufficient</option>
+            </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+            <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Min Score</label>
+            <select id="priority-score-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                <option value="">Any</option>
+                <option value="0.5">&ge; 50%</option>
+                <option value="0.4">&ge; 40%</option>
+                <option value="0.3">&ge; 30%</option>
+                <option value="0.2">&ge; 20%</option>
+            </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+            <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Per Page</label>
+            <select id="priority-per-page" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                <option value="15">15</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">All</option>
+            </select>
+        </div>
+        <span id="priority-filter-count" style="font-size:11px;color:var(--muted);margin-left:auto"></span>
     </div>
     <div id="priority-body"><div class="loading">Loading priority engine...</div></div>
+    <div id="priority-pagination" style="margin-top:12px;text-align:center"></div>
 </section>
 
 <section class="section" id="evidence">
@@ -5847,14 +5881,50 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }
     }
 
+    var priorityPage = 1;
+
     function filterPriority() {
         var q = (document.getElementById('priority-search').value || '').trim().toLowerCase();
-        if (!q) { renderPriorityCards(priorityAllTargets); return; }
+        var tierVal = document.getElementById('priority-tier-filter').value;
+        var minScore = parseFloat(document.getElementById('priority-score-filter').value) || 0;
+
         var filtered = priorityAllTargets.filter(function(t) {
-            return (t.symbol || '').toLowerCase().indexOf(q) !== -1 ||
-                   (t.name || '').toLowerCase().indexOf(q) !== -1;
+            if (q && (t.symbol || '').toLowerCase().indexOf(q) === -1 && (t.name || '').toLowerCase().indexOf(q) === -1) return false;
+            if (tierVal && (t.tier || '') !== tierVal + '_promising' && (t.tier || '') !== tierVal + '_actionable' && (t.tier || '') !== tierVal + '_exploratory' && (t.tier || '') !== tierVal + '_insufficient' && (t.tier || '').indexOf(tierVal) === -1) return false;
+            if (minScore > 0 && (t.composite_score || 0) < minScore) return false;
+            return true;
         });
-        renderPriorityCards(filtered);
+
+        var countEl = document.getElementById('priority-filter-count');
+        if (q || tierVal || minScore) {
+            countEl.textContent = filtered.length + ' of ' + priorityAllTargets.length;
+        } else {
+            countEl.textContent = '';
+        }
+
+        priorityPage = 1;
+        renderPriorityPaginated(filtered);
+    }
+
+    function renderPriorityPaginated(targets) {
+        var perPage = parseInt(document.getElementById('priority-per-page').value) || 25;
+        if (perPage >= 100) perPage = targets.length; // "All"
+        var totalPages = Math.max(1, Math.ceil(targets.length / perPage));
+        if (priorityPage > totalPages) priorityPage = totalPages;
+        var start = (priorityPage - 1) * perPage;
+        var pageTargets = targets.slice(start, start + perPage);
+
+        renderPriorityCards(pageTargets);
+
+        // Pagination
+        var pagEl = clearEl('priority-pagination');
+        if (totalPages > 1) {
+            for (var pg = 1; pg <= totalPages; pg++) {
+                var btn = el('button', {className: 'page-btn' + (pg === priorityPage ? ' active' : ''), text: String(pg)});
+                (function(p) { btn.addEventListener('click', function() { priorityPage = p; renderPriorityPaginated(targets); window.scrollTo({top: document.getElementById('priority').offsetTop, behavior: 'smooth'}); }); })(pg);
+                pagEl.appendChild(btn);
+            }
+        }
     }
 
     function loadPriority() {
@@ -5868,12 +5938,17 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 return;
             }
             priorityAllTargets = targets;
-            document.getElementById('priority-filter-bar').style.display = 'block';
-            renderPriorityCards(targets);
-            document.getElementById('priority-search').addEventListener('keyup', function() {
-                if (prioritySearchTimer) clearTimeout(prioritySearchTimer);
-                prioritySearchTimer = setTimeout(function() { filterPriority(); }, 250);
+            document.getElementById('priority-filter-bar').style.display = 'flex';
+            renderPriorityPaginated(targets);
+            // Wire up filters
+            var searchTimer = null;
+            document.getElementById('priority-search').addEventListener('input', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(filterPriority, 250);
             });
+            document.getElementById('priority-tier-filter').addEventListener('change', filterPriority);
+            document.getElementById('priority-score-filter').addEventListener('change', filterPriority);
+            document.getElementById('priority-per-page').addEventListener('change', function() { priorityPage = 1; filterPriority(); });
         }).catch(function() {
             var wrap = clearEl('priority-body');
             wrap.appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Priority v2 endpoint not available.'})]));
