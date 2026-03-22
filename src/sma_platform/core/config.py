@@ -34,6 +34,7 @@ class Settings(BaseSettings):
 
     # NVIDIA NIMs (DiffDock v2.2, OpenFold3, GenMol)
     nvidia_api_key: str = ""
+    nvidia_api_key_2: str = ""
 
     # Server
     host: str = "0.0.0.0"
