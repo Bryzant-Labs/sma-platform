@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SMA Research Platform — Open Evidence Graph</title>
-    <meta name="description" content="Open-source evidence-first research platform for Spinal Muscular Atrophy (SMA). Thousands of PubMed sources, tens of thousands of extracted claims, hundreds of prioritized hypotheses, clinical trials, 21 molecular targets, hundreds of compounds screened — structured for accelerating SMA therapeutic development.">
+    <meta name="description" content="Open-source evidence-first research platform for Spinal Muscular Atrophy (SMA). Thousands of PubMed sources, thousands of quality-filtered claims, hundreds of prioritized hypotheses, clinical trials, 21 molecular targets, hundreds of compounds screened — structured for accelerating SMA therapeutic development.">
     <meta name="keywords" content="SMA, Spinal Muscular Atrophy, SMN1, SMN2, drug discovery, evidence graph, clinical trials, nusinersen, risdiplam, onasemnogene, gene therapy, ASO, splicing modifier, motor neuron, rare disease, orphan drug, target discovery, hypothesis prioritization">
     <meta name="author" content="Christian Fischer / Bryzant Labs">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -13,7 +13,7 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="SMA Research Platform — Open Evidence Graph for Spinal Muscular Atrophy">
-    <meta property="og:description" content="Evidence-first drug research for SMA. Thousands of sources, tens of thousands of claims, hundreds of hypotheses, clinical trials, 21 targets, hundreds of compounds screened. Open source, biology-first, no marketing.">
+    <meta property="og:description" content="Evidence-first drug research for SMA. Thousands of sources, thousands of curated claims, hundreds of hypotheses, clinical trials, 21 targets, hundreds of compounds screened. Open source, biology-first, no marketing.">
     <meta property="og:url" content="https://sma-research.info/">
     <meta property="og:site_name" content="SMA Research Platform">
     <meta property="og:locale" content="en_US">
@@ -145,7 +145,7 @@
         "@context": "https://schema.org",
         "@type": "Dataset",
         "name": "SMA Evidence Graph Dataset",
-        "description": "Aggregated dataset containing thousands of PubMed sources, tens of thousands of LLM-extracted claims, hundreds of clinical trials, 21 molecular targets, approved and investigational drugs, and hundreds of prioritized hypotheses for Spinal Muscular Atrophy research.",
+        "description": "Aggregated dataset containing thousands of PubMed sources, thousands of quality-filtered LLM-extracted claims, hundreds of clinical trials, 21 molecular targets, approved and investigational drugs, and hundreds of prioritized hypotheses for Spinal Muscular Atrophy research.",
         "url": "https://sma-research.info/api/v2/stats",
         "license": "https://www.gnu.org/licenses/agpl-3.0.html",
         "creator": {
@@ -341,7 +341,7 @@
         .section-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
         .section-title { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .section-count { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
-        .section-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; max-width: 800px; }
+        .section-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; max-width: 100%; line-height: 1.7; }
         .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; background: var(--panel); border: 1px solid var(--line); }
         table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: auto; }
         thead th {
@@ -446,8 +446,8 @@
         .score-dims { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
         .dim-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; padding: 4px 0; }
         .dim-label { color: var(--text-secondary); }
-        .dim-bar { width: 60px; height: 6px; background: var(--line-light); display: inline-block; vertical-align: middle; margin-right: 6px; }
-        .dim-fill { height: 100%; }
+        .dim-bar { width: 60px; height: 6px; background: var(--line); display: inline-block; vertical-align: middle; margin-right: 6px; border-radius: 3px; overflow: hidden; position: relative; }
+        .dim-fill { height: 100%; display: block; border-radius: 3px; min-width: 1px; }
         .dim-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 11px; min-width: 80px; text-align: right; }
         .tier-high { color: var(--green); }
         .tier-medium { color: var(--amber); }
@@ -1365,14 +1365,14 @@
 
 <section class="section" id="targets">
     <div class="section-header"><h2 class="section-title">Targets</h2><span style="font-size:10px;padding:2px 8px;background:#16a34a1a;color:#16a34a;font-weight:600;margin-left:8px;vertical-align:middle">VALIDATED DATA</span><span class="section-count" id="targets-count"></span></div>
-    <p class="section-desc">Genes, proteins, and pathways implicated in SMA pathogenesis. Core targets include SMN1/SMN2 (primary), STMN2 (neuroprotective), and natural protective modifiers PLS3 and NCALD. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/targets.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">Genes, proteins, and pathways implicated in SMA pathogenesis, scored across multiple evidence dimensions. The platform tracks 58 molecular targets across three tiers: <strong>Primary targets</strong> — SMN1 and SMN2, the causal genes of SMA where loss of full-length SMN protein drives motor neuron degeneration. <strong>Established modifier targets</strong> — STMN2 (axonal maintenance), PLS3 and NCALD (natural protective modifiers identified in asymptomatic SMN1-deletion carriers), UBA1 (ubiquitin pathway), and CORO1C (actin dynamics). <strong>Discovery targets</strong> — recently identified through multi-omics convergence analysis and cross-disease research, including PFN1 (profilin, SMA-ALS convergence), CFL2 (cofilin, actin rod formation), ROCK2 (Rho-kinase, druggable with fasudil), and TP53 (p53-mediated motor neuron death). Each target is scored on evidence depth, source diversity, druggability, and clinical validation. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/targets.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div class="table-wrap"><table><thead><tr><th>Symbol</th><th>Name</th><th>Type</th><th>Identifiers</th><th>Description</th><th></th></tr></thead>
     <tbody id="targets-body"><tr><td colspan="6" class="loading">Loading targets...</td></tr></tbody></table></div>
 </section>
 
 <section class="section" id="trials">
     <div class="section-header"><h2 class="section-title">Clinical Trials</h2><span style="font-size:10px;padding:2px 8px;background:#16a34a1a;color:#16a34a;font-weight:600;margin-left:8px;vertical-align:middle">VALIDATED DATA</span><span class="section-count" id="trials-count"></span></div>
-    <p class="section-desc">SMA clinical trials from ClinicalTrials.gov. Data refreshed via automated ingestion from the ClinicalTrials.gov v2 API. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/trials.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">SMA clinical trials aggregated from ClinicalTrials.gov via the v2 API with automated daily refresh. Covers all interventional and observational studies related to spinal muscular atrophy — from early Phase 1 safety trials through Phase 3 efficacy studies and post-marketing surveillance. Each trial entry includes NCT identifier, phase, enrollment, status, intervention type, primary/secondary outcome measures, and where available, published results with adverse events and participant flow data. Use the filters to explore by phase, status, intervention type, or keyword. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/trials.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="trial-filter-bar" style="display:flex;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
         <div style="flex:1;min-width:180px">
             <input type="text" id="trial-search" placeholder="Search NCT ID, title, sponsor..."
@@ -1405,7 +1405,7 @@
 
 <section class="section" id="drugs">
     <div class="section-header"><h2 class="section-title">Drugs &amp; Therapies</h2><span style="font-size:10px;padding:2px 8px;background:#16a34a1a;color:#16a34a;font-weight:600;margin-left:8px;vertical-align:middle">VALIDATED DATA</span><span class="section-count" id="drugs-count"></span></div>
-    <p class="section-desc">Approved SMA therapies and pipeline candidates. Three approved treatments target the SMN pathway; pipeline drugs explore muscle-enhancing and neuroprotective approaches. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/drugs.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">Approved SMA therapies and pipeline candidates tracked with mechanism of action, clinical status, and computational screening data. Three FDA/EMA-approved treatments target the SMN pathway directly: nusinersen (antisense oligonucleotide, intrathecal), risdiplam (small molecule splicing modifier, oral), and onasemnogene abeparvovec (AAV9 gene therapy, one-time IV). Pipeline drugs explore complementary approaches including muscle-enhancing (apitegromab, anti-myostatin), neuroprotective (fasudil, ROCK inhibition), HDAC-mediated SMN2 upregulation (panobinostat, vorinostat), and pathway-corrective strategies targeting actin dynamics, p53-mediated apoptosis, and axonal transport. Each drug entry links to DiffDock virtual screening results where available. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/drugs.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="drugs-filter-bar" style="display:flex;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
         <div style="flex:1;min-width:180px">
             <input type="text" id="drugs-search" placeholder="Search drug name, brand, mechanism..."
@@ -1428,7 +1428,7 @@
 
 <section class="section" id="sources">
     <div class="section-header"><h2 class="section-title">Literature</h2><span style="font-size:10px;padding:2px 8px;background:#16a34a1a;color:#16a34a;font-weight:600;margin-left:8px;vertical-align:middle">VALIDATED DATA</span><span class="section-count" id="sources-count"></span></div>
-    <p class="section-desc">PubMed papers ingested via automated daily search, scanned by AI for structured claims about SMA biology, targets, and therapies. Sorted by most recent first. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/sources.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">PubMed papers and patent literature ingested via automated daily pipeline, each scanned by AI (Gemini Flash with Groq fallback) for structured claims about SMA biology, molecular targets, and therapeutic approaches. The ingestion pipeline runs daily at 03:00 UTC, querying PubMed, bioRxiv/medRxiv preprints, ClinicalTrials.gov, and Google Patents. Each abstract passes a two-layer quality filter: first an SMA-relevance gate (must mention SMA, SMN, motor neuron, or approved therapy names), then a post-extraction quality gate that rejects claims about unrelated diseases. Sources are linked to their extracted claims — use the "With claims" filter to see which papers have been processed. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/app.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="sources-type-tabs" class="filter-tabs" style="margin-bottom:6px"></div>
     <div id="sources-filter-bar" style="display:none;gap:12px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
         <div style="display:flex;gap:4px;align-items:center">
@@ -1476,7 +1476,7 @@
 
 <section class="section" id="claims">
     <div class="section-header"><h2 class="section-title">Extracted Claims</h2><span style="font-size:10px;padding:2px 8px;background:#16a34a1a;color:#16a34a;font-weight:600;margin-left:8px;vertical-align:middle">VALIDATED DATA</span><span class="section-count" id="claims-count"></span></div>
-    <p class="section-desc">Structured assertions extracted from paper abstracts using LLM analysis. Each claim is typed, scored for confidence, and linked to its source paper. Click any row to see the full provenance chain: paper, abstract, evidence excerpt, and metadata. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/claims.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">Structured scientific assertions extracted from paper abstracts using multi-LLM analysis with rigorous quality filtering. Each claim is a single factual statement that preserves the original authors' hedging language (e.g., "may regulate" stays "may regulate" — never upgraded to definitive). Claims are typed into 12 categories (gene expression, protein interaction, drug efficacy, splicing event, biomarker, etc.), scored for confidence (0–100%), and linked to both their source paper and relevant molecular targets via 200+ alias patterns. The extraction pipeline uses a two-layer quality gate: disease-relevance filtering removes non-SMA contamination, and word-boundary matching prevents false target links. Click any row to see the full provenance chain: paper title, PubMed ID, abstract excerpt, extraction model, and metadata. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/app.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div class="claims-toolbar">
         <div class="claims-filters-row">
             <div class="claims-filter-group">
@@ -1569,7 +1569,7 @@
 
 <section class="section" id="convergence">
     <div class="section-header"><h2 class="section-title">Evidence Convergence</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="convergence-count"></span></div>
-    <p class="section-desc">Multi-dimensional evidence convergence scoring across tens of thousands of claims. Each target is scored on claim volume, lab independence, method diversity, temporal trend, and replication. All weights are <a href="https://github.com/Bryzant-Labs/sma-platform/blob/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent)">open source on GitHub</a>. Generates falsifiable predictions grounded in evidence. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">Multi-dimensional evidence convergence scoring across thousands of curated, quality-filtered claims extracted from 6,400+ PubMed sources. Each of the 58 molecular targets is scored across five independent dimensions: <strong>Claim Volume</strong> (raw evidence mass — how many distinct assertions support this target), <strong>Lab Independence</strong> (number of unique research groups reporting findings — guards against single-lab bias), <strong>Method Diversity</strong> (range of experimental approaches: in vitro, animal model, patient data, computational — cross-validated findings score higher), <strong>Temporal Trend</strong> (whether evidence is growing, stable, or declining over recent years — captures scientific momentum), and <strong>Replication</strong> (how often key findings have been independently confirmed across different studies and model systems). Scores are weighted and combined into a composite convergence score (0–100). All weights and methodology are fully transparent and <a href="https://github.com/Bryzant-Labs/sma-platform/blob/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent)">open source on GitHub</a>. The engine generates falsifiable predictions grounded in evidence — each prediction card links every supporting claim back to its source paper for full traceability. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/convergence_engine.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="convergence-content">
         <div id="convergence-table-wrap"><div class="loading">Loading convergence scores...</div></div>
         <h3 style="margin-top:24px;font-size:16px;font-weight:600;color:var(--text)">Prediction Cards</h3>
@@ -1580,7 +1580,7 @@
 
 <section class="section" id="calibration">
     <div class="section-header"><h2 class="section-title">Evidence Calibration</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="calibration-count"></span></div>
-    <p class="section-desc">Bayesian back-testing of convergence scores against known drug outcomes. Measures how well the platform's evidence scoring predicts real-world drug success and failure. If approved drugs score high and failed drugs score low, the scoring system is well-calibrated. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/bayesian_calibration.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">Bayesian back-testing of convergence scores against known drug outcomes — the critical self-check that separates rigorous research from speculation. For each drug with a known clinical outcome (approved, failed in Phase 2/3, or preclinical only), the platform asks: <strong>did our evidence scoring predict the right outcome?</strong> The calibration process works as follows: (1) <strong>Outcome collection</strong> — gather real-world drug approval/failure data from ClinicalTrials.gov and FDA records for all 21 tracked drugs. (2) <strong>Score comparison</strong> — compare each drug's convergence score against its actual clinical outcome. Approved drugs (nusinersen, risdiplam, onasemnogene) should score high; failed drugs should score low. (3) <strong>Bayesian updating</strong> — use the comparison to compute posterior probabilities, measuring how well evidence mass predicts clinical success. (4) <strong>Grade assignment</strong> — the system earns a calibration grade (A–F) based on concordance between predicted and actual outcomes. Grade A (current: 89.8%) means the scoring reliably separates successful from unsuccessful therapeutic approaches. A well-calibrated platform means researchers can trust the convergence scores when evaluating novel, untested targets. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/bayesian_calibration.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="calibration-content">
         <div id="calibration-gauge" style="text-align:center;padding:24px 0">
             <div class="loading">Loading calibration data...</div>
@@ -1654,7 +1654,7 @@
 
 <section class="section" id="screening">
     <div class="section-header"><h2 class="section-title">Drug Screening</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="screening-count"></span></div>
-    <p class="section-desc">Computational molecular analysis of ChEMBL compounds. RDKit screens for Lipinski drug-likeness, blood-brain barrier permeability, CNS MPO score, QED, and PAINS alerts. Compounds that can cross the BBB are critical for reaching motor neurons. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/virtual_screening.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">Computational molecular analysis of ChEMBL compounds. RDKit screens for Lipinski drug-likeness, blood-brain barrier permeability, CNS MPO score, QED, and PAINS alerts. Compounds that can cross the BBB are critical for reaching motor neurons. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/drug_screener.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <p style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5"><em>Note: Drug-likeness predictions use rule-based heuristics (Lipinski Rule of 5, TPSA-based BBB estimate, QED score). These are filtering tools, not validated PK/tox models.</em></p>
     <div id="screening-summary" class="screen-summary"><div class="loading">Loading screening data...</div></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Top Candidates</h3>
@@ -1739,7 +1739,7 @@
 
 <section class="section" id="outcomes">
     <div class="section-header"><h2 class="section-title">Drug Outcome Database</h2><span style="font-size:10px;padding:2px 8px;background:#16a34a1a;color:#16a34a;font-weight:600;margin-left:8px;vertical-align:middle">VALIDATED DATA</span><span class="section-count" id="outcomes-count"></span></div>
-    <p class="section-desc">Structured database of drug successes and failures in SMA research. Every outcome traces back to a source paper — capturing not just what worked, but why compounds failed (toxicity, bioavailability, efficacy). <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/drug_outcomes.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">Structured database of drug successes and failures in SMA research. Every outcome traces back to a source paper — capturing not just what worked, but why compounds failed (toxicity, bioavailability, efficacy). <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/app.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
     <div id="outcomes-summary" class="outcome-summary"><div class="loading" style="grid-column:1/-1;text-align:center;padding:30px">Loading outcomes...</div></div>
     <div class="outcome-filters" id="outcomes-filters"></div>
     <div class="table-wrap"><table><thead><tr><th>Compound</th><th>Target</th><th>Outcome</th><th>Phase</th><th>Failure Reason</th><th>Key Finding</th><th>Source</th></tr></thead>
@@ -1911,7 +1911,7 @@
 
 <section class="section" id="search">
     <div class="section-header"><h2 class="section-title">Search</h2><span class="section-count" id="search-index-stats"></span></div>
-    <p class="section-desc">Ask any question about SMA research or search across tens of thousands of evidence claims and thousands of sources. Ask follow-up questions to go deeper.</p>
+    <p class="section-desc">Ask any question about SMA research or search across thousands of evidence claims and thousands of sources. Ask follow-up questions to go deeper.</p>
     <div class="chat-container">
         <div id="chat-messages" class="chat-messages">
             <div class="chat-welcome">
@@ -1928,7 +1928,7 @@
                 <details style="margin-top:16px">
                     <summary style="cursor:pointer;color:var(--muted);font-size:11px">How does search work?</summary>
                     <div style="font-size:11px;color:var(--muted);line-height:1.5;padding:8px 0">
-                        Your question is searched across tens of thousands of evidence claims and thousands of papers using hybrid semantic + keyword matching. An AI assistant then synthesizes a grounded answer citing specific claims and papers. All data comes from PubMed, ClinicalTrials.gov, Google Patents, and other public biomedical databases.
+                        Your question is searched across thousands of evidence claims and thousands of papers using hybrid semantic + keyword matching. An AI assistant then synthesizes a grounded answer citing specific claims and papers. All data comes from PubMed, ClinicalTrials.gov, Google Patents, and other public biomedical databases.
                     </div>
                 </details>
             </div>
@@ -1998,6 +1998,10 @@
 <section class="section" id="crispr">
     <div class="section-header"><h2 class="section-title">CRISPR Guide Design</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
     <p class="section-desc">CRISPR/CRISPRi guide RNA design for SMN2 exon 7 region. Three therapeutic strategies: CRISPRi at ISS-N1 (mimic nusinersen), CRISPRi at ESS (block hnRNP A1), CRISPRa at ESE (enhance Tra2-beta). 20 nt protospacer + NGG PAM, GC 40-70%, polyT filtered.</p>
+    <div id="crispr-explainer" style="background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);padding:14px 16px;margin-bottom:20px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text);display:block;margin-bottom:6px">Why CRISPR for SMA?</strong>
+        SMA is caused by a single-nucleotide difference between <span class="badge badge-blue" style="cursor:pointer" id="crispr-smn2-badge">SMN2</span> and the lost SMN1 gene. SMN2 exon 7 is mis-spliced due to a silencer element called <strong>ISS-N1</strong> (Intronic Splicing Silencer at position N1). CRISPRi targeting ISS-N1 blocks the silencer, forcing exon 7 inclusion &mdash; mimicking the mechanism of nusinersen (Spinraza) but as a one-time genomic intervention. GC content of 40&ndash;70% optimises guide stability; on-target scores use the Doench 2016 model; specificity scores (CFD) penalise off-target sites. Click any strategy card or guide row for full technical details.
+    </div>
     <div id="crispr-strategies"></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">SMN2 Regulatory Motifs</h3>
     <div id="crispr-motifs"></div>
@@ -2011,6 +2015,10 @@
 <section class="section" id="aav">
     <div class="section-header"><h2 class="section-title">AAV Capsid Evaluation</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
     <p class="section-desc">AAV serotype evaluation for SMA gene therapy delivery. 9 capsids scored across motor neuron tropism, BBB crossing, immunogenicity (NAb seroprevalence), manufacturing feasibility, and packaging capacity. Zolgensma uses AAV9 (scAAV9-SMN1).</p>
+    <div style="background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);padding:14px 16px;margin-bottom:20px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text);display:block;margin-bottom:6px">Why AAV9 for Zolgensma?</strong>
+        AAV9 was chosen for <span class="badge badge-green" style="cursor:pointer" id="aav-zolgensma-badge">Zolgensma</span> because it combines the highest motor neuron tropism (~90%) with efficient blood-brain barrier crossing in neonates and a proven manufacturing process for clinical-grade production. A key limitation is pre-existing neutralising antibodies (NAbs): patients with anti-AAV9 titres above 1:50 are typically excluded. Alternative capsids &mdash; including PHP.B (enhanced CNS transduction), AAVrh10 (broader tropism), and AAV-B1 (high MN specificity) &mdash; are in preclinical evaluation. Click any serotype row or strategy card to compare tropism, immunogenicity, and clinical precedent.
+    </div>
     <div id="aav-strategies"></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Capsid Rankings</h3>
     <div class="table-wrap"><table><thead><tr>
@@ -2022,13 +2030,18 @@
 <section class="section" id="versions">
     <div class="section-header"><h2 class="section-title">Gene Edit Versioning</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
     <p class="section-desc">"GitHub for Life" &mdash; every SMN2 sequence variant is a deterministic commit with a SHA-256 hash. The disease (SMA) is a single-nucleotide bug (C&rarr;T at position 6). Therapeutic edits are patches that restore function. Track the lineage from SMN1 (healthy) through SMN2 (disease) to corrected variants.</p>
+    <div style="background:var(--panel);border-left:3px solid var(--accent);padding:12px 16px;margin-bottom:20px;font-size:12px;line-height:1.7">
+        <strong>"GitHub for Life" — what does that mean?</strong> In software, every code change is a versioned commit with a unique hash. Here we apply the same concept to DNA: each SMN gene variant is hashed deterministically, so two sequences produce the same hash if and only if they are identical. The single C&rarr;T substitution at exon 7 position 6 that distinguishes <span id="versions-smn1-link" style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="navigateTo('targets')">SMN1</span> from <span id="versions-smn2-link" style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="navigateTo('targets')">SMN2</span> changes one bit in a 30,000-base sequence — yet this single nucleotide determines whether a patient can walk or not. Therapeutic edits (base editing, prime editing, ASO-mediated splicing correction) are tracked as patches on top of the disease variant. Click any row in the version tree to see the exact base change and its functional impact.
+    </div>
     <div id="versions-lineage"></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Version Tree</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:10px">Click any row to expand the full sequence diff, clinical significance, and population frequency.</p>
     <div class="table-wrap"><table><thead><tr>
         <th>Commit Hash</th><th>Type</th><th>Region</th><th>Parent</th><th>Edit</th><th>Impact</th>
     </tr></thead>
     <tbody id="versions-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
-    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Diffs</h3>
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Sequence Diffs</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:10px">Each diff shows the exact nucleotide changes between parent and child variant. Position numbers refer to the SMN exon 7 coordinate system.</p>
     <div id="versions-diffs"></div>
 </section>
 
@@ -2095,6 +2108,10 @@
 <section class="section" id="regen">
     <div class="section-header"><h2 class="section-title">Regeneration Signatures</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
     <p class="section-desc">Phase 7.2 &mdash; Cross-species regeneration programs in axolotl and zebrafish compared with degeneration in human SMA motor neurons. Identifies conserved repair pathways that are silenced in SMA and could be therapeutically reactivated.</p>
+    <div style="background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);padding:14px 16px;margin-bottom:20px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text);display:block;margin-bottom:6px">What can SMA research learn from animals that regenerate?</strong>
+        Axolotls (Mexican salamanders) and zebrafish can regrow severed spinal cord and peripheral nerve tissue &mdash; a capacity completely lost in mammals. By comparing the transcriptional programmes active during their regeneration with the degenerating state of SMA motor neurons, we can identify repair pathways that are <em>silenced</em> in human SMA and might be therapeutically reactivated. Key differences include Wnt/&beta;-catenin signalling (active in regeneration, suppressed in SMA), BDNF/TrkB retrograde survival signals, and cytoskeletal actin dynamics. Genes in the table below are candidates for reactivation strategies. Click any row to see the human ortholog, current SMA expression status, and therapeutic potential.
+    </div>
     <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Regeneration Genes</h3>
     <div class="table-wrap"><table><thead><tr>
         <th>Gene</th><th>Organism</th><th>Human Ortholog</th><th>Pathway</th><th>SMA Status</th><th>Reactivation Potential</th>
@@ -2129,14 +2146,19 @@
 <section class="section" id="multisystem">
     <div class="section-header"><h2 class="section-title">Multisystem SMA</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
     <p class="section-desc">Phase 7.4 &mdash; SMA is not just a motor neuron disease. Liver, cardiac, metabolic, pancreatic, vascular, skeletal, and GI pathology emerges especially in severe SMA types. Models the full systemic picture and combination therapy strategies.</p>
+    <div style="background:var(--panel);border-left:3px solid var(--accent);padding:12px 16px;margin-bottom:20px;font-size:12px;line-height:1.7">
+        <strong>Why does SMA affect so many organs?</strong> SMN protein is required in every cell — it manages the assembly of RNA splicing machinery (snRNPs). Motor neurons are most sensitive because of their extreme length and metabolic demand, but cardiac muscle, hepatocytes, pancreatic beta cells, and vascular endothelium all suffer when SMN is low. In SMA Type I, >60% of patients show cardiac defects; liver enlargement and metabolic dysfunction are common autopsy findings. This is why systemic treatment — not just spinal delivery — matters. Click any row to expand clinical details and biomarkers.
+    </div>
     <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Affected Organ Systems</h3>
     <div class="table-wrap"><table><thead><tr>
         <th>System</th><th>Organ</th><th>SMA Types</th><th>Prevalence</th><th>Severity</th><th>SMN-Dependent</th><th>Biomarkers</th>
     </tr></thead>
     <tbody id="multi-organs-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
     <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Combination Therapies</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Each strategy targets multiple disease axes simultaneously. Click a card to see drugs involved, mechanism rationale, and clinical evidence.</p>
     <div id="multi-combos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:8px"></div>
-    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Energy Budget</h3>
+    <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Energy Budget Model</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:12px">SMA motor neurons run an energy deficit: SMN loss impairs mitochondrial function, actin dynamics require ATP, and retrograde transport of neurotrophic factors stalls. The energy budget model compares ATP supply vs. demand across normal, SMA, and treated motor neurons. A supply/demand ratio below 0.7 predicts neurodegeneration.</p>
     <div id="multi-energy" style="margin-top:8px"></div>
 </section>
 
@@ -2161,6 +2183,9 @@
 <section class="section" id="splicemap">
     <div class="section-header"><h2 class="section-title">Cross-Species Splicing Map</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
     <p class="section-desc">Phase 9.3 &mdash; Axolotl and zebrafish use alternative splicing as a master switch for regeneration. The same genes exist in humans but their regeneration-promoting isoforms are epigenetically silenced. This module maps 10 regeneration-specific splice events to human orthologs.</p>
+    <div style="background:var(--panel);border-left:3px solid var(--accent);padding:12px 16px;margin-bottom:20px;font-size:12px;line-height:1.7">
+        <strong>Why can axolotls regenerate limbs — and can we copy this in humans?</strong> The axolotl (<em>Ambystoma mexicanum</em>) and zebrafish (<em>Danio rerio</em>) switch on alternative mRNA isoforms during injury that activate cell proliferation, cytoskeletal remodeling, and axon re-growth programs. These isoforms are encoded in the same genes humans carry — but in us they are epigenetically silenced after embryonic development. By mapping which exons are alternatively spliced in regenerating animals vs. human SMA motor neurons, we identify candidate ASO (antisense oligonucleotide) targets that could reawaken these dormant programs. Click any row to see species context, conservation score, and ASO targeting feasibility.
+    </div>
     <div class="table-wrap"><table><thead><tr>
         <th>Axolotl Gene</th><th>Human Ortholog</th><th>Event Type</th><th>Exon</th><th>Axolotl State</th><th>Human SMA</th><th>Conservation</th><th>Feasibility</th>
     </tr></thead>
@@ -2197,6 +2222,10 @@
 <section class="section" id="twin">
     <div class="section-header"><h2 class="section-title">Digital Twin</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
     <p class="section-desc">Phase 10.3 &mdash; Multi-scale computational model of the SMA motor neuron. Simulates drug combinations across 5 compartments (soma, axon, NMJ, dendrites, nucleus) and 8 signaling pathways. Predicts synergistic drug combinations in silico.</p>
+    <div style="background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);padding:14px 16px;margin-bottom:20px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text);display:block;margin-bottom:6px">What is a Digital Twin?</strong>
+        A digital twin is a computational replica of a biological system &mdash; here, a single SMA-affected alpha motor neuron. Each of the 5 compartments (soma, axon, NMJ, dendrites, nucleus) has its own health baseline, volume, and disease-specific defects derived from SMA omics data. Signalling pathways modelled include mTOR, MAPK, Wnt/&beta;-catenin, BDNF/TrkB, and actin dynamics. Drug combinations are simulated by applying known mechanisms of action to the relevant compartments and scoring the resulting functional recovery. This allows in silico prediction of synergistic combinations before expensive wet-lab experiments. Click any compartment card or pathway row for details, or follow drug links to the <span class="badge badge-green" style="cursor:pointer" id="twin-drugs-badge">Drugs</span> section.
+    </div>
     <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Motor Neuron Compartments</h3>
     <div id="twin-compartments" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:8px"></div>
     <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Signaling Pathways</h3>
@@ -2210,7 +2239,7 @@
 
 <section class="section" id="labos">
     <div class="section-header"><h2 class="section-title">Lab-OS</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
-    <p class="section-desc">Phase 10.4 &mdash; Open-source experiment design automation. 8 standardized SMA assays with cost/timeline/protocol specs. 3 cloud lab integrations (Emerald Cloud Lab, Strateos, Opentrons). Generates complete experiment designs from hypothesis text.</p>
+    <p class="section-desc">Phase 10.4 &mdash; Open-source experiment design automation. 8 standardized SMA assays with timeline and protocol specifications. 3 cloud lab integrations (Emerald Cloud Lab, Strateos, Opentrons). Generates complete experiment designs from hypothesis text.</p>
     <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">SMA Assay Library</h3>
     <div class="table-wrap"><table><thead><tr>
         <th>Assay</th><th>Category</th><th>Readout</th><th>Timeline</th><th>Cost</th><th>Throughput</th>
@@ -2249,9 +2278,9 @@
     <div id="trans-grants" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:8px"></div>
     <h3 style="margin:20px 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:0.5px">Validation Pipeline</h3>
     <div class="table-wrap"><table><thead><tr>
-        <th>Level</th><th>Name</th><th>Assays</th><th>Timeline</th><th>Cost</th><th>Go/No-Go</th>
+        <th>Level</th><th>Name</th><th>Assays</th><th>Timeline</th><th>Go/No-Go</th>
     </tr></thead>
-    <tbody id="trans-val-body"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody></table></div>
+    <tbody id="trans-val-body"><tr><td colspan="5" class="loading">Loading...</td></tr></tbody></table></div>
 </section>
 
 <section class="section" id="gpu-results">
@@ -2324,9 +2353,31 @@
         <span class="section-count" id="news-count"></span>
         <a href="/api/v2/news/feed/rss" target="_blank" rel="noopener" title="RSS Feed" style="margin-left:12px;font-size:14px;color:var(--accent);text-decoration:none">&#128225; RSS</a>
     </div>
-    <p class="section-desc">Research highlights, computational discoveries, and platform updates. Comment on findings and join the discussion.</p>
-    <div class="news-filters" style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap" id="news-filter-bar">
-        <button class="page-btn active" data-cat="">All</button>
+    <p class="section-desc">Research highlights, computational discoveries, and platform updates. Each post documents a specific finding with full methodology and source citations. Comment on findings and join the discussion.</p>
+    <div class="news-filters" style="margin-bottom:16px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px" id="news-filter-bar">
+            <button class="page-btn active" data-cat="">All</button>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <div style="display:flex;flex-direction:column;gap:4px">
+                <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Tag</label>
+                <select id="news-tag-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                    <option value="">All tags</option>
+                </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+                <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Sort</label>
+                <select id="news-sort-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                    <option value="comments">Most comments</option>
+                </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+                <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Search</label>
+                <input type="text" id="news-search-filter" placeholder="Search in titles..." style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit;min-width:180px">
+            </div>
+        </div>
     </div>
     <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px">
         <div class="loading" style="grid-column:1/-1;text-align:center;padding:30px">Loading news...</div>
@@ -2345,20 +2396,30 @@
             <h2 id="news-detail-title" style="font-size:22px;margin:0 0 16px;line-height:1.3"></h2>
             <div id="news-detail-tags" style="margin-bottom:16px;display:flex;gap:6px;flex-wrap:wrap"></div>
             <div id="news-detail-content" style="font-size:14px;line-height:1.7"></div>
+            <div id="news-related-sections" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)"></div>
         </article>
 
-        <div style="margin-top:24px">
-            <h3 style="font-size:15px;font-weight:600;margin-bottom:12px" id="news-comments-title">Comments</h3>
-            <div id="news-comments-list" style="margin-bottom:20px"></div>
+        <div style="margin-top:40px;border-top:2px solid var(--line);padding-top:32px">
+            <h3 style="font-size:17px;font-weight:700;margin-bottom:16px;color:var(--text)" id="news-comments-title">Comments</h3>
+            <div id="news-comments-list" style="margin-bottom:28px"></div>
 
-            <div class="card" style="padding:20px">
-                <h4 style="font-size:13px;font-weight:600;margin:0 0 12px">Leave a Comment</h4>
-                <form id="news-comment-form" style="display:flex;flex-direction:column;gap:10px">
-                    <input type="text" id="comment-name" placeholder="Your name *" required style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:13px">
-                    <input type="email" id="comment-email" placeholder="Email (optional, not displayed)" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:13px">
-                    <textarea id="comment-content" placeholder="Your comment *" required rows="4" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-size:13px;resize:vertical"></textarea>
-                    <div style="display:flex;align-items:center;gap:12px">
-                        <button type="submit" class="page-btn" style="padding:8px 20px">Submit Comment</button>
+            <div style="background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:24px">
+                <h4 style="font-size:14px;font-weight:700;margin:0 0 16px;color:var(--text)">Leave a Comment</h4>
+                <form id="news-comment-form" style="display:flex;flex-direction:column;gap:14px">
+                    <div>
+                        <label for="comment-name" style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Name *</label>
+                        <input type="text" id="comment-name" placeholder="Your name" required style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;transition:border-color 0.2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--line)'">
+                    </div>
+                    <div>
+                        <label for="comment-email" style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Email <span style="font-weight:400;text-transform:none">(optional, not displayed)</span></label>
+                        <input type="email" id="comment-email" placeholder="your@email.com" style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;transition:border-color 0.2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--line)'">
+                    </div>
+                    <div>
+                        <label for="comment-content" style="display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:6px">Comment *</label>
+                        <textarea id="comment-content" placeholder="Share your thoughts on this research..." required rows="5" style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;resize:vertical;transition:border-color 0.2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--line)'"></textarea>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+                        <button type="submit" style="padding:10px 24px;background:var(--text);color:var(--bg);border:none;border-radius:6px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:opacity 0.2s" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Submit Comment</button>
                         <span id="comment-status" style="font-size:12px"></span>
                     </div>
                 </form>
@@ -2369,14 +2430,28 @@
 
 <section class="section" id="synthesis">
     <div class="section-header"><h2 class="section-title">Cross-Paper Synthesis</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="synthesis-count"></span></div>
-    <p class="section-desc">Non-obvious connections across tens of thousands of claims from different papers. Discover shared mechanisms and co-occurring targets that no single publication reveals. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/cross_paper_synthesis.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
-    <div class="filter-tabs" id="synthesis-tabs">
-        <button class="filter-tab active" data-synth-tab="cooccurrences">Co-occurrences</button>
-        <button class="filter-tab" data-synth-tab="shared-mechanisms">Shared Mechanisms</button>
-        <button class="filter-tab" data-synth-tab="cards">Synthesis Cards</button>
-        <button class="filter-tab" data-synth-tab="temporal">Temporal</button>
-        <button class="filter-tab" data-synth-tab="contradictions">Contradictions</button>
-        <button class="filter-tab" data-synth-tab="surprise">Surprise</button>
+    <p class="section-desc">Non-obvious connections across thousands of curated claims from different papers — the platform's core differentiator. While individual papers report isolated findings, cross-paper synthesis reveals hidden patterns: targets that co-occur in unrelated studies, shared mechanisms between seemingly independent pathways, and transitive bridges (if Paper A links X→Y and Paper B links Y→Z, the platform discovers X→Z). The analysis builds a co-occurrence matrix across all claims, identifies statistically significant target pairs, and generates synthesis cards that explain the biological connection with full citation trails. This is how the platform discovered the ROCK-cofilin-actin rod pathway as a therapeutic axis — no single paper described the complete pathway, but the synthesis engine connected findings from 12+ independent publications. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/cross_paper_synthesis.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px">
+        <div class="filter-tabs" id="synthesis-tabs" style="flex:1;min-width:300px">
+            <button class="filter-tab active" data-synth-tab="cooccurrences">Co-occurrences</button>
+            <button class="filter-tab" data-synth-tab="shared-mechanisms">Shared Mechanisms</button>
+            <button class="filter-tab" data-synth-tab="cards">Synthesis Cards</button>
+            <button class="filter-tab" data-synth-tab="temporal">Temporal</button>
+            <button class="filter-tab" data-synth-tab="contradictions">Contradictions</button>
+            <button class="filter-tab" data-synth-tab="surprise">Surprise</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+            <div style="display:flex;flex-direction:column;gap:3px">
+                <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Target</label>
+                <select id="synthesis-target-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                    <option value="">All targets</option>
+                </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+                <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Search</label>
+                <input type="text" id="synthesis-search-filter" placeholder="Filter..." style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit;width:120px">
+            </div>
+        </div>
     </div>
     <div id="synthesis-cooccurrences">
         <div class="table-wrap"><table><thead><tr><th>Target A</th><th>Target B</th><th>Shared Papers</th><th>Avg Confidence</th><th>Score</th></tr></thead>
@@ -3032,30 +3107,45 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     // ============ Section loaders (lazy) ============
     var loaded = {};
+    var targetsAllData = []; // cached for news badge re-render
+
+    function renderTargetsTable(data) {
+        document.getElementById('targets-count').textContent = data.length + ' targets';
+        var body = clearEl('targets-body');
+        for (var i = 0; i < data.length; i++) {
+            var t = data[i];
+            var btnTd = el('td');
+            var ddBtn = el('button', {className: 'btn-expand', text: 'Deep Dive'});
+            (function(tid, eid, b) { ddBtn.addEventListener('click', function() {
+                loadTargetDeepDive(tid, eid, b);
+            }); })(t.id, 'target-dd-' + i, ddBtn);
+            // News badge: check if this target symbol appears in newsTagIndex
+            if (t.symbol && newsTagIndex[t.symbol.toLowerCase()] && newsTagIndex[t.symbol.toLowerCase()].length > 0) {
+                var newsBadgeT = document.createElement('button');
+                newsBadgeT.style.cssText = 'margin-right:6px;cursor:pointer;border:none;padding:2px 7px;font-size:10px;font-weight:700;border-radius:10px;background:var(--accent,#3b82f6);color:#fff;vertical-align:middle;line-height:1.4';
+                newsBadgeT.textContent = '\uD83D\uDCF0 News';
+                newsBadgeT.title = newsTagIndex[t.symbol.toLowerCase()].length + ' related news post(s)';
+                (function(newsBtn) { newsBtn.addEventListener('click', function(e) { e.stopPropagation(); navigateTo('news'); }); })(newsBadgeT);
+                btnTd.appendChild(newsBadgeT);
+            }
+            btnTd.appendChild(ddBtn);
+            body.appendChild(el('tr', null, [
+                td(t.symbol, 'symbol'), td(t.name),
+                tdBadge(t.target_type, typeCls(t.target_type)),
+                td(formatIds(t.identifiers), 'mono', 'font-size:11px;color:var(--muted);word-wrap:break-word;overflow-wrap:break-word'),
+                td(t.description, 'desc'),
+                btnTd
+            ]));
+        }
+    }
 
     function loadTargets() {
         if (loaded.targets) return; loaded.targets = true;
         fetch(API + '/targets?limit=200').then(function(r) { return r.json(); }).then(function(data) {
             var order = {gene:0,protein:1,pathway:2,cell_state:3,phenotype:4,other:5};
             data.sort(function(a,b) { return (order[a.target_type]||9) - (order[b.target_type]||9); });
-            document.getElementById('targets-count').textContent = data.length + ' targets';
-            var body = clearEl('targets-body');
-            for (var i = 0; i < data.length; i++) {
-                var t = data[i];
-                var btnTd = el('td');
-                var ddBtn = el('button', {className: 'btn-expand', text: 'Deep Dive'});
-                (function(tid, eid, b) { ddBtn.addEventListener('click', function() {
-                    loadTargetDeepDive(tid, eid, b);
-                }); })(t.id, 'target-dd-' + i, ddBtn);
-                btnTd.appendChild(ddBtn);
-                body.appendChild(el('tr', null, [
-                    td(t.symbol, 'symbol'), td(t.name),
-                    tdBadge(t.target_type, typeCls(t.target_type)),
-                    td(formatIds(t.identifiers), 'mono', 'font-size:11px;color:var(--muted);word-wrap:break-word;overflow-wrap:break-word'),
-                    td(t.description, 'desc'),
-                    btnTd
-                ]));
-            }
+            targetsAllData = data;
+            renderTargetsTable(data);
         });
     }
 
@@ -3304,6 +3394,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             if (e.key === 'Enter') { if (sourcesSearchTimer) clearTimeout(sourcesSearchTimer); document.getElementById('source-filter-btn').click(); }
         });
         // Dropdown change listeners trigger filter immediately
+        document.getElementById('source-year-from').addEventListener('change', function() {
+            sourcesYearFrom = this.value; document.getElementById('source-filter-btn').click();
+        });
+        document.getElementById('source-year-to').addEventListener('change', function() {
+            sourcesYearTo = this.value; document.getElementById('source-filter-btn').click();
+        });
         document.getElementById('source-journal').addEventListener('change', function() {
             sourcesJournalFilter = this.value; document.getElementById('source-filter-btn').click();
         });
@@ -3734,13 +3830,18 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         if (loaded.claims) return; loaded.claims = true;
         initClaimFilterDropdowns();
         // Filter bar event listeners
-        document.getElementById('claims-f-apply').addEventListener('click', function() {
+        function applyClaimFilters() {
             claimsFilters.type = document.getElementById('claims-f-type').value;
             claimsFilters.conf = document.getElementById('claims-f-conf').value;
             claimsFilters.target = document.getElementById('claims-f-target').value;
             claimsFilters.q = document.getElementById('claims-f-q').value.trim();
             claimsPage = 1; fetchClaimsPage();
-        });
+        }
+        document.getElementById('claims-f-apply').addEventListener('click', applyClaimFilters);
+        // Dropdowns filter immediately on change
+        document.getElementById('claims-f-type').addEventListener('change', applyClaimFilters);
+        document.getElementById('claims-f-conf').addEventListener('change', applyClaimFilters);
+        document.getElementById('claims-f-target').addEventListener('change', applyClaimFilters);
         document.getElementById('claims-f-reset').addEventListener('click', function() {
             claimsFilters = { type: '', conf: '', target: '', q: '' };
             document.getElementById('claims-f-type').value = '';
@@ -3750,7 +3851,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             claimsPage = 1; fetchClaimsPage();
         });
         document.getElementById('claims-f-q').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') document.getElementById('claims-f-apply').click();
+            if (e.key === 'Enter') applyClaimFilters();
         });
         fetchClaimsPage();
     }
@@ -3831,6 +3932,15 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     });
                 });
             })(d.id, expandId, btn);
+            // News badge: check if this drug name appears in newsTagIndex
+            if (d.name && newsTagIndex[d.name.toLowerCase()] && newsTagIndex[d.name.toLowerCase()].length > 0) {
+                var newsBadgeD = document.createElement('button');
+                newsBadgeD.style.cssText = 'margin-right:6px;cursor:pointer;border:none;padding:2px 7px;font-size:10px;font-weight:700;border-radius:10px;background:var(--accent,#3b82f6);color:#fff;vertical-align:middle;line-height:1.4';
+                newsBadgeD.textContent = '\uD83D\uDCF0 News';
+                newsBadgeD.title = newsTagIndex[d.name.toLowerCase()].length + ' related news post(s)';
+                newsBadgeD.addEventListener('click', function(e) { e.stopPropagation(); navigateTo('news'); });
+                btnTd.insertBefore(newsBadgeD, btn);
+            }
             btnTd.appendChild(btn);
             body.appendChild(el('tr', null, [
                 td(d.name, '', 'font-weight:600;text-transform:capitalize'),
@@ -4113,8 +4223,27 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var cs = h.composite_score || 0;
             var csEl = el('span', {className: 'hyp-score-pill', text: 'Score: ' + (cs * 100).toFixed(1) + '%', style: 'font-weight:700;color:' + (cs >= 0.6 ? 'var(--green)' : cs >= 0.4 ? 'var(--amber)' : 'var(--muted)')});
             scoreRow.appendChild(csEl);
-            scoreRow.appendChild(el('span', {className: 'hyp-score-pill', text: h.claim_count + ' claims'}));
-            scoreRow.appendChild(el('span', {className: 'hyp-score-pill', text: h.source_count + ' sources'}));
+            var claimLink = el('a', {className: 'hyp-score-pill', text: h.claim_count + ' claims', href: '/claims#' + encodeURIComponent(h.target_symbol || ''), style: 'cursor:pointer;text-decoration:none;color:inherit;border-bottom:1px dashed var(--muted)'});
+            claimLink.title = 'View claims for ' + (h.target_symbol || 'this target');
+            claimLink.addEventListener('click', function(evt) {
+                evt.preventDefault();
+                var sym = this.getAttribute('href').split('#')[1];
+                if (sym) {
+                    navigateTo('claims');
+                    setTimeout(function() {
+                        var sel = document.getElementById('claims-f-target');
+                        if (sel) { sel.value = decodeURIComponent(sym); if (typeof applyClaimFilters === 'function') applyClaimFilters(); }
+                    }, 500);
+                }
+            });
+            scoreRow.appendChild(claimLink);
+            var sourceLink = el('a', {className: 'hyp-score-pill', text: h.source_count + ' sources', href: '/sources', style: 'cursor:pointer;text-decoration:none;color:inherit;border-bottom:1px dashed var(--muted)'});
+            sourceLink.title = 'View source papers';
+            sourceLink.addEventListener('click', function(evt) {
+                evt.preventDefault();
+                navigateTo('sources');
+            });
+            scoreRow.appendChild(sourceLink);
             var conf = h.confidence || 0;
             var confDiv = el('div', {className: 'conf-bar'});
             var track = el('div', {className: 'conf-track'});
@@ -4221,8 +4350,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             html += '<div style="font-size:12px">' + (p.primary_readout || '') + '</div>';
             html += '</div>';
             html += '<div style="background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px">';
-            html += '<div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:4px">TIMELINE & COST</div>';
-            html += '<div style="font-size:12px">' + (p.estimated_timeline_weeks || '?') + ' weeks &middot; $' + ((p.estimated_cost_usd || 0).toLocaleString()) + '</div>';
+            html += '<div style="font-size:10px;font-weight:700;color:var(--accent);margin-bottom:4px">ESTIMATED TIMELINE</div>';
+            html += '<div style="font-size:12px">' + (p.estimated_timeline_weeks || '?') + ' weeks</div>';
             html += '</div>';
             html += '</div>';
 
@@ -4234,7 +4363,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var ms = p.model_systems[mi];
                     html += '<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--line)">';
                     html += '<span style="font-weight:600">[' + (ms.tier || '').toUpperCase() + ']</span> ' + ms.name;
-                    html += ' <span style="color:var(--muted)">($' + (ms.cost_usd || 0).toLocaleString() + ', ' + (ms.time_weeks || '?') + 'w)</span>';
+                    html += ' <span style="color:var(--muted)">(' + (ms.time_weeks || '?') + ' weeks)</span>';
                     html += '</div>';
                 }
                 html += '</div>';
@@ -4258,7 +4387,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     html += '<div style="font-size:11px;padding:3px 0;display:flex;gap:8px;align-items:baseline">';
                     html += '<span style="font-weight:700;color:var(--accent);min-width:20px">S' + step.step + '</span>';
                     html += '<span style="flex:1">' + step.assay + '</span>';
-                    html += '<span style="color:var(--muted);white-space:nowrap">$' + (step.cost_usd || 0).toLocaleString() + ' / ' + step.time_weeks + 'w</span>';
+                    html += '<span style="color:var(--muted);white-space:nowrap">' + step.time_weeks + ' weeks</span>';
                     html += '</div>';
                     html += '<div style="font-size:10px;color:var(--muted);padding-left:28px;margin-bottom:2px">Gate: ' + step.gate + '</div>';
                 }
@@ -4670,54 +4799,86 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 return;
             }
 
+            // Filter bar
+            var convFilterBar = document.createElement('div');
+            convFilterBar.style.cssText = 'display:flex;gap:10px;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap';
+            var convSearchDiv = document.createElement('div');
+            convSearchDiv.style.cssText = 'display:flex;flex-direction:column;gap:3px';
+            convSearchDiv.appendChild(el('label', {text: 'Search', style: 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)'}));
+            var convSearchInput = document.createElement('input');
+            convSearchInput.type = 'text';
+            convSearchInput.placeholder = 'Filter targets...';
+            convSearchInput.style.cssText = 'padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit;width:150px';
+            convSearchDiv.appendChild(convSearchInput);
+            convFilterBar.appendChild(convSearchDiv);
+            var convScoreDiv = document.createElement('div');
+            convScoreDiv.style.cssText = 'display:flex;flex-direction:column;gap:3px';
+            convScoreDiv.appendChild(el('label', {text: 'Min Score', style: 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)'}));
+            var convScoreSel = document.createElement('select');
+            convScoreSel.style.cssText = 'padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit';
+            [['', 'All'], ['0.7', '\u2265 70%'], ['0.5', '\u2265 50%'], ['0.3', '\u2265 30%']].forEach(function(o) {
+                var opt = document.createElement('option'); opt.value = o[0]; opt.textContent = o[1]; convScoreSel.appendChild(opt);
+            });
+            convScoreDiv.appendChild(convScoreSel);
+            convFilterBar.appendChild(convScoreDiv);
+            var convCountSpan = document.createElement('span');
+            convCountSpan.style.cssText = 'font-size:11px;color:var(--muted);margin-left:auto';
+            convCountSpan.textContent = targets.length + ' targets';
+            convFilterBar.appendChild(convCountSpan);
+            wrap.appendChild(convFilterBar);
+
+            // Scrollable table
+            var tableScroll = document.createElement('div');
+            tableScroll.style.cssText = 'max-height:450px;overflow-y:auto;border:1px solid var(--line);border-radius:4px';
             var table = document.createElement('table');
             table.className = 'data-table';
-
+            table.style.margin = '0';
             var thead = document.createElement('thead');
             var hr = document.createElement('tr');
             ['Target', 'Score', 'Confidence', 'Claims', 'Sources', 'Volume', 'Independence', 'Methods', 'Trend', 'Replication'].forEach(function(h) {
                 var th = document.createElement('th');
                 th.textContent = h;
+                th.style.cssText = 'position:sticky;top:0;background:var(--panel);z-index:1';
                 hr.appendChild(th);
             });
             thead.appendChild(hr);
             table.appendChild(thead);
 
             var tbody = document.createElement('tbody');
+            var convAllRows = [];
             targets.forEach(function(t) {
                 var row = document.createElement('tr');
+                row.style.cursor = 'pointer';
+                var targetName = t.target_label || t.target_key || '';
+                var scoreVal = parseFloat(t.composite_score) || 0;
+                row.dataset.target = targetName.toLowerCase();
+                row.dataset.score = scoreVal;
 
                 var tdTarget = document.createElement('td');
-                tdTarget.textContent = t.target_label || t.target_key || '';
-                tdTarget.style.fontWeight = '600';
+                tdTarget.appendChild(el('a', {text: targetName, style: 'color:var(--accent);text-decoration:none;font-weight:600;cursor:pointer'}));
                 row.appendChild(tdTarget);
 
                 var tdScore = document.createElement('td');
-                var scoreVal = parseFloat(t.composite_score) || 0;
                 tdScore.textContent = (scoreVal * 100).toFixed(0) + '%';
                 tdScore.style.fontWeight = '700';
-                if (scoreVal >= 0.75) tdScore.style.color = '#22c55e';
-                else if (scoreVal >= 0.55) tdScore.style.color = '#eab308';
-                else tdScore.style.color = '#94a3b8';
+                tdScore.style.color = scoreVal >= 0.75 ? '#22c55e' : scoreVal >= 0.55 ? '#eab308' : '#94a3b8';
                 row.appendChild(tdScore);
 
                 var tdConf = document.createElement('td');
-                var cl = (t.confidence_level || 'low').replace('_', ' ');
-                tdConf.textContent = cl;
+                tdConf.textContent = (t.confidence_level || 'low').replace('_', ' ');
                 tdConf.style.textTransform = 'capitalize';
                 row.appendChild(tdConf);
 
                 var tdClaims = document.createElement('td');
-                tdClaims.textContent = t.claim_count || 0;
+                var claimLink = el('a', {text: String(t.claim_count || 0), style: 'color:var(--accent);text-decoration:none;cursor:pointer;border-bottom:1px dashed var(--muted)'});
+                claimLink.addEventListener('click', function(evt) { evt.stopPropagation(); navigateTo('claims'); });
+                tdClaims.appendChild(claimLink);
                 row.appendChild(tdClaims);
 
-                var tdSources = document.createElement('td');
-                tdSources.textContent = t.source_count || 0;
-                row.appendChild(tdSources);
+                row.appendChild(td(String(t.source_count || 0), 'mono'));
 
-                // Mini bars for the 5 dimensions
                 [t.volume, t.lab_independence, t.method_diversity, t.temporal_trend, t.replication].forEach(function(v) {
-                    var td = document.createElement('td');
+                    var dimTd = document.createElement('td');
                     var val = parseFloat(v) || 0;
                     var bar = document.createElement('div');
                     bar.style.cssText = 'width:50px;height:8px;background:var(--line);border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle';
@@ -4725,18 +4886,41 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     fill.style.cssText = 'height:100%;border-radius:4px;background:' + (val >= 0.7 ? '#22c55e' : val >= 0.4 ? '#eab308' : '#94a3b8');
                     fill.style.width = (val * 100) + '%';
                     bar.appendChild(fill);
-                    td.appendChild(bar);
-                    var label = document.createElement('span');
-                    label.textContent = ' ' + (val * 100).toFixed(0) + '%';
-                    label.style.cssText = 'font-size:10px;color:var(--muted)';
-                    td.appendChild(label);
-                    row.appendChild(td);
+                    dimTd.appendChild(bar);
+                    dimTd.appendChild(el('span', {text: ' ' + (val * 100).toFixed(0) + '%', style: 'font-size:10px;color:var(--muted)'}));
+                    row.appendChild(dimTd);
                 });
 
+                // Click → highlight + scroll to predictions
+                row.addEventListener('click', function() {
+                    for (var ri = 0; ri < convAllRows.length; ri++) convAllRows[ri].style.background = '';
+                    row.style.background = 'var(--bg)';
+                    var predCards = document.getElementById('convergence-prediction-cards');
+                    if (predCards) predCards.scrollIntoView({behavior: 'smooth', block: 'start'});
+                });
+
+                convAllRows.push(row);
                 tbody.appendChild(row);
             });
             table.appendChild(tbody);
-            wrap.appendChild(table);
+            tableScroll.appendChild(table);
+            wrap.appendChild(tableScroll);
+
+            // Filter logic
+            function filterConvTable() {
+                var search = convSearchInput.value.toLowerCase().trim();
+                var minScore = parseFloat(convScoreSel.value) || 0;
+                var shown = 0;
+                for (var i = 0; i < convAllRows.length; i++) {
+                    var r = convAllRows[i];
+                    var show = (!search || r.dataset.target.indexOf(search) !== -1) && parseFloat(r.dataset.score) >= minScore;
+                    r.style.display = show ? '' : 'none';
+                    if (show) shown++;
+                }
+                convCountSpan.textContent = shown + ' of ' + convAllRows.length + ' targets';
+            }
+            convSearchInput.addEventListener('input', filterConvTable);
+            convScoreSel.addEventListener('change', filterConvTable);
         }).catch(function(err) {
             var wrap = document.getElementById('convergence-table-wrap');
             wrap.textContent = '';
@@ -5176,11 +5360,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var q = screeningSearchQuery;
                 return (c.chembl_id || '').toLowerCase().indexOf(q) !== -1 ||
                        (c.smiles || '').toLowerCase().indexOf(q) !== -1 ||
-                       (c.target || '').toLowerCase().indexOf(q) !== -1;
+                       (c.target || c.target_symbol || '').toLowerCase().indexOf(q) !== -1;
             });
         }
         if (screeningTargetFilter) {
-            result = result.filter(function(c) { return (c.target || '') === screeningTargetFilter; });
+            result = result.filter(function(c) { return (c.target || c.target_symbol || '') === screeningTargetFilter; });
         }
         if (screeningScoreFilter) {
             var minQed = parseFloat(screeningScoreFilter);
@@ -5243,7 +5427,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             // Populate target dropdown
             var targets = {};
             for (var t = 0; t < screeningAllData.length; t++) {
-                var tgt = screeningAllData[t].target;
+                var tgt = screeningAllData[t].target || screeningAllData[t].target_symbol;
                 if (tgt) targets[tgt] = true;
             }
             var targetSel = document.getElementById('screening-target-filter');
@@ -6055,12 +6239,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                             var score = o.conservation_score;
                             var scoreCls = score >= 0.7 ? 'badge-green' : score >= 0.3 ? 'badge-amber' : 'badge-gray';
                             row.appendChild(tdBadge(score != null ? (score * 100).toFixed(0) + '%' : '?', scoreCls));
-                            row.appendChild(td(o.ortholog_gene_id ? String(o.ortholog_gene_id) : '-', 'mono', 'font-size:11px'));
+                            row.appendChild(td(o.ortholog_id || o.ortholog_gene_id ? String(o.ortholog_id || o.ortholog_gene_id) : '-', 'mono', 'font-size:11px'));
                             var linkTd = document.createElement('td');
-                            if (o.ortholog_gene_id) {
+                            if (o.ortholog_id || o.ortholog_gene_id) {
                                 var ncbiLink = document.createElement('a');
                                 ncbiLink.textContent = 'NCBI';
-                                ncbiLink.href = 'https://www.ncbi.nlm.nih.gov/gene/' + o.ortholog_gene_id;
+                                ncbiLink.href = 'https://www.ncbi.nlm.nih.gov/gene/' + o.ortholog_id || o.ortholog_gene_id;
                                 ncbiLink.target = '_blank';
                                 ncbiLink.rel = 'noopener';
                                 ncbiLink.style.cssText = 'color:var(--accent);font-size:11px;text-decoration:none;margin-right:8px';
@@ -6119,7 +6303,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                                     'Human gene: ' + humanSym,
                                     'Ortholog: ' + (orthData.ortholog_symbol || '?') + ' in ' + speciesName,
                                     'Conservation score: ' + (orthData.conservation_score != null ? (orthData.conservation_score * 100).toFixed(1) + '%' : 'unknown'),
-                                    'Gene ID: ' + (orthData.ortholog_gene_id || 'N/A'),
+                                    'Gene ID: ' + (orthData.ortholog_id || orthData.ortholog_gene_id || 'N/A'),
                                 ];
                                 for (var ii = 0; ii < info.length; ii++) {
                                     var p = document.createElement('div');
@@ -6129,10 +6313,10 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                                 }
                                 var links = document.createElement('div');
                                 links.style.cssText = 'margin-top:8px;display:flex;gap:12px';
-                                if (orthData.ortholog_gene_id) {
+                                if (orthData.ortholog_id || orthData.ortholog_gene_id) {
                                     var a = document.createElement('a');
                                     a.textContent = 'View on NCBI Gene';
-                                    a.href = 'https://www.ncbi.nlm.nih.gov/gene/' + orthData.ortholog_gene_id;
+                                    a.href = 'https://www.ncbi.nlm.nih.gov/gene/' + orthData.ortholog_id || orthData.ortholog_gene_id;
                                     a.target = '_blank'; a.rel = 'noopener';
                                     a.style.cssText = 'color:var(--accent);text-decoration:none;font-weight:600';
                                     links.appendChild(a);
@@ -6662,7 +6846,10 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             if (data.sources_used > 0) {
                 var sourceMeta = document.createElement('div');
                 sourceMeta.className = 'chat-msg-sources';
-                sourceMeta.textContent = 'Based on ' + (data.claims_in_context || 0) + ' claims and ' + (data.sources_in_context || 0) + ' papers';
+                var metaParts = [];
+                if (data.claims_in_context > 0) metaParts.push(data.claims_in_context + ' claims');
+                if (data.sources_in_context > 0) metaParts.push(data.sources_in_context + ' papers');
+                sourceMeta.textContent = metaParts.length ? 'Based on ' + metaParts.join(' and ') : 'Based on evidence search';
                 aiMsg.appendChild(sourceMeta);
             }
 
@@ -7497,10 +7684,20 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function loadSpatial() {
         if (loaded.spatial) return; loaded.spatial = true;
         fetch(API + '/spatial/penetration').then(function(r) { return r.json(); }).then(function(data) {
-            // Zones table - expandable rows
+            // Zones table — expandable rows with anatomy detail + best-drug info
             var zb = clearEl('spatial-zones-body');
             var zones = data.zones || {};
             var keys = Object.keys(zones);
+            // Build zone→best-drug lookup
+            var zoneBestDrug = {};
+            var drugsArr = data.penetration || [];
+            for (var bi = 0; bi < drugsArr.length; bi++) {
+                var bd = drugsArr[bi];
+                if (bd.best_zone) {
+                    if (!zoneBestDrug[bd.best_zone]) zoneBestDrug[bd.best_zone] = [];
+                    zoneBestDrug[bd.best_zone].push(bd.name);
+                }
+            }
             for (var i = 0; i < keys.length; i++) {
                 (function(z, key) {
                     var row = el('tr', {className: 'adv-row'}, [
@@ -7517,15 +7714,23 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     zb.appendChild(row);
                     var detailRow = el('tr', {className: 'adv-row-detail'});
                     var detailTd = el('td', {colSpan: 7});
+                    detailTd.style.cssText = 'padding:16px;background:var(--bg);line-height:1.7';
                     var detInner = el('div', {className: 'adv-detail-inner'});
+
+                    // Zone anatomy description
+                    detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'ZONE ANATOMY & CLINICAL RELEVANCE'}));
+                    var anatDesc = document.createElement('div');
+                    anatDesc.textContent = (z.anatomical_region || 'Spinal cord compartment') + '. Cell types present: ' + ((z.cell_types || []).join(', ') || 'not specified') + '.';
+                    anatDesc.style.cssText = 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6';
+                    detInner.appendChild(anatDesc);
+
+                    // Penetration metrics
                     var fields = [
                         ['Zone ID', key],
-                        ['Anatomical Region', z.anatomical_region || '-'],
                         ['BBB Permeability', String(z.bbb_permeability)],
                         ['CSF Exposure', String(z.csf_exposure)],
                         ['Vascular Density', String(z.vascular_density)],
-                        ['SMA Relevance', String(z.sma_relevance)],
-                        ['Cell Types', (z.cell_types || []).join(', ') || '-']
+                        ['SMA Relevance Score', String(z.sma_relevance)]
                     ];
                     for (var fi = 0; fi < fields.length; fi++) {
                         var fr = el('div', {className: 'adv-detail-row'});
@@ -7533,6 +7738,29 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                         fr.appendChild(document.createTextNode(fields[fi][1]));
                         detInner.appendChild(fr);
                     }
+
+                    // Best drugs for this zone (clickable badges)
+                    var bestDrugs = zoneBestDrug[z.name] || zoneBestDrug[key] || [];
+                    if (bestDrugs.length > 0) {
+                        detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--text);margin:10px 0 4px', text: 'BEST REACHING DRUGS'}));
+                        var bdWrap = el('div', {style: 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px'});
+                        for (var bdi = 0; bdi < bestDrugs.length; bdi++) {
+                            (function(dName) {
+                                var db = el('span', {className: 'badge badge-green', text: dName, style: 'cursor:pointer'});
+                                db.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('drugs'); });
+                                bdWrap.appendChild(db);
+                            })(bestDrugs[bdi]);
+                        }
+                        detInner.appendChild(bdWrap);
+                    }
+
+                    // Clinical relevance note
+                    var relColor = z.sma_relevance >= 0.8 ? 'var(--green)' : z.sma_relevance >= 0.4 ? 'var(--accent)' : 'var(--muted)';
+                    var relNote = document.createElement('div');
+                    relNote.textContent = z.sma_relevance >= 0.8 ? 'High clinical relevance \u2014 primary target for SMA therapeutics.' : z.sma_relevance >= 0.4 ? 'Moderate clinical relevance \u2014 secondary therapeutic target zone.' : 'Low clinical relevance for SMA motor neuron rescue.';
+                    relNote.style.cssText = 'font-size:11px;color:' + relColor + ';margin-top:8px;font-style:italic';
+                    detInner.appendChild(relNote);
+
                     detailTd.appendChild(detInner);
                     detailRow.appendChild(detailTd);
                     zb.appendChild(detailRow);
@@ -7542,14 +7770,19 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     });
                 })(zones[keys[i]], keys[i]);
             }
-            // Drug penetration table - expandable rows
+            // Drug penetration table — expandable rows with BBB mechanism + drug link
             var db = clearEl('spatial-drugs-body');
             var drugs = data.penetration || [];
             for (var j = 0; j < drugs.length; j++) {
                 (function(d) {
                     var zp = d.zone_penetration || {};
+                    // Drug name: clickable badge linking to drugs section
+                    var nameTd = el('td', {style: 'font-weight:600;font-size:11px'});
+                    var nameSpan = el('span', {className: 'badge badge-blue', text: d.name, style: 'cursor:pointer'});
+                    nameSpan.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('drugs'); });
+                    nameTd.appendChild(nameSpan);
                     var row = el('tr', {className: 'adv-row'}, [
-                        td(d.name, null, 'font-weight:600;font-size:11px'),
+                        nameTd,
                         tdBadge(d.type, 'badge-blue'),
                         td(d.route),
                         tdBadge(d.best_zone, 'badge-green'),
@@ -7562,18 +7795,48 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     db.appendChild(row);
                     var detailRow = el('tr', {className: 'adv-row-detail'});
                     var detailTd = el('td', {colSpan: 7});
+                    detailTd.style.cssText = 'padding:16px;background:var(--bg);line-height:1.7';
                     var detInner = el('div', {className: 'adv-detail-inner'});
+
+                    // BBB/CSF crossing mechanism
+                    detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'CNS PENETRATION MECHANISM'}));
+                    var mechText = document.createElement('div');
+                    var routeMap = {
+                        'intrathecal': 'Delivered directly into CSF via intrathecal injection \u2014 bypasses BBB entirely, achieves high spinal cord exposure.',
+                        'intravenous': 'Systemic IV delivery \u2014 must cross the blood-brain barrier (BBB). Penetration depends on molecular weight, lipophilicity, and P-gp efflux.',
+                        'oral': 'Oral bioavailability required; CNS exposure depends on BBB permeability, plasma protein binding, and hepatic first-pass metabolism.',
+                        'intramuscular': 'Intramuscular injection \u2014 systemic absorption, then CNS penetration via BBB.',
+                        'subcutaneous': 'Subcutaneous delivery \u2014 slow systemic absorption, then CNS penetration via BBB.'
+                    };
+                    var routeKey = (d.route || '').toLowerCase();
+                    mechText.textContent = routeMap[routeKey] || ('Route: ' + (d.route || 'unknown') + '. CNS penetration varies by drug class and formulation.');
+                    mechText.style.cssText = 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6';
+                    detInner.appendChild(mechText);
+
+                    // Zone penetration scores with colour coding
                     var zpKeys = Object.keys(zp);
-                    var fields = [['Drug', d.name], ['Type', d.type || '-'], ['Route', d.route || '-'], ['Best Zone', d.best_zone || '-'], ['Worst Zone', d.worst_zone || '-']];
-                    for (var zk = 0; zk < zpKeys.length; zk++) {
-                        fields.push([zpKeys[zk].replace(/_/g, ' '), String(zp[zpKeys[zk]])]);
+                    if (zpKeys.length > 0) {
+                        detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px', text: 'ZONE PENETRATION SCORES'}));
+                        for (var zk = 0; zk < zpKeys.length; zk++) {
+                            var zpVal = zp[zpKeys[zk]];
+                            var zpColor = zpVal >= 0.7 ? 'var(--green)' : zpVal >= 0.4 ? 'var(--accent)' : 'var(--muted)';
+                            var zfr = el('div', {className: 'adv-detail-row'});
+                            zfr.appendChild(el('span', {className: 'adv-detail-label', text: zpKeys[zk].replace(/_/g, ' ') + ':'}));
+                            var zpSpan = document.createElement('span');
+                            zpSpan.textContent = String(zpVal);
+                            zpSpan.style.cssText = 'font-weight:700;color:' + zpColor;
+                            zfr.appendChild(zpSpan);
+                            detInner.appendChild(zfr);
+                        }
                     }
-                    for (var fi = 0; fi < fields.length; fi++) {
-                        var fr = el('div', {className: 'adv-detail-row'});
-                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
-                        fr.appendChild(document.createTextNode(fields[fi][1]));
-                        detInner.appendChild(fr);
-                    }
+
+                    // Link to drugs section
+                    var drugNavLink = document.createElement('div');
+                    drugNavLink.textContent = 'View full drug profile \u2192';
+                    drugNavLink.style.cssText = 'margin-top:10px;font-size:11px;color:var(--accent);cursor:pointer;font-weight:600';
+                    drugNavLink.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('drugs'); });
+                    detInner.appendChild(drugNavLink);
+
                     detailTd.appendChild(detInner);
                     detailRow.appendChild(detailTd);
                     db.appendChild(detailRow);
@@ -7584,61 +7847,6 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 })(drugs[j]);
             }
         });
-        fetch(API + '/spatial/silent-zones').then(function(r) { return r.json(); }).then(function(data) {
-            var box = clearEl('spatial-silent');
-            var sz = data.silent_zones || [];
-            if (sz.length === 0) {
-                var p = document.createElement('p');
-                p.textContent = 'No silent zones detected \u2014 all SMA-relevant zones have adequate therapeutic coverage (>50% access).';
-                p.style.cssText = 'color:var(--muted);font-size:12px';
-                box.appendChild(p);
-            } else {
-                for (var i = 0; i < sz.length; i++) {
-                    (function(zone) {
-                        var card = document.createElement('div');
-                        card.className = 'adv-card';
-                        card.style.cssText += ';margin-bottom:8px';
-                        var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
-                        var h = document.createElement('h4');
-                        h.appendChild(toggle);
-                        h.appendChild(document.createTextNode(' ' + zone.zone_name + ' (relevance: ' + zone.sma_relevance + ')'));
-                        h.style.cssText = 'margin:0 0 8px;font-size:12px';
-                        card.appendChild(h);
-                        var summary = document.createElement('p');
-                        summary.textContent = 'Best access: ' + zone.best_therapy_access + ' | Gap: ' + zone.gap + ' \u2014 click to expand';
-                        summary.style.cssText = 'font-size:11px;color:var(--muted);margin:0';
-                        card.appendChild(summary);
-                        var detail = el('div', {className: 'adv-detail'});
-                        var detInner = el('div', {className: 'adv-detail-inner'});
-                        detInner.style.cssText = 'padding:8px;background:var(--bg);border:1px solid var(--line)';
-                        var zoneKeys = Object.keys(zone);
-                        for (var zk = 0; zk < zoneKeys.length; zk++) {
-                            var zkey = zoneKeys[zk];
-                            if (zkey === 'zone_name') continue;
-                            var fr = el('div', {className: 'adv-detail-row'});
-                            fr.appendChild(el('span', {className: 'adv-detail-label', text: zkey.replace(/_/g, ' ') + ':'}));
-                            fr.appendChild(document.createTextNode(String(zone[zkey])));
-                            detInner.appendChild(fr);
-                        }
-                        detail.appendChild(detInner);
-                        card.appendChild(detail);
-                        card.addEventListener('click', function() {
-                            card.classList.toggle('open');
-                            detail.classList.toggle('open');
-                        });
-                        box.appendChild(card);
-                    })(sz[i]);
-                }
-            }
-            if (data.insight) {
-                var ins = document.createElement('p');
-                ins.textContent = data.insight;
-                ins.style.cssText = 'font-size:11px;color:var(--muted);margin-top:8px;font-style:italic';
-                box.appendChild(ins);
-            }
-        });
-    }
-
     // --- Phase 7.2: Regeneration Signatures ---
     function loadRegen() {
         if (loaded.regen) return; loaded.regen = true;
@@ -7701,21 +7909,53 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     body.appendChild(row);
                     var detailRow = el('tr', {className: 'adv-row-detail'});
                     var detailTd = el('td', {colSpan: 7});
+                    detailTd.style.cssText = 'padding:16px;background:var(--bg);line-height:1.7';
                     var detInner = el('div', {className: 'adv-detail-inner'});
+
+                    // Full mechanism block
+                    if (s.mechanism) {
+                        detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'RETROGRADE SIGNALING MECHANISM'}));
+                        detInner.appendChild(el('div', {text: s.mechanism, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
+                    }
+
+                    // SMA context with colour
+                    var smaColor = s.sma_status === 'reduced' ? '#ef4444' : 'var(--green)';
+                    var smaRow = el('div', {className: 'adv-detail-row'});
+                    smaRow.appendChild(el('span', {className: 'adv-detail-label', text: 'SMA Status:'}));
+                    var smaSpan = document.createElement('span');
+                    smaSpan.textContent = (s.sma_status || '-').toUpperCase() + (s.sma_status === 'reduced' ? ' \u2014 signal deficit contributes to motor neuron vulnerability' : '');
+                    smaSpan.style.cssText = 'font-weight:700;color:' + smaColor;
+                    smaRow.appendChild(smaSpan);
+                    detInner.appendChild(smaRow);
+
+                    // Key fields
                     var fields = [
-                        ['Signal', s.name], ['Molecule Type', s.molecule_type || '-'], ['Source', s.source || '-'],
-                        ['Target', s.target || '-'], ['SMA Status', s.sma_status || '-'],
+                        ['Molecule Type', s.molecule_type || '-'],
+                        ['Source', s.source || '-'],
+                        ['Target', s.target || '-'],
                         ['Therapeutic Potential', String(s.therapeutic_potential)],
                         ['Evidence Strength', s.evidence_strength || '-']
                     ];
-                    if (s.mechanism) { fields.push(['Mechanism', s.mechanism]); }
-                    if (s.therapeutic_strategy) { fields.push(['Strategy', s.therapeutic_strategy]); }
                     for (var fi = 0; fi < fields.length; fi++) {
                         var fr = el('div', {className: 'adv-detail-row'});
                         fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
                         fr.appendChild(document.createTextNode(fields[fi][1]));
                         detInner.appendChild(fr);
                     }
+
+                    // Therapeutic strategy block
+                    if (s.therapeutic_strategy) {
+                        detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--text);margin:10px 0 4px', text: 'THERAPEUTIC STRATEGY'}));
+                        detInner.appendChild(el('div', {text: s.therapeutic_strategy, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;line-height:1.6'}));
+                    }
+
+                    // Link to molecular targets
+                    var targLink = document.createElement('div');
+                    targLink.textContent = 'View related molecular targets \u2192';
+                    targLink.style.cssText = 'margin-top:10px;font-size:11px;color:var(--accent);cursor:pointer;font-weight:600';
+                    targLink.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('targets'); });
+                    detInner.appendChild(targLink);
+
                     detailTd.appendChild(detInner);
                     detailRow.appendChild(detailTd);
                     body.appendChild(detailRow);
@@ -7749,14 +7989,39 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     body.appendChild(row);
                     var detailRow = el('tr', {className: 'adv-row-detail'});
                     var detailTd = el('td', {colSpan: 5});
+                    detailTd.style.cssText = 'padding:16px;background:var(--bg);line-height:1.7';
                     var detInner = el('div', {className: 'adv-detail-inner'});
-                    var fields = [['Cargo', c.name], ['Type', c.cargo_type || '-'], ['Function', c.function || '-'], ['SMA Relevance', c.sma_relevance || '-'], ['Delivery Feasibility', String(c.delivery_feasibility)]];
-                    for (var fi = 0; fi < fields.length; fi++) {
-                        var fr = el('div', {className: 'adv-detail-row'});
-                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
-                        fr.appendChild(document.createTextNode(fields[fi][1]));
-                        detInner.appendChild(fr);
-                    }
+
+                    // Therapeutic rationale block
+                    detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'THERAPEUTIC RATIONALE'}));
+                    var rationaleText = document.createElement('div');
+                    rationaleText.textContent = (c.function || 'Unknown function') + (c.sma_relevance ? '. SMA context: ' + c.sma_relevance : '') + '. Extracellular vesicles (EVs) are natural nanocarriers that can be engineered to deliver therapeutic cargo across biological barriers including the BBB.';
+                    rationaleText.style.cssText = 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6';
+                    detInner.appendChild(rationaleText);
+
+                    // Delivery mechanism by cargo type
+                    detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px', text: 'DELIVERY MECHANISM'}));
+                    var deliveryText = document.createElement('div');
+                    var typeMap = {
+                        'mRNA': 'mRNA cargo in EVs is translated by recipient motor neurons after endocytic uptake. Transient expression, no genomic integration.',
+                        'protein': 'Protein cargo delivered in active form \u2014 bypasses translation, immediate effect on recipient cell signaling.',
+                        'miRNA': 'miRNA payload modulates gene expression post-transcriptionally, simultaneously targeting multiple disease-relevant genes.',
+                        'siRNA': 'siRNA mediates RNAi-based gene silencing with high target specificity in motor neurons.'
+                    };
+                    deliveryText.textContent = typeMap[c.cargo_type] || ('EV-mediated delivery of ' + (c.cargo_type || 'biological cargo') + '. EVs enter target cells via membrane fusion or endocytosis, releasing cargo intracellularly.');
+                    deliveryText.style.cssText = 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6';
+                    detInner.appendChild(deliveryText);
+
+                    var feasVal = parseFloat(c.delivery_feasibility) || 0;
+                    var feasColor = feasVal >= 0.7 ? 'var(--green)' : feasVal >= 0.4 ? 'var(--accent)' : 'var(--muted)';
+                    var feasRow = el('div', {className: 'adv-detail-row'});
+                    feasRow.appendChild(el('span', {className: 'adv-detail-label', text: 'Delivery Feasibility:'}));
+                    var feasSpan = document.createElement('span');
+                    feasSpan.textContent = String(c.delivery_feasibility);
+                    feasSpan.style.cssText = 'font-weight:700;color:' + feasColor;
+                    feasRow.appendChild(feasSpan);
+                    detInner.appendChild(feasRow);
+
                     detailTd.appendChild(detInner);
                     detailRow.appendChild(detailTd);
                     body.appendChild(detailRow);
@@ -7774,6 +8039,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 (function(m) {
                     var card = document.createElement('div');
                     card.className = 'adv-card';
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('mouseenter', function() { card.style.borderColor = 'var(--accent)'; });
+                    card.addEventListener('mouseleave', function() { if (!detail.classList.contains('open')) card.style.borderColor = 'var(--line)'; });
                     var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
                     var h = document.createElement('h4');
                     h.appendChild(toggle);
@@ -7782,7 +8050,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     card.appendChild(h);
                     var trl = document.createElement('span');
                     trl.textContent = 'TRL ' + m.trl;
-                    trl.className = 'badge badge-blue';
+                    trl.className = 'badge ' + (m.trl >= 6 ? 'badge-green' : m.trl >= 4 ? 'badge-blue' : 'badge-gray');
                     trl.style.cssText = 'margin-bottom:8px;display:inline-block';
                     card.appendChild(trl);
                     var summary = document.createElement('p');
@@ -7792,21 +8060,40 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var detail = el('div', {className: 'adv-detail'});
                     var detInner = el('div', {className: 'adv-detail-inner'});
                     detInner.style.cssText = 'padding:8px;background:var(--bg);border:1px solid var(--line)';
-                    var fields = [['Cost', m.cost_per_chip || '-'], ['Throughput', m.throughput || '-'], ['TRL', String(m.trl)], ['SMA Modeling', m.sma_modeling || '-']];
-                    if (m.cell_types) { fields.push(['Cell Types', Array.isArray(m.cell_types) ? m.cell_types.join(', ') : m.cell_types]); }
-                    if (m.readouts) { fields.push(['Readouts', Array.isArray(m.readouts) ? m.readouts.join(', ') : m.readouts]); }
-                    for (var fi = 0; fi < fields.length; fi++) {
+
+                    // Technical specs
+                    var specFields = [
+                        ['Cost per Chip', m.cost_per_chip || '-'],
+                        ['Throughput', m.throughput || '-'],
+                        ['TRL', String(m.trl)],
+                        ['SMA Modeling Capability', m.sma_modeling || '-']
+                    ];
+                    if (m.cell_types) { specFields.push(['Cell Types', Array.isArray(m.cell_types) ? m.cell_types.join(', ') : m.cell_types]); }
+                    if (m.readouts) { specFields.push(['Readouts', Array.isArray(m.readouts) ? m.readouts.join(', ') : m.readouts]); }
+                    if (m.validation_assays) { specFields.push(['Validation Assays', Array.isArray(m.validation_assays) ? m.validation_assays.join(', ') : m.validation_assays]); }
+                    if (m.supplier) { specFields.push(['Supplier', m.supplier]); }
+                    for (var fi = 0; fi < specFields.length; fi++) {
                         var fr = el('div', {className: 'adv-detail-row'});
-                        fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
-                        fr.appendChild(document.createTextNode(fields[fi][1]));
+                        fr.appendChild(el('span', {className: 'adv-detail-label', text: specFields[fi][0] + ':'}));
+                        fr.appendChild(document.createTextNode(specFields[fi][1]));
                         detInner.appendChild(fr);
                     }
+
+                    // TRL interpretation
+                    var trlNote = document.createElement('div');
+                    var trlText = m.trl >= 7 ? 'Commercially available \u2014 can be ordered and used immediately.' : m.trl >= 5 ? 'Technology validated in relevant environment \u2014 prototype stage.' : m.trl >= 3 ? 'Proof of concept demonstrated \u2014 active research phase.' : 'Basic research stage \u2014 concept not yet experimentally validated.';
+                    trlNote.textContent = 'TRL ' + m.trl + ': ' + trlText;
+                    trlNote.style.cssText = 'font-size:11px;color:var(--muted);margin-top:8px;font-style:italic';
+                    detInner.appendChild(trlNote);
+
                     detail.appendChild(detInner);
                     card.appendChild(detail);
                     card.addEventListener('click', function() {
+                        var isOpen = detail.classList.toggle('open');
                         card.classList.toggle('open');
-                        detail.classList.toggle('open');
-                        summary.textContent = m.cost_per_chip + ' | ' + m.throughput + (detail.classList.contains('open') ? '' : ' \u2014 click to expand');
+                        toggle.textContent = isOpen ? '\u25BC' : '\u25B6';
+                        if (!isOpen) card.style.borderColor = 'var(--line)';
+                        summary.textContent = m.cost_per_chip + ' | ' + m.throughput + (isOpen ? '' : ' \u2014 click to expand');
                     });
                     box.appendChild(card);
                 })(models[i]);
@@ -7893,12 +8180,28 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                         ['Feasibility', (c.feasibility * 100).toFixed(0) + '%'],
                         ['Clinical Status', c.clinical_status || '-']
                     ];
-                    if (c.drugs) { fields.push(['Drugs', Array.isArray(c.drugs) ? c.drugs.join(', ') : c.drugs]); }
                     for (var fi = 0; fi < fields.length; fi++) {
                         var fr = el('div', {className: 'adv-detail-row'});
                         fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
                         fr.appendChild(document.createTextNode(fields[fi][1]));
                         detInner.appendChild(fr);
+                    }
+                    if (c.drugs && (Array.isArray(c.drugs) ? c.drugs.length : c.drugs)) {
+                        var drugFr = el('div', {className: 'adv-detail-row'});
+                        drugFr.appendChild(el('span', {className: 'adv-detail-label', text: 'Drugs:'}));
+                        var drugList = Array.isArray(c.drugs) ? c.drugs : [c.drugs];
+                        var drugWrap = el('span');
+                        for (var di = 0; di < drugList.length; di++) {
+                            (function(drugName) {
+                                var badge = el('span', {text: drugName});
+                                badge.style.cssText = 'display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;background:var(--accent);color:#fff;font-size:10px;font-weight:600;border-radius:3px;cursor:pointer';
+                                badge.title = 'View in Drugs';
+                                badge.addEventListener('click', function(e) { e.stopPropagation(); navigateTo('drugs'); });
+                                drugWrap.appendChild(badge);
+                            })(drugList[di]);
+                        }
+                        drugFr.appendChild(drugWrap);
+                        detInner.appendChild(drugFr);
                     }
                     detail.appendChild(detInner);
                     card.appendChild(detail);
@@ -7965,39 +8268,100 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // --- Phase 7.5: Bioelectric Reprogramming ---
     function loadBioelectric() {
         if (loaded.bioelectric) return; loaded.bioelectric = true;
+
+        // Section intro — Michael Levin framework explanation
+        var bioIntroBox = document.getElementById('bio-insight');
+        if (bioIntroBox && !bioIntroBox.dataset.introAdded) {
+            bioIntroBox.dataset.introAdded = '1';
+            var introCard = document.createElement('div');
+            introCard.style.cssText = 'background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);padding:14px 16px;border-radius:4px;margin-bottom:12px';
+            introCard.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px;letter-spacing:0.5px', text: "MICHAEL LEVIN'S BIOELECTRICITY FRAMEWORK"}));
+            var p1 = document.createElement('p');
+            p1.textContent = 'Bioelectricity treats ion channels and membrane voltage (Vmem) as information-processing signals \u2014 not just electrical noise. Every cell broadcasts its identity and functional state via Vmem. In SMA, approximately 40% of motor neurons are electrically dormant: they are alive, have intact genomes, but are silent because their ion channel profile locks them into a hyperpolarized, low-activity state.';
+            p1.style.cssText = 'font-size:12px;color:var(--text-secondary);line-height:1.7;margin:0 0 8px';
+            introCard.appendChild(p1);
+            var p2 = document.createElement('p');
+            p2.textContent = 'This is fundamentally different from apoptosis. These neurons can potentially be reactivated by shifting their Vmem toward the healthy depolarized range using pharmacological ion channel modulators or electroceutical interventions (non-invasive electrical stimulation). The key insight: rescue viable but dormant neurons before they undergo irreversible degeneration.';
+            p2.style.cssText = 'font-size:12px;color:var(--text-secondary);line-height:1.7;margin:0';
+            introCard.appendChild(p2);
+            bioIntroBox.insertBefore(introCard, bioIntroBox.firstChild);
+        }
+
         fetch(API + '/bioelectric/channels').then(function(r) { return r.json(); }).then(function(data) {
             var body = clearEl('bio-channels-body');
             var chs = data.channels || [];
             for (var i = 0; i < chs.length; i++) {
                 (function(c) {
+                    // Drug candidates column: clickable badges linking to drugs section
+                    var drugCandsTd = el('td', {style: 'font-size:10px'});
+                    var drugCands = c.drug_candidates || [];
+                    if (drugCands.length === 0) {
+                        drugCandsTd.textContent = '\u2014';
+                    } else {
+                        var badgeWrap = el('div', {style: 'display:flex;gap:4px;flex-wrap:wrap'});
+                        for (var di = 0; di < drugCands.length; di++) {
+                            (function(dName) {
+                                var db = el('span', {className: 'badge badge-blue', text: dName, style: 'cursor:pointer'});
+                                db.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('drugs'); });
+                                badgeWrap.appendChild(db);
+                            })(drugCands[di]);
+                        }
+                        drugCandsTd.appendChild(badgeWrap);
+                    }
                     var row = el('tr', {className: 'adv-row'}, [
                         td(c.gene, 'mono', 'font-weight:600;font-size:11px'),
                         td(c.name, null, 'font-size:11px'),
                         tdBadge(c.channel_type, 'badge-blue'),
                         td(c.vmem_role),
                         tdBadge(c.sma_expression, c.sma_expression === 'downregulated' ? 'badge-red' : c.sma_expression === 'upregulated' ? 'badge-green' : ''),
-                        td((c.drug_candidates || []).join(', '), null, 'font-size:10px')
+                        drugCandsTd
                     ]);
                     var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
                     row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
                     body.appendChild(row);
                     var detailRow = el('tr', {className: 'adv-row-detail'});
                     var detailTd = el('td', {colSpan: 6});
+                    detailTd.style.cssText = 'padding:16px;background:var(--bg);line-height:1.7';
                     var detInner = el('div', {className: 'adv-detail-inner'});
+
+                    // Mechanism of action in SMA (highlighted block)
+                    if (c.mechanism) {
+                        detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'MECHANISM IN SMA MOTOR NEURONS'}));
+                        detInner.appendChild(el('div', {text: c.mechanism, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
+                    }
+
+                    // Key fields
                     var fields = [
                         ['Gene', c.gene], ['Channel', c.name || '-'], ['Type', c.channel_type || '-'],
-                        ['Vmem Role', c.vmem_role || '-'], ['SMA Expression', c.sma_expression || '-'],
-                        ['Drug Candidates', (c.drug_candidates || []).join(', ') || 'None']
+                        ['Vmem Role', c.vmem_role || '-'], ['SMA Expression', c.sma_expression || '-']
                     ];
                     if (c.conductance) { fields.push(['Conductance', c.conductance]); }
                     if (c.selectivity) { fields.push(['Selectivity', c.selectivity]); }
-                    if (c.mechanism) { fields.push(['Mechanism', c.mechanism]); }
                     for (var fi = 0; fi < fields.length; fi++) {
                         var fr = el('div', {className: 'adv-detail-row'});
                         fr.appendChild(el('span', {className: 'adv-detail-label', text: fields[fi][0] + ':'}));
                         fr.appendChild(document.createTextNode(fields[fi][1]));
                         detInner.appendChild(fr);
                     }
+
+                    // Drug candidates as clickable badges
+                    if (drugCands.length > 0) {
+                        detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--text);margin:10px 0 4px', text: 'DRUG CANDIDATES'}));
+                        var dcWrap = el('div', {style: 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px'});
+                        for (var dci = 0; dci < drugCands.length; dci++) {
+                            (function(dName) {
+                                var db2 = el('span', {className: 'badge badge-blue', text: dName, style: 'cursor:pointer'});
+                                db2.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('drugs'); });
+                                dcWrap.appendChild(db2);
+                            })(drugCands[dci]);
+                        }
+                        detInner.appendChild(dcWrap);
+                        var drugsNote = document.createElement('div');
+                        drugsNote.textContent = 'Click a drug name to navigate to the Drugs section.';
+                        drugsNote.style.cssText = 'font-size:10px;color:var(--muted)';
+                        detInner.appendChild(drugsNote);
+                    }
+
                     detailTd.appendChild(detInner);
                     detailRow.appendChild(detailTd);
                     body.appendChild(detailRow);
@@ -8021,6 +8385,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 (function(v) {
                     var card = document.createElement('div');
                     card.className = 'adv-card';
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('mouseenter', function() { card.style.borderColor = 'var(--accent)'; });
+                    card.addEventListener('mouseleave', function() { if (!detail.classList.contains('open')) card.style.borderColor = 'var(--line)'; });
                     var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
                     var h = document.createElement('h4');
                     h.appendChild(toggle);
@@ -8054,12 +8421,20 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                         fr.appendChild(document.createTextNode(fields[fi][1]));
                         detInner.appendChild(fr);
                     }
+                    // "View related targets" navigation link
+                    var targLink = document.createElement('div');
+                    targLink.textContent = 'View related targets \u2192';
+                    targLink.style.cssText = 'margin-top:10px;font-size:11px;color:var(--accent);cursor:pointer;font-weight:600';
+                    targLink.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('targets'); });
+                    detInner.appendChild(targLink);
                     detail.appendChild(detInner);
                     card.appendChild(detail);
                     card.addEventListener('click', function() {
+                        var isOpen = detail.classList.toggle('open');
                         card.classList.toggle('open');
-                        detail.classList.toggle('open');
-                        prev.textContent = (v.prevalence_in_sma * 100).toFixed(0) + '% of SMA MNs' + (detail.classList.contains('open') ? '' : ' \u2014 click to expand');
+                        toggle.textContent = isOpen ? '\u25BC' : '\u25B6';
+                        if (!isOpen) card.style.borderColor = 'var(--line)';
+                        prev.textContent = (v.prevalence_in_sma * 100).toFixed(0) + '% of SMA MNs' + (isOpen ? '' : ' \u2014 click to expand');
                     });
                     box.appendChild(card);
                 })(states[i]);
@@ -8082,14 +8457,30 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     body.appendChild(row);
                     var detailRow = el('tr', {className: 'adv-row-detail'});
                     var detailTd = el('td', {colSpan: 5});
+                    detailTd.style.cssText = 'padding:16px;background:var(--bg);line-height:1.7';
                     var detInner = el('div', {className: 'adv-detail-inner'});
+
+                    // Mechanism of action (highlighted block)
+                    if (e.mechanism) {
+                        detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'MECHANISM OF ACTION'}));
+                        detInner.appendChild(el('div', {text: e.mechanism, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
+                    }
+
+                    // Evidence level with colour coding
+                    var evColor = e.evidence_level === 'clinical' ? 'var(--green)' : e.evidence_level === 'preclinical' ? 'var(--accent)' : 'var(--muted)';
+                    var evRow = el('div', {className: 'adv-detail-row'});
+                    evRow.appendChild(el('span', {className: 'adv-detail-label', text: 'Evidence Level:'}));
+                    var evSpan = document.createElement('span');
+                    evSpan.textContent = (e.evidence_level || '-').toUpperCase();
+                    evSpan.style.cssText = 'font-weight:700;color:' + evColor;
+                    evRow.appendChild(evSpan);
+                    detInner.appendChild(evRow);
+
                     var fields = [
-                        ['Intervention', e.name], ['Modality', e.modality || '-'],
-                        ['Target State', e.target_vmem_state || '-'],
-                        ['Evidence Level', e.evidence_level || '-'],
+                        ['Modality', e.modality || '-'],
+                        ['Target Vmem State', e.target_vmem_state || '-'],
                         ['Feasibility', (e.feasibility * 100).toFixed(0) + '%']
                     ];
-                    if (e.mechanism) { fields.push(['Mechanism', e.mechanism]); }
                     if (e.parameters) { fields.push(['Parameters', e.parameters]); }
                     if (e.clinical_status) { fields.push(['Clinical Status', e.clinical_status]); }
                     for (var fi = 0; fi < fields.length; fi++) {
@@ -8098,6 +8489,16 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                         fr.appendChild(document.createTextNode(fields[fi][1]));
                         detInner.appendChild(fr);
                     }
+
+                    // Clinical trial link when evidence is clinical
+                    if (e.evidence_level === 'clinical' || e.clinical_status) {
+                        var trialLink = document.createElement('div');
+                        trialLink.textContent = 'Search clinical trials \u2192';
+                        trialLink.style.cssText = 'margin-top:10px;font-size:11px;color:var(--accent);cursor:pointer;font-weight:600';
+                        trialLink.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('trials'); });
+                        detInner.appendChild(trialLink);
+                    }
+
                     detailTd.appendChild(detInner);
                     detailRow.appendChild(detailTd);
                     body.appendChild(detailRow);
@@ -8548,66 +8949,173 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     function loadTranslation() {
         if (loaded.translate) return; loaded.translate = true;
+
+        // --- Regulatory Pathways (expandable rows) ---
         fetch(API + '/translate/regulatory').then(function(r) { return r.json(); }).then(function(data) {
             var body = clearEl('trans-reg-body');
             var paths = data.pathways || [];
             for (var i = 0; i < paths.length; i++) {
-                var p = paths[i];
-                body.appendChild(el('tr', null, [
-                    td(p.name, null, 'font-weight:600;font-size:11px'),
-                    tdBadge(p.agency, p.agency === 'both' ? 'badge-green' : 'badge-blue'),
-                    td(p.designation, null, 'font-size:10px'),
-                    td(p.timeline, 'mono', 'font-size:10px'),
-                    td((p.current_sma_drugs || []).join(', '), null, 'font-size:10px'),
-                    td(p.sma_relevance, null, 'font-size:9px;word-wrap:break-word;overflow-wrap:break-word')
-                ]));
+                (function(p) {
+                    var row = el('tr', {style: 'cursor:pointer'}, [
+                        td(p.name, null, 'font-weight:600;font-size:11px'),
+                        tdBadge(p.agency, p.agency === 'both' ? 'badge-green' : 'badge-blue'),
+                        td(p.designation, null, 'font-size:10px'),
+                        td(p.timeline, 'mono', 'font-size:10px'),
+                        td((p.current_sma_drugs || []).join(', '), null, 'font-size:10px'),
+                        td(p.sma_relevance, null, 'font-size:9px;max-width:200px;word-wrap:break-word')
+                    ]);
+                    row.addEventListener('click', function() {
+                        var existing = row.nextElementSibling;
+                        if (existing && existing.classList.contains('reg-detail')) { existing.remove(); return; }
+                        var detailRow = el('tr', {className: 'reg-detail'});
+                        var detailTd = document.createElement('td');
+                        detailTd.colSpan = 6;
+                        detailTd.style.cssText = 'padding:16px;background:var(--bg);line-height:1.7';
+                        // Benefits
+                        var benefits = p.benefits || [];
+                        if (benefits.length > 0) {
+                            detailTd.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px', text: 'KEY BENEFITS'}));
+                            var ul = el('ul', {style: 'margin:0 0 12px 16px;padding:0;font-size:12px'});
+                            for (var b = 0; b < benefits.length; b++) ul.appendChild(el('li', {text: benefits[b], style: 'margin-bottom:3px'}));
+                            detailTd.appendChild(ul);
+                        }
+                        // Requirements
+                        var reqs = p.requirements || [];
+                        if (reqs.length > 0) {
+                            detailTd.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px', text: 'REQUIREMENTS'}));
+                            var ul2 = el('ul', {style: 'margin:0 0 12px 16px;padding:0;font-size:12px'});
+                            for (var r2 = 0; r2 < reqs.length; r2++) ul2.appendChild(el('li', {text: reqs[r2], style: 'margin-bottom:3px'}));
+                            detailTd.appendChild(ul2);
+                        }
+                        // SMA drugs using this pathway
+                        if (p.current_sma_drugs && p.current_sma_drugs.length > 0) {
+                            detailTd.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px', text: 'SMA DRUGS USING THIS PATHWAY'}));
+                            var drugLinks = el('div', {style: 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'});
+                            for (var d = 0; d < p.current_sma_drugs.length; d++) {
+                                var drugBadge = el('span', {className: 'badge badge-blue', text: p.current_sma_drugs[d], style: 'cursor:pointer'});
+                                drugBadge.addEventListener('click', function(evt) { evt.stopPropagation(); navigateTo('drugs'); });
+                                drugLinks.appendChild(drugBadge);
+                            }
+                            detailTd.appendChild(drugLinks);
+                        }
+                        detailRow.appendChild(detailTd);
+                        row.parentNode.insertBefore(detailRow, row.nextSibling);
+                    });
+                    body.appendChild(row);
+                })(paths[i]);
             }
         });
+
+        // --- Grant Templates (expandable cards with export button) ---
         fetch(API + '/translate/grants').then(function(r) { return r.json(); }).then(function(data) {
             var box = clearEl('trans-grants');
             var templates = data.templates || [];
             for (var i = 0; i < templates.length; i++) {
-                var g = templates[i];
-                var card = document.createElement('div');
-                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
-                var h = document.createElement('h4');
-                h.textContent = g.name;
-                h.style.cssText = 'margin:0 0 8px;font-size:12px';
-                card.appendChild(h);
-                var mech = document.createElement('span');
-                mech.textContent = g.mechanism;
-                mech.className = 'badge badge-blue';
-                mech.style.cssText = 'display:inline-block;margin-right:4px;margin-bottom:8px';
-                card.appendChild(mech);
-                var budget = document.createElement('span');
-                budget.textContent = g.budget_range;
-                budget.className = 'badge badge-green';
-                budget.style.cssText = 'display:inline-block;margin-bottom:8px';
-                card.appendChild(budget);
-                var fit = document.createElement('p');
-                fit.textContent = g.sma_fit;
-                fit.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 4px';
-                card.appendChild(fit);
-                var tips = document.createElement('p');
-                tips.textContent = 'Tips: ' + (g.success_tips || []).slice(0, 2).join('; ');
-                tips.style.cssText = 'font-size:10px;margin:4px 0 0';
-                card.appendChild(tips);
-                box.appendChild(card);
+                (function(g) {
+                    var card = document.createElement('div');
+                    card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px;border-radius:6px;transition:border-color 0.2s';
+                    card.addEventListener('mouseenter', function() { this.style.borderColor = 'var(--accent)'; });
+                    card.addEventListener('mouseleave', function() { this.style.borderColor = 'var(--line)'; });
+
+                    card.appendChild(el('h4', {text: g.name, style: 'margin:0 0 8px;font-size:13px;font-weight:700'}));
+
+                    var badges = el('div', {style: 'display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px'});
+                    badges.appendChild(badgeEl(g.mechanism, 'badge-blue'));
+                    if (g.duration) badges.appendChild(badgeEl(g.duration, 'badge-gray'));
+                    card.appendChild(badges);
+
+                    card.appendChild(el('p', {text: g.sma_fit, style: 'font-size:12px;color:var(--text-secondary);margin:0 0 10px;line-height:1.5'}));
+
+                    // Tips (collapsed by default)
+                    var tips = g.success_tips || [];
+                    if (tips.length > 0) {
+                        var tipsToggle = el('div', {style: 'font-size:11px;color:var(--accent);cursor:pointer;margin-bottom:8px', text: 'Success tips (' + tips.length + ') ▸'});
+                        var tipsList = el('ul', {style: 'display:none;margin:4px 0 8px 16px;padding:0;font-size:11px;color:var(--text-secondary)'});
+                        for (var t = 0; t < tips.length; t++) tipsList.appendChild(el('li', {text: tips[t], style: 'margin-bottom:3px'}));
+                        tipsToggle.addEventListener('click', function(evt) {
+                            evt.stopPropagation();
+                            var vis = tipsList.style.display === 'none';
+                            tipsList.style.display = vis ? '' : 'none';
+                            tipsToggle.textContent = 'Success tips (' + tips.length + ') ' + (vis ? '▾' : '▸');
+                        });
+                        card.appendChild(tipsToggle);
+                        card.appendChild(tipsList);
+                    }
+
+                    // Key sections
+                    var sections = g.sections || [];
+                    if (sections.length > 0) {
+                        var secDiv = el('div', {style: 'font-size:11px;color:var(--muted);margin-bottom:8px'});
+                        secDiv.appendChild(el('strong', {text: 'Sections: '}));
+                        secDiv.appendChild(document.createTextNode(sections.join(' → ')));
+                        card.appendChild(secDiv);
+                    }
+
+                    // Export button (links to grant export API)
+                    var exportBtn = el('button', {text: 'Generate Grant Draft', style: 'padding:6px 14px;font-size:11px;font-weight:600;color:#fff;background:var(--accent);border:none;border-radius:4px;cursor:pointer;margin-top:4px'});
+                    exportBtn.addEventListener('click', function(evt) {
+                        evt.stopPropagation();
+                        navigateTo('search');
+                        setTimeout(function() {
+                            var input = document.getElementById('search-input') || document.getElementById('chat-input');
+                            if (input) { input.value = 'Generate a ' + g.name + ' grant proposal for our top-ranked SMA hypothesis'; input.focus(); }
+                        }, 500);
+                    });
+                    card.appendChild(exportBtn);
+
+                    box.appendChild(card);
+                })(templates[i]);
             }
         });
+
+        // --- Validation Pipeline (expandable rows, no cost column) ---
         fetch(API + '/translate/validation').then(function(r) { return r.json(); }).then(function(data) {
             var body = clearEl('trans-val-body');
             var levels = data.levels || [];
             for (var i = 0; i < levels.length; i++) {
-                var v = levels[i];
-                body.appendChild(el('tr', null, [
-                    td('L' + v.level, 'mono', 'font-weight:700'),
-                    td(v.name, null, 'font-weight:600;font-size:11px'),
-                    td((v.assays || []).slice(0, 2).join(', '), null, 'font-size:9px'),
-                    td(v.timeline, 'mono', 'font-size:10px'),
-                    td(v.cost_estimate, 'mono', 'font-size:10px'),
-                    td(v.go_no_go, null, 'font-size:9px;word-wrap:break-word;overflow-wrap:break-word')
-                ]));
+                (function(v, idx) {
+                    var levelColor = idx === 0 ? 'var(--accent)' : idx < 3 ? 'var(--green)' : idx < 4 ? 'var(--amber)' : 'var(--muted)';
+                    var row = el('tr', {style: 'cursor:pointer'}, [
+                        td('L' + v.level, 'mono', 'font-weight:700;color:' + levelColor),
+                        td(v.name, null, 'font-weight:600;font-size:11px'),
+                        td((v.assays || []).join(', '), null, 'font-size:10px'),
+                        td(v.timeline, 'mono', 'font-size:10px'),
+                        td(v.go_no_go, null, 'font-size:10px;max-width:250px;word-wrap:break-word')
+                    ]);
+                    row.addEventListener('click', function() {
+                        var existing = row.nextElementSibling;
+                        if (existing && existing.classList.contains('val-detail')) { existing.remove(); return; }
+                        var detailRow = el('tr', {className: 'val-detail'});
+                        var detailTd = document.createElement('td');
+                        detailTd.colSpan = 5;
+                        detailTd.style.cssText = 'padding:16px;background:var(--bg);line-height:1.7';
+
+                        // All assays
+                        var assays = v.assays || [];
+                        if (assays.length > 0) {
+                            detailTd.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:6px', text: 'REQUIRED ASSAYS'}));
+                            var ul = el('ul', {style: 'margin:0 0 12px 16px;padding:0;font-size:12px'});
+                            for (var a = 0; a < assays.length; a++) ul.appendChild(el('li', {text: assays[a], style: 'margin-bottom:3px'}));
+                            detailTd.appendChild(ul);
+                        }
+
+                        // Go/No-Go criteria (highlighted)
+                        detailTd.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px', text: 'GO / NO-GO CRITERIA'}));
+                        detailTd.appendChild(el('div', {text: v.go_no_go || '', style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:8px'}));
+
+                        // Next level arrow
+                        if (idx < levels.length - 1) {
+                            var nextLevel = levels[idx + 1];
+                            detailTd.appendChild(el('div', {text: '→ If GO: proceed to L' + nextLevel.level + ' — ' + nextLevel.name + ' (' + nextLevel.timeline + ')', style: 'font-size:11px;color:var(--green);font-weight:600'}));
+                        } else {
+                            detailTd.appendChild(el('div', {text: '→ Final gate: IND filing and Phase 1 clinical trial', style: 'font-size:11px;color:var(--green);font-weight:600'}));
+                        }
+
+                        detailRow.appendChild(detailTd);
+                        row.parentNode.insertBefore(detailRow, row.nextSibling);
+                    });
+                    body.appendChild(row);
+                })(levels[i], i);
             }
             if (data.insight) {
                 var ins = document.createElement('p');
@@ -8891,6 +9399,58 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             }
         });
 
+        // --- Synthesis Filter Logic ---
+        var synthTargetSel = document.getElementById('synthesis-target-filter');
+        var synthSearchInput = document.getElementById('synthesis-search-filter');
+
+        function synthFilterRows(tabId) {
+            var targetFilter = synthTargetSel ? synthTargetSel.value.toLowerCase() : '';
+            var searchFilter = synthSearchInput ? synthSearchInput.value.toLowerCase().trim() : '';
+            var tbody = document.getElementById(tabId);
+            if (!tbody) return;
+            var rows = tbody.querySelectorAll('tr');
+            for (var i = 0; i < rows.length; i++) {
+                if (rows[i].classList.contains('temporal-detail') || rows[i].classList.contains('loading')) continue;
+                var text = rows[i].textContent.toLowerCase();
+                var show = true;
+                if (targetFilter && text.indexOf(targetFilter) === -1) show = false;
+                if (searchFilter && text.indexOf(searchFilter) === -1) show = false;
+                rows[i].style.display = show ? '' : 'none';
+            }
+        }
+
+        function synthFilterAll() {
+            ['synthesis-cooc-body', 'synthesis-mech-body', 'synthesis-temporal-body', 'synthesis-contradictions-body', 'synthesis-surprise-body'].forEach(synthFilterRows);
+        }
+
+        if (synthTargetSel) synthTargetSel.addEventListener('change', synthFilterAll);
+        if (synthSearchInput) {
+            var synthSearchTimer = null;
+            synthSearchInput.addEventListener('input', function() {
+                clearTimeout(synthSearchTimer);
+                synthSearchTimer = setTimeout(synthFilterAll, 200);
+            });
+        }
+
+        function populateSynthTargets(items) {
+            if (!synthTargetSel || synthTargetSel.options.length > 1) return;
+            var targets = {};
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var a = item.target_a || item.target_a_symbol || item.target || '';
+                var b = item.target_b || item.target_b_symbol || '';
+                if (a) targets[a] = true;
+                if (b) targets[b] = true;
+            }
+            var sorted = Object.keys(targets).sort();
+            for (var j = 0; j < sorted.length; j++) {
+                var opt = document.createElement('option');
+                opt.value = sorted[j];
+                opt.textContent = sorted[j];
+                synthTargetSel.appendChild(opt);
+            }
+        }
+
         // Co-occurrences
         fetch(API + '/synthesis/cooccurrences?limit=20').then(function(r) { return r.json(); }).then(function(data) {
             var items = data.cooccurrences || data.results || data;
@@ -8901,6 +9461,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 return;
             }
             setText('synthesis-count', items.length + ' co-occurrences');
+            populateSynthTargets(items);
             for (var i = 0; i < items.length; i++) {
                 var c = items[i];
                 var conf = c.avg_confidence != null ? Number(c.avg_confidence).toFixed(2) : '-';
@@ -8934,7 +9495,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 body.appendChild(el('tr', null, [
                     td(m.mechanism || m.name || '', '', 'font-weight:600'),
                     td(targetsStr, '', 'font-size:12px'),
-                    td(String(m.claims || m.claim_count || 0), 'mono'),
+                    td(String(m.num_claims || m.claims || m.claim_count || 0), 'mono'),
                     td(conf, 'mono')
                 ]));
             }
@@ -9000,15 +9561,62 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             for (var i = 0; i < items.length; i++) {
                 var t = items[i];
                 var ratio = t.reinforcement_ratio != null ? Number(t.reinforcement_ratio).toFixed(2) : '-';
-                body.appendChild(el('tr', null, [
-                    td(t.target || t.target_symbol || '', '', 'font-weight:600'),
-                    td(t.claim_type || t.type || '', '', 'font-size:12px'),
-                    td(String(t.old_claims || t.early_claims || 0), 'mono'),
-                    td(String(t.new_claims || t.recent_claims || 0), 'mono'),
+                var oldC = t.old_count || t.old_claims || t.early_claims || 0;
+                var newC = t.new_count || t.new_claims || t.recent_claims || 0;
+                // Target as clickable link
+                var targetTd = document.createElement('td');
+                targetTd.style.fontWeight = '600';
+                var targetLink = el('a', {text: t.target || t.target_symbol || '', href: '#', style: 'color:var(--accent);text-decoration:none;cursor:pointer'});
+                targetLink.addEventListener('click', function(evt) { evt.preventDefault(); navigateTo('targets'); });
+                targetTd.appendChild(targetLink);
+                // Dates from API
+                var oldestText = t.oldest_paper_date ? t.oldest_paper_date.substring(0, 7) : (t.oldest_paper || t.earliest_year || '-');
+                var newestText = t.newest_paper_date ? t.newest_paper_date.substring(0, 7) : (t.newest_paper || t.latest_year || '-');
+                var row = el('tr', null, [
+                    targetTd,
+                    td((t.claim_type || t.type || '').replace(/_/g, ' '), '', 'font-size:12px'),
+                    td(String(oldC), 'mono'),
+                    td(String(newC), 'mono'),
                     tdBadge(ratio, Number(t.reinforcement_ratio) >= 2.0 ? 'badge-green' : Number(t.reinforcement_ratio) >= 1.0 ? 'badge-amber' : 'badge-gray'),
-                    td(t.oldest_paper || t.earliest_year || '-', 'mono', 'font-size:11px'),
-                    td(t.newest_paper || t.latest_year || '-', 'mono', 'font-size:11px')
-                ]));
+                    td(oldestText, 'mono', 'font-size:11px'),
+                    td(newestText, 'mono', 'font-size:11px')
+                ]);
+                // Expandable detail on click
+                row.style.cursor = 'pointer';
+                (function(item, rowEl) {
+                    rowEl.addEventListener('click', function() {
+                        var existing = rowEl.nextElementSibling;
+                        if (existing && existing.classList.contains('temporal-detail')) { existing.remove(); return; }
+                        var detailRow = el('tr', {className: 'temporal-detail'});
+                        var detailTd = document.createElement('td');
+                        detailTd.colSpan = 7;
+                        detailTd.style.cssText = 'padding:12px;background:var(--bg);font-size:12px;line-height:1.6';
+                        if (item.example_old_predicate) {
+                            var oldDiv = el('div', {style: 'margin-bottom:6px'});
+                            oldDiv.appendChild(el('strong', {text: 'Early finding: ', style: 'color:var(--muted)'}));
+                            oldDiv.appendChild(document.createTextNode(item.example_old_predicate));
+                            detailTd.appendChild(oldDiv);
+                        }
+                        if (item.example_new_predicate) {
+                            var newDiv = el('div', {style: 'margin-bottom:6px'});
+                            newDiv.appendChild(el('strong', {text: 'Recent finding: ', style: 'color:var(--accent)'}));
+                            newDiv.appendChild(document.createTextNode(item.example_new_predicate));
+                            detailTd.appendChild(newDiv);
+                        }
+                        if (item.oldest_paper_title) {
+                            detailTd.appendChild(el('div', {text: 'Oldest: ' + item.oldest_paper_title + ' (' + (item.oldest_paper_date || '') + ')', style: 'font-size:11px;color:var(--muted)'}));
+                        }
+                        if (item.newest_paper_title) {
+                            detailTd.appendChild(el('div', {text: 'Newest: ' + item.newest_paper_title + ' (' + (item.newest_paper_date || '') + ')', style: 'font-size:11px;color:var(--muted)'}));
+                        }
+                        if (!item.example_old_predicate && !item.example_new_predicate) {
+                            detailTd.appendChild(el('em', {text: 'No additional details available', style: 'color:var(--muted)'}));
+                        }
+                        detailRow.appendChild(detailTd);
+                        rowEl.parentNode.insertBefore(detailRow, rowEl.nextSibling);
+                    });
+                })(t, row);
+                body.appendChild(row);
             }
         }).catch(function(e) {
             clearEl('synthesis-temporal-body').appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'Temporal data not available: ' + e.message})]));
@@ -9025,24 +9633,32 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             }
             for (var i = 0; i < items.length; i++) {
                 var c = items[i];
-                var score = c.score != null ? Number(c.score).toFixed(3) : '-';
+                var score = c.contradiction_score != null ? Number(c.contradiction_score).toFixed(3) : (c.score != null ? Number(c.score).toFixed(3) : '-');
+                var scoreNum = Number(c.contradiction_score || c.score || 0);
+                // Handle both flat numbers and nested objects for positive/negative claims
+                var posCount = typeof c.positive_claims === 'object' && c.positive_claims ? (c.positive_claims.count || 0) : (c.positive_claims || c.positive || 0);
+                var negCount = typeof c.negative_claims === 'object' && c.negative_claims ? (c.negative_claims.count || 0) : (c.negative_claims || c.negative || 0);
                 var row = el('tr', null, [
                     td(c.target || c.target_symbol || '', '', 'font-weight:600'),
                     td(c.claim_type || c.type || '', '', 'font-size:12px'),
-                    td(String(c.positive_claims || c.positive || 0), 'mono', 'color:var(--green)'),
-                    td(String(c.negative_claims || c.negative || 0), 'mono', 'color:var(--red)'),
-                    tdBadge(score, Number(c.score) >= 0.7 ? 'badge-red' : Number(c.score) >= 0.4 ? 'badge-amber' : 'badge-gray')
+                    td(String(posCount), 'mono', 'color:var(--green)'),
+                    td(String(negCount), 'mono', 'color:var(--red)'),
+                    tdBadge(score, scoreNum >= 0.7 ? 'badge-red' : scoreNum >= 0.4 ? 'badge-amber' : 'badge-gray')
                 ]);
                 // Show example predicates below the row on hover via title attribute
                 var examples = [];
-                if (c.positive_examples && Array.isArray(c.positive_examples)) {
-                    for (var p = 0; p < Math.min(c.positive_examples.length, 2); p++) {
-                        examples.push('[+] ' + (c.positive_examples[p].predicate || c.positive_examples[p]));
+                var posExamples = c.positive_examples || (typeof c.positive_claims === 'object' && c.positive_claims ? [c.positive_claims] : []);
+                var negExamples = c.negative_examples || (typeof c.negative_claims === 'object' && c.negative_claims ? [c.negative_claims] : []);
+                if (Array.isArray(posExamples)) {
+                    for (var p = 0; p < Math.min(posExamples.length, 2); p++) {
+                        var pText = posExamples[p].example_predicate || posExamples[p].predicate || posExamples[p];
+                        if (pText && typeof pText === 'string') examples.push('[+] ' + pText);
                     }
                 }
-                if (c.negative_examples && Array.isArray(c.negative_examples)) {
-                    for (var n = 0; n < Math.min(c.negative_examples.length, 2); n++) {
-                        examples.push('[-] ' + (c.negative_examples[n].predicate || c.negative_examples[n]));
+                if (Array.isArray(negExamples)) {
+                    for (var n = 0; n < Math.min(negExamples.length, 2); n++) {
+                        var nText = negExamples[n].example_predicate || negExamples[n].predicate || negExamples[n];
+                        if (nText && typeof nText === 'string') examples.push('[-] ' + nText);
                     }
                 }
                 if (examples.length > 0) row.setAttribute('title', examples.join('\n'));
@@ -9054,7 +9670,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
         // Surprise connections
         fetch(API + '/synthesis/surprise?limit=20').then(function(r) { return r.json(); }).then(function(data) {
-            var items = data.surprise || data.connections || data.results || data;
+            var items = data.surprises || data.surprise || data.connections || data.results || data;
             if (!Array.isArray(items)) items = [];
             var body = clearEl('synthesis-surprise-body');
             if (items.length === 0) {
@@ -9065,15 +9681,15 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             for (var i = 0; i < items.length; i++) {
                 var s = items[i];
                 var surpriseScore = s.surprise_score != null ? Number(s.surprise_score).toFixed(3) : (s.score != null ? Number(s.score).toFixed(3) : '-');
-                var diversity = s.diversity != null ? Number(s.diversity).toFixed(2) : '-';
-                var independence = s.independence != null ? Number(s.independence).toFixed(2) : '-';
+                var diversity = s.claim_diversity != null ? Number(s.claim_diversity).toFixed(2) : (s.diversity != null ? Number(s.diversity).toFixed(2) : '-');
+                var independence = s.source_independence != null ? Number(s.source_independence).toFixed(2) : (s.independence != null ? Number(s.independence).toFixed(2) : '-');
                 var recency = s.recency != null ? Number(s.recency).toFixed(2) : '-';
                 var isTop3 = i < 3;
                 var rowStyle = isTop3 ? 'background:color-mix(in srgb, var(--accent) 8%, transparent)' : '';
                 body.appendChild(el('tr', {style: rowStyle}, [
                     td(s.target_a || s.target_a_symbol || '', '', 'font-weight:600' + (isTop3 ? ';color:var(--accent)' : '')),
                     td(s.target_b || s.target_b_symbol || '', '', 'font-weight:600' + (isTop3 ? ';color:var(--accent)' : '')),
-                    td(String(s.papers || s.paper_count || 0), 'mono'),
+                    td(String(s.paper_overlap || s.papers || s.paper_count || 0), 'mono'),
                     td(diversity, 'mono'),
                     td(independence, 'mono'),
                     td(recency, 'mono'),
@@ -9238,23 +9854,48 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // ============ News & Discoveries ============
     var newsCurrentPage = 1;
     var newsCurrentCategory = '';
+    var newsCurrentTag = '';
+    var newsCurrentSort = 'newest';
+    var newsCurrentSearch = '';
     var newsCurrentSlug = null;
+    var newsAllPosts = []; // cached for client-side filtering
+    var newsTagIndex = {}; // maps tag (lowercase) → [slug, ...]
 
     function loadNews() {
         if (loaded.news) return; loaded.news = true;
-        // Build category filter buttons dynamically from actual data
+        // Load all posts once for client-side filtering
         fetch(API + '/news?limit=100').then(function(r) { return r.json(); }).then(function(allPosts) {
             var posts = allPosts.posts || allPosts;
             if (!Array.isArray(posts)) posts = [];
+            newsAllPosts = posts;
+
+            // Build newsTagIndex: tag (lowercase) → [slug, ...]
+            newsTagIndex = {};
+            for (var ni = 0; ni < posts.length; ni++) {
+                var ntags = posts[ni].tags || [];
+                for (var nti = 0; nti < ntags.length; nti++) {
+                    var nkey = ntags[nti].toLowerCase();
+                    if (!newsTagIndex[nkey]) newsTagIndex[nkey] = [];
+                    newsTagIndex[nkey].push(posts[ni].slug);
+                }
+            }
+            // If targets or drugs already rendered, re-render to add news badges
+            if (loaded.targets && targetsAllData.length > 0) { renderTargetsTable(targetsAllData); }
+            if (loaded.drugs && drugsAllData.length > 0) { renderDrugsTable(drugsAllData); }
+
+            // Build category filter buttons
             var cats = {};
+            var allTags = {};
             for (var p = 0; p < posts.length; p++) {
                 var cat = posts[p].category || 'other';
                 cats[cat] = (cats[cat] || 0) + 1;
+                var ptags = posts[p].tags || [];
+                for (var ti = 0; ti < ptags.length; ti++) {
+                    allTags[ptags[ti]] = (allTags[ptags[ti]] || 0) + 1;
+                }
             }
             var bar = document.getElementById('news-filter-bar');
-            // Update "All" count
             bar.firstChild.textContent = 'All (' + posts.length + ')';
-            // Add buttons for categories that have posts
             var sortedCats = Object.keys(cats).sort(function(a, b) { return cats[b] - cats[a]; });
             for (var ci = 0; ci < sortedCats.length; ci++) {
                 var btn = document.createElement('button');
@@ -9263,7 +9904,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 btn.textContent = sortedCats[ci].charAt(0).toUpperCase() + sortedCats[ci].slice(1).replace(/_/g, ' ') + ' (' + cats[sortedCats[ci]] + ')';
                 bar.appendChild(btn);
             }
-            // Wire up click handlers
+            // Wire up category click handlers
             var filterBtns = bar.querySelectorAll('.page-btn');
             for (var f = 0; f < filterBtns.length; f++) {
                 filterBtns[f].addEventListener('click', function() {
@@ -9272,16 +9913,44 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     this.classList.add('active');
                     newsCurrentCategory = this.dataset.cat || '';
                     newsCurrentPage = 1;
-                    fetchNewsPosts(1, newsCurrentCategory);
+                    renderFilteredNews();
                 });
             }
+
+            // Populate tag dropdown
+            var tagSel = document.getElementById('news-tag-filter');
+            var sortedTags = Object.keys(allTags).sort(function(a, b) { return allTags[b] - allTags[a]; });
+            for (var t = 0; t < sortedTags.length; t++) {
+                var opt = document.createElement('option');
+                opt.value = sortedTags[t];
+                opt.textContent = '#' + sortedTags[t] + ' (' + allTags[sortedTags[t]] + ')';
+                tagSel.appendChild(opt);
+            }
+
+            renderFilteredNews();
         });
-        fetchNewsPosts(1, '');
+
+        // Wire up new filters — instant on change
+        document.getElementById('news-tag-filter').addEventListener('change', function() {
+            newsCurrentTag = this.value;
+            newsCurrentPage = 1;
+            renderFilteredNews();
+        });
+        document.getElementById('news-sort-filter').addEventListener('change', function() {
+            newsCurrentSort = this.value;
+            newsCurrentPage = 1;
+            renderFilteredNews();
+        });
+        document.getElementById('news-search-filter').addEventListener('input', function() {
+            newsCurrentSearch = this.value.trim().toLowerCase();
+            newsCurrentPage = 1;
+            renderFilteredNews();
+        });
 
         // Back button
         document.getElementById('news-back-btn').addEventListener('click', function() {
             document.getElementById('news-detail').style.display = 'none';
-            document.getElementById('news-grid').style.display = '';
+            document.getElementById('news-grid').style.display = 'grid';
             document.getElementById('news-pagination').style.display = '';
             document.querySelector('.news-filters').style.display = '';
             document.querySelector('#news .section-desc').style.display = '';
@@ -9332,23 +10001,53 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         return {discovery:'Discovery', gpu_result:'GPU Result', hypothesis:'Hypothesis', data_update:'Data Update', announcement:'Announcement'}[cat] || cat;
     }
 
-    function fetchNewsPosts(page, category) {
-        var url = API + '/news?page=' + page + '&per_page=12';
-        if (category) url += '&category=' + category;
-        fetch(url).then(function(r) { return r.json(); })
-        .then(function(data) {
-            setText('news-count', data.total + ' posts');
-            var grid = clearEl('news-grid');
-            var posts = data.posts || [];
-            if (posts.length === 0) {
-                grid.appendChild(el('div', {className: 'empty-state', style: 'grid-column:1/-1;text-align:center;padding:40px'}, [
-                    el('h3', {text: 'No Posts Yet'}),
-                    el('p', {text: 'Research highlights and discoveries will appear here.'})
-                ]));
-                return;
-            }
-            for (var i = 0; i < posts.length; i++) {
-                var p = posts[i];
+    function renderFilteredNews() {
+        // Client-side filtering from cached newsAllPosts
+        var filtered = newsAllPosts.slice();
+        // Category filter
+        if (newsCurrentCategory) {
+            filtered = filtered.filter(function(p) { return p.category === newsCurrentCategory; });
+        }
+        // Tag filter
+        if (newsCurrentTag) {
+            filtered = filtered.filter(function(p) { return (p.tags || []).indexOf(newsCurrentTag) !== -1; });
+        }
+        // Search filter
+        if (newsCurrentSearch) {
+            filtered = filtered.filter(function(p) {
+                return (p.title || '').toLowerCase().indexOf(newsCurrentSearch) !== -1 ||
+                       (p.excerpt || '').toLowerCase().indexOf(newsCurrentSearch) !== -1 ||
+                       (p.tags || []).join(' ').toLowerCase().indexOf(newsCurrentSearch) !== -1;
+            });
+        }
+        // Sort
+        if (newsCurrentSort === 'oldest') {
+            filtered.sort(function(a, b) { return new Date(a.created_at) - new Date(b.created_at); });
+        } else if (newsCurrentSort === 'comments') {
+            filtered.sort(function(a, b) { return (b.comment_count || 0) - (a.comment_count || 0); });
+        } else {
+            filtered.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+        }
+        // Paginate
+        var perPage = 12;
+        var totalPages = Math.ceil(filtered.length / perPage) || 1;
+        if (newsCurrentPage > totalPages) newsCurrentPage = 1;
+        var start = (newsCurrentPage - 1) * perPage;
+        var paginated = filtered.slice(start, start + perPage);
+
+        setText('news-count', filtered.length + ' posts');
+        var grid = clearEl('news-grid');
+        if (paginated.length === 0) {
+            grid.appendChild(el('div', {className: 'empty-state', style: 'grid-column:1/-1;text-align:center;padding:40px'}, [
+                el('h3', {text: 'No matching posts'}),
+                el('p', {text: newsCurrentSearch ? 'Try a different search term.' : 'No posts match the selected filters.'})
+            ]));
+            // Clear pagination
+            clearEl('news-pagination');
+            return;
+        }
+        for (var i = 0; i < paginated.length; i++) {
+            var p = paginated[i];
                 var card = el('div', {className: 'card', style: 'padding:16px;cursor:pointer;transition:border-color 0.2s'});
                 card.dataset.slug = p.slug;
 
@@ -9377,26 +10076,28 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 grid.appendChild(card);
             }
 
-            // Pagination
-            var pagEl = clearEl('news-pagination');
-            if (data.total_pages > 1) {
-                for (var pg = 1; pg <= data.total_pages; pg++) {
-                    var btn = el('button', {className: 'page-btn' + (pg === page ? ' active' : ''), text: String(pg)});
-                    (function(pageNum) {
-                        btn.addEventListener('click', function() {
-                            newsCurrentPage = pageNum;
-                            fetchNewsPosts(pageNum, newsCurrentCategory);
-                            window.scrollTo({top: document.getElementById('news').offsetTop, behavior: 'smooth'});
-                        });
-                    })(pg);
-                    pagEl.appendChild(btn);
-                }
+        // Pagination
+        var pagEl = clearEl('news-pagination');
+        if (totalPages > 1) {
+            for (var pg = 1; pg <= totalPages; pg++) {
+                var btn = el('button', {className: 'page-btn' + (pg === newsCurrentPage ? ' active' : ''), text: String(pg)});
+                (function(pageNum) {
+                    btn.addEventListener('click', function() {
+                        newsCurrentPage = pageNum;
+                        renderFilteredNews();
+                        window.scrollTo({top: document.getElementById('news').offsetTop, behavior: 'smooth'});
+                    });
+                })(pg);
+                pagEl.appendChild(btn);
             }
-        }).catch(function(err) {
-            clearEl('news-grid').appendChild(el('div', {className: 'empty-state', style: 'grid-column:1/-1'}, [
-                el('p', {text: 'Failed to load news: ' + err.message})
-            ]));
-        });
+        }
+    }
+
+    // Keep backward compat — old calls redirect to new client-side function
+    function fetchNewsPosts(page, category) {
+        newsCurrentPage = page;
+        newsCurrentCategory = category;
+        renderFilteredNews();
     }
 
     function fetchNewsPost(slug) {
@@ -9429,6 +10130,70 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             contentEl.textContent = '';
             renderMarkdownSafe(contentEl, post.content || '');
 
+            // Related Sections — derive from tags
+            var relatedEl = document.getElementById('news-related-sections');
+            relatedEl.textContent = '';
+            var postTags = (post.tags || []).map(function(t) { return t.toLowerCase(); });
+            var targetSymbols = ['coro1c','smn1','smn2','pfn1','cfl2','rock2','uba1','pls3','ncald','tp53','stmn2'];
+            var drugNames = ['riluzole','fasudil','risdiplam','nusinersen'];
+            var relatedSections = [];
+            // Check tags against each category
+            for (var ri = 0; ri < postTags.length; ri++) {
+                var rtag = postTags[ri];
+                for (var tsi = 0; tsi < targetSymbols.length; tsi++) {
+                    if (rtag.indexOf(targetSymbols[tsi]) !== -1) {
+                        relatedSections.push({label: targetSymbols[tsi].toUpperCase() + ' \u2192 Targets', section: 'targets'});
+                        break;
+                    }
+                }
+                for (var dri = 0; dri < drugNames.length; dri++) {
+                    if (rtag.indexOf(drugNames[dri]) !== -1) {
+                        relatedSections.push({label: drugNames[dri].charAt(0).toUpperCase() + drugNames[dri].slice(1) + ' \u2192 Drugs', section: 'drugs'});
+                        break;
+                    }
+                }
+                if (rtag === 'diffdock' || rtag === 'screening' || rtag === 'virtual-screening') {
+                    relatedSections.push({label: rtag === 'diffdock' ? 'DiffDock \u2192 GPU Results' : 'Screening \u2192 Screening', section: rtag === 'diffdock' ? 'gpu-results' : 'screening'});
+                }
+                if (rtag === 'hypothesis' || rtag === 'mechanism') {
+                    relatedSections.push({label: 'Hypothesis \u2192 Hypotheses', section: 'hypotheses'});
+                }
+                if (rtag === 'geo' || rtag === 'rna-seq' || rtag === 'expression') {
+                    relatedSections.push({label: 'Dataset \u2192 Datasets', section: 'datasets'});
+                }
+                if (rtag === 'trial' || rtag === 'clinical') {
+                    relatedSections.push({label: 'Trial \u2192 Trials', section: 'trials'});
+                }
+            }
+            // Deduplicate by section
+            var seenSections = {};
+            var uniqueRelated = [];
+            for (var uri = 0; uri < relatedSections.length; uri++) {
+                var rkey = relatedSections[uri].section + '|' + relatedSections[uri].label;
+                if (!seenSections[rkey]) { seenSections[rkey] = true; uniqueRelated.push(relatedSections[uri]); }
+            }
+            if (uniqueRelated.length > 0) {
+                var relLabel = document.createElement('div');
+                relLabel.style.cssText = 'font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:10px';
+                relLabel.textContent = 'Related Sections';
+                relatedEl.appendChild(relLabel);
+                var badgeRow = document.createElement('div');
+                badgeRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px';
+                for (var bi = 0; bi < uniqueRelated.length; bi++) {
+                    (function(item) {
+                        var badge = document.createElement('button');
+                        badge.className = 'badge badge-blue';
+                        badge.style.cssText = 'cursor:pointer;border:none;padding:4px 12px;font-size:12px;font-weight:600;border-radius:20px;background:var(--accent,#3b82f6);color:#fff;transition:opacity 0.15s';
+                        badge.textContent = item.label;
+                        badge.addEventListener('mouseenter', function() { this.style.opacity = '0.8'; });
+                        badge.addEventListener('mouseleave', function() { this.style.opacity = '1'; });
+                        badge.addEventListener('click', function() { navigateTo(item.section); });
+                        badgeRow.appendChild(badge);
+                    })(uniqueRelated[bi]);
+                }
+                relatedEl.appendChild(badgeRow);
+            }
+
             // Comments
             var comments = post.comments || [];
             setText('news-comments-title', 'Comments (' + comments.length + ')');
@@ -9454,7 +10219,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             window.scrollTo({top: document.getElementById('news').offsetTop, behavior: 'smooth'});
         }).catch(function(err) {
             document.getElementById('news-detail').style.display = 'none';
-            document.getElementById('news-grid').style.display = '';
+            document.getElementById('news-grid').style.display = 'grid';
         });
     }
 
@@ -10469,8 +11234,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     // SEO meta data per section for dynamic <title> and <meta description>
     var sectionMeta = {
-        mission:     {title: 'SMA Research Platform — Open Evidence Graph', desc: 'Open-source evidence-first research platform for Spinal Muscular Atrophy (SMA). Thousands of PubMed sources, tens of thousands of extracted claims, hundreds of hypotheses, clinical trials, 21 molecular targets.'},
-        search:      {title: 'Search — SMA Research Platform', desc: 'Search and ask questions about SMA research across tens of thousands of evidence claims and thousands of sources with AI-powered answers.'},
+        mission:     {title: 'SMA Research Platform — Open Evidence Graph', desc: 'Open-source evidence-first research platform for Spinal Muscular Atrophy (SMA). Thousands of PubMed sources, thousands of quality-filtered claims, hundreds of hypotheses, clinical trials, 21 molecular targets.'},
+        search:      {title: 'Search — SMA Research Platform', desc: 'Search and ask questions about SMA research across thousands of evidence claims and thousands of sources with AI-powered answers.'},
         targets:     {title: 'Molecular Targets — SMA Research Platform', desc: '21 prioritized molecular targets for SMA drug discovery, scored across 7 dimensions including druggability, evidence depth, and novelty.'},
         trials:      {title: 'Clinical Trials — SMA Research Platform', desc: 'SMA clinical trials from ClinicalTrials.gov. Track nusinersen, risdiplam, onasemnogene, and emerging gene therapies.'},
         drugs:       {title: 'Drugs & Compounds — SMA Research Platform', desc: 'SMA drugs and investigational compounds including approved therapies and pipeline candidates.'},
@@ -10478,7 +11243,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         claims:      {title: 'Evidence Claims — SMA Research Platform', desc: 'Tens of thousands of LLM-extracted claims from SMA literature, structured by type, confidence, and linked to molecular targets.'},
         hypotheses:  {title: 'Hypotheses — SMA Research Platform', desc: 'Hundreds of prioritized research hypotheses for SMA, scored by evidence depth, source convergence, and therapeutic clarity.'},
         predictions: {title: 'Predictions — SMA Research Platform', desc: 'AI-generated predictions for SMA research outcomes based on evidence graph analysis.'},
-        convergence: {title: 'Evidence Convergence — SMA Research Platform', desc: 'Multi-dimensional evidence convergence scoring for SMA targets. 5 dimensions: claim volume, lab independence, method diversity, temporal trend, and replication. Generates falsifiable predictions from tens of thousands of claims.'},
+        convergence: {title: 'Evidence Convergence — SMA Research Platform', desc: 'Multi-dimensional evidence convergence scoring for SMA targets. 5 dimensions: claim volume, lab independence, method diversity, temporal trend, and replication. Generates falsifiable predictions from thousands of curated claims.'},
         graph:       {title: 'Evidence Graph — SMA Research Platform', desc: 'Interactive network visualization of SMA evidence relationships between targets, drugs, claims, and trials.'},
         scores:      {title: 'Target Scores — SMA Research Platform', desc: '7-dimension composite scoring for SMA molecular targets: druggability, evidence, clinical relevance, and more.'},
         priority:    {title: 'Target Priority Engine v2 — SMA Research Platform', desc: '6-dimension multi-criteria target prioritization integrating evidence convergence, DiffDock druggability, ESM-2 structural uniqueness, clinical validation, cross-species conservation, and novelty.'},
@@ -10508,7 +11273,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         federated:   {title: 'Federated Analysis — SMA Research Platform', desc: 'Federated learning and cross-institutional data analysis for SMA research.'},
         translate:   {title: 'Translation — SMA Research Platform', desc: 'Translational research pipeline from bench to bedside for SMA therapeutics.'},
         'gpu-results': {title: 'GPU Results — SMA Research Platform', desc: 'GPU-accelerated computation results for molecular docking, CRISPR off-target analysis, and MD simulations.'},
-        synthesis:     {title: 'Cross-Paper Synthesis — SMA Research Platform', desc: 'Non-obvious connections across tens of thousands of SMA claims. Co-occurring targets, shared mechanisms, temporal reinforcements, contradictions, and surprise connections from cross-paper analysis.'},
+        synthesis:     {title: 'Cross-Paper Synthesis — SMA Research Platform', desc: 'Non-obvious connections across thousands of curated SMA claims. Co-occurring targets, shared mechanisms, temporal reinforcements, contradictions, and surprise connections from cross-paper analysis.'},
         synergy:       {title: 'Synergy Predictions — SMA Research Platform', desc: 'AI-predicted drug-target synergy scores combining docking affinity, literature evidence, pathway overlap, and claim support for SMA therapeutic combinations.'},
         'nim-results': {title: 'NIM Docking Results — SMA Research Platform', desc: '700 compound-target docking predictions via NVIDIA NIM DiffDock v2.2 API. Structure-based virtual screening for SMA drug candidates.'},
         news:          {title: 'News & Discoveries — SMA Research Platform', desc: 'Research highlights, computational discoveries, and community discussion on the SMA Research Platform.'},
