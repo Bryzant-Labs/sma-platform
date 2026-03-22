@@ -10820,7 +10820,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 })(gdata[gi], gi);
             }
         }
-        fetch(API + '/gpu/crispr-guides').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/crispr/guides').then(function(r) { return r.json(); }).then(function(data) {
             crisprGuidesAll = data.guides || data || [];
             if (!Array.isArray(crisprGuidesAll)) crisprGuidesAll = [];
             // Populate strategy filter
