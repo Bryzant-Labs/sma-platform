@@ -5,7 +5,14 @@ API client for NVIDIA's cloud-hosted Biology NIM microservices:
 - DiffDock v2.2: Molecular docking (protein-ligand binding prediction)
 - OpenFold3: Biomolecular structure prediction (protein/RNA/DNA/ligand)
 - GenMol v1.0: De novo molecule generation and optimization
-- RNAPro: RNA 3D structure prediction
+- AlphaFold2: Protein structure prediction
+- ESMfold: Fast protein structure prediction (no MSA needed)
+- RFdiffusion: De novo protein design
+- ProteinMPNN: Protein sequence design
+- MSA Search: Multiple sequence alignment
+- ESM-2 650M: Protein embeddings (degraded — retry logic)
+
+RNAPro: NOT available as cloud API (container-only, self-host on Vast.ai).
 
 Requires: NVIDIA_API_KEY environment variable (from build.nvidia.com)
 Docs: https://docs.nvidia.com/nim/bionemo/
@@ -33,7 +40,19 @@ OPENFOLD3_URL = "https://health.api.nvidia.com/v1/biology/openfold/openfold3"
 GENMOL_URL = "https://health.api.nvidia.com/v1/biology/nvidia/genmol"
 GENMOL_GENERATE_URL = "https://health.api.nvidia.com/v1/biology/nvidia/genmol/generate"
 MOLMIM_URL = "https://health.api.nvidia.com/v1/biology/nvidia/molmim/generate"  # Alternate GenMol
-RNAPRO_URL = "https://health.api.nvidia.com/v1/biology/nvidia/rnapro"
+
+# NEW NIMs (2026-03-22)
+ALPHAFOLD2_URL = "https://health.api.nvidia.com/v1/biology/deepmind/alphafold2"
+ALPHAFOLD2_MULTIMER_URL = "https://health.api.nvidia.com/v1/biology/deepmind/alphafold2-multimer"
+ESMFOLD_URL = "https://health.api.nvidia.com/v1/biology/meta/esmfold"
+RFDIFFUSION_URL = "https://health.api.nvidia.com/v1/biology/ipd/rfdiffusion/generate"
+PROTEINMPNN_URL = "https://health.api.nvidia.com/v1/biology/ipd/proteinmpnn/predict"
+MSA_SEARCH_URL = "https://health.api.nvidia.com/v1/biology/colabfold/msa-search/predict"
+ESM2_URL = "https://health.api.nvidia.com/v1/biology/meta/esm2-650m"
+
+# RNAPro — NO cloud API available (404). Container-only, self-host on Vast.ai.
+# Kept as constant for future self-hosted deployment.
+RNAPRO_URL = os.environ.get("RNAPRO_SELF_URL", "")  # Set when self-hosted on Vast.ai
 
 TIMEOUT = 120  # seconds — structure prediction can be slow
 
@@ -331,7 +350,12 @@ async def genmol_from_4ap(num_molecules: int = 100) -> dict:
 
 
 # =============================================================================
-# RNAPro — RNA 3D Structure Prediction (GTC 2026)
+# RNAPro — RNA 3D Structure Prediction
+# CONTAINER-ONLY: No cloud API available (returns 404).
+# Must self-host via NGC container on Vast.ai GPU instance.
+# GitHub: https://github.com/NVIDIA-Digital-Bio/RNAPro
+# HuggingFace: nvidia/RNAPro-Public-Best-500M
+# NGC: catalog.ngc.nvidia.com/orgs/nvidia/teams/clara/collections/rnapro
 # =============================================================================
 
 async def rnapro_predict(
@@ -340,24 +364,390 @@ async def rnapro_predict(
 ) -> dict:
     """Predict RNA 3D structure using NVIDIA RNAPro NIM.
 
+    NOTE: RNAPro has NO cloud API. This function only works when
+    RNAPRO_SELF_URL is set to a self-hosted instance (e.g., Vast.ai).
+
     Args:
         rna_sequence: RNA sequence (A/U/G/C)
         name: Identifier for the prediction
 
     Returns:
         dict with predicted 3D coordinates and confidence scores
+
+    Raises:
+        ValueError: If no self-hosted RNAPro URL is configured
     """
+    if not RNAPRO_URL:
+        raise ValueError(
+            "RNAPro has no cloud API (404 on build.nvidia.com). "
+            "Set RNAPRO_SELF_URL to a self-hosted instance on Vast.ai. "
+            "See: https://github.com/NVIDIA-Digital-Bio/RNAPro"
+        )
+
     logger.info("RNAPro prediction for %s (%d nt)", name, len(rna_sequence))
     async with httpx.AsyncClient(timeout=TIMEOUT) as client:
         resp = await client.post(
             RNAPRO_URL,
-            headers=_headers(),
+            headers=_headers(for_self_hosted=True),
             json={"sequence": rna_sequence, "name": name},
         )
         resp.raise_for_status()
         result = resp.json()
         logger.info("RNAPro prediction complete for %s", name)
         return result
+
+
+# =============================================================================
+# AlphaFold2 — Protein Structure Prediction
+# =============================================================================
+
+async def predict_structure_af2(
+    sequence: str,
+    algorithm: str = "jackhmmer",
+    e_value: float = 0.0001,
+    databases: Optional[list[str]] = None,
+    relax_prediction: bool = True,
+) -> dict:
+    """
+    Predict protein structure using AlphaFold2 NIM.
+
+    Uses MSA (multiple sequence alignment) for accurate structure prediction.
+    Slower than ESMfold but generally more accurate for novel proteins.
+
+    Args:
+        sequence: Amino acid sequence (1-letter code)
+        algorithm: MSA search algorithm — "jackhmmer" or "mmseqs2"
+        e_value: E-value threshold for MSA search
+        databases: Databases to search (default: uniref90, mgnify, etc.)
+        relax_prediction: Apply Amber relaxation to final structure
+
+    Returns:
+        dict with PDB structure, pLDDT scores, and metadata
+    """
+    payload = {
+        "sequence": sequence,
+        "algorithm": algorithm,
+        "e_value": e_value,
+        "relax_prediction": relax_prediction,
+    }
+    if databases:
+        payload["databases"] = databases
+
+    async with httpx.AsyncClient(timeout=600) as client:  # AF2 can be slow (MSA)
+        logger.info(
+            "AlphaFold2: Predicting structure for %d-residue protein (algo=%s)",
+            len(sequence), algorithm,
+        )
+        resp = await client.post(
+            ALPHAFOLD2_URL,
+            json=payload,
+            headers=_headers(),
+        )
+        resp.raise_for_status()
+        result = resp.json()
+
+    logger.info("AlphaFold2: Structure prediction complete (%d residues)", len(sequence))
+    return result
+
+
+async def predict_structure_af2_multimer(
+    sequences: list[str],
+    algorithm: str = "jackhmmer",
+    e_value: float = 0.0001,
+    relax_prediction: bool = True,
+) -> dict:
+    """
+    Predict protein complex structure using AlphaFold2-Multimer NIM.
+
+    Supports 1-6 protein chains for complex structure prediction.
+
+    Args:
+        sequences: List of amino acid sequences (one per chain)
+        algorithm: MSA search algorithm
+        e_value: E-value threshold for MSA search
+        relax_prediction: Apply Amber relaxation
+
+    Returns:
+        dict with PDB complex structure, pLDDT, pTM, ipTM scores
+    """
+    payload = {
+        "sequences": sequences,
+        "algorithm": algorithm,
+        "e_value": e_value,
+        "relax_prediction": relax_prediction,
+    }
+
+    async with httpx.AsyncClient(timeout=900) as client:  # Multimer is even slower
+        logger.info(
+            "AlphaFold2-Multimer: Predicting complex with %d chains",
+            len(sequences),
+        )
+        resp = await client.post(
+            ALPHAFOLD2_MULTIMER_URL,
+            json=payload,
+            headers=_headers(),
+        )
+        resp.raise_for_status()
+        result = resp.json()
+
+    logger.info("AlphaFold2-Multimer: Complex prediction complete (%d chains)", len(sequences))
+    return result
+
+
+# =============================================================================
+# ESMfold — Fast Protein Structure Prediction (No MSA)
+# =============================================================================
+
+async def predict_structure_esmfold(
+    sequence: str,
+) -> dict:
+    """
+    Predict protein structure using ESMfold NIM (Meta).
+
+    Much faster than AlphaFold2 — uses a protein language model
+    instead of MSA search. Good for rapid screening of many proteins.
+
+    Args:
+        sequence: Amino acid sequence (1-letter code)
+
+    Returns:
+        dict with PDB structure and pLDDT scores
+    """
+    payload = {"sequence": sequence}
+
+    async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+        logger.info(
+            "ESMfold: Fast structure prediction for %d-residue protein",
+            len(sequence),
+        )
+        resp = await client.post(
+            ESMFOLD_URL,
+            json=payload,
+            headers=_headers(),
+        )
+        resp.raise_for_status()
+        result = resp.json()
+
+    logger.info("ESMfold: Structure prediction complete (%d residues)", len(sequence))
+    return result
+
+
+# =============================================================================
+# RFdiffusion — De Novo Protein Design
+# =============================================================================
+
+async def design_binder(
+    target_pdb: str,
+    hotspot_residues: list[str],
+    binder_length: int = 100,
+    num_designs: int = 10,
+) -> dict:
+    """
+    Design a protein binder for a target using RFdiffusion NIM.
+
+    Creates novel protein backbones that bind to specified hotspot
+    residues on the target protein. Useful for designing therapeutic
+    proteins against SMA targets (ROCK2, MAPK14, LIMK1).
+
+    Args:
+        target_pdb: PDB file content of the target protein
+        hotspot_residues: List of residue identifiers to target,
+            e.g., ["A100", "A101", "A105"] (chain + residue number)
+        binder_length: Length of the designed binder (residues)
+        num_designs: Number of binder designs to generate
+
+    Returns:
+        dict with designed protein backbones (PDB format)
+    """
+    # RFdiffusion uses "contigs" notation for specifying what to design
+    # Format: [binder_length/0 target_chain_start-target_chain_end]
+    hotspot_str = ",".join(hotspot_residues)
+
+    payload = {
+        "target_pdb": target_pdb,
+        "contigs": f"{binder_length}/0",
+        "hotspot_residues": hotspot_str,
+        "num_designs": num_designs,
+    }
+
+    async with httpx.AsyncClient(timeout=300) as client:
+        logger.info(
+            "RFdiffusion: Designing %d binders (%d residues) targeting %d hotspots",
+            num_designs, binder_length, len(hotspot_residues),
+        )
+        resp = await client.post(
+            RFDIFFUSION_URL,
+            json=payload,
+            headers=_headers(),
+        )
+        resp.raise_for_status()
+        result = resp.json()
+
+    logger.info("RFdiffusion: Generated %d binder designs", num_designs)
+    return result
+
+
+# =============================================================================
+# ProteinMPNN — Protein Sequence Design
+# =============================================================================
+
+async def design_sequence(
+    backbone_pdb: str,
+    num_sequences: int = 10,
+    temperature: float = 0.1,
+    fixed_residues: Optional[list[str]] = None,
+) -> dict:
+    """
+    Design amino acid sequences for a protein backbone using ProteinMPNN NIM.
+
+    Given a protein backbone (e.g., from RFdiffusion), predicts optimal
+    amino acid sequences that would fold into that structure.
+
+    Args:
+        backbone_pdb: PDB file content of the protein backbone
+        num_sequences: Number of sequence designs to generate
+        temperature: Sampling temperature (lower = more conservative)
+        fixed_residues: Optional list of residues to keep fixed
+
+    Returns:
+        dict with designed sequences, scores, and recovery metrics
+    """
+    payload = {
+        "pdb": backbone_pdb,
+        "num_sequences": num_sequences,
+        "temperature": temperature,
+    }
+    if fixed_residues:
+        payload["fixed_residues"] = ",".join(fixed_residues)
+
+    async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+        logger.info(
+            "ProteinMPNN: Designing %d sequences (T=%.2f)",
+            num_sequences, temperature,
+        )
+        resp = await client.post(
+            PROTEINMPNN_URL,
+            json=payload,
+            headers=_headers(),
+        )
+        resp.raise_for_status()
+        result = resp.json()
+
+    logger.info("ProteinMPNN: Generated %d sequence designs", num_sequences)
+    return result
+
+
+# =============================================================================
+# MSA Search — Multiple Sequence Alignment
+# =============================================================================
+
+async def msa_search(
+    sequence: str,
+    databases: Optional[list[str]] = None,
+) -> dict:
+    """
+    Run multiple sequence alignment search using ColabFold MSA NIM.
+
+    Searches against Uniref30, PDB70, and colabfold_envdb.
+    Required as input for AlphaFold2 structure prediction.
+
+    Args:
+        sequence: Amino acid sequence (1-letter code)
+        databases: Databases to search (default: all available)
+
+    Returns:
+        dict with MSA alignments in A3M format
+    """
+    payload = {"sequence": sequence}
+    if databases:
+        payload["databases"] = databases
+
+    async with httpx.AsyncClient(timeout=300) as client:
+        logger.info("MSA Search: Aligning %d-residue sequence", len(sequence))
+        resp = await client.post(
+            MSA_SEARCH_URL,
+            json=payload,
+            headers=_headers(),
+        )
+        resp.raise_for_status()
+        result = resp.json()
+
+    logger.info("MSA Search: Alignment complete")
+    return result
+
+
+# =============================================================================
+# ESM-2 650M — Protein Embeddings (DEGRADED — retry logic)
+# =============================================================================
+
+async def esm2_embed(
+    sequences: list[str],
+    max_retries: int = 3,
+    retry_delay: float = 2.0,
+) -> dict:
+    """
+    Get protein embeddings using ESM-2 650M NIM.
+
+    STATUS: DEGRADED — NVIDIA endpoint returns 500 errors intermittently.
+    This function includes retry logic to handle transient failures.
+
+    Args:
+        sequences: List of amino acid sequences
+        max_retries: Maximum number of retry attempts
+        retry_delay: Delay between retries in seconds (doubles each retry)
+
+    Returns:
+        dict with embedding vectors
+
+    Raises:
+        httpx.HTTPStatusError: After all retries exhausted
+    """
+    import asyncio
+
+    payload = {"sequences": sequences}
+    last_error = None
+
+    for attempt in range(max_retries):
+        try:
+            async with httpx.AsyncClient(timeout=TIMEOUT) as client:
+                logger.info(
+                    "ESM-2: Embedding %d sequences (attempt %d/%d)",
+                    len(sequences), attempt + 1, max_retries,
+                )
+                resp = await client.post(
+                    ESM2_URL,
+                    json=payload,
+                    headers=_headers(),
+                )
+                resp.raise_for_status()
+                result = resp.json()
+                logger.info("ESM-2: Embedding complete for %d sequences", len(sequences))
+                return result
+        except httpx.HTTPStatusError as e:
+            last_error = e
+            if e.response.status_code == 500 and attempt < max_retries - 1:
+                delay = retry_delay * (2 ** attempt)
+                logger.warning(
+                    "ESM-2: HTTP 500 error (attempt %d/%d), retrying in %.1fs: %s",
+                    attempt + 1, max_retries, delay, e,
+                )
+                await asyncio.sleep(delay)
+            else:
+                raise
+        except Exception as e:
+            last_error = e
+            if attempt < max_retries - 1:
+                delay = retry_delay * (2 ** attempt)
+                logger.warning(
+                    "ESM-2: Error (attempt %d/%d), retrying in %.1fs: %s",
+                    attempt + 1, max_retries, delay, e,
+                )
+                await asyncio.sleep(delay)
+            else:
+                raise
+
+    raise last_error  # Should not reach here, but safety net
+
 
 # =============================================================================
 # Batch Operations — SMA-specific workflows
@@ -433,6 +823,61 @@ async def predict_smn2_rna_structure() -> dict:
     ])
 
 
+async def design_rock2_binder(
+    rock2_pdb: Optional[str] = None,
+) -> dict:
+    """
+    Design a protein binder for ROCK2 kinase domain using RFdiffusion + ProteinMPNN.
+
+    ROCK2 is a high-priority SMA target (actin dynamics pathway).
+    This pipeline: RFdiffusion backbone → ProteinMPNN sequence → ESMfold validation.
+
+    Args:
+        rock2_pdb: PDB content for ROCK2. If None, downloads AlphaFold structure.
+
+    Returns:
+        dict with designed binders (backbone + sequence + predicted structure)
+    """
+    import urllib.request
+
+    # Get ROCK2 structure (UniProt O75116)
+    if not rock2_pdb:
+        logger.info("Downloading ROCK2 AlphaFold structure...")
+        url = "https://alphafold.ebi.ac.uk/files/AF-O75116-F1-model_v6.pdb"
+        with urllib.request.urlopen(url) as resp:
+            rock2_pdb = resp.read().decode()
+
+    # Step 1: Design binder backbones with RFdiffusion
+    # Target the kinase domain active site (residues 85-180 approximate)
+    backbones = await design_binder(
+        target_pdb=rock2_pdb,
+        hotspot_residues=["A121", "A154", "A160", "A176"],  # Kinase domain hotspots
+        binder_length=80,
+        num_designs=5,
+    )
+
+    # Step 2: Design sequences for each backbone with ProteinMPNN
+    results = []
+    for i, backbone in enumerate(backbones.get("designs", [])):
+        sequences = await design_sequence(
+            backbone_pdb=backbone.get("pdb", ""),
+            num_sequences=3,
+            temperature=0.1,
+        )
+        results.append({
+            "backbone_index": i,
+            "backbone": backbone,
+            "sequences": sequences,
+        })
+
+    return {
+        "target": "ROCK2 (O75116)",
+        "pipeline": "RFdiffusion → ProteinMPNN",
+        "num_backbones": len(backbones.get("designs", [])),
+        "designs": results,
+    }
+
+
 # =============================================================================
 # Utility
 # =============================================================================
@@ -445,14 +890,23 @@ def check_api_key() -> bool:
 async def check_nim_health() -> dict:
     """Check health of all NIM endpoints."""
     results = {}
-    # Cloud NIMs don't have a /health endpoint — just check if the API responds
     endpoints = {
         "diffdock": DIFFDOCK_URL,
         "openfold3": OPENFOLD3_URL,
         "genmol": GENMOL_GENERATE_URL,
         "molmim": MOLMIM_URL,
-        "rnapro": RNAPRO_URL,
+        "alphafold2": ALPHAFOLD2_URL,
+        "alphafold2_multimer": ALPHAFOLD2_MULTIMER_URL,
+        "esmfold": ESMFOLD_URL,
+        "rfdiffusion": RFDIFFUSION_URL,
+        "proteinmpnn": PROTEINMPNN_URL,
+        "msa_search": MSA_SEARCH_URL,
+        "esm2": ESM2_URL,
     }
+
+    # RNAPro only if self-hosted URL is configured
+    if RNAPRO_URL:
+        endpoints["rnapro"] = RNAPRO_URL
 
     async with httpx.AsyncClient(timeout=10) as client:
         for name, url in endpoints.items():
@@ -472,5 +926,12 @@ async def check_nim_health() -> dict:
                 }
             except Exception as e:
                 results[name] = {"status": "unreachable", "error": str(e)}
+
+    # Always report RNAPro status
+    if "rnapro" not in results:
+        results["rnapro"] = {
+            "status": "not_configured",
+            "note": "No cloud API. Set RNAPRO_SELF_URL for self-hosted instance.",
+        }
 
     return results

@@ -53,3 +53,6 @@ docs/meeting-prep-simon*
 docs/presentation-simon*
 docs/proposals/*-collaboration*
 docs/private/
+*.pptx
+docs/presentations/SMA_Research_Platform*
+docs/presentations/generate_*.py

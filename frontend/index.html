@@ -1654,7 +1654,14 @@
 
 <section class="section" id="screening">
     <div class="section-header"><h2 class="section-title">Drug Screening</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="screening-count"></span></div>
-    <p class="section-desc">Computational molecular analysis of ChEMBL compounds. RDKit screens for Lipinski drug-likeness, blood-brain barrier permeability, CNS MPO score, QED, and PAINS alerts. Compounds that can cross the BBB are critical for reaching motor neurons. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/drug_screener.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a></p>
+    <p class="section-desc">
+        This pipeline computationally filters thousands of ChEMBL compounds down to the best candidates for SMA drug discovery. The process runs in six steps: (1) <strong>ChEMBL query</strong> — compounds bioactive against top-scored SMA targets are fetched with their SMILES strings; (2) <strong>RDKit descriptor calculation</strong> — molecular weight, LogP, rotatable bonds, H-bond donors/acceptors, TPSA, and QED are computed from SMILES; (3) <strong>Lipinski Rule of 5</strong> — MW &lt; 500, LogP &lt; 5, HBD &le; 5, HBA &le; 10; compounds failing two or more rules are flagged as non-drug-like; (4) <strong>BBB permeability estimate</strong> — TPSA &lt; 90 Å² and MW &lt; 450 are used as a heuristic for blood-brain barrier crossing; (5) <strong>CNS MPO score</strong> — a 0–6 composite of LogP, LogD, MW, TPSA, HBD, and pKa tuned for CNS drug development; (6) <strong>PAINS filter</strong> — substructure alerts for pan-assay interference compounds that cause false positives in biochemical screens.
+        <br><br>
+        <strong>Why BBB penetration matters for SMA:</strong> SMA is caused by the loss of SMN protein in lower motor neurons located in the anterior horn of the spinal cord — a compartment behind the blood-brain barrier. Small-molecule therapeutics must cross this barrier to reach motor neurons. Risdiplam (approved 2020) succeeds partly because of its BBB-permeable profile; many otherwise potent compounds fail in SMA because they cannot access the CNS. Compounds with TPSA &gt; 90 Å² or MW &gt; 500 Da are unlikely to achieve meaningful CNS exposure via oral dosing.
+        <br><br>
+        <strong>Score glossary:</strong> <em>Lipinski</em> — binary pass/fail for oral bioavailability potential. <em>BBB</em> — heuristic estimate of CNS penetration (TPSA + MW). <em>CNS MPO</em> — 0–6 score; ≥ 4 is considered CNS-optimized. <em>QED</em> — 0–1 drug-likeness estimate combining eight Lipinski-adjacent properties; &ge; 0.5 is high quality. <em>PAINS</em> — substructure alert for reactive or promiscuous scaffolds that should be deprioritized.
+        <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/reasoning/drug_screener.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source</a>
+    </p>
     <p style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5"><em>Note: Drug-likeness predictions use rule-based heuristics (Lipinski Rule of 5, TPSA-based BBB estimate, QED score). These are filtering tools, not validated PK/tox models.</em></p>
     <div id="screening-summary" class="screen-summary"><div class="loading">Loading screening data...</div></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Top Candidates</h3>
@@ -1683,7 +1690,13 @@
 
 <section class="section" id="repurposing">
     <div class="section-header"><h2 class="section-title">Drug Repurposing</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="repurposing-count"></span></div>
-    <p class="section-desc">Candidates identified through two strategies: (1) drugs successful in related neuromuscular diseases (ALS, DMD, SBMA) that target SMA pathways, and (2) ChEMBL compounds with high bioactivity on top-scored SMA targets. Each candidate has a repurposing score combining target relevance, potency, and clinical advancement.</p>
+    <p class="section-desc">
+        Drug repurposing means finding new therapeutic uses for existing approved drugs — bypassing the 10–15 years and $1–2B typically required for de novo drug development. Repurposed drugs have already passed safety trials, so clinical translation is dramatically faster: Phase I is often skipped and Phase II can start in 2–3 years rather than 10+.
+        <br><br>
+        The platform identifies SMA repurposing candidates through three convergent strategies: (1) <strong>Cross-disease mining</strong> — drugs approved or in trials for related neuromuscular diseases (ALS, Duchenne Muscular Dystrophy, SBMA, CMT) that share molecular targets with SMA; (2) <strong>ChEMBL bioactivity</strong> — known compounds with high pChEMBL values (&ge; 6.0, corresponding to IC₅₀ &le; 1 µM) against top-scored SMA targets; (3) <strong>Pathway overlap</strong> — compounds whose known mechanism overlaps with the actin dynamics, NMJ signaling, or autophagy/survival pathways dysregulated in SMA.
+        <br><br>
+        <strong>Precedent in SMA:</strong> Valproic acid (VPA), originally an epilepsy drug, was one of the first compounds tested in SMA clinical trials — its HDAC inhibition was found to increase SMN2 splicing. Olesoxime (a cholesterol-oxime neuroprotective) reached Phase II. Riluzole (ALS-approved) showed modest motor neuron protection in SMA models. The platform extends this approach computationally, scoring each candidate 0–1 based on target relevance, potency, clinical phase, and pathway convergence. Click any row to see full rationale, mechanism, and target link.
+    </p>
     <div id="repurposing-summary" class="screen-summary"><div class="loading">Loading repurposing candidates...</div></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Top Candidates</h3>
     <div class="table-wrap"><table><thead><tr>
@@ -1694,7 +1707,13 @@
 
 <section class="section" id="candidates">
     <div class="section-header"><h2 class="section-title">Top Drug Candidates</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="candidates-count"></span></div>
-    <p class="section-desc">Integrated ranking combining drug-likeness (QED, Lipinski), BBB/CNS access, ADMET safety, potency (pChEMBL), target relevance, and repurposing evidence. Each candidate is scored 0-1 and assigned a tier (A/B/C). This is the unified view — the best compounds from all analysis pipelines.</p>
+    <p class="section-desc">
+        In drug discovery, a <strong>hit</strong> is a compound that shows measurable activity against a target of interest and passes initial computational filters. This section is the unified ranked list — the best compounds from all analysis pipelines: ChEMBL screening, cross-disease repurposing, and DiffDock virtual binding.
+        <br><br>
+        Each candidate passes through a <strong>6-stage validation pipeline</strong>: (1) <strong>Computational</strong> — drug-likeness filters (Lipinski, QED, PAINS), BBB/CNS MPO scoring; (2) <strong>Structural</strong> — DiffDock pose prediction against SMA target binding pockets, confidence scoring; (3) <strong>Analog search</strong> — ChEMBL SAR analysis to identify structurally similar compounds with known SMA-relevant activity; (4) <strong>ADMET prediction</strong> — rule-based absorption, distribution, metabolism, excretion, and toxicity estimates; (5) <strong>Literature review</strong> — automated PubMed search for the compound + SMA target co-occurrence; (6) <strong>Experimental design</strong> — suggested assay types (SMN2 splicing reporter, NMJ morphology, motor neuron survival) for wet-lab validation.
+        <br><br>
+        Candidates are scored 0–1 (integrated score) and assigned a tier: <strong>Tier A</strong> (≥ 0.6) — strong multi-dimensional evidence, prioritized for experimental follow-up; <strong>Tier B</strong> (0.4–0.6) — moderate evidence, worth secondary screening; <strong>Tier C</strong> (&lt; 0.4) — computational-only signal, lower priority. Click any row to see full molecular properties, BBB status, DiffDock score, validation stage, and target link.
+    </p>
     <p style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5"><em>Note: ADMET predictions use rule-based heuristics (Lipinski Rule of 5, TPSA-based BBB estimate, QED score, PAINS substructure filters). These are computational filtering tools, not validated pharmacokinetic or toxicology models.</em></p>
     <div id="candidates-summary" class="screen-summary"><div class="loading">Loading integrated candidates...</div></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Ranked Candidates</h3>
@@ -1748,7 +1767,8 @@
 
 <section class="section" id="comparative">
     <div class="section-header"><h2 class="section-title">Cross-Species Comparative</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="comparative-count"></span></div>
-    <p class="section-desc">Conservation mapping of SMA-relevant targets across model organisms. Click any species card for details, click any heatmap cell to see the ortholog. Organisms with natural regeneration or motor neuron resilience reveal therapeutic pathways. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/comparative.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source &rarr;</a></p>
+    <p class="section-desc">Cross-species conservation mapping of SMA-relevant molecular targets across 7 model organisms. Each organism offers unique advantages for SMA research: mice (<em>Mus musculus</em>) serve as the primary disease model with SMN-delta7 and Taiwanese SMA strains; zebrafish (<em>Danio rerio</em>) enable rapid drug screening with motor neuron fluorescent reporters; the naked mole rat (<em>Heterocephalus glaber</em>) shows exceptional neuronal resilience and resistance to neurodegeneration; axolotl offers complete spinal cord regeneration. Conservation scores are computed from NCBI Ortholog data — a score of 71% or higher indicates strong evolutionary conservation, suggesting the target's function is preserved across species and findings from model organisms are likely translatable to humans. Click any species card to see which SMA targets have orthologs in that organism, or click any heatmap cell to view the specific ortholog with links to NCBI Gene and STRING-DB. <a href="https://github.com/Bryzant-Labs/sma-platform/tree/master/src/sma_platform/api/routes/comparative.py" target="_blank" style="color:var(--accent);font-size:11px;margin-left:8px">View source &rarr;</a></p>
+    <div id="comparative-insight" style="margin-top:12px"></div>
     <div class="species-grid" id="species-grid"><div class="loading" style="grid-column:1/-1;text-align:center;padding:30px">Loading species data...</div></div>
     <div id="species-detail" style="display:none;margin:16px 0;background:var(--panel);border:1px solid var(--line);padding:20px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -2031,7 +2051,7 @@
     <div class="section-header"><h2 class="section-title">Gene Edit Versioning</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span></div>
     <p class="section-desc">"GitHub for Life" &mdash; every SMN2 sequence variant is a deterministic commit with a SHA-256 hash. The disease (SMA) is a single-nucleotide bug (C&rarr;T at position 6). Therapeutic edits are patches that restore function. Track the lineage from SMN1 (healthy) through SMN2 (disease) to corrected variants.</p>
     <div style="background:var(--panel);border-left:3px solid var(--accent);padding:12px 16px;margin-bottom:20px;font-size:12px;line-height:1.7">
-        <strong>"GitHub for Life" — what does that mean?</strong> In software, every code change is a versioned commit with a unique hash. Here we apply the same concept to DNA: each SMN gene variant is hashed deterministically, so two sequences produce the same hash if and only if they are identical. The single C&rarr;T substitution at exon 7 position 6 that distinguishes <span id="versions-smn1-link" style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="navigateTo('targets')">SMN1</span> from <span id="versions-smn2-link" style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="navigateTo('targets')">SMN2</span> changes one bit in a 30,000-base sequence — yet this single nucleotide determines whether a patient can walk or not. Therapeutic edits (base editing, prime editing, ASO-mediated splicing correction) are tracked as patches on top of the disease variant. Click any row in the version tree to see the exact base change and its functional impact.
+        <strong>"GitHub for Life" — what does that mean?</strong> In software, every code change is a versioned commit with a unique hash. Here we apply the same concept to DNA: each SMN gene variant is hashed deterministically, so two sequences produce the same hash if and only if they are identical. The single C&rarr;T substitution at exon 7 position 6 that distinguishes <span id="versions-smn1-link" style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="showSection('targets')">SMN1</span> from <span id="versions-smn2-link" style="cursor:pointer;color:var(--accent);text-decoration:underline" onclick="showSection('targets')">SMN2</span> changes one bit in a 30,000-base sequence — yet this single nucleotide determines whether a patient can walk or not. Therapeutic edits (base editing, prime editing, ASO-mediated splicing correction) are tracked as patches on top of the disease variant. Click any row in the version tree to see the exact base change and its functional impact.
     </div>
     <div id="versions-lineage"></div>
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Version Tree</h3>
@@ -2833,27 +2853,55 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     /** Append text with bold (**text**) and PMID links safely */
     function appendFormattedText(el, text) {
-        // Split on **bold** markers
-        var parts = text.split(/(\*\*[^*]+\*\*)/g);
+        // Split on **bold**, [links](url), and PMID patterns
+        var parts = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\)|PMID:\s*\d+)/g);
         for (var pi = 0; pi < parts.length; pi++) {
             var part = parts[pi];
+            if (!part) continue;
             if (part.startsWith('**') && part.endsWith('**')) {
+                // Bold text
                 var strong = document.createElement('strong');
                 strong.textContent = part.slice(2, -2);
                 el.appendChild(strong);
+            } else if (part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)) {
+                // Markdown link [text](url)
+                var linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+                var a = document.createElement('a');
+                a.textContent = linkMatch[1];
+                var linkUrl = linkMatch[2];
+                // Only allow safe URLs (https, http)
+                if (linkUrl.match(/^https?:\/\//)) {
+                    a.href = linkUrl;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                } else {
+                    a.href = '#';
+                }
+                a.style.cssText = 'color:var(--accent);text-decoration:underline;font-weight:500';
+                el.appendChild(a);
+            } else if (part.match(/^PMID:\s*(\d+)$/)) {
+                // PMID link
+                var pmatch = part.match(/PMID:\s*(\d+)/);
+                var pa = document.createElement('a');
+                pa.href = 'https://pubmed.ncbi.nlm.nih.gov/' + pmatch[1] + '/';
+                pa.target = '_blank';
+                pa.rel = 'noopener';
+                pa.textContent = part;
+                pa.style.color = 'var(--accent)';
+                el.appendChild(pa);
             } else {
-                // Handle PMID links
+                // Plain text — still check for inline PMIDs
                 var pmidParts = part.split(/(PMID:\s*\d+)/g);
                 for (var pj = 0; pj < pmidParts.length; pj++) {
-                    var pmatch = pmidParts[pj].match(/PMID:\s*(\d+)/);
-                    if (pmatch) {
-                        var a = document.createElement('a');
-                        a.href = 'https://pubmed.ncbi.nlm.nih.gov/' + pmatch[1] + '/';
-                        a.target = '_blank';
-                        a.rel = 'noopener';
-                        a.textContent = pmidParts[pj];
-                        a.style.color = 'var(--accent)';
-                        el.appendChild(a);
+                    var pm = pmidParts[pj].match(/PMID:\s*(\d+)/);
+                    if (pm) {
+                        var pa2 = document.createElement('a');
+                        pa2.href = 'https://pubmed.ncbi.nlm.nih.gov/' + pm[1] + '/';
+                        pa2.target = '_blank';
+                        pa2.rel = 'noopener';
+                        pa2.textContent = pmidParts[pj];
+                        pa2.style.color = 'var(--accent)';
+                        el.appendChild(pa2);
                     } else {
                         el.appendChild(document.createTextNode(pmidParts[pj]));
                     }
@@ -3125,7 +3173,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 newsBadgeT.style.cssText = 'margin-right:6px;cursor:pointer;border:none;padding:2px 7px;font-size:10px;font-weight:700;border-radius:10px;background:var(--accent,#3b82f6);color:#fff;vertical-align:middle;line-height:1.4';
                 newsBadgeT.textContent = '\uD83D\uDCF0 News';
                 newsBadgeT.title = newsTagIndex[t.symbol.toLowerCase()].length + ' related news post(s)';
-                (function(newsBtn) { newsBtn.addEventListener('click', function(e) { e.stopPropagation(); navigateTo('news'); }); })(newsBadgeT);
+                (function(newsBtn) { newsBtn.addEventListener('click', function(e) { e.stopPropagation(); showSection('news'); }); })(newsBadgeT);
                 btnTd.appendChild(newsBadgeT);
             }
             btnTd.appendChild(ddBtn);
@@ -3938,7 +3986,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 newsBadgeD.style.cssText = 'margin-right:6px;cursor:pointer;border:none;padding:2px 7px;font-size:10px;font-weight:700;border-radius:10px;background:var(--accent,#3b82f6);color:#fff;vertical-align:middle;line-height:1.4';
                 newsBadgeD.textContent = '\uD83D\uDCF0 News';
                 newsBadgeD.title = newsTagIndex[d.name.toLowerCase()].length + ' related news post(s)';
-                newsBadgeD.addEventListener('click', function(e) { e.stopPropagation(); navigateTo('news'); });
+                newsBadgeD.addEventListener('click', function(e) { e.stopPropagation(); showSection('news'); });
                 btnTd.insertBefore(newsBadgeD, btn);
             }
             btnTd.appendChild(btn);
@@ -4229,7 +4277,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 evt.preventDefault();
                 var sym = this.getAttribute('href').split('#')[1];
                 if (sym) {
-                    navigateTo('claims');
+                    showSection('claims');
                     setTimeout(function() {
                         var sel = document.getElementById('claims-f-target');
                         if (sel) { sel.value = decodeURIComponent(sym); if (typeof applyClaimFilters === 'function') applyClaimFilters(); }
@@ -4241,7 +4289,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             sourceLink.title = 'View source papers';
             sourceLink.addEventListener('click', function(evt) {
                 evt.preventDefault();
-                navigateTo('sources');
+                showSection('sources');
             });
             scoreRow.appendChild(sourceLink);
             var conf = h.confidence || 0;
@@ -4871,7 +4919,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
                 var tdClaims = document.createElement('td');
                 var claimLink = el('a', {text: String(t.claim_count || 0), style: 'color:var(--accent);text-decoration:none;cursor:pointer;border-bottom:1px dashed var(--muted)'});
-                claimLink.addEventListener('click', function(evt) { evt.stopPropagation(); navigateTo('claims'); });
+                claimLink.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('claims'); });
                 tdClaims.appendChild(claimLink);
                 row.appendChild(tdClaims);
 
@@ -5381,7 +5429,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var end = Math.min(start + PER_PAGE, filtered.length);
         for (var i = start; i < end; i++) {
             var c = filtered[i];
-            body.appendChild(el('tr', {className: 'compound-row'}, [
+            var expandId = 'scr-expand-' + start + '-' + i;
+            var mainRow = el('tr', {className: 'compound-row', style: 'cursor:pointer', title: 'Click to expand details'}, [
                 td(c.chembl_id, 'mono', 'font-weight:600'),
                 el('td', {className: 'smiles-cell', text: c.smiles, title: c.smiles}),
                 td(String(c.mw), 'mono'),
@@ -5392,7 +5441,36 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 tdBadge(c.lipinski_pass ? 'PASS' : 'fail', c.lipinski_pass ? 'badge-green' : 'badge-red'),
                 tdBadge(c.pains_alert_estimated ? 'ALERT' : 'clean', c.pains_alert_estimated ? 'badge-red' : 'badge-green'),
                 td(c.best_pchembl ? String(c.best_pchembl) : '-', 'mono')
-            ]));
+            ]);
+            (function(eid) { mainRow.addEventListener('click', function() { toggleExpand(eid); }); })(expandId);
+            body.appendChild(mainRow);
+            // Expandable detail row
+            var expandRow = el('tr', {className: 'expand-row', id: expandId});
+            var expandCell = el('td', {colSpan: 10, className: 'expand-cell'});
+            var bbbExplain = c.estimated_bbb_permeable
+                ? 'Estimated CNS-penetrant (TPSA \u2264 90 \u00c5\u00b2, MW \u2264 450 Da) — likely to cross the blood-brain barrier and reach motor neurons in the spinal cord.'
+                : 'Estimated poor CNS penetration (TPSA or MW above thresholds) — may not reach spinal motor neurons at therapeutic concentrations.';
+            var flags = [];
+            if (!c.lipinski_pass) flags.push('Lipinski violation');
+            if (c.pains_alert_estimated) flags.push('PAINS alert — possible assay interference');
+            if (c.estimated_qed < 0.3) flags.push('Low QED (' + c.estimated_qed + ') — poor drug-likeness');
+            var detailHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px 24px;font-size:12px;line-height:1.7">'
+                + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">ChEMBL ID</span><br>'
+                + '<a href="https://www.ebi.ac.uk/chembl/compound_report_card/' + (c.chembl_id || '') + '/" target="_blank" style="color:var(--accent);font-weight:600">' + (c.chembl_id || '-') + ' &#8599;</a></div>'
+                + (c.target || c.target_symbol ? '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">Target</span><br><span style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="showSection(\'targets\')">' + (c.target || c.target_symbol) + ' &#8599;</span></div>' : '')
+                + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">MW / LogP</span><br><span class="mono">' + (c.mw || '-') + ' Da / ' + (c.logp || '-') + '</span></div>'
+                + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">QED Score</span><br><span class="mono">' + (c.estimated_qed || '-') + '</span> <span style="color:var(--muted);font-size:11px">(0–1; \u2265 0.5 = high quality)</span></div>'
+                + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">CNS MPO</span><br><span class="mono">' + (c.estimated_cns_mpo || '-') + '/6</span> <span style="color:var(--muted);font-size:11px">(\u2265 4 = CNS-optimized)</span></div>'
+                + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">pChEMBL (potency)</span><br><span class="mono">' + (c.best_pchembl || '-') + '</span> <span style="color:var(--muted);font-size:11px">(\u2265 6 \u2248 IC\u2085\u2080 \u2264 1 \u03bcM)</span></div>'
+                + '</div>'
+                + '<div style="margin-top:10px;font-size:12px;color:var(--text-secondary)">'
+                + '<strong>BBB Assessment:</strong> ' + bbbExplain
+                + (flags.length ? '<br><strong style="color:#d97606">Flags:</strong> ' + flags.join(' &bull; ') : '')
+                + '</div>'
+                + (c.smiles ? '<div style="margin-top:8px;font-size:11px;color:var(--muted)"><strong>SMILES:</strong> <span style="font-family:monospace;word-break:break-all">' + c.smiles + '</span></div>' : '');
+            expandCell.innerHTML = detailHtml;
+            expandRow.appendChild(expandCell);
+            body.appendChild(expandRow);
         }
         if (filtered.length === 0) {
             body.appendChild(el('tr', null, [el('td', {colSpan: 10, className: 'loading', text: 'No compounds match this filter.'})]));
@@ -5486,23 +5564,89 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
                 summary.appendChild(card);
             }
-            // Candidates table
-            var body = clearEl('repurposing-body');
-            var candidates = data.candidates || [];
+            // Candidates table with expandable rows
+            // Store all repurposing data for filtering
+            var repurposingAllData = data.candidates || [];
+            var repurposingPhaseFilter = '';
+            function renderRepurposingTable(filterPhase) {
+                var body = clearEl('repurposing-body');
+                var candidates = filterPhase ? repurposingAllData.filter(function(c) {
+                    return (c.trial_phase || '').toLowerCase() === filterPhase.toLowerCase();
+                }) : repurposingAllData;
+                // Show active filter indicator
+                var filterBar = document.getElementById('repurposing-filter-bar');
+                if (filterBar) filterBar.remove();
+                if (filterPhase) {
+                    var bar = el('div', {id: 'repurposing-filter-bar'});
+                    bar.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);font-size:12px';
+                    bar.appendChild(el('span', {text: 'Filtered: ' + filterPhase + ' (' + candidates.length + ' results)'}));
+                    var clearBtn = el('button', {className: 'page-btn', text: 'Clear filter'});
+                    clearBtn.style.cssText = 'padding:2px 10px;font-size:11px';
+                    clearBtn.addEventListener('click', function() { repurposingPhaseFilter = ''; renderRepurposingTable(''); });
+                    bar.appendChild(clearBtn);
+                    var tableWrap = document.querySelector('#repurposing .table-wrap');
+                    if (tableWrap) tableWrap.parentNode.insertBefore(bar, tableWrap);
+                }
             for (var i = 0; i < candidates.length; i++) {
-                var c = candidates[i];
-                var scoreClass = c.repurposing_score >= 0.7 ? 'badge-green' : c.repurposing_score >= 0.4 ? 'badge-amber' : 'badge-gray';
-                var sourceClass = c.source === 'cross_disease' ? 'badge-blue' : 'badge-purple';
-                body.appendChild(el('tr', {className: 'compound-row'}, [
-                    td(String(c.rank || (i+1)), 'mono', 'font-weight:600;text-align:center'),
-                    td(c.compound_name, 'mono', 'font-weight:600'),
-                    td(c.proposed_sma_target || '-'),
-                    tdBadge(String(c.repurposing_score), scoreClass),
-                    tdBadge(c.source === 'cross_disease' ? 'Cross-Disease' : 'ChEMBL', sourceClass),
-                    td(c.trial_phase || '-'),
-                    el('td', {className: 'rationale-cell', text: (c.rationale || '').substring(0, 120) + ((c.rationale || '').length > 120 ? '...' : ''), title: c.rationale || ''})
-                ]));
+                (function(c, idx) {
+                    var expandId = 'rep-expand-' + idx;
+                    var scoreClass = c.repurposing_score >= 0.7 ? 'badge-green' : c.repurposing_score >= 0.4 ? 'badge-amber' : 'badge-gray';
+                    var sourceClass = c.source === 'cross_disease' ? 'badge-blue' : 'badge-purple';
+                    // Target cell - clickable to navigate to targets section
+                    var targetTd = el('td');
+                    var targetSpan = el('span', {text: (c.proposed_sma_target || '-') + ' \u2197'});
+                    targetSpan.style.cssText = 'cursor:pointer;color:var(--accent);font-weight:600';
+                    targetSpan.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('targets'); });
+                    targetTd.appendChild(targetSpan);
+                    // Phase cell - clickable to filter by phase
+                    var phaseTd = el('td');
+                    var phaseText = c.trial_phase || '-';
+                    var phaseSpan = el('span', {text: phaseText});
+                    var phaseClass = phaseText.toLowerCase() === 'approved' ? 'badge-green' : phaseText.toLowerCase().indexOf('phase') >= 0 ? 'badge-blue' : 'badge-gray';
+                    phaseSpan.className = 'badge ' + phaseClass;
+                    phaseSpan.style.cursor = 'pointer';
+                    phaseSpan.title = 'Click to filter by ' + phaseText;
+                    phaseSpan.addEventListener('click', function(evt) { evt.stopPropagation(); repurposingPhaseFilter = phaseText; renderRepurposingTable(phaseText); });
+                    phaseTd.appendChild(phaseSpan);
+                    var mainRow = el('tr', {className: 'compound-row', style: 'cursor:pointer', title: 'Click to expand details'}, [
+                        td(String(c.rank || (idx+1)), 'mono', 'font-weight:600;text-align:center'),
+                        td(c.compound_name, 'mono', 'font-weight:600'),
+                        targetTd,
+                        tdBadge(String(c.repurposing_score), scoreClass),
+                        tdBadge(c.source === 'cross_disease' ? 'Cross-Disease' : 'ChEMBL', sourceClass),
+                        phaseTd,
+                        el('td', {className: 'rationale-cell', text: (c.rationale || '').substring(0, 120) + ((c.rationale || '').length > 120 ? '...' : ''), title: c.rationale || ''})
+                    ]);
+                    mainRow.addEventListener('click', function() { toggleExpand(expandId); });
+                    body.appendChild(mainRow);
+                    // Expandable detail row
+                    var expandRow = el('tr', {className: 'expand-row', id: expandId});
+                    var expandCell = el('td', {colSpan: 7, className: 'expand-cell'});
+                    var sourceLabel = c.source === 'cross_disease'
+                        ? 'Cross-disease: drug approved or in trials for a related neuromuscular disease (ALS, DMD, SBMA) that shares a molecular target with SMA'
+                        : 'ChEMBL: high bioactivity compound (\u2265 1 \u03bcM potency) identified against a top-scored SMA target from ChEMBL database';
+                    var detailHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px 24px;font-size:12px;line-height:1.7">'
+                        + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">Compound</span><br><strong>' + (c.compound_name || '-') + '</strong>'
+                        + (c.chembl_id ? ' &mdash; <a href="https://www.ebi.ac.uk/chembl/compound_report_card/' + c.chembl_id + '/" target="_blank" style="color:var(--accent);font-size:11px">' + c.chembl_id + ' &#8599;</a>' : '') + '</div>'
+                        + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">SMA Target</span><br>'
+                        + '<span style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="showSection(\'targets\')">' + (c.proposed_sma_target || '-') + ' &#8599;</span></div>'
+                        + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">Repurposing Score</span><br><span class="mono" style="font-weight:600">' + (c.repurposing_score || '-') + '</span> <span style="color:var(--muted);font-size:11px">(0\u20131; \u2265 0.7 = high priority)</span></div>'
+                        + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">Clinical Phase</span><br>' + (c.trial_phase || 'Not in trials') + '</div>'
+                        + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">Original Indication</span><br>' + (c.original_indication || c.disease_context || '-') + '</div>'
+                        + '</div>'
+                        + '<div style="margin-top:10px;font-size:12px;color:var(--text-secondary)"><strong>Discovery Strategy:</strong> ' + sourceLabel + '</div>'
+                        + (c.rationale ? '<div style="margin-top:8px;font-size:12px;color:var(--text-secondary)"><strong>Rationale:</strong> ' + c.rationale + '</div>' : '')
+                        + (c.mechanism ? '<div style="margin-top:6px;font-size:12px;color:var(--text-secondary)"><strong>Mechanism:</strong> ' + c.mechanism + '</div>' : '');
+                    expandCell.innerHTML = detailHtml;
+                    expandRow.appendChild(expandCell);
+                    body.appendChild(expandRow);
+                })(candidates[i], i);
             }
+            if (candidates.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: filterPhase ? 'No candidates match "' + filterPhase + '".' : 'No repurposing candidates available.'})]));
+            }
+            } // end renderRepurposingTable
+            renderRepurposingTable('');
         }).catch(function(e) {
             clearEl('repurposing-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Repurposing data not available: ' + e.message})]));
         });
@@ -5534,24 +5678,68 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var start = (candidatesPage - 1) * PER_PAGE;
         var end = Math.min(start + PER_PAGE, filtered.length);
         for (var i = start; i < end; i++) {
-            var c = filtered[i];
-            var scoreClass = c.integrated_score >= 0.6 ? 'badge-green' : c.integrated_score >= 0.4 ? 'badge-amber' : 'badge-gray';
-            var tierClass = c.tier === 'A' ? 'badge-green' : c.tier === 'B' ? 'badge-amber' : 'badge-gray';
-            var admetClass = (c.admet_score || 0) >= 0.6 ? 'badge-green' : (c.admet_score || 0) >= 0.4 ? 'badge-amber' : 'badge-red';
-            var flagsText = (c.flags || []).join(', ') || 'none';
-            var flagsClass = (c.flags || []).length > 0 ? 'badge-red' : 'badge-green';
-            body.appendChild(el('tr', {className: 'compound-row'}, [
-                td(String(c.rank || (i + 1)), 'mono', 'font-weight:600;text-align:center'),
-                td(c.chembl_id, 'mono', 'font-weight:600'),
-                td(c.target || '-'),
-                tdBadge(String(c.integrated_score), scoreClass),
-                tdBadge(c.tier, tierClass),
-                td(String(c.qed || '-'), 'mono'),
-                tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
-                tdBadge(c.admet_score ? String(c.admet_score) : '-', admetClass),
-                td(c.pchembl ? String(c.pchembl) : '-', 'mono'),
-                tdBadge(flagsText, flagsClass)
-            ]));
+            (function(c, idx) {
+                var expandId = 'cand-expand-' + start + '-' + idx;
+                var scoreClass = c.integrated_score >= 0.6 ? 'badge-green' : c.integrated_score >= 0.4 ? 'badge-amber' : 'badge-gray';
+                var tierClass = c.tier === 'A' ? 'badge-green' : c.tier === 'B' ? 'badge-amber' : 'badge-gray';
+                var admetClass = (c.admet_score || 0) >= 0.6 ? 'badge-green' : (c.admet_score || 0) >= 0.4 ? 'badge-amber' : 'badge-red';
+                var flagsText = (c.flags || []).join(', ') || 'none';
+                var flagsClass = (c.flags || []).length > 0 ? 'badge-red' : 'badge-green';
+                var mainRow = el('tr', {className: 'compound-row', style: 'cursor:pointer', title: 'Click to expand details'}, [
+                    td(String(c.rank || (idx + 1)), 'mono', 'font-weight:600;text-align:center'),
+                    td(c.chembl_id, 'mono', 'font-weight:600'),
+                    td(c.target || '-'),
+                    tdBadge(String(c.integrated_score), scoreClass),
+                    tdBadge(c.tier, tierClass),
+                    td(String(c.qed || '-'), 'mono'),
+                    tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
+                    tdBadge(c.admet_score ? String(c.admet_score) : '-', admetClass),
+                    td(c.pchembl ? String(c.pchembl) : '-', 'mono'),
+                    tdBadge(flagsText, flagsClass)
+                ]);
+                mainRow.addEventListener('click', function() { toggleExpand(expandId); });
+                body.appendChild(mainRow);
+                // Expandable detail row with full compound info
+                var expandRow = el('tr', {className: 'expand-row', id: expandId});
+                var expandCell = el('td', {colSpan: 10, className: 'expand-cell'});
+                var bbbExplain = c.bbb_permeable
+                    ? 'Estimated CNS-penetrant \u2014 predicted to cross the blood-brain barrier to reach motor neurons in the spinal cord.'
+                    : 'Estimated poor CNS penetration \u2014 may not reach spinal motor neurons at therapeutic concentrations without formulation optimization.';
+                var tierExplain = c.tier === 'A'
+                    ? 'Tier A (\u2265 0.6 integrated score): strong multi-dimensional evidence across drug-likeness, potency, BBB, and target relevance. Prioritized for experimental follow-up.'
+                    : c.tier === 'B'
+                    ? 'Tier B (0.4\u20130.6 integrated score): moderate evidence across dimensions. Worth secondary screening.'
+                    : 'Tier C (< 0.4 integrated score): computational-only signal. Lower priority without additional corroboration.';
+                // Validation stage heuristic
+                var valStage = 1;
+                if (c.diffdock_score && c.diffdock_score > 0) valStage = 2;
+                if ((c.admet_score || 0) >= 0.4) valStage = 4;
+                if (c.literature_count && c.literature_count > 0) valStage = 5;
+                var stageLabels = ['Computational', 'Structural (DiffDock)', 'Analog Search', 'ADMET Prediction', 'Literature Review', 'Experimental Design'];
+                var stageHtml = stageLabels.map(function(s, si) {
+                    var active = si < valStage;
+                    return '<span style="font-size:11px;padding:2px 8px;border:1px solid ' + (active ? 'var(--green)' : 'var(--line)') + ';color:' + (active ? 'var(--green)' : 'var(--muted)') + ';margin-right:4px;margin-bottom:4px;display:inline-block">' + (si+1) + '. ' + s + '</span>';
+                }).join('');
+                var detailHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px 24px;font-size:12px;line-height:1.7">'
+                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">ChEMBL ID</span><br>'
+                    + '<a href="https://www.ebi.ac.uk/chembl/compound_report_card/' + (c.chembl_id || '') + '/" target="_blank" style="color:var(--accent);font-weight:600">' + (c.chembl_id || '-') + ' &#8599;</a></div>'
+                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">Target</span><br>'
+                    + '<span style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="showSection(\'targets\')">' + (c.target || '-') + ' &#8599;</span></div>'
+                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">MW / LogP</span><br><span class="mono">' + (c.mw || c.molecular_weight || '-') + ' Da / ' + (c.logp || '-') + '</span></div>'
+                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">TPSA / HBD / HBA</span><br><span class="mono">' + (c.tpsa || '-') + ' \u00c5\u00b2 / ' + (c.hbd || '-') + ' / ' + (c.hba || '-') + '</span></div>'
+                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">QED Score</span><br><span class="mono">' + (c.qed || '-') + '</span> <span style="color:var(--muted);font-size:11px">(\u2265 0.5 = high drug-likeness)</span></div>'
+                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">pChEMBL (potency)</span><br><span class="mono">' + (c.pchembl || '-') + '</span> <span style="color:var(--muted);font-size:11px">(\u2265 6 \u2248 IC\u2085\u2080 \u2264 1 \u03bcM)</span></div>'
+                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">ADMET Score</span><br><span class="mono">' + (c.admet_score || '-') + '</span></div>'
+                    + (c.diffdock_score ? '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">DiffDock Binding Score</span><br><span class="mono">' + c.diffdock_score + '</span> <span style="color:var(--muted);font-size:11px">(AI pose confidence)</span></div>' : '')
+                    + '</div>'
+                    + '<div style="margin-top:10px;font-size:12px;color:var(--text-secondary)"><strong>BBB Assessment:</strong> ' + bbbExplain + '</div>'
+                    + '<div style="margin-top:6px;font-size:12px;color:var(--text-secondary)"><strong>Tier:</strong> ' + tierExplain + '</div>'
+                    + ((c.flags || []).length > 0 ? '<div style="margin-top:6px;font-size:12px;color:#d97606"><strong>Flags:</strong> ' + (c.flags || []).join(' \u2022 ') + '</div>' : '')
+                    + '<div style="margin-top:10px"><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Validation Pipeline Progress</span>' + stageHtml + '</div>';
+                expandCell.innerHTML = detailHtml;
+                expandRow.appendChild(expandCell);
+                body.appendChild(expandRow);
+            })(filtered[i], i);
         }
         if (filtered.length === 0) {
             body.appendChild(el('tr', null, [el('td', {colSpan: 10, className: 'loading', text: 'No candidates match this filter.'})]));
@@ -6192,6 +6380,28 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     };
     function loadComparative() {
         if (loaded.comparative) return; loaded.comparative = true;
+
+        // Info banner — 3 key insights from comparative biology
+        var insightBox = document.getElementById('comparative-insight');
+        if (insightBox && !insightBox.dataset.introAdded) {
+            insightBox.dataset.introAdded = '1';
+            var introCard = document.createElement('div');
+            introCard.style.cssText = 'background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);padding:14px 16px;border-radius:4px;margin-bottom:16px';
+            introCard.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:10px;letter-spacing:0.5px', text: 'KEY INSIGHTS FROM COMPARATIVE BIOLOGY'}));
+            var insights = [
+                '\u25b8  90% of SMA preclinical research uses mice, but zebrafish and C. elegans enable faster genetic screens — drug candidates can be triaged in days rather than months.',
+                '\u25b8  Naked mole rats naturally resist neurodegeneration across a 30-year lifespan. Understanding the molecular basis of this resistance could reveal neuroprotective pathways transferable to SMA therapy.',
+                '\u25b8  Axolotl regeneration genes (mapped in our Regeneration section) may be reactivatable in humans — targets with conserved orthologs in axolotl are priority candidates for spinal cord repair strategies.'
+            ];
+            for (var ii = 0; ii < insights.length; ii++) {
+                var p = document.createElement('p');
+                p.textContent = insights[ii];
+                p.style.cssText = 'font-size:12px;color:var(--text-secondary);line-height:1.7;margin:0 0 6px';
+                introCard.appendChild(p);
+            }
+            insightBox.appendChild(introCard);
+        }
+
         fetch(API + '/comparative/orthologs').then(function(r) { return r.json(); }).then(function(data) {
             if (data && data.detail) { data = []; } // handle 404/error gracefully
             if (!data || !data.length) {
@@ -6223,6 +6433,14 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 card.appendChild(el('div', {className: 'species-card-count', text: String(speciesCounts[sp]) + ' orthologs'}));
                 card.appendChild(el('div', {style: 'font-size:11px;color:var(--text-secondary);margin-top:4px', text: info.desc}));
                 card.appendChild(el('div', {style: 'font-size:10px;color:var(--accent);margin-top:6px', text: 'Click for details \u2192'}));
+                card.addEventListener('mouseenter', function() {
+                    this.style.borderColor = 'var(--accent)';
+                    this.style.boxShadow = '0 2px 12px rgba(99,102,241,0.15)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.borderColor = '';
+                    this.style.boxShadow = '';
+                });
                 (function(species, speciesInfo, allData) {
                     card.addEventListener('click', function() {
                         var detail = document.getElementById('species-detail');
@@ -7034,6 +7252,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     tdBadge(c.drug_likeness_pass ? 'PASS' : 'fail', c.drug_likeness_pass ? 'badge-green' : 'badge-gray')
                 ]));
             }
+            if (top.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 8, className: 'loading', text: 'No molecule screening results available yet.'})]));
+            }
+        }).catch(function(e) {
+            clearEl('molecules-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Molecule screening not available: ' + e.message})]));
+            clearEl('molecules-body').appendChild(el('tr', null, [el('td', {colSpan: 8, text: 'Error loading data: ' + e.message})]));
         });
     }
 
@@ -7441,6 +7665,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     });
                 })(compounds[i], i);
             }
+            if (compounds.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'No docking results for this pocket yet.'})]));
+            }
+        }).catch(function(e) {
+            clearEl('docking-pockets').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Docking data not available: ' + e.message})]));
+            clearEl('docking-body').appendChild(el('tr', null, [el('td', {colSpan: 9, text: 'Error loading docking data: ' + e.message})]));
         });
     }
 
@@ -8197,7 +8427,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                                 var badge = el('span', {text: drugName});
                                 badge.style.cssText = 'display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;background:var(--accent);color:#fff;font-size:10px;font-weight:600;border-radius:3px;cursor:pointer';
                                 badge.title = 'View in Drugs';
-                                badge.addEventListener('click', function(e) { e.stopPropagation(); navigateTo('drugs'); });
+                                badge.addEventListener('click', function(e) { e.stopPropagation(); showSection('drugs'); });
                                 drugWrap.appendChild(badge);
                             })(drugList[di]);
                         }
@@ -8747,32 +8977,104 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // --- Phase 10.3: Digital Twin ---
     function loadDigitalTwin() {
         if (loaded.twin) return; loaded.twin = true;
+        // Wire up drugs badge link
+        var twinDrugsBadge = document.getElementById('twin-drugs-badge');
+        if (twinDrugsBadge) twinDrugsBadge.addEventListener('click', function(e) { e.stopPropagation(); showSection('drugs'); });
         fetch(API + '/twin/compartments').then(function(r) { return r.json(); }).then(function(data) {
             var box = clearEl('twin-compartments');
             var comps = data.compartments || [];
             for (var i = 0; i < comps.length; i++) {
-                var c = comps[i];
-                var card = document.createElement('div');
-                card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px';
-                var h = document.createElement('h4');
-                h.textContent = c.name;
-                h.style.cssText = 'margin:0 0 8px;font-size:12px';
-                card.appendChild(h);
-                var health = document.createElement('span');
-                health.textContent = 'Health: ' + (c.health_baseline * 100).toFixed(0) + '%';
-                health.className = 'badge ' + (c.health_baseline >= 0.35 ? 'badge-blue' : 'badge-red');
-                health.style.cssText = 'display:inline-block;margin-bottom:8px';
-                card.appendChild(health);
-                var vol = document.createElement('span');
-                vol.textContent = c.volume_um3.toLocaleString() + ' \u00b5m\u00b3';
-                vol.className = 'badge';
-                vol.style.cssText = 'display:inline-block;margin-left:4px;margin-bottom:8px';
-                card.appendChild(vol);
-                var defects = document.createElement('p');
-                defects.textContent = (c.sma_defects || []).slice(0, 2).join('; ');
-                defects.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 0';
-                card.appendChild(defects);
-                box.appendChild(card);
+                (function(c, idx) {
+                    var card = document.createElement('div');
+                    card.style.cssText = 'background:var(--panel);border:1px solid var(--line);padding:16px;cursor:pointer;transition:border-color 0.2s';
+                    card.title = 'Click to expand details';
+                    card.addEventListener('mouseenter', function() { card.style.borderColor = 'var(--accent)'; });
+                    card.addEventListener('mouseleave', function() { card.style.borderColor = 'var(--line)'; });
+                    // Header row
+                    var headerDiv = document.createElement('div');
+                    headerDiv.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px';
+                    var h = document.createElement('h4');
+                    h.textContent = c.name;
+                    h.style.cssText = 'margin:0;font-size:13px';
+                    headerDiv.appendChild(h);
+                    var toggle = document.createElement('span');
+                    toggle.textContent = '\u25B6';
+                    toggle.style.cssText = 'font-size:10px;color:var(--muted);transition:transform 0.2s';
+                    headerDiv.appendChild(toggle);
+                    card.appendChild(headerDiv);
+                    // Health bar
+                    var healthPct = (c.health_baseline * 100).toFixed(0);
+                    var healthBarOuter = document.createElement('div');
+                    healthBarOuter.style.cssText = 'background:var(--line);height:6px;border-radius:3px;margin-bottom:8px;overflow:hidden';
+                    var healthBarInner = document.createElement('div');
+                    var barColor = c.health_baseline >= 0.35 ? 'var(--green, #22c55e)' : c.health_baseline >= 0.25 ? 'var(--amber, #d97606)' : 'var(--red, #ef4444)';
+                    healthBarInner.style.cssText = 'height:100%;border-radius:3px;background:' + barColor + ';width:' + healthPct + '%';
+                    healthBarOuter.appendChild(healthBarInner);
+                    card.appendChild(healthBarOuter);
+                    // Badges
+                    var badgeRow = document.createElement('div');
+                    badgeRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px';
+                    var health = document.createElement('span');
+                    health.textContent = 'Health: ' + healthPct + '%';
+                    health.className = 'badge ' + (c.health_baseline >= 0.35 ? 'badge-blue' : 'badge-red');
+                    badgeRow.appendChild(health);
+                    var vol = document.createElement('span');
+                    vol.textContent = c.volume_um3.toLocaleString() + ' \u00b5m\u00b3';
+                    vol.className = 'badge';
+                    badgeRow.appendChild(vol);
+                    var drugBadge = document.createElement('span');
+                    drugBadge.textContent = c.druggable ? 'Druggable' : 'Not druggable';
+                    drugBadge.className = 'badge ' + (c.druggable ? 'badge-green' : 'badge-gray');
+                    badgeRow.appendChild(drugBadge);
+                    card.appendChild(badgeRow);
+                    // Preview of defects
+                    var defectsPreview = document.createElement('p');
+                    defectsPreview.textContent = (c.sma_defects || []).slice(0, 2).join('; ') + ((c.sma_defects || []).length > 2 ? ' ...' : '');
+                    defectsPreview.style.cssText = 'font-size:10px;color:var(--muted);margin:4px 0 0';
+                    card.appendChild(defectsPreview);
+                    // Expandable detail
+                    var detail = document.createElement('div');
+                    detail.style.cssText = 'display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:12px';
+                    // Key processes
+                    var procTitle = document.createElement('div');
+                    procTitle.textContent = 'KEY PROCESSES';
+                    procTitle.style.cssText = 'font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.5px;margin-bottom:6px';
+                    detail.appendChild(procTitle);
+                    var processes = c.key_processes || [];
+                    for (var pi = 0; pi < processes.length; pi++) {
+                        var pEl = document.createElement('div');
+                        pEl.textContent = '\u2022 ' + processes[pi];
+                        pEl.style.cssText = 'font-size:11px;color:var(--text-secondary);line-height:1.6;padding-left:8px';
+                        detail.appendChild(pEl);
+                    }
+                    // SMA defects
+                    var defTitle = document.createElement('div');
+                    defTitle.textContent = 'SMA DEFECTS';
+                    defTitle.style.cssText = 'font-size:10px;font-weight:700;color:#ef4444;letter-spacing:0.5px;margin:10px 0 6px';
+                    detail.appendChild(defTitle);
+                    var defects = c.sma_defects || [];
+                    for (var di = 0; di < defects.length; di++) {
+                        var dEl = document.createElement('div');
+                        dEl.textContent = '\u2022 ' + defects[di];
+                        dEl.style.cssText = 'font-size:11px;color:var(--text-secondary);line-height:1.6;padding-left:8px';
+                        detail.appendChild(dEl);
+                    }
+                    // Druggable status
+                    var drugNote = document.createElement('div');
+                    drugNote.style.cssText = 'margin-top:10px;font-size:11px;padding:6px 10px;background:' + (c.druggable ? 'rgba(34,197,94,0.1)' : 'rgba(148,163,184,0.1)') + ';border-radius:4px';
+                    drugNote.textContent = c.druggable ? '\u2705 This compartment has druggable targets accessible to small molecules or biologics.' : '\u26A0 Limited druggability \u2014 therapeutic access may require specialized delivery (e.g., gene therapy, nanoparticles).';
+                    detail.appendChild(drugNote);
+                    card.appendChild(detail);
+                    // Toggle expand
+                    var expanded = false;
+                    card.addEventListener('click', function() {
+                        expanded = !expanded;
+                        detail.style.display = expanded ? 'block' : 'none';
+                        toggle.style.transform = expanded ? 'rotate(90deg)' : 'rotate(0deg)';
+                        defectsPreview.style.display = expanded ? 'none' : '';
+                    });
+                    box.appendChild(card);
+                })(comps[i], i);
             }
         });
         fetch(API + '/twin/pathways').then(function(r) { return r.json(); }).then(function(data) {
@@ -8994,7 +9296,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                             var drugLinks = el('div', {style: 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'});
                             for (var d = 0; d < p.current_sma_drugs.length; d++) {
                                 var drugBadge = el('span', {className: 'badge badge-blue', text: p.current_sma_drugs[d], style: 'cursor:pointer'});
-                                drugBadge.addEventListener('click', function(evt) { evt.stopPropagation(); navigateTo('drugs'); });
+                                drugBadge.addEventListener('click', function(evt) { evt.stopPropagation(); showSection('drugs'); });
                                 drugLinks.appendChild(drugBadge);
                             }
                             detailTd.appendChild(drugLinks);
@@ -9056,7 +9358,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var exportBtn = el('button', {text: 'Generate Grant Draft', style: 'padding:6px 14px;font-size:11px;font-weight:600;color:#fff;background:var(--accent);border:none;border-radius:4px;cursor:pointer;margin-top:4px'});
                     exportBtn.addEventListener('click', function(evt) {
                         evt.stopPropagation();
-                        navigateTo('search');
+                        showSection('search');
                         setTimeout(function() {
                             var input = document.getElementById('search-input') || document.getElementById('chat-input');
                             if (input) { input.value = 'Generate a ' + g.name + ' grant proposal for our top-ranked SMA hypothesis'; input.focus(); }
@@ -9568,7 +9870,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var targetTd = document.createElement('td');
                 targetTd.style.fontWeight = '600';
                 var targetLink = el('a', {text: t.target || t.target_symbol || '', href: '#', style: 'color:var(--accent);text-decoration:none;cursor:pointer'});
-                targetLink.addEventListener('click', function(evt) { evt.preventDefault(); navigateTo('targets'); });
+                targetLink.addEventListener('click', function(evt) { evt.preventDefault(); showSection('targets'); });
                 targetTd.appendChild(targetLink);
                 // Dates from API
                 var oldestText = t.oldest_paper_date ? t.oldest_paper_date.substring(0, 7) : (t.oldest_paper || t.earliest_year || '-');
@@ -10188,7 +10490,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                         badge.textContent = item.label;
                         badge.addEventListener('mouseenter', function() { this.style.opacity = '0.8'; });
                         badge.addEventListener('mouseleave', function() { this.style.opacity = '1'; });
-                        badge.addEventListener('click', function() { navigateTo(item.section); });
+                        badge.addEventListener('click', function() { showSection(item.section); });
                         badgeRow.appendChild(badge);
                     })(uniqueRelated[bi]);
                 }
