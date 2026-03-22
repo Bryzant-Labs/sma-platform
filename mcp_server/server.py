@@ -1091,51 +1091,602 @@ async def check_nim_health() -> dict[str, Any]:
     return result
 
 
+# Known SMA target symbols -> UniProt IDs (fast-path, avoids UniProt API call)
+_SMA_UNIPROT: dict[str, str] = {
+    "SMN1": "Q16637",
+    "SMN2": "Q16637",
+    "PLS3": "P13797",
+    "STMN2": "Q93045",
+    "NCALD": "P61601",
+    "UBA1": "P22314",
+    "CORO1C": "Q9ULV4",
+    "ROCK2": "O75116",
+    "MAPK14": "Q16539",
+    "LIMK1": "P53667",
+    "CFL2": "Q9Y281",
+    "PFN1": "P07737",
+}
+
+# Valid amino acid single-letter codes (standard + ambiguous IUPAC)
+_AA_CHARS = set("ACDEFGHIKLMNPQRSTVWYXBZUacdefghiklmnpqrstvwyxbzu")
+
+
+def _looks_like_sequence(text: str) -> bool:
+    """Return True if the string looks like a raw amino-acid sequence."""
+    stripped = text.strip()
+    if len(stripped) < 10:
+        return False
+    return all(c in _AA_CHARS for c in stripped)
+
+
+async def _resolve_symbol_to_sequence(symbol: str) -> dict[str, Any]:
+    """Resolve a protein gene symbol to its canonical amino-acid sequence.
+
+    Fast path for 12 known SMA targets: directly fetches from UniProt by
+    accession.  Fallback for any other symbol: queries the UniProt search API
+    (human reviewed entries only).
+
+    Returns a dict with keys ``sequence`` (str) and ``uniprot_id`` (str),
+    or an ``error`` key describing why resolution failed.
+    """
+    upper = symbol.upper()
+    uniprot_id: Optional[str] = _SMA_UNIPROT.get(upper)
+
+    if not uniprot_id:
+        # Query UniProt REST search for human reviewed entry
+        search_url = "https://rest.uniprot.org/uniprotkb/search"
+        params = {
+            "query": f"gene:{symbol} AND organism_id:9606 AND reviewed:true",
+            "fields": "accession",
+            "format": "json",
+            "size": "1",
+        }
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                resp = await client.get(search_url, params=params)
+                resp.raise_for_status()
+                data = resp.json()
+                results = data.get("results", [])
+                if not results:
+                    return {
+                        "error": f"Unknown protein symbol: '{symbol}'",
+                        "detail": (
+                            f"Could not find '{symbol}' in UniProt "
+                            "(Homo sapiens, reviewed). "
+                            "Known SMA targets: "
+                            + ", ".join(sorted(_SMA_UNIPROT.keys()))
+                        ),
+                    }
+                uniprot_id = results[0]["primaryAccession"]
+        except httpx.RequestError as exc:
+            return {"error": f"UniProt search failed: {exc}"}
+
+    # Fetch canonical sequence from UniProt FASTA
+    fasta_url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            resp = await client.get(fasta_url)
+            resp.raise_for_status()
+            lines = resp.text.splitlines()
+            sequence = "".join(line for line in lines if not line.startswith(">"))
+            if not sequence:
+                return {"error": f"Empty sequence returned for UniProt {uniprot_id}"}
+            return {"sequence": sequence, "uniprot_id": uniprot_id}
+    except httpx.RequestError as exc:
+        return {"error": f"UniProt FASTA fetch failed: {exc}"}
+
+
+def _parse_plddt(result: dict[str, Any]) -> tuple[Optional[float], list[float]]:
+    """Extract mean pLDDT and per-residue pLDDT from a NIM response dict.
+
+    Tries multiple paths since ESMfold and AlphaFold2 responses differ.
+    Returns (mean_plddt, per_residue_list) or (None, []) if not found.
+    """
+    inner = result.get("result", result)
+
+    # ESMfold returns a flat list under "plddt"
+    per_residue: list[float] = inner.get("plddt", [])
+    if isinstance(per_residue, list) and per_residue:
+        mean = round(sum(per_residue) / len(per_residue), 2)
+        return mean, [round(v, 2) for v in per_residue]
+
+    # AlphaFold2 returns a scalar
+    mean_scalar = inner.get("mean_plddt") or inner.get("plddt_mean")
+    if mean_scalar is not None:
+        return round(float(mean_scalar), 2), []
+
+    return None, []
+
+
+def _confidence_category(plddt_mean: Optional[float]) -> str:
+    """Map mean pLDDT to a human-readable confidence tier."""
+    if plddt_mean is None:
+        return "unknown"
+    if plddt_mean >= 90:
+        return "very_high"
+    if plddt_mean >= 70:
+        return "high"
+    if plddt_mean >= 50:
+        return "medium"
+    return "low"
+
+
 @mcp.tool()
-async def dock_compound_nim(
-    smiles: str,
-    target_pdb_id: str,
-    method: str = "diffdock",
+async def predict_protein_structure(
+    protein: str,
+    method: str = "auto",
 ) -> dict[str, Any]:
-    """Dock a compound against a protein target using NVIDIA NIM (DiffDock).
+    """Predict the 3D structure of a protein using AlphaFold2 or ESMfold.
 
-    Submits a molecular docking job to the GPU-accelerated DiffDock NIM service.
-    Requires an admin API key (set via SMA_ADMIN_KEY environment variable).
+    Accepts a protein gene symbol (e.g. "NCALD", "PLS3", "SMN2") or a raw
+    amino-acid sequence.  When a symbol is provided the canonical human
+    sequence is fetched automatically from UniProt.
 
-    This is a computational chemistry operation that predicts how a small
-    molecule binds to a protein target structure.  Results include predicted
-    binding poses, confidence scores, and estimated binding affinity.
+    Method selection:
+    - ``"auto"``       -- ESMfold for < 300 residues, AlphaFold2 for >= 300.
+    - ``"esmfold"``    -- Force ESMfold.  Fast (~15 s), no MSA needed.
+    - ``"alphafold2"`` -- Force AlphaFold2.  Slower (minutes), MSA-based.
+
+    Requires the ``SMA_ADMIN_KEY`` environment variable.
 
     Args:
-        smiles: SMILES string of the compound to dock (e.g.
-                "CC(=O)Oc1ccccc1C(=O)O" for aspirin).
-        target_pdb_id: PDB identifier of the target protein structure
-                       (e.g. "7VQB" for SMN2 pre-mRNA).
-        method: Docking method — currently only "diffdock" is supported.
+        protein: Gene symbol (e.g. "NCALD") or amino-acid sequence
+                 (>= 10 and <= 2000 single-letter residues).
+        method:  "auto" (default), "esmfold", or "alphafold2".
 
     Returns:
-        Dict with keys: job_id, status, smiles, target_pdb_id, method,
-        poses (list of predicted binding poses with scores), top_score,
-        and submitted_at.  Returns an error if the admin key is missing
-        or the NIM service is unavailable.
+        Dict containing: protein, sequence_length, method (chosen),
+        pdb_structure (PDB text), plddt_mean, plddt_per_residue,
+        confidence_category ("very_high"/"high"/"medium"/"low"/"unknown"),
+        uniprot_id (if resolved from symbol), alphafold_db_available,
+        alphafold_db_url (if available), runtime_seconds.
+        Returns an error dict on auth failure, unknown symbol, invalid
+        sequence length, or NIM service error.
     """
+    import time
+
+    t0 = time.monotonic()
+
+    # 1. Validate method
+    method = method.lower().strip()
+    if method not in ("auto", "esmfold", "alphafold2"):
+        return {
+            "error": f"Unknown method: '{method}'",
+            "detail": "Use 'auto', 'esmfold', or 'alphafold2'.",
+        }
+
+    # 2. Resolve input to sequence
+    uniprot_id: Optional[str] = None
+    protein_label: str = protein.strip()
+
+    if _looks_like_sequence(protein):
+        sequence = protein.strip().upper()
+    else:
+        resolution = await _resolve_symbol_to_sequence(protein_label)
+        if _is_error(resolution):
+            return resolution
+        sequence = resolution["sequence"].upper()
+        uniprot_id = resolution.get("uniprot_id")
+
+    # 3. Validate length
+    seq_len = len(sequence)
+    if seq_len < 10:
+        return {
+            "error": "Sequence too short",
+            "detail": f"Got {seq_len} residues; minimum is 10.",
+        }
+    if seq_len > 2000:
+        return {
+            "error": "Sequence too long",
+            "detail": (
+                f"Got {seq_len} residues; maximum is 2000. "
+                "For large proteins consider fetching a pre-computed structure "
+                "from AlphaFold DB: https://alphafold.ebi.ac.uk"
+            ),
+        }
+
+    # 4. Select method
+    if method == "auto":
+        chosen_method = "esmfold" if seq_len < 300 else "alphafold2"
+    else:
+        chosen_method = method
+
+    # 5. Auth check
     admin_key = os.environ.get("SMA_ADMIN_KEY")
     if not admin_key:
         return {
             "error": "SMA_ADMIN_KEY environment variable is not set",
-            "detail": "Docking requires admin authentication. Set SMA_ADMIN_KEY.",
+            "detail": (
+                "Structure prediction requires admin authentication. "
+                "Set SMA_ADMIN_KEY to your platform admin key."
+            ),
         }
 
     headers = {"X-Admin-Key": admin_key}
-    body = {
-        "smiles": smiles,
-        "target_pdb_id": target_pdb_id,
-        "method": method,
+
+    # 6. Build request body and set appropriate timeout
+    # AlphaFold2 (MSA-based) can take up to 15 minutes for long sequences
+    nim_timeout = 900.0 if chosen_method == "alphafold2" else 120.0
+
+    if chosen_method == "esmfold":
+        body: dict[str, Any] = {"sequence": sequence}
+        nim_path = "/nims/esmfold"
+    else:
+        body = {
+            "sequence": sequence,
+            "algorithm": "jackhmmer",
+            "relax_prediction": True,
+        }
+        nim_path = "/nims/alphafold2"
+
+    # 7. Call the platform NIM endpoint
+    url = f"{API_BASE}{nim_path}"
+    try:
+        async with httpx.AsyncClient(timeout=nim_timeout) as client:
+            response = await client.post(url, json=body, headers=headers)
+            response.raise_for_status()
+            nim_result = response.json()
+    except httpx.TimeoutException:
+        timeout_minutes = int(nim_timeout // 60)
+        suggestion = (
+            f"AlphaFold2 can take up to {timeout_minutes} min for long sequences. "
+            "Try method='esmfold' for a faster (~15 s) result, or retry later."
+            if chosen_method == "alphafold2"
+            else f"ESMfold timed out after {int(nim_timeout)} s. "
+            "The NIM service may be overloaded — retry later."
+        )
+        return {
+            "error": "NIM request timed out",
+            "method": chosen_method,
+            "timeout_seconds": nim_timeout,
+            "detail": suggestion,
+        }
+    except httpx.HTTPStatusError as exc:
+        return {
+            "error": f"NIM endpoint returned {exc.response.status_code}",
+            "method": chosen_method,
+            "url": url,
+            "detail": exc.response.text[:500],
+        }
+    except httpx.RequestError as exc:
+        return {
+            "error": f"NIM request failed: {type(exc).__name__}",
+            "method": chosen_method,
+            "url": url,
+            "detail": str(exc),
+        }
+
+    if _is_error(nim_result):
+        nim_result["method"] = chosen_method
+        return nim_result
+
+    # 8. Parse and return structured response
+    plddt_mean, plddt_per_residue = _parse_plddt(nim_result)
+    inner = nim_result.get("result", nim_result)
+    pdb_structure: str = inner.get("pdb", inner.get("pdb_structure", ""))
+
+    runtime = round(time.monotonic() - t0, 1)
+    alphafold_db_url: Optional[str] = (
+        f"https://alphafold.ebi.ac.uk/entry/{uniprot_id}" if uniprot_id else None
+    )
+
+    out: dict[str, Any] = {
+        "protein": protein_label,
+        "sequence_length": seq_len,
+        "method": chosen_method,
+        "pdb_structure": pdb_structure,
+        "plddt_mean": plddt_mean,
+        "plddt_per_residue": plddt_per_residue,
+        "confidence_category": _confidence_category(plddt_mean),
+        "runtime_seconds": runtime,
+        "alphafold_db_available": uniprot_id is not None,
     }
-    result = await _post("/nims/dock", json_body=body, headers=headers)
-    if _is_error(result):
-        return result
-    return result
+    if uniprot_id:
+        out["uniprot_id"] = uniprot_id
+        out["alphafold_db_url"] = alphafold_db_url
+
+    return out
+
+
+
+@mcp.tool()
+async def dock_compound(
+    compound: str,
+    target: str = "SMN2",
+    num_poses: int = 10,
+    compare_existing: bool = True,
+) -> dict[str, Any]:
+    """Dock a compound against an SMA target using DiffDock v2.2 (NVIDIA NIM).
+
+    Enhanced docking tool that accepts a drug name OR SMILES string and a target
+    protein name (not a raw PDB ID).  The tool resolves the compound to SMILES
+    via the platform drug registry (falling back to PubChem/ChEMBL), resolves
+    the target via the platform target registry, runs DiffDock v2.2, and
+    optionally compares the result with existing screening hits.
+
+    Requires SMA_ADMIN_KEY environment variable for authentication.
+
+    SMA targets supported: SMN1, SMN2, STMN2, PLS3, NCALD, UBA1, CORO1C, TP53,
+    ROCK1, ROCK2, NRXN1, GEMIN2 (and any other target in the platform registry).
+
+    Args:
+        compound: Drug name (e.g. "riluzole", "fasudil", "4-AP"), SMILES string
+                  (detected automatically by presence of =, #, (, ), [, ] etc.),
+                  or PubChem CID prefixed with "CID:" (e.g. "CID:5353940").
+        target:   Target protein symbol (e.g. "SMN2", "ROCK2", "CORO1C").
+                  Defaults to "SMN2".
+        num_poses: Number of binding poses to generate (1-20). Default 10.
+        compare_existing: If True (default), fetch existing screening hits for
+                          this target and rank the new compound among them.
+
+    Returns:
+        Dict with keys:
+          - compound: resolved compound name
+          - smiles: SMILES string used for docking
+          - smiles_source: "input", "platform_drugs", "pubchem", or "chembl"
+          - target: target symbol
+          - target_uniprot: UniProt accession (if resolved)
+          - nim: "DiffDock v2.2"
+          - poses: list of pose dicts with pose_id, confidence,
+            binding_site_residues (if available), sdf_content (if available)
+          - top_confidence: highest confidence score across all poses
+          - binding_assessment: "strong" (>0.4), "moderate" (0.2-0.4),
+            "weak" (0-0.2), or "unlikely" (<0)
+          - comparison: dict with existing_hits_for_target, rank_among_existing,
+            percentile, better_than_riluzole, riluzole_confidence (only when
+            compare_existing=True and screening hits are available)
+          - runtime_seconds: elapsed wall-clock time
+          - error: present only on failure
+    """
+    import time
+    import re as _re
+
+    t0 = time.monotonic()
+
+    admin_key = os.environ.get("SMA_ADMIN_KEY")
+    if not admin_key:
+        return {
+            "error": "SMA_ADMIN_KEY environment variable is not set",
+            "detail": (
+                "Docking requires admin authentication. "
+                "Set SMA_ADMIN_KEY to your platform admin key."
+            ),
+        }
+
+    headers = {"X-Admin-Key": admin_key}
+
+    # ------------------------------------------------------------------
+    # Step 1: Resolve compound to SMILES
+    # ------------------------------------------------------------------
+    # Detect raw SMILES by presence of characters that never appear in plain
+    # drug names: = # ( ) [ ] / \ @ +
+    smiles_chars = _re.compile(r"[=#()\[\]/\@\+]")
+    compound_name: str
+    smiles: str
+    smiles_source: str
+
+    if smiles_chars.search(compound):
+        # Already a SMILES string
+        smiles = compound
+        compound_name = compound
+        smiles_source = "input"
+    elif compound.upper().startswith("CID:"):
+        # PubChem CID shorthand
+        cid = compound[4:].strip()
+        pubchem_result = await _get(f"/drugs/pubchem/{cid}")
+        if _is_error(pubchem_result) or not pubchem_result.get("smiles"):
+            return {
+                "error": f"Could not resolve PubChem CID {cid} to SMILES",
+                "detail": pubchem_result.get("detail", "PubChem lookup failed") if _is_error(pubchem_result) else "No SMILES in response",
+                "hint": "Provide the SMILES string directly instead.",
+            }
+        smiles = pubchem_result["smiles"]
+        compound_name = pubchem_result.get("name", compound)
+        smiles_source = "pubchem"
+    else:
+        # Drug name — look up in platform drug registry first
+        drugs_result = await _get("/drugs", params={"q": compound, "limit": 5})
+        resolved_smiles: Optional[str] = None
+        resolved_name: str = compound
+        smiles_source = "platform_drugs"
+
+        if not _is_error(drugs_result):
+            hits = drugs_result if isinstance(drugs_result, list) else drugs_result.get("results", [])
+            for hit in hits:
+                if hit.get("smiles"):
+                    resolved_smiles = hit["smiles"]
+                    resolved_name = hit.get("name", compound)
+                    break
+
+        if resolved_smiles:
+            smiles = resolved_smiles
+            compound_name = resolved_name
+        else:
+            # Fall back to PubChem name search via platform proxy
+            pubchem_result = await _get("/drugs/pubchem/search", params={"name": compound})
+            if not _is_error(pubchem_result) and pubchem_result.get("smiles"):
+                smiles = pubchem_result["smiles"]
+                compound_name = pubchem_result.get("name", compound)
+                smiles_source = "pubchem"
+            else:
+                # Last resort: ChEMBL name lookup
+                chembl_result = await _get("/drugs/chembl/search", params={"name": compound})
+                if not _is_error(chembl_result) and chembl_result.get("smiles"):
+                    smiles = chembl_result["smiles"]
+                    compound_name = chembl_result.get("name", compound)
+                    smiles_source = "chembl"
+                else:
+                    available: list[str] = []
+                    all_drugs = await _get("/drugs", params={"limit": 30})
+                    if not _is_error(all_drugs):
+                        drug_list = all_drugs if isinstance(all_drugs, list) else all_drugs.get("results", [])
+                        available = [d.get("name", "") for d in drug_list if d.get("name")]
+                    return {
+                        "error": f"Could not resolve compound '{compound}' to a SMILES string",
+                        "detail": (
+                            "No match found in platform drug registry, PubChem, or ChEMBL. "
+                            "Provide the SMILES string directly."
+                        ),
+                        "available_platform_drugs": available[:20],
+                        "hint": "Example SMILES for riluzole: 'CCOc1ccc2nc(N)sc2c1'",
+                    }
+
+    # ------------------------------------------------------------------
+    # Step 2: Resolve target via platform registry
+    # ------------------------------------------------------------------
+    target_result = await _get(f"/targets/symbol/{target}")
+    target_uniprot: Optional[str] = None
+
+    if _is_error(target_result):
+        all_targets = await _get("/targets", params={"limit": 50})
+        available_targets: list[str] = []
+        if not _is_error(all_targets):
+            tlist = all_targets if isinstance(all_targets, list) else all_targets.get("results", [])
+            available_targets = [t.get("symbol", "") for t in tlist if t.get("symbol")]
+        return {
+            "error": f"Target '{target}' not found in platform registry",
+            "detail": target_result.get("detail", "Unknown target symbol"),
+            "available_targets": available_targets[:20],
+            "hint": "Common SMA targets: SMN2, STMN2, PLS3, NCALD, UBA1, CORO1C, ROCK2",
+        }
+
+    target_uniprot = target_result.get("uniprot_id") or target_result.get("uniprot")
+
+    # ------------------------------------------------------------------
+    # Step 3: Call DiffDock v2.2 via /api/v2/nims/dock
+    # ------------------------------------------------------------------
+    dock_body: dict[str, Any] = {
+        "smiles": smiles,
+        "target_symbol": target,
+        "num_poses": max(1, min(num_poses, 20)),
+    }
+    if target_uniprot:
+        dock_body["target_uniprot"] = target_uniprot
+
+    dock_result = await _post("/nims/dock", json_body=dock_body, headers=headers)
+
+    if _is_error(dock_result):
+        return {
+            "error": "DiffDock docking failed",
+            "compound": compound_name,
+            "smiles": smiles,
+            "target": target,
+            "detail": dock_result.get("detail", dock_result.get("error", "Unknown error")),
+            "hint": (
+                "Check NIM health with check_nim_health(). "
+                "If DiffDock is unavailable, try reducing num_poses."
+            ),
+        }
+
+    # ------------------------------------------------------------------
+    # Step 4: Parse poses and compute top confidence
+    # ------------------------------------------------------------------
+    raw_poses = dock_result.get("poses", [])
+    poses: list[dict[str, Any]] = []
+    for i, p in enumerate(raw_poses):
+        pose: dict[str, Any] = {
+            "pose_id": i + 1,
+            "confidence": float(p.get("confidence", p.get("score", 0.0))),
+        }
+        if p.get("binding_site_residues"):
+            pose["binding_site_residues"] = p["binding_site_residues"]
+        if p.get("sdf_content") or p.get("sdf"):
+            pose["sdf_content"] = p.get("sdf_content") or p.get("sdf")
+        poses.append(pose)
+
+    # Sort by confidence descending
+    poses.sort(key=lambda x: x["confidence"], reverse=True)
+
+    if poses:
+        top_confidence = poses[0]["confidence"]
+    else:
+        top_confidence = float(dock_result.get("top_score", dock_result.get("top_confidence", 0.0)))
+
+    # Binding assessment thresholds based on DiffDock v2.2 score distribution
+    if top_confidence > 0.4:
+        binding_assessment = "strong"
+    elif top_confidence > 0.2:
+        binding_assessment = "moderate"
+    elif top_confidence >= 0.0:
+        binding_assessment = "weak"
+    else:
+        binding_assessment = "unlikely"
+
+    # Warn if all poses are negative confidence
+    if poses and all(p["confidence"] < 0 for p in poses):
+        binding_assessment = "unlikely"
+
+    # ------------------------------------------------------------------
+    # Step 5: Compare with existing screening hits (optional)
+    # ------------------------------------------------------------------
+    comparison: dict[str, Any] = {}
+    if compare_existing:
+        screen_result = await _get(
+            "/screen/compounds/results",
+            params={"target": target, "limit": 500},
+        )
+        if not _is_error(screen_result):
+            existing_hits = (
+                screen_result
+                if isinstance(screen_result, list)
+                else screen_result.get("results", screen_result.get("hits", []))
+            )
+            if existing_hits:
+                existing_scores = [
+                    float(h.get("top_confidence", h.get("top_score", h.get("confidence", 0.0))))
+                    for h in existing_hits
+                    if h.get("top_confidence") is not None
+                    or h.get("top_score") is not None
+                    or h.get("confidence") is not None
+                ]
+                if existing_scores:
+                    n_total = len(existing_scores)
+                    rank = sum(1 for s in existing_scores if s > top_confidence) + 1
+                    percentile = round(100.0 * (1 - (rank - 1) / max(n_total, 1)), 1)
+
+                    # Find riluzole baseline
+                    riluzole_confidence: Optional[float] = None
+                    for h in existing_hits:
+                        name_field = h.get("compound_name", h.get("name", "")).lower()
+                        if "riluzole" in name_field:
+                            riluzole_confidence = float(
+                                h.get("top_confidence", h.get("top_score", h.get("confidence", 0.0)))
+                            )
+                            break
+
+                    comparison = {
+                        "existing_hits_for_target": n_total,
+                        "rank_among_existing": rank,
+                        "percentile": percentile,
+                    }
+                    if riluzole_confidence is not None:
+                        comparison["better_than_riluzole"] = top_confidence > riluzole_confidence
+                        comparison["riluzole_confidence"] = riluzole_confidence
+
+    runtime_seconds = round(time.monotonic() - t0, 2)
+
+    # ------------------------------------------------------------------
+    # Assemble final result
+    # ------------------------------------------------------------------
+    output: dict[str, Any] = {
+        "compound": compound_name,
+        "smiles": smiles,
+        "smiles_source": smiles_source,
+        "target": target,
+        "nim": "DiffDock v2.2",
+        "poses": poses,
+        "top_confidence": top_confidence,
+        "binding_assessment": binding_assessment,
+        "runtime_seconds": runtime_seconds,
+    }
+    if target_uniprot:
+        output["target_uniprot"] = target_uniprot
+    if comparison:
+        output["comparison"] = comparison
+    if dock_result.get("warning"):
+        output["warning"] = dock_result["warning"]
+
+    return output
 
 
 
@@ -1195,6 +1746,161 @@ async def run_virtual_screening(
 
 
 @mcp.tool()
+async def generate_molecules(
+    target: str = "SMN2",
+    scaffold_smiles: str = "",
+    num_molecules: int = 50,
+    filter_druglike: bool = True,
+) -> dict[str, Any]:
+    """Generate novel drug-like molecules using GenMol NIM for an SMA target.
+
+    Calls NVIDIA GenMol to generate novel molecules from a scaffold SMILES,
+    then optionally filters candidates for drug-likeness using the platform's
+    Lipinski estimator.  Returns top candidates ranked by QED score.
+
+    Default scaffolds are chosen based on the target:
+    - SMN2: 4-aminopyridine (Nc1ccncc1) — validated DiffDock hit
+    - ROCK2: fasudil-like indazole (c1ccc2[nH]c(-c3ccncc3)nc2c1)
+    - CORO1C / PLS3: de novo generation (empty scaffold)
+    - All other targets: de novo generation
+
+    Args:
+        target: SMA target symbol to generate molecules for (e.g. "SMN2",
+                "ROCK2", "CORO1C", "PLS3", "NCALD", "UBA1").  Used to select
+                a default scaffold when scaffold_smiles is not provided.
+        scaffold_smiles: Starting molecule in SMILES notation.  If empty,
+                         the target default scaffold is used.  Pass "" to
+                         trigger de novo generation for novel targets.
+        num_molecules: Number of molecules for GenMol to generate (10–500).
+                       Larger values produce more diversity but take longer.
+        filter_druglike: When True (default), each generated molecule is
+                         scored against Lipinski Rule-of-Five + QED.  Only
+                         molecules that pass are included in the final output.
+                         Set to False to return all generated molecules.
+
+    Returns:
+        Dict with keys: scaffold, target, num_generated, num_passed_filter,
+        molecules (list of candidates sorted by qed, each with smiles, qed,
+        lipinski_pass, molecular_weight, hbd, hba, logp), nim, and
+        filter_applied.  Returns an error dict if SMA_ADMIN_KEY is not set
+        or GenMol is unavailable.
+    """
+    # --- Default scaffolds by target ---
+    _DEFAULT_SCAFFOLDS: dict[str, str] = {
+        "SMN2": "Nc1ccncc1",                          # 4-AP — validated DiffDock hit
+        "ROCK2": "c1ccc2[nH]c(-c3ccncc3)nc2c1",       # fasudil-like ROCK inhibitor
+        # CORO1C and PLS3 have no known small-molecule binders → de novo
+        "CORO1C": "",
+        "PLS3": "",
+    }
+
+    admin_key = os.environ.get("SMA_ADMIN_KEY")
+    if not admin_key:
+        return {
+            "error": "SMA_ADMIN_KEY environment variable is not set",
+            "detail": (
+                "generate_molecules requires admin authentication. "
+                "Set SMA_ADMIN_KEY to your platform admin key."
+            ),
+        }
+
+    # Resolve scaffold
+    resolved_scaffold = scaffold_smiles.strip()
+    if not resolved_scaffold:
+        resolved_scaffold = _DEFAULT_SCAFFOLDS.get(target.upper(), "")
+
+    # Clamp num_molecules to valid range
+    n = max(10, min(num_molecules, 500))
+
+    # --- Step 1: Generate molecules via GenMol NIM ---
+    headers = {"X-Admin-Key": admin_key}
+    body: dict[str, Any] = {
+        "scaffold_smiles": resolved_scaffold if resolved_scaffold else "C",
+        "num_molecules": n,
+    }
+    gen_result = await _post("/nims/generate-molecules", json_body=body, headers=headers)
+    if _is_error(gen_result):
+        return gen_result
+
+    # Extract generated SMILES from GenMol response.
+    # GenMol returns {"result": {"smiles": [...], "scores": [...]}} or a flat
+    # list under various keys depending on API version — handle both shapes.
+    raw_smiles: list[str] = []
+    if isinstance(gen_result, dict):
+        inner = gen_result.get("result", gen_result)
+        if isinstance(inner, dict):
+            raw_smiles = inner.get("smiles", inner.get("molecules", []))
+        elif isinstance(inner, list):
+            raw_smiles = inner
+    elif isinstance(gen_result, list):
+        raw_smiles = gen_result
+
+    # Normalise: entries may be bare strings or dicts with a "smiles" key
+    normalised: list[str] = []
+    for entry in raw_smiles:
+        if isinstance(entry, str) and entry.strip():
+            normalised.append(entry.strip())
+        elif isinstance(entry, dict) and entry.get("smiles"):
+            normalised.append(str(entry["smiles"]).strip())
+
+    num_generated = len(normalised)
+
+    # --- Step 2: Drug-likeness filtering via platform funnel API ---
+    candidates: list[dict[str, Any]] = []
+    for smi in normalised:
+        dl_result = await _post("/funnel/estimate", json_body={"smiles": smi})
+        if _is_error(dl_result):
+            # Estimation failed for this molecule — skip silently
+            continue
+
+        mw = dl_result.get("mw", 0.0)
+        logp = dl_result.get("logp", 0.0)
+        hbd = dl_result.get("hbd", 0)
+        hba = dl_result.get("hba", 0)
+        rotatable = dl_result.get("rotatable", 0)
+        lipinski_pass = bool(dl_result.get("lipinski_pass", False))
+
+        # Approximate QED-like score: reward low MW, moderate LogP, low donors
+        # (platform does not expose a standalone QED endpoint — this is a
+        # simple surrogate based on the Bickerton 2012 desirability formula
+        # applied to the Lipinski descriptors we have available)
+        mw_score = max(0.0, 1.0 - max(0.0, mw - 200) / 300)
+        logp_score = max(0.0, 1.0 - abs(logp - 2.5) / 4.0)
+        hbd_score = max(0.0, 1.0 - hbd / 5.0)
+        hba_score = max(0.0, 1.0 - hba / 10.0)
+        rot_score = max(0.0, 1.0 - rotatable / 10.0)
+        qed = round((mw_score + logp_score + hbd_score + hba_score + rot_score) / 5.0, 3)
+
+        if filter_druglike and not lipinski_pass:
+            continue
+
+        candidates.append(
+            {
+                "smiles": smi,
+                "qed": qed,
+                "lipinski_pass": lipinski_pass,
+                "molecular_weight": round(mw, 2),
+                "logp": round(logp, 2),
+                "hbd": hbd,
+                "hba": hba,
+            }
+        )
+
+    # Sort by QED descending
+    candidates.sort(key=lambda m: m["qed"], reverse=True)
+
+    return {
+        "scaffold": resolved_scaffold or "(de novo)",
+        "target": target,
+        "num_generated": num_generated,
+        "num_passed_filter": len(candidates),
+        "filter_applied": filter_druglike,
+        "molecules": candidates,
+        "nim": "GenMol v1.0",
+    }
+
+
+@mcp.tool()
 async def check_alphafold_complexes() -> list[dict[str, Any]]:
     """Check AlphaFold DB for predicted structures of 8 SMA protein complexes.
 
@@ -1235,6 +1941,153 @@ async def list_binder_targets() -> list[dict[str, Any]]:
     if _is_error(result):
         return [result]  # type: ignore[list-item]
     return result if isinstance(result, list) else result.get("items", result)
+
+
+@mcp.tool()
+async def design_protein_binder(
+    target: str,
+    hotspot_residues: Optional[list[str]] = None,
+    binder_length: int = 100,
+    num_designs: int = 5,
+) -> dict[str, Any]:
+    """Design a novel protein binder for an SMA target using RFdiffusion + ProteinMPNN.
+
+    Runs a 2-step NIM pipeline:
+    1. RFdiffusion generates binder backbone structures conditioned on the target
+       interface (and optionally on specific hotspot residues).
+    2. ProteinMPNN optimises an amino-acid sequence for each backbone, maximising
+       packing and binding contacts.
+
+    The target is resolved to a UniProt ID and AlphaFold structure automatically.
+    If no hotspot residues are provided, the server uses pre-configured default
+    interface residues from the SMA binder target catalogue.
+
+    Args:
+        target: Target protein symbol or name (e.g. "ROCK2", "NCALD", "SMN2").
+        hotspot_residues: Optional list of residues to focus the binding interface
+                          on, in chain+position format (e.g. ["A100", "A105",
+                          "A230"]).  Leave empty to use defaults.
+        binder_length: Length of the designed binder in residues (50 – 200,
+                       default 100).
+        num_designs: Number of independent binder designs to return (1 – 20,
+                     default 5).
+
+    Returns:
+        Dict with keys:
+          - target: resolved target symbol
+          - target_uniprot: UniProt accession used for structure lookup
+          - num_designs: number of designs returned
+          - designs: list of dicts, each containing design_id, backbone_pdb
+            (ATOM records as string), sequence (single-letter AA sequence),
+            mpnn_score (0 – 1, higher = better packing), binder_length, and
+            hotspot_contacts (residues contacted in final design)
+          - pipeline: ordered list of NIM steps executed
+          - runtime_seconds: wall-clock time of the pipeline
+          - error (if applicable): human-readable failure reason
+
+    Example::
+
+        design_protein_binder(
+            target="ROCK2",
+            hotspot_residues=["A160", "A165", "A230"],
+            binder_length=100,
+            num_designs=5,
+        )
+        # -> 5 binder designs ready for ESMfold validation
+    """
+    admin_key = os.environ.get("SMA_ADMIN_KEY")
+    if not admin_key:
+        return {
+            "error": "SMA_ADMIN_KEY environment variable is not set",
+            "detail": (
+                "Protein binder design requires admin authentication. "
+                "Set SMA_ADMIN_KEY to an authorised API key."
+            ),
+        }
+
+    # Clamp parameters to allowed ranges
+    binder_length = max(50, min(200, binder_length))
+    num_designs = max(1, min(20, num_designs))
+
+    headers = {"X-Admin-Key": admin_key}
+
+    # ------------------------------------------------------------------ #
+    # Step 1: RFdiffusion — generate binder backbones
+    # ------------------------------------------------------------------ #
+    rfdiffusion_body: dict[str, Any] = {
+        "target": target,
+        "binder_length": binder_length,
+        "num_designs": num_designs,
+    }
+    if hotspot_residues:
+        rfdiffusion_body["hotspot_residues"] = hotspot_residues
+
+    backbone_result = await _post(
+        "/nims/design-binder",
+        json_body=rfdiffusion_body,
+        headers=headers,
+    )
+
+    if _is_error(backbone_result):
+        # Surface the RFdiffusion error with helpful context
+        return {
+            "error": "RFdiffusion backbone design failed",
+            "target": target,
+            "rfdiffusion_error": backbone_result,
+            "suggestion": (
+                "Verify the target symbol is correct and has an available "
+                "AlphaFold structure.  Use list_binder_targets() to see "
+                "pre-configured targets."
+            ),
+        }
+
+    # ------------------------------------------------------------------ #
+    # Step 2: ProteinMPNN — design sequences for each backbone
+    # ------------------------------------------------------------------ #
+    # backbone_result is expected to contain backbone PDB data keyed by
+    # design_id; pass the full backbone payload to the sequence design NIM.
+    mpnn_body: dict[str, Any] = {
+        "target": target,
+        "backbones": backbone_result.get("backbones", backbone_result),
+        "num_designs": num_designs,
+    }
+
+    sequence_result = await _post(
+        "/nims/design-sequence",
+        json_body=mpnn_body,
+        headers=headers,
+    )
+
+    if _is_error(sequence_result):
+        # Partial success: return backbone data even if MPNN failed
+        return {
+            "target": target,
+            "target_uniprot": backbone_result.get("target_uniprot", "unknown"),
+            "num_designs": 0,
+            "designs": [],
+            "pipeline": ["RFdiffusion (backbone)", "ProteinMPNN (sequence) — FAILED"],
+            "runtime_seconds": backbone_result.get("runtime_seconds", 0),
+            "warning": "ProteinMPNN sequence design failed; backbone data only.",
+            "backbone_data": backbone_result,
+            "mpnn_error": sequence_result,
+        }
+
+    # ------------------------------------------------------------------ #
+    # Merge and return final result
+    # ------------------------------------------------------------------ #
+    # The sequence design endpoint is expected to return the complete merged
+    # result with backbone + sequence data.  Pass it through, enriching with
+    # pipeline metadata if the backend does not include it.
+    if "pipeline" not in sequence_result:
+        sequence_result["pipeline"] = [
+            "RFdiffusion (backbone)",
+            "ProteinMPNN (sequence)",
+        ]
+    if "target" not in sequence_result:
+        sequence_result["target"] = target
+
+    return sequence_result
+
 
 
 # ---------------------------------------------------------------------------
