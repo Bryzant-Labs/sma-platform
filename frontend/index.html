@@ -690,7 +690,7 @@
         /* Screening tab */
         .screen-summary { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
         .screen-stat { background: var(--panel); border: 1px solid var(--line); padding: 16px; text-align: center; }
-        .screen-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; }
+        .screen-stat-val { font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
         .screen-stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-top: 4px; }
         .screen-stat-val.highlight { color: var(--green); }
         .compound-row td { font-size: 12px; }
