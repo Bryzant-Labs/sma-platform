@@ -880,85 +880,55 @@
         }
 
         /* ===== Discovery Pipeline Visualization ===== */
-        .discovery-pipeline { margin: 40px 0 32px; }
-        .discovery-pipeline-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
-        .discovery-pipeline-title { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .dp-refresh-btn { background: none; border: 1px solid var(--line); padding: 4px 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--muted); cursor: pointer; font-family: inherit; }
-        .dp-refresh-btn:hover { background: var(--bg); color: var(--text); border-color: var(--text); }
+        .discovery-pipeline { margin: 28px 0 24px; }
+        .discovery-pipeline-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+        .discovery-pipeline-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+        .dp-refresh-btn { background: none; border: none; padding: 0; font-size: 10px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); cursor: pointer; font-family: inherit; }
+        .dp-refresh-btn:hover { color: var(--text); }
         .dp-grid {
-            display: grid;
-            grid-template-columns: 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr;
-            gap: 0;
+            display: flex;
+            align-items: stretch;
             border: 1px solid var(--line);
-            background: var(--line);
             overflow: hidden;
         }
         .dp-node {
             background: var(--panel);
-            padding: 16px 14px 14px;
+            padding: 11px 12px 10px;
             cursor: pointer;
-            position: relative;
-            transition: border-color 0.2s, background 0.2s;
-            border: none;
+            flex: 1;
+            min-width: 0;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 1px;
+            border-right: 1px solid var(--line);
+            transition: background 0.15s;
         }
-        .dp-node:hover { background: var(--blue-bg); }
+        .dp-node:last-child { border-right: none; }
+        .dp-node:hover { background: var(--bg); }
         .dp-node:hover .dp-node-name { color: var(--accent); }
-        .dp-separator {
-            background: var(--line);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 1px;
-        }
-        .dp-node-icon { font-size: 18px; margin-bottom: 2px; line-height: 1; }
-        .dp-node-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text); transition: color 0.2s; }
-        .dp-node-count { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; line-height: 1.2; margin: 2px 0; }
-        .dp-node-desc { font-size: 10px; color: var(--muted); line-height: 1.4; margin-top: 2px; }
-        .dp-node-status { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; border-radius: 50%; }
-        .dp-status-green { background: #22c55e; box-shadow: 0 0 0 2px #dcfce7; }
-        .dp-status-amber { background: #f59e0b; box-shadow: 0 0 0 2px #fef3c7; }
-        .dp-status-gray { background: #9ca3af; box-shadow: 0 0 0 2px #f3f4f6; }
-
-        /* Pulsing animation for "active" nodes */
-        @keyframes dp-pulse {
-            0% { box-shadow: 0 0 0 2px #dcfce7; }
-            50% { box-shadow: 0 0 0 4px #bbf7d0; }
-            100% { box-shadow: 0 0 0 2px #dcfce7; }
-        }
-        .dp-node.dp-active { background: var(--green-bg); border-left: 3px solid var(--green); }
-        .dp-node.dp-active .dp-node-status { animation: dp-pulse 2s ease-in-out infinite; }
-
-        /* Connector arrows between cards */
+        .dp-node-name { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.15s; }
+        .dp-node-count { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; line-height: 1.2; color: var(--accent); white-space: nowrap; }
+        .dp-node-unit { font-size: 9px; color: var(--muted); text-transform: lowercase; letter-spacing: 0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dp-arrow {
-            background: var(--panel);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0 2px;
-            color: var(--muted);
-            font-size: 14px;
-            font-weight: 300;
+            padding: 0 4px;
+            color: var(--line);
+            font-size: 12px;
             user-select: none;
             pointer-events: none;
+            flex-shrink: 0;
+            background: var(--panel);
         }
 
         /* Mobile: vertical stack */
         @media (max-width: 900px) {
-            .dp-grid {
-                grid-template-columns: 1fr !important;
-            }
-            .dp-arrow {
-                padding: 6px 16px;
-                font-size: 16px;
-                transform: rotate(90deg);
-            }
-        }
-        @media (max-width: 600px) {
-            .dp-node { padding: 12px; }
-            .dp-node-count { font-size: 13px; }
+            .dp-grid { flex-direction: column; }
+            .dp-node { border-right: none; border-bottom: 1px solid var(--line); flex-direction: row; align-items: center; gap: 12px; padding: 9px 14px; }
+            .dp-node:last-child { border-bottom: none; }
+            .dp-node-count { font-size: 14px; min-width: 64px; }
+            .dp-arrow { padding: 2px 14px; transform: rotate(90deg); }
         }
     </style>
 </head>
@@ -1009,6 +979,7 @@
             <a href="/outcomes" class="nav-link" data-section="outcomes">Outcomes</a>
             <a href="/synergy" class="nav-link" data-section="synergy">Synergy</a>
             <a href="/drugs" class="nav-link" data-section="drugs">Drugs</a>
+            <a href="/molecules" class="nav-link" data-section="molecules">Molecules</a>
             <a href="/repurposing" class="nav-link" data-section="repurposing">Repurposing</a>
         </div>
     </span>
@@ -1035,7 +1006,6 @@
             <a href="/multisystem" class="nav-link" data-section="multisystem">Multisystem</a>
             <a href="/bioelectric" class="nav-link" data-section="bioelectric">Bioelectric</a>
             <a href="/dualtarget" class="nav-link" data-section="dualtarget">Dual Target</a>
-            <a href="/molecules" class="nav-link" data-section="molecules">Molecules</a>
             <a href="/twin" class="nav-link" data-section="twin">Digital Twin</a>
         </div>
     </span>
@@ -2460,14 +2430,74 @@
 </section>
 
 <section class="section" id="molecules">
-    <div class="section-header"><h2 class="section-title">Molecule Screening</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="molecules-count"></span></div>
-    <p class="section-desc">Direct ChEMBL/PubChem bioactive compound screening against all 21 SMA targets. Compounds are filtered for drug-likeness (MW &le; 800, pChEMBL &ge; 5.0, aLogP &le; 7.0) and ranked by potency. This is a broader search than the RDKit-based screening — it queries external databases via API.</p>
-    <div id="molecules-summary" class="screen-summary"><div class="loading">Loading molecule screening data...</div></div>
-    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Top Compounds by Potency</h3>
-    <div class="table-wrap"><table><thead><tr>
-        <th>#</th><th>Target</th><th>ChEMBL ID</th><th>pChEMBL</th><th>Type</th><th>MW</th><th>aLogP</th><th>Drug-Like</th>
-    </tr></thead>
-    <tbody id="molecules-body"><tr><td colspan="8" class="loading">Loading...</td></tr></tbody></table></div>
+    <div class="section-header"><h2 class="section-title">Molecule Browser</h2><span style="font-size:10px;padding:2px 8px;background:#10b9811a;color:#10b981;font-weight:600;margin-left:8px;vertical-align:middle">AI-GENERATED</span><span class="section-count" id="molecules-count"></span></div>
+    <p class="section-desc">Browse 800+ AI-generated and computationally screened molecules for SMA drug targets. Includes MolMIM scaffold decorations, GenMol analogs, DiffDock docking results, and ML-proxy 100k virtual screen hits. Filter by target, drug-likeness, BBB permeability, and more. Export as CSV (researchers) or SDF (chemists).</p>
+
+    <!-- Stats bar -->
+    <div id="mol-browser-stats" class="screen-summary"><div class="loading">Loading molecule statistics...</div></div>
+
+    <!-- Filter bar -->
+    <div id="mol-filter-bar" style="display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;align-items:center">
+        <select id="mol-filter-target" style="padding:5px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+            <option value="">All Targets</option>
+        </select>
+        <select id="mol-filter-method" style="padding:5px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+            <option value="">All Methods</option>
+        </select>
+        <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--text-secondary)">
+            <input type="checkbox" id="mol-filter-bbb"> BBB Only
+        </label>
+        <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--text-secondary)">
+            <input type="checkbox" id="mol-filter-lipinski"> Lipinski Only
+        </label>
+        <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--text-secondary)">
+            Min QED: <input type="number" id="mol-filter-qed" min="0" max="1" step="0.1" placeholder="0.0" style="width:50px;padding:3px 5px;border:1px solid var(--line);font-size:11px;border-radius:3px;background:var(--bg);color:var(--text)">
+        </label>
+        <label style="font-size:11px;display:flex;align-items:center;gap:4px;color:var(--text-secondary)">
+            Max MW: <input type="number" id="mol-filter-mw" placeholder="any" style="width:60px;padding:3px 5px;border:1px solid var(--line);font-size:11px;border-radius:3px;background:var(--bg);color:var(--text)">
+        </label>
+        <input type="text" id="mol-filter-smiles" placeholder="Search SMILES..." style="padding:5px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit;flex:1;min-width:120px">
+        <select id="mol-sort" style="padding:5px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+            <option value="newest">Newest</option>
+            <option value="qed_desc">QED (high to low)</option>
+            <option value="mw_asc">MW (low to high)</option>
+            <option value="confidence_desc">DiffDock confidence</option>
+        </select>
+        <div style="display:flex;gap:4px;margin-left:auto">
+            <button class="page-btn active" id="mol-view-grid" title="Grid view" style="padding:4px 8px;font-size:11px">Grid</button>
+            <button class="page-btn" id="mol-view-table" title="Table view" style="padding:4px 8px;font-size:11px">Table</button>
+        </div>
+    </div>
+
+    <!-- Target distribution chart -->
+    <div id="mol-target-chart" style="margin-bottom:16px"></div>
+
+    <!-- Grid view -->
+    <div id="mol-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px"></div>
+
+    <!-- Table view (hidden by default) -->
+    <div id="mol-table-wrap" style="display:none">
+        <div class="table-wrap"><table><thead><tr>
+            <th>#</th><th>Target</th><th>SMILES</th><th>QED</th><th>MW</th><th>LogP</th><th>BBB</th><th>Lipinski</th><th>DiffDock</th><th>Method</th>
+        </tr></thead>
+        <tbody id="mol-table-body"><tr><td colspan="10" class="loading">Loading...</td></tr></tbody></table></div>
+    </div>
+
+    <!-- Pagination -->
+    <div id="mol-pagination" style="margin-top:12px"></div>
+
+    <!-- Export buttons -->
+    <div style="margin-top:16px;display:flex;gap:8px;align-items:center">
+        <button class="page-btn" id="mol-export-csv" style="font-size:11px;padding:4px 12px">Export CSV</button>
+        <button class="page-btn" id="mol-export-sdf" style="font-size:11px;padding:4px 12px">Export SDF</button>
+        <span style="font-size:10px;color:var(--muted);margin-left:8px">CSV for spreadsheets &bull; SDF for chemistry tools (PyMOL, RDKit)</span>
+    </div>
+
+    <!-- Detail panel (shown on card click) -->
+    <div id="mol-detail-panel" style="display:none;position:fixed;top:0;right:0;width:420px;height:100vh;background:var(--bg);border-left:1px solid var(--line);box-shadow:-4px 0 20px rgba(0,0,0,0.3);z-index:1000;overflow-y:auto;padding:24px">
+        <button id="mol-detail-close" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--text);font-size:20px;cursor:pointer">&times;</button>
+        <div id="mol-detail-content"></div>
+    </div>
 </section>
 
 <section class="section" id="crispr">
@@ -2794,14 +2824,38 @@
         <tbody id="gpu-docking-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
 
         <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:32px 0 12px">Extended DiffDock Campaign</h3>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">DiffDock v2.2 | NVIDIA NIM API | 224 dockings across 8 targets</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">Best confidence closer to 0 = stronger predicted binding</span></p>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">DiffDock v2.2 | NVIDIA NIM API | 112 dockings, 14 drugs, 8 targets</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">Best confidence closer to 0 = stronger predicted binding. Click any row for full details.</span></p>
+
+        <!-- Campaign heatmap -->
+        <div id="expdock-heatmap" style="margin-bottom:16px;overflow-x:auto"><div class="loading">Loading heatmap...</div></div>
+
+        <!-- Stats -->
         <div id="gpu-expdock-summary" class="screen-summary" style="margin-bottom:8px"><div class="loading">Loading campaign stats...</div></div>
-        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
-            <input type="text" id="expdock-drug-filter" placeholder="Filter by drug..." style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
-            <input type="text" id="expdock-target-filter" placeholder="Filter by target..." style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+
+        <!-- Filters -->
+        <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center">
+            <select id="expdock-drug-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                <option value="">All Drugs</option>
+            </select>
+            <select id="expdock-target-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                <option value="">All Targets</option>
+            </select>
+            <select id="expdock-conf-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                <option value="">Any Confidence</option>
+                <option value="0">Positive only (> 0)</option>
+                <option value="-0.2">Strong (> -0.2)</option>
+                <option value="-1">Moderate+ (> -1)</option>
+            </select>
+            <select id="expdock-sort" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+                <option value="confidence">Best Confidence</option>
+                <option value="drug">Drug Name</option>
+                <option value="target">Target</option>
+            </select>
+            <span id="expdock-filter-count" style="font-size:11px;color:var(--text-secondary);margin-left:auto"></span>
         </div>
+
         <div class="table-wrap"><table><thead><tr>
-            <th>#</th><th>Drug</th><th>Target</th><th>MW</th><th>Best Confidence</th><th>Avg Confidence</th><th>Poses</th><th>Campaign</th>
+            <th>#</th><th>Drug</th><th>Target</th><th>MW</th><th>Best Confidence</th><th>Avg Confidence</th><th>Poses</th><th>Status</th>
         </tr></thead>
         <tbody id="gpu-expdock-body"><tr><td colspan="8" class="loading">Loading extended docking results...</td></tr></tbody></table></div>
         <div id="gpu-expdock-pagination"></div>
@@ -7832,60 +7886,388 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }
     }
 
-    // Molecules section — ChEMBL/PubChem screening
+    // ============ Molecule Browser ============
     function loadMolecules() {
         if (loaded.molecules) return; loaded.molecules = true;
-        fetch(API + '/screen/molecules').then(function(r) { return r.json(); }).then(function(data) {
-            var total = data.total_screened || 0;
-            var pass = data.drug_likeness_pass || 0;
-            var passRate = total > 0 ? Math.round(100 * pass / total) : 0;
-            document.getElementById('molecules-count').textContent = total.toLocaleString() + ' compounds';
-            var summary = clearEl('molecules-summary');
-            var stats = [
-                {val: total.toLocaleString(), label: 'Total Screened', cls: ''},
-                {val: pass.toLocaleString(), label: 'Drug-Like (' + passRate + '%)', cls: 'highlight'},
-                {val: String(data.targets_covered || 0), label: 'Targets Covered', cls: ''},
-                {val: (data.chembl_compounds || 0).toLocaleString(), label: 'ChEMBL', cls: ''},
-                {val: String(data.pubchem_compounds || 0), label: 'PubChem', cls: ''},
+
+        var molPage = 1;
+        var molPerPage = 20;
+        var molView = 'grid'; // 'grid' or 'table'
+        var molStats = null;
+        var molData = null;
+
+        // Load stats first
+        fetch(API + '/molecules/browser/stats').then(function(r) { return r.json(); }).then(function(stats) {
+            molStats = stats;
+            document.getElementById('molecules-count').textContent = stats.total.toLocaleString() + ' molecules';
+            var summary = clearEl('mol-browser-stats');
+            var statCards = [
+                {val: stats.total.toLocaleString(), label: 'Total Molecules', cls: ''},
+                {val: String(stats.targets_covered), label: 'Targets Covered', cls: ''},
+                {val: stats.bbb_permeable.toLocaleString(), label: 'BBB Permeable', cls: 'highlight'},
+                {val: stats.lipinski_pass.toLocaleString(), label: 'Lipinski Pass', cls: ''},
+                {val: stats.docked.toLocaleString(), label: 'Docked', cls: ''},
+                {val: stats.avg_qed != null ? String(stats.avg_qed) : '-', label: 'Avg QED', cls: 'highlight'},
+                {val: stats.avg_mw != null ? stats.avg_mw + ' Da' : '-', label: 'Avg MW', cls: ''},
             ];
-            if (data.screening_running) {
-                stats.push({val: 'RUNNING', label: 'Screening Active', cls: 'highlight'});
-            }
-            for (var s = 0; s < stats.length; s++) {
+            for (var s = 0; s < statCards.length; s++) {
                 var card = el('div', {className: 'screen-stat'});
-                card.appendChild(el('div', {className: 'screen-stat-val' + (stats[s].cls ? ' ' + stats[s].cls : ''), text: stats[s].val}));
-                card.appendChild(el('div', {className: 'screen-stat-label', text: stats[s].label}));
+                card.appendChild(el('div', {className: 'screen-stat-val' + (statCards[s].cls ? ' ' + statCards[s].cls : ''), text: statCards[s].val}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: statCards[s].label}));
                 summary.appendChild(card);
             }
-            var body = clearEl('molecules-body');
-            var top = data.top_10_by_pchembl || [];
-            for (var i = 0; i < top.length; i++) {
-                var c = top[i];
-                var chemblLink = el('a', {text: c.chembl_id || '-', title: 'View on ChEMBL'});
-                if (c.chembl_id) chemblLink.href = 'https://www.ebi.ac.uk/chembl/compound_report_card/' + c.chembl_id;
-                chemblLink.target = '_blank';
-                chemblLink.rel = 'noopener';
-                chemblLink.style.cssText = 'color:var(--text);font-weight:600;font-family:var(--mono);font-size:11px;text-decoration:underline';
-                var linkTd = el('td');
-                linkTd.appendChild(chemblLink);
-                body.appendChild(el('tr', null, [
-                    td(String(i + 1), 'mono'),
-                    tdBadge(c.target_symbol || '-', 'badge-blue'),
-                    linkTd,
-                    td(c.pchembl_value ? c.pchembl_value.toFixed(1) : '-', 'mono', 'font-weight:700'),
-                    td(c.activity_type || '-'),
-                    td(c.molecular_weight ? c.molecular_weight.toFixed(0) : '-', 'mono'),
-                    td(c.alogp ? c.alogp.toFixed(1) : '-', 'mono'),
-                    tdBadge(c.drug_likeness_pass ? 'PASS' : 'fail', c.drug_likeness_pass ? 'badge-green' : 'badge-gray')
-                ]));
+            // Populate filter dropdowns
+            var targetSel = document.getElementById('mol-filter-target');
+            var byTarget = stats.by_target || [];
+            for (var ti = 0; ti < byTarget.length; ti++) {
+                var opt = document.createElement('option');
+                opt.value = byTarget[ti].target_symbol;
+                opt.textContent = byTarget[ti].target_symbol + ' (' + byTarget[ti].count + ')';
+                targetSel.appendChild(opt);
             }
-            if (top.length === 0) {
-                body.appendChild(el('tr', null, [el('td', {colSpan: 8, className: 'loading', text: 'No molecule screening results available yet.'})]));
+            var methodSel = document.getElementById('mol-filter-method');
+            var byMethod = stats.by_method || [];
+            for (var mi = 0; mi < byMethod.length; mi++) {
+                var mopt = document.createElement('option');
+                mopt.value = byMethod[mi].method;
+                mopt.textContent = byMethod[mi].method + ' (' + byMethod[mi].count + ')';
+                methodSel.appendChild(mopt);
+            }
+
+            // Build target distribution bar chart
+            var chartDiv = document.getElementById('mol-target-chart');
+            if (byTarget.length > 0) {
+                var maxCount = byTarget[0].count;
+                var chartHtml = '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;color:var(--text-secondary)">Molecules by Target</div>';
+                for (var ci = 0; ci < byTarget.length; ci++) {
+                    var pct = Math.round(100 * byTarget[ci].count / stats.total);
+                    var barW = Math.max(2, Math.round(100 * byTarget[ci].count / maxCount));
+                    chartHtml += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;cursor:pointer" onclick="document.getElementById('mol-filter-target').value='' + byTarget[ci].target_symbol + '';document.getElementById('mol-filter-target').dispatchEvent(new Event('change'))">'
+                        + '<span style="font-family:var(--mono);font-size:10px;width:60px;text-align:right;color:var(--text)">' + byTarget[ci].target_symbol + '</span>'
+                        + '<div style="flex:1;height:14px;background:var(--panel);border-radius:2px;overflow:hidden"><div style="width:' + barW + '%;height:100%;background:var(--accent);border-radius:2px"></div></div>'
+                        + '<span style="font-family:var(--mono);font-size:10px;color:var(--muted);width:40px">' + byTarget[ci].count + '</span>'
+                        + '</div>';
+                }
+                chartDiv.innerHTML = chartHtml;
             }
         }).catch(function(e) {
-            clearEl('molecules-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Molecule screening not available: ' + e.message})]));
-            clearEl('molecules-body').appendChild(el('tr', null, [el('td', {colSpan: 8, text: 'Error loading data: ' + e.message})]));
+            clearEl('mol-browser-stats').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Stats not available: ' + e.message})]));
         });
+
+        // Build query string from filters
+        function buildQuery() {
+            var params = [];
+            params.push('page=' + molPage);
+            params.push('per_page=' + molPerPage);
+            var target = document.getElementById('mol-filter-target').value;
+            if (target) params.push('target=' + encodeURIComponent(target));
+            var method = document.getElementById('mol-filter-method').value;
+            if (method) params.push('method=' + encodeURIComponent(method));
+            if (document.getElementById('mol-filter-bbb').checked) params.push('bbb_only=true');
+            if (document.getElementById('mol-filter-lipinski').checked) params.push('lipinski_only=true');
+            var qed = document.getElementById('mol-filter-qed').value;
+            if (qed) params.push('min_qed=' + qed);
+            var mw = document.getElementById('mol-filter-mw').value;
+            if (mw) params.push('max_mw=' + mw);
+            var smiles = document.getElementById('mol-filter-smiles').value.trim();
+            if (smiles) params.push('search_smiles=' + encodeURIComponent(smiles));
+            var sort = document.getElementById('mol-sort').value;
+            params.push('sort=' + sort);
+            return params.join('&');
+        }
+
+        function fetchMolecules() {
+            var q = buildQuery();
+            fetch(API + '/molecules/browser?' + q).then(function(r) { return r.json(); }).then(function(data) {
+                molData = data;
+                if (molView === 'grid') renderGrid(data);
+                else renderTable(data);
+                renderPagination('mol-pagination', data.total, data.page, function(p) { molPage = p; fetchMolecules(); }, molPerPage);
+            }).catch(function(e) {
+                var grid = document.getElementById('mol-grid');
+                grid.innerHTML = '<div class="empty-state"><p>Error loading molecules: ' + e.message + '</p></div>';
+            });
+        }
+
+        function renderGrid(data) {
+            var grid = clearEl('mol-grid');
+            grid.style.display = '';
+            document.getElementById('mol-table-wrap').style.display = 'none';
+            var mols = data.molecules || [];
+            if (mols.length === 0) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><p>No molecules match your filters.</p></div>';
+                return;
+            }
+            for (var i = 0; i < mols.length; i++) {
+                (function(m, idx) {
+                    var card = document.createElement('div');
+                    card.style.cssText = 'background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;cursor:pointer;transition:border-color 0.2s';
+                    card.addEventListener('mouseenter', function() { card.style.borderColor = 'var(--accent)'; });
+                    card.addEventListener('mouseleave', function() { card.style.borderColor = 'var(--line)'; });
+                    card.addEventListener('click', function() { showMolDetail(m); });
+
+                    // SVG or SMILES display
+                    var svgDiv = document.createElement('div');
+                    svgDiv.style.cssText = 'width:100%;height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;overflow:hidden';
+                    if (m.svg_2d) {
+                        svgDiv.innerHTML = m.svg_2d;
+                        var svgEl = svgDiv.querySelector('svg');
+                        if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.maxHeight = '100%'; }
+                    } else {
+                        svgDiv.innerHTML = '<span style="font-family:var(--mono);font-size:9px;color:var(--muted);word-break:break-all;max-height:100%;overflow:hidden">' + (m.smiles || '').substring(0, 80) + '</span>';
+                    }
+                    card.appendChild(svgDiv);
+
+                    // Target badge
+                    var targetRow = document.createElement('div');
+                    targetRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:6px';
+                    var badge = document.createElement('span');
+                    badge.className = 'badge badge-blue';
+                    badge.textContent = m.target_symbol || '-';
+                    badge.style.fontSize = '10px';
+                    targetRow.appendChild(badge);
+                    if (m.method) {
+                        var methodBadge = document.createElement('span');
+                        methodBadge.style.cssText = 'font-size:9px;color:var(--muted);background:var(--bg);padding:1px 5px;border-radius:3px';
+                        methodBadge.textContent = m.method;
+                        targetRow.appendChild(methodBadge);
+                    }
+                    card.appendChild(targetRow);
+
+                    // Properties
+                    var props = document.createElement('div');
+                    props.style.cssText = 'font-size:11px;line-height:1.8;color:var(--text-secondary)';
+                    var html = '';
+                    if (m.qed != null) html += '<div style="display:flex;justify-content:space-between"><span>QED</span><span style="font-weight:600;color:var(--text);font-family:var(--mono)">' + m.qed.toFixed(3) + '</span></div>';
+                    if (m.mw != null) html += '<div style="display:flex;justify-content:space-between"><span>MW</span><span style="font-family:var(--mono)">' + m.mw.toFixed(0) + ' Da</span></div>';
+                    if (m.logp != null) html += '<div style="display:flex;justify-content:space-between"><span>LogP</span><span style="font-family:var(--mono)">' + m.logp.toFixed(2) + '</span></div>';
+                    // BBB + Lipinski badges
+                    html += '<div style="display:flex;gap:6px;margin-top:4px">';
+                    if (m.bbb_permeable) html += '<span class="badge badge-green" style="font-size:9px">BBB</span>';
+                    if (m.lipinski_pass) html += '<span class="badge badge-green" style="font-size:9px">Lipinski</span>';
+                    if (m.diffdock_confidence != null) {
+                        var dCls = m.diffdock_confidence >= 0 ? 'badge-green' : m.diffdock_confidence >= -1 ? 'badge-amber' : 'badge-gray';
+                        html += '<span class="badge ' + dCls + '" style="font-size:9px">Dock: ' + m.diffdock_confidence.toFixed(3) + '</span>';
+                    }
+                    html += '</div>';
+                    props.innerHTML = html;
+                    card.appendChild(props);
+
+                    // Copy SMILES button
+                    var copyBtn = document.createElement('button');
+                    copyBtn.textContent = 'Copy SMILES';
+                    copyBtn.className = 'page-btn';
+                    copyBtn.style.cssText = 'width:100%;margin-top:8px;font-size:10px;padding:3px 0';
+                    copyBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        navigator.clipboard.writeText(m.smiles || '').then(function() {
+                            copyBtn.textContent = 'Copied!';
+                            setTimeout(function() { copyBtn.textContent = 'Copy SMILES'; }, 1500);
+                        });
+                    });
+                    card.appendChild(copyBtn);
+
+                    grid.appendChild(card);
+                })(mols[i], i);
+            }
+        }
+
+        function renderTable(data) {
+            document.getElementById('mol-grid').style.display = 'none';
+            document.getElementById('mol-table-wrap').style.display = '';
+            var body = clearEl('mol-table-body');
+            var mols = data.molecules || [];
+            if (mols.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 10, className: 'loading', text: 'No molecules match your filters.'})]));
+                return;
+            }
+            var offset = (data.page - 1) * data.per_page;
+            for (var i = 0; i < mols.length; i++) {
+                (function(m, idx) {
+                    var row = el('tr');
+                    row.style.cursor = 'pointer';
+                    row.addEventListener('click', function() { showMolDetail(m); });
+                    row.appendChild(td(String(offset + idx + 1), 'mono'));
+                    row.appendChild(tdBadge(m.target_symbol || '-', 'badge-blue'));
+
+                    var smTd = td((m.smiles || '').substring(0, 30) + (m.smiles && m.smiles.length > 30 ? '...' : ''), 'mono', 'font-size:10px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap');
+                    smTd.title = m.smiles || '';
+                    row.appendChild(smTd);
+
+                    row.appendChild(td(m.qed != null ? m.qed.toFixed(3) : '-', 'mono', 'font-weight:600'));
+                    row.appendChild(td(m.mw != null ? m.mw.toFixed(0) : '-', 'mono'));
+                    row.appendChild(td(m.logp != null ? m.logp.toFixed(2) : '-', 'mono'));
+                    row.appendChild(tdBadge(m.bbb_permeable ? 'YES' : 'no', m.bbb_permeable ? 'badge-green' : 'badge-gray'));
+                    row.appendChild(tdBadge(m.lipinski_pass ? 'YES' : 'no', m.lipinski_pass ? 'badge-green' : 'badge-gray'));
+
+                    if (m.diffdock_confidence != null) {
+                        var dCls = m.diffdock_confidence >= 0 ? 'badge-green' : m.diffdock_confidence >= -1 ? 'badge-amber' : 'badge-gray';
+                        row.appendChild(tdBadge(m.diffdock_confidence.toFixed(3), dCls));
+                    } else {
+                        row.appendChild(td('-', '', 'color:var(--muted)'));
+                    }
+                    row.appendChild(td(m.method || '-', '', 'font-size:10px'));
+                    body.appendChild(row);
+                })(mols[i], i);
+            }
+        }
+
+        function showMolDetail(m) {
+            var panel = document.getElementById('mol-detail-panel');
+            var content = clearEl('mol-detail-content');
+            panel.style.display = '';
+
+            // SVG
+            var svgDiv = document.createElement('div');
+            svgDiv.style.cssText = 'width:100%;height:220px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;background:var(--panel);border-radius:6px;border:1px solid var(--line)';
+            if (m.svg_2d) {
+                svgDiv.innerHTML = m.svg_2d;
+                var svgEl = svgDiv.querySelector('svg');
+                if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.maxHeight = '100%'; }
+            } else {
+                svgDiv.innerHTML = '<span style="font-family:var(--mono);font-size:10px;color:var(--muted);word-break:break-all;padding:12px">' + (m.smiles || '') + '</span>';
+            }
+            content.appendChild(svgDiv);
+
+            // Title
+            var title = document.createElement('h3');
+            title.style.cssText = 'font-size:16px;margin:0 0 4px';
+            title.textContent = (m.target_symbol || 'Unknown') + ' Molecule #' + m.id;
+            content.appendChild(title);
+
+            // Method + batch
+            var meta = document.createElement('div');
+            meta.style.cssText = 'font-size:11px;color:var(--muted);margin-bottom:16px';
+            meta.textContent = (m.method || 'Unknown method') + (m.generation_batch ? ' | ' + m.generation_batch : '');
+            content.appendChild(meta);
+
+            // SMILES with copy
+            var smilesBox = document.createElement('div');
+            smilesBox.style.cssText = 'background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin-bottom:16px;font-family:var(--mono);font-size:10px;word-break:break-all;line-height:1.5;position:relative';
+            smilesBox.textContent = m.smiles || '';
+            var copyBtn2 = document.createElement('button');
+            copyBtn2.textContent = 'Copy';
+            copyBtn2.className = 'page-btn';
+            copyBtn2.style.cssText = 'position:absolute;top:4px;right:4px;font-size:9px;padding:2px 8px';
+            copyBtn2.addEventListener('click', function() {
+                navigator.clipboard.writeText(m.smiles || '').then(function() {
+                    copyBtn2.textContent = 'Copied!';
+                    setTimeout(function() { copyBtn2.textContent = 'Copy'; }, 1500);
+                });
+            });
+            smilesBox.appendChild(copyBtn2);
+            content.appendChild(smilesBox);
+
+            // Properties grid
+            var propGrid = document.createElement('div');
+            propGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px';
+            var allProps = [
+                {label: 'QED', val: m.qed != null ? m.qed.toFixed(3) : '-'},
+                {label: 'MW', val: m.mw != null ? m.mw.toFixed(1) + ' Da' : '-'},
+                {label: 'LogP', val: m.logp != null ? m.logp.toFixed(2) : '-'},
+                {label: 'TPSA', val: m.tpsa != null ? m.tpsa.toFixed(1) : '-'},
+                {label: 'HBD', val: m.hbd != null ? String(m.hbd) : '-'},
+                {label: 'HBA', val: m.hba != null ? String(m.hba) : '-'},
+                {label: 'CNS-MPO', val: m.cns_mpo != null ? m.cns_mpo.toFixed(2) : '-'},
+                {label: 'BBB', val: m.bbb_permeable ? 'Permeable' : 'Not permeable'},
+                {label: 'Lipinski', val: m.lipinski_pass ? 'Pass' : m.lipinski_pass === false ? 'Fail' : '-'},
+                {label: 'DiffDock', val: m.diffdock_confidence != null ? m.diffdock_confidence.toFixed(4) : 'Not docked'},
+            ];
+            if (m.diffdock_target) allProps.push({label: 'Dock Target', val: m.diffdock_target});
+            if (m.score != null) allProps.push({label: 'Score', val: m.score.toFixed(4)});
+
+            for (var pi = 0; pi < allProps.length; pi++) {
+                var propItem = document.createElement('div');
+                propItem.style.cssText = 'background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:6px 8px';
+                propItem.innerHTML = '<div style="font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:2px">' + allProps[pi].label + '</div>'
+                    + '<div style="font-size:13px;font-weight:600;font-family:var(--mono);color:var(--text)">' + allProps[pi].val + '</div>';
+                propGrid.appendChild(propItem);
+            }
+            content.appendChild(propGrid);
+
+            // Scaffold SMILES
+            if (m.scaffold_smiles) {
+                var scaff = document.createElement('div');
+                scaff.style.cssText = 'font-size:11px;color:var(--text-secondary);margin-bottom:12px';
+                scaff.innerHTML = '<span style="font-weight:600">Scaffold:</span> <span style="font-family:var(--mono);font-size:10px">' + m.scaffold_smiles + '</span>';
+                content.appendChild(scaff);
+            }
+
+            // External links
+            var links = document.createElement('div');
+            links.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px';
+            var linkData = [
+                {text: 'View in MolView', url: 'https://molview.org/?smiles=' + encodeURIComponent(m.smiles || '')},
+                {text: 'PubChem Similarity', url: 'https://pubchem.ncbi.nlm.nih.gov/#query=' + encodeURIComponent(m.smiles || '') + '&input_type=smiles'},
+            ];
+            for (var li = 0; li < linkData.length; li++) {
+                var a = document.createElement('a');
+                a.textContent = linkData[li].text;
+                a.href = linkData[li].url;
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.style.cssText = 'font-size:11px;color:var(--accent);text-decoration:none;padding:4px 8px;border:1px solid var(--accent);border-radius:3px';
+                links.appendChild(a);
+            }
+            content.appendChild(links);
+        }
+
+        // Close detail panel
+        document.getElementById('mol-detail-close').addEventListener('click', function() {
+            document.getElementById('mol-detail-panel').style.display = 'none';
+        });
+
+        // View toggle
+        document.getElementById('mol-view-grid').addEventListener('click', function() {
+            molView = 'grid';
+            document.getElementById('mol-view-grid').classList.add('active');
+            document.getElementById('mol-view-table').classList.remove('active');
+            if (molData) renderGrid(molData);
+        });
+        document.getElementById('mol-view-table').addEventListener('click', function() {
+            molView = 'table';
+            document.getElementById('mol-view-table').classList.add('active');
+            document.getElementById('mol-view-grid').classList.remove('active');
+            if (molData) renderTable(molData);
+        });
+
+        // Filter change handlers
+        var filterIds = ['mol-filter-target', 'mol-filter-method', 'mol-filter-bbb', 'mol-filter-lipinski', 'mol-sort'];
+        for (var fi = 0; fi < filterIds.length; fi++) {
+            document.getElementById(filterIds[fi]).addEventListener('change', function() { molPage = 1; fetchMolecules(); });
+        }
+        // Debounced text inputs
+        var textIds = ['mol-filter-qed', 'mol-filter-mw', 'mol-filter-smiles'];
+        for (var ti = 0; ti < textIds.length; ti++) {
+            (function(id) {
+                var timeout;
+                document.getElementById(id).addEventListener('input', function() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function() { molPage = 1; fetchMolecules(); }, 400);
+                });
+            })(textIds[ti]);
+        }
+
+        // Export handlers
+        document.getElementById('mol-export-csv').addEventListener('click', function() {
+            var target = document.getElementById('mol-filter-target').value;
+            var bbb = document.getElementById('mol-filter-bbb').checked;
+            var params = ['format=csv'];
+            if (target) params.push('target=' + encodeURIComponent(target));
+            if (bbb) params.push('bbb_only=true');
+            window.open(API + '/molecules/browser/export?' + params.join('&'), '_blank');
+        });
+        document.getElementById('mol-export-sdf').addEventListener('click', function() {
+            var target = document.getElementById('mol-filter-target').value;
+            var bbb = document.getElementById('mol-filter-bbb').checked;
+            var params = ['format=sdf'];
+            if (target) params.push('target=' + encodeURIComponent(target));
+            if (bbb) params.push('bbb_only=true');
+            window.open(API + '/molecules/browser/export?' + params.join('&'), '_blank');
+        });
+
+        // Initial load
+        fetchMolecules();
     }
 
     function loadCrispr() {
@@ -10479,59 +10861,225 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var expDockAllData = [];
         var expDockPage = 1;
         var EXP_DOCK_PER_PAGE = 30;
+
+        function renderExpDockHeatmap(data) {
+            var hm = document.getElementById('expdock-heatmap');
+            if (!data || data.length === 0) { hm.innerHTML = ''; return; }
+
+            // Collect unique drugs and targets
+            var drugs = [], targets = [], lookup = {};
+            for (var i = 0; i < data.length; i++) {
+                var d = data[i].drug || '', t = data[i].target || '';
+                if (drugs.indexOf(d) === -1) drugs.push(d);
+                if (targets.indexOf(t) === -1) targets.push(t);
+                lookup[d + '|' + t] = data[i];
+            }
+            drugs.sort(); targets.sort();
+
+            var html = '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;color:var(--text-secondary)">Drug x Target Heatmap <span style="font-weight:400;text-transform:none;letter-spacing:0">(click cell to filter)</span></div>';
+            html += '<div style="overflow-x:auto"><table style="font-size:10px;border-collapse:collapse;width:auto">';
+            html += '<tr><td style="padding:3px 6px;font-weight:600"></td>';
+            for (var ti = 0; ti < targets.length; ti++) {
+                html += '<td style="padding:3px 6px;font-weight:600;text-align:center;font-family:var(--mono);font-size:9px;writing-mode:vertical-lr;transform:rotate(180deg);height:60px">' + targets[ti] + '</td>';
+            }
+            html += '</tr>';
+            for (var di = 0; di < drugs.length; di++) {
+                html += '<tr><td style="padding:3px 6px;font-weight:600;white-space:nowrap;font-size:10px">' + drugs[di] + '</td>';
+                for (var ti = 0; ti < targets.length; ti++) {
+                    var key = drugs[di] + '|' + targets[ti];
+                    var entry = lookup[key];
+                    var color, text, title;
+                    if (!entry) {
+                        color = '#1a1a2e'; text = '-'; title = 'No data';
+                    } else if (entry.best_confidence >= 0) {
+                        color = '#10b981'; text = '+'; title = 'Positive: ' + Number(entry.best_confidence).toFixed(3);
+                    } else if (entry.best_confidence >= -1) {
+                        color = '#f59e0b'; text = '~'; title = 'Moderate: ' + Number(entry.best_confidence).toFixed(3);
+                    } else {
+                        color = '#6b7280'; text = '-'; title = 'Weak: ' + Number(entry.best_confidence).toFixed(3);
+                    }
+                    html += '<td style="padding:0;width:28px;height:28px;text-align:center;background:' + color + '20;border:1px solid ' + color + '40;cursor:pointer;color:' + color + ';font-weight:700;font-size:12px" title="' + title + '" onclick="document.getElementById('expdock-drug-filter').value='' + drugs[di] + '';document.getElementById('expdock-target-filter').value='' + targets[ti] + '';document.getElementById('expdock-drug-filter').dispatchEvent(new Event('change'))">' + text + '</td>';
+                }
+                html += '</tr>';
+            }
+            html += '</table></div>';
+            hm.innerHTML = html;
+        }
+
         function renderExpDockPage() {
             var body = clearEl('gpu-expdock-body');
-            var fdrug = (document.getElementById('expdock-drug-filter') || {value:''}).value.toLowerCase();
-            var ftgt = (document.getElementById('expdock-target-filter') || {value:''}).value.toLowerCase();
+            var fdrug = document.getElementById('expdock-drug-filter').value;
+            var ftgt = document.getElementById('expdock-target-filter').value;
+            var fconf = document.getElementById('expdock-conf-filter').value;
+            var fsort = document.getElementById('expdock-sort').value;
+
             var filtered = expDockAllData.filter(function(r) {
-                return (!fdrug || (r.drug||'').toLowerCase().indexOf(fdrug) !== -1) &&
-                       (!ftgt || (r.target||'').toLowerCase().indexOf(ftgt) !== -1);
+                if (fdrug && r.drug !== fdrug) return false;
+                if (ftgt && r.target !== ftgt) return false;
+                if (fconf && (r.best_confidence == null || r.best_confidence < parseFloat(fconf))) return false;
+                return true;
             });
+
+            // Sort
+            filtered.sort(function(a, b) {
+                if (fsort === 'drug') return (a.drug || '').localeCompare(b.drug || '');
+                if (fsort === 'target') return (a.target || '').localeCompare(b.target || '');
+                return (b.best_confidence || -999) - (a.best_confidence || -999);
+            });
+
+            // Count display
+            var posCount = filtered.filter(function(r) { return r.best_confidence >= 0; }).length;
+            var countEl = document.getElementById('expdock-filter-count');
+            countEl.textContent = posCount + ' positive hits of ' + filtered.length + ' shown (' + expDockAllData.length + ' total)';
+
             if (filtered.length === 0) {
                 body.appendChild(el('tr', null, [el('td', {colSpan: 8, className: 'loading', text: 'No results match filter.'})]));
                 renderPagination('gpu-expdock-pagination', 0, 1, function() {});
                 return;
             }
+
             var start = (expDockPage - 1) * EXP_DOCK_PER_PAGE;
             var end = Math.min(start + EXP_DOCK_PER_PAGE, filtered.length);
             for (var di = start; di < end; di++) {
-                var dr = filtered[di];
-                var bc = dr.best_confidence != null ? Number(dr.best_confidence).toFixed(3) : '-';
-                var ac = dr.avg_confidence != null ? Number(dr.avg_confidence).toFixed(3) : '-';
-                var bcCls = dr.best_confidence >= 0 ? 'badge-green' : dr.best_confidence >= -1 ? 'badge-amber' : 'badge-gray';
-                body.appendChild(el('tr', null, [
-                    td(String(di+1), 'mono'),
-                    td(dr.drug || '', '', 'font-weight:600'),
-                    td(dr.target || '', 'mono'),
-                    td(dr.mw ? Number(dr.mw).toFixed(0) + ' Da' : '-', 'mono', 'font-size:10px'),
-                    tdBadge(bc, bcCls),
-                    td(ac, 'mono', 'font-size:10px'),
-                    td(String(dr.num_poses || '-'), 'mono', 'font-size:10px'),
-                    td((dr.campaign || '').replace('_', ' '), '', 'font-size:9px;color:var(--muted)')
-                ]));
+                (function(dr, idx) {
+                    var bc = dr.best_confidence != null ? Number(dr.best_confidence).toFixed(3) : '-';
+                    var ac = dr.avg_confidence != null ? Number(dr.avg_confidence).toFixed(3) : '-';
+                    var bcCls = dr.best_confidence >= 0 ? 'badge-green' : dr.best_confidence >= -1 ? 'badge-amber' : 'badge-gray';
+                    var statusText = dr.best_confidence >= 0 ? 'BINDER' : dr.best_confidence >= -1 ? 'Moderate' : 'Weak';
+                    var statusCls = dr.best_confidence >= 0 ? 'badge-green' : dr.best_confidence >= -1 ? 'badge-amber' : 'badge-gray';
+
+                    var row = el('tr');
+                    row.style.cursor = 'pointer';
+                    row.appendChild(td(String(idx + 1), 'mono'));
+                    row.appendChild(td(dr.drug || '', '', 'font-weight:600'));
+                    row.appendChild(td(dr.target || '', 'mono'));
+                    row.appendChild(td(dr.mw ? Number(dr.mw).toFixed(0) + ' Da' : '-', 'mono', 'font-size:10px'));
+                    row.appendChild(tdBadge(bc, bcCls));
+                    row.appendChild(td(ac, 'mono', 'font-size:10px'));
+                    row.appendChild(td(String(dr.num_poses || '-'), 'mono', 'font-size:10px'));
+                    row.appendChild(tdBadge(statusText, statusCls));
+
+                    // Expandable detail
+                    var expanded = false;
+                    var detailRow = null;
+                    row.addEventListener('click', function() {
+                        if (expanded && detailRow) {
+                            detailRow.remove();
+                            detailRow = null;
+                            expanded = false;
+                            row.style.background = '';
+                            return;
+                        }
+                        row.style.background = 'var(--panel)';
+                        detailRow = document.createElement('tr');
+                        var cell = document.createElement('td');
+                        cell.colSpan = 8;
+                        cell.style.cssText = 'background:var(--panel);padding:16px;font-size:12px;line-height:1.8;border-left:3px solid var(--accent)';
+
+                        var h = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">';
+                        h += '<div><span style="font-weight:700;font-size:13px">' + (dr.drug || '') + '</span>';
+                        h += '<div style="font-size:11px;color:var(--muted);margin-top:2px">Target: <span style="font-weight:600;color:var(--text)">' + (dr.target || '') + '</span></div>';
+                        if (dr.mw) h += '<div style="font-size:11px;color:var(--muted)">MW: ' + dr.mw + ' Da</div>';
+                        if (dr.formula) h += '<div style="font-size:11px;color:var(--muted)">Formula: ' + dr.formula + '</div>';
+                        h += '</div>';
+
+                        h += '<div>';
+                        h += '<div style="font-size:11px;font-weight:600;margin-bottom:4px">Binding Assessment</div>';
+                        if (dr.best_confidence >= 0) {
+                            h += '<div style="color:#10b981;font-weight:700">POSITIVE BINDER — predicted to bind ' + (dr.target || '') + '</div>';
+                        } else if (dr.best_confidence >= -1) {
+                            h += '<div style="color:#f59e0b;font-weight:600">Moderate — may bind weakly</div>';
+                        } else {
+                            h += '<div style="color:#6b7280">Weak/no predicted binding</div>';
+                        }
+                        h += '</div></div>';
+
+                        // All pose confidences
+                        var confidences = dr.all_confidences || [];
+                        if (confidences.length > 0) {
+                            h += '<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:600;margin-bottom:6px">All ' + confidences.length + ' Pose Confidences</div>';
+                            h += '<div style="display:flex;gap:4px;flex-wrap:wrap">';
+                            for (var ci = 0; ci < confidences.length; ci++) {
+                                var cv = Number(confidences[ci]);
+                                var ccls = cv >= 0 ? '#10b981' : cv >= -1 ? '#f59e0b' : '#6b7280';
+                                h += '<span style="font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:3px;background:' + ccls + '20;color:' + ccls + ';border:1px solid ' + ccls + '40">' + cv.toFixed(3) + '</span>';
+                            }
+                            h += '</div></div>';
+                        }
+
+                        // SMILES if available
+                        if (dr.smiles) {
+                            h += '<div style="margin-bottom:8px"><span style="font-size:11px;font-weight:600">SMILES:</span> <span style="font-family:var(--mono);font-size:10px;word-break:break-all">' + dr.smiles + '</span></div>';
+                        }
+
+                        // Links
+                        h += '<div style="display:flex;gap:8px;margin-top:8px">';
+                        if (dr.target) {
+                            h += '<a href="https://www.uniprot.org/uniprotkb?query=' + encodeURIComponent(dr.target + ' human') + '" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);text-decoration:none;padding:3px 8px;border:1px solid var(--accent);border-radius:3px">UniProt: ' + dr.target + '</a>';
+                        }
+                        if (dr.smiles) {
+                            h += '<a href="https://molview.org/?smiles=' + encodeURIComponent(dr.smiles) + '" target="_blank" rel="noopener" style="font-size:11px;color:var(--accent);text-decoration:none;padding:3px 8px;border:1px solid var(--accent);border-radius:3px">View 3D</a>';
+                        }
+                        h += '<span onclick="showSection('molecules')" style="font-size:11px;color:var(--accent);cursor:pointer;padding:3px 8px;border:1px solid var(--accent);border-radius:3px">Browse Molecules</span>';
+                        h += '</div>';
+
+                        cell.innerHTML = h;
+                        detailRow.appendChild(cell);
+                        row.parentNode.insertBefore(detailRow, row.nextSibling);
+                        expanded = true;
+                    });
+
+                    body.appendChild(row);
+                })(filtered[di], di);
             }
             renderPagination('gpu-expdock-pagination', filtered.length, expDockPage, function(p) { expDockPage = p; renderExpDockPage(); });
         }
+
         fetch(API + '/nims/extended-docking?limit=300').then(function(r) { return r.json(); }).then(function(data) {
             var sumDiv = clearEl('gpu-expdock-summary');
+            var results = data.results || [];
+            var posHits = results.filter(function(r) { return r.best_confidence >= 0; }).length;
             var dstats = [
                 {val: String(data.total || 0), label: 'Total Dockings'},
+                {val: String(posHits), label: 'Positive Hits', cls: 'highlight'},
                 {val: String(data.unique_drugs || 0), label: 'Unique Drugs'},
                 {val: String(data.unique_targets || 0), label: 'Targets Screened'},
                 {val: data.avg_confidence != null ? Number(data.avg_confidence).toFixed(3) : '-', label: 'Avg Confidence'},
             ];
             for (var ds = 0; ds < dstats.length; ds++) {
                 var dcard = el('div', {className: 'screen-stat'});
-                dcard.appendChild(el('div', {className: 'screen-stat-val', text: dstats[ds].val}));
+                dcard.appendChild(el('div', {className: 'screen-stat-val' + (dstats[ds].cls ? ' ' + dstats[ds].cls : ''), text: dstats[ds].val}));
                 dcard.appendChild(el('div', {className: 'screen-stat-label', text: dstats[ds].label}));
                 sumDiv.appendChild(dcard);
             }
-            expDockAllData = data.results || [];
+
+            expDockAllData = results;
+
+            // Populate filter dropdowns
+            var drugSet = {}, targetSet = {};
+            for (var i = 0; i < results.length; i++) {
+                if (results[i].drug) drugSet[results[i].drug] = true;
+                if (results[i].target) targetSet[results[i].target] = true;
+            }
+            var drugSel = document.getElementById('expdock-drug-filter');
+            var tgtSel = document.getElementById('expdock-target-filter');
+            Object.keys(drugSet).sort().forEach(function(d) {
+                var o = document.createElement('option'); o.value = d; o.textContent = d; drugSel.appendChild(o);
+            });
+            Object.keys(targetSet).sort().forEach(function(t) {
+                var o = document.createElement('option'); o.value = t; o.textContent = t; tgtSel.appendChild(o);
+            });
+
+            // Render heatmap
+            renderExpDockHeatmap(results);
+
+            // Render table
             renderExpDockPage();
-            var drugInput = document.getElementById('expdock-drug-filter');
-            var tgtInput = document.getElementById('expdock-target-filter');
-            if (drugInput) drugInput.addEventListener('keyup', function() { expDockPage = 1; renderExpDockPage(); });
-            if (tgtInput) tgtInput.addEventListener('keyup', function() { expDockPage = 1; renderExpDockPage(); });
+
+            // Filter event listeners
+            ['expdock-drug-filter', 'expdock-target-filter', 'expdock-conf-filter', 'expdock-sort'].forEach(function(id) {
+                document.getElementById(id).addEventListener('change', function() { expDockPage = 1; renderExpDockPage(); });
+            });
         }).catch(function(e) {
             clearEl('gpu-expdock-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Extended docking data not available: ' + e.message})]));
             clearEl('gpu-expdock-body').appendChild(el('tr', null, [el('td', {colSpan: 8, text: 'Error loading data'})]));
@@ -12750,6 +13298,135 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+    // ===== Pathway Diagram =====
+    var pathwayLoaded = false;
+
+    // Node metadata: symbol → { fullName, role, smaStatus, description, drugs }
+    var PATHWAY_NODES = {
+        'SMN1':  { symbol: 'SMN1', fullName: 'Survival Motor Neuron 1', role: 'Causal gene', smaStatus: 'Absent / Depleted' },
+        'PFN1':  { symbol: 'PFN1', fullName: 'Profilin-1', role: 'Actin nucleation factor', smaStatus: 'Dysregulated' },
+        'ROCK2': { symbol: 'ROCK2', fullName: 'Rho-associated protein kinase 2', role: 'Rho-kinase', smaStatus: 'Hyperactivated', drugs: ['Fasudil', 'Belumosudil'] },
+        'LIMK1': { symbol: 'LIMK1', fullName: 'LIM domain kinase 1', role: 'Cofilin kinase', smaStatus: 'Hyperactivated', drugs: ['MDI-117740'] },
+        'CFL2':  { symbol: 'CFL2', fullName: 'Cofilin-2 (muscle/neuron isoform)', role: 'Actin-severing protein', smaStatus: 'Phosphorylated (inactive)' },
+        'CORO1C':{ symbol: 'CORO1C', fullName: 'Coronin-1C', role: 'Actin rod cap / disassembly factor', smaStatus: 'Dysregulated' },
+        'STMN2': { symbol: 'STMN2', fullName: 'Stathmin-2', role: 'Axonal growth / maintenance factor', smaStatus: 'Downregulated' },
+        'MAPK14':{ symbol: 'MAPK14', fullName: 'p38 MAP kinase alpha', role: 'Stress-activated kinase', smaStatus: 'Activated', drugs: ['MW150', 'Thiadiazole Champion'] },
+        'TP53':  { symbol: 'TP53', fullName: 'Tumor protein p53', role: 'Apoptosis gatekeeper', smaStatus: 'De-repressed', drugs: ['Pifithrin-\u03b1'] }
+    };
+
+    function loadPathway() {
+        if (pathwayLoaded) return;
+        pathwayLoaded = true;
+        // Fetch live claim counts for each pathway node from API
+        var nodes = ['SMN1', 'SMN2', 'PFN1', 'ROCK2', 'LIMK1', 'CFL2', 'CORO1C', 'STMN2', 'MAPK14', 'TP53', 'NMJ Maturation'];
+        nodes.forEach(function(sym) {
+            // Map display IDs to claim element IDs
+            var idMap = {
+                'SMN1': 'pn-claims-SMN1',
+                'SMN2': 'pn-claims-SMN1',
+                'PFN1': 'pn-claims-PFN1',
+                'ROCK2': 'pn-claims-ROCK2',
+                'LIMK1': 'pn-claims-LIMK1',
+                'CFL2': 'pn-claims-CFL2',
+                'CORO1C': 'pn-claims-CORO1C',
+                'STMN2': 'pn-claims-STMN2',
+                'MAPK14': 'pn-claims-MAPK14',
+                'TP53': 'pn-claims-TP53',
+                'NMJ Maturation': 'pn-claims-NMJ'
+            };
+            var elId = idMap[sym];
+            if (!elId) return;
+            var encoded = encodeURIComponent(sym);
+            fetch(API + '/claims/count?target_symbol=' + encoded)
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    var el2 = document.getElementById(elId);
+                    if (!el2) return;
+                    if (data && (data.count !== undefined)) {
+                        el2.textContent = data.count + ' claim' + (data.count !== 1 ? 's' : '');
+                    } else {
+                        // Try fetching target details for claim count
+                        fetch(API + '/targets?symbol=' + encoded)
+                            .then(function(r2) { return r2.ok ? r2.json() : null; })
+                            .then(function(d2) {
+                                if (!d2) return;
+                                var items = Array.isArray(d2) ? d2 : (d2.items || d2.targets || []);
+                                if (items.length > 0 && items[0].claim_count !== undefined) {
+                                    el2.textContent = items[0].claim_count + ' claims';
+                                } else {
+                                    el2.textContent = '';
+                                }
+                            }).catch(function() {});
+                    }
+                }).catch(function() {
+                    var el2 = document.getElementById(elId);
+                    if (el2) el2.textContent = '';
+                });
+        });
+    }
+
+    function pathwayNodeClick(symbol, title, subtitle, description, status, relatedSymbols) {
+        var panel = document.getElementById('pathway-detail');
+        if (!panel) return;
+        // Toggle: clicking the same node twice closes the panel
+        if (panel.getAttribute('data-open-symbol') === symbol && panel.style.display !== 'none') {
+            panel.style.display = 'none';
+            panel.removeAttribute('data-open-symbol');
+            return;
+        }
+        panel.setAttribute('data-open-symbol', symbol);
+        // Clear and build panel using safe DOM
+        while (panel.firstChild) panel.removeChild(panel.firstChild);
+        panel.style.display = 'block';
+        panel.className = 'pathway-detail-panel';
+
+        var closeBtn = el('button', {className: 'pathway-close-btn', title: 'Close'});
+        closeBtn.textContent = '\u00d7';
+        closeBtn.addEventListener('click', function() {
+            panel.style.display = 'none';
+            panel.removeAttribute('data-open-symbol');
+        });
+        panel.appendChild(closeBtn);
+
+        var titleEl = el('div', {className: 'pathway-detail-title'});
+        titleEl.textContent = title;
+        panel.appendChild(titleEl);
+
+        var meta = el('div', {className: 'pathway-detail-meta'});
+        meta.textContent = subtitle + ' \u2022 SMA status: ' + status;
+        panel.appendChild(meta);
+
+        var desc = el('div', {className: 'pathway-detail-claims'});
+        desc.textContent = description;
+        panel.appendChild(desc);
+
+        // Action buttons row
+        var btns = el('div', {style: 'margin-top:14px;display:flex;gap:8px;flex-wrap:wrap'});
+
+        var node = PATHWAY_NODES[symbol];
+        if (node && node.drugs && node.drugs.length > 0) {
+            var drugsBtn = el('button', {style: 'font-size:11px;font-weight:600;padding:5px 12px;background:var(--red-bg);color:var(--red);border:1px solid #fecaca;cursor:pointer'});
+            drugsBtn.textContent = 'View drugs \u2192';
+            drugsBtn.addEventListener('click', function() { showSection('drugs'); });
+            btns.appendChild(drugsBtn);
+        }
+
+        var targBtn = el('button', {style: 'font-size:11px;font-weight:600;padding:5px 12px;background:var(--blue-bg);color:var(--blue);border:1px solid var(--line);cursor:pointer'});
+        targBtn.textContent = 'Targets section \u2192';
+        targBtn.addEventListener('click', function() { showSection('targets'); });
+        btns.appendChild(targBtn);
+
+        var claimsBtn = el('button', {style: 'font-size:11px;font-weight:600;padding:5px 12px;background:var(--panel);color:var(--text-secondary);border:1px solid var(--line);cursor:pointer'});
+        claimsBtn.textContent = 'Browse claims \u2192';
+        claimsBtn.addEventListener('click', function() { showSection('claims'); });
+        btns.appendChild(claimsBtn);
+
+        panel.appendChild(btns);
+
+        // Scroll panel into view smoothly
+        panel.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    }
+
     // Section loader map
     var loaders = {
         mission: loadMission, research: loadResearch,
@@ -12774,7 +13451,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         news: loadNews,
         advisory: loadAdvisory,
         analytics: loadAnalytics,
-        growth: loadGrowth
+        growth: loadGrowth,
+        pathway: loadPathway
     };
 
     // SEO meta data per section for dynamic <title> and <meta description>
@@ -12807,7 +13485,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         rnabind:     {title: 'RNA Binding — SMA Research Platform', desc: 'RNA-binding protein interactions with SMN2 pre-mRNA relevant to SMA splicing therapy.'},
         dualtarget:  {title: 'Dual Target — SMA Research Platform', desc: 'Dual-target therapeutic strategies combining SMN-dependent and SMN-independent pathways.'},
         twin:        {title: 'Digital Twin — SMA Research Platform', desc: 'Digital twin simulation of SMA disease progression and therapeutic response modeling.'},
-        molecules:   {title: 'Molecules — SMA Research Platform', desc: 'Molecular structure analysis and virtual screening results for SMA drug candidates.'},
+        molecules:   {title: 'Molecule Browser — SMA Research Platform', desc: '800+ AI-generated and computationally screened molecules for SMA drug targets. MolMIM, GenMol, DiffDock docking results, ML-proxy virtual screening. Filterable by target, BBB, Lipinski, QED. Export CSV/SDF.'},
         crispr:      {title: 'CRISPR — SMA Research Platform', desc: 'CRISPR-based gene editing strategies for SMN1 restoration and SMN2 exon 7 inclusion.'},
         aav:         {title: 'AAV Vectors — SMA Research Platform', desc: 'Adeno-associated virus vector design and optimization for SMA gene therapy.'},
         docking:     {title: 'Molecular Docking — SMA Research Platform', desc: 'Computational docking results for SMA drug candidates against prioritized targets.'},
@@ -12830,7 +13508,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         versions:    {title: 'Version History — SMA Research Platform', desc: 'Platform version history and changelog for the SMA Research Platform.'},
         advisory:    {title: 'Scientific Advisory Pack — SMA Research Platform', desc: 'Auto-generated 5-section research summary for external collaborators, professors, and grant reviewers. Covers platform overview, top targets, virtual screening, key hypotheses, and honest assessment of strengths and limitations.'},
         analytics:   {title: 'Platform Analytics — SMA Research Platform', desc: 'Real-time analytics dashboard showing platform stats, evidence convergence, claim distributions, top journals, and research progress for the SMA Research Platform.'},
-        growth:      {title: 'Platform Growth — SMA Research Platform', desc: 'How the SMA Research Platform has grown since launch: live database counts, key milestones, pipeline stats, and computational resources used.'}
+        growth:      {title: 'Platform Growth — SMA Research Platform', desc: 'How the SMA Research Platform has grown since launch: live database counts, key milestones, pipeline stats, and computational resources used.'},
+        pathway:     {title: 'ROCK-LIMK-Cofilin Pathway — SMA Research Platform', desc: 'Interactive pathway map of the ROCK2-LIMK1-CFL2-Actin Rod axis — the platform\'s strongest convergence finding (5/6 research streams). Druggable nodes include ROCK2 (fasudil, belumosudil), LIMK1 (MDI-117740), MAPK14 (MW150), and p53 (pifithrin-alpha).'}
     };
 
     // Update document title and meta description for SEO
