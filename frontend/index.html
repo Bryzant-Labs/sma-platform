@@ -2640,16 +2640,16 @@
     </div>
     <p class="section-desc">Research highlights, computational discoveries, and platform updates. Each post documents a specific finding with full methodology and source citations. Comment on findings and join the discussion.</p>
     <div class="news-filters" style="margin-bottom:16px">
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px" id="news-filter-bar">
+        <!-- Row 1: Category filter buttons -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px" id="news-filter-bar">
             <button class="page-btn active" data-cat="">All</button>
         </div>
+        <!-- Row 2: Tag pill buttons (populated by JS) + Sort + Search -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);white-space:nowrap">Tags:</span>
+            <div id="news-tag-pills" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-            <div style="display:flex;flex-direction:column;gap:4px">
-                <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Tag</label>
-                <select id="news-tag-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
-                    <option value="">All tags</option>
-                </select>
-            </div>
             <div style="display:flex;flex-direction:column;gap:4px">
                 <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Sort</label>
                 <select id="news-sort-filter" style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
@@ -2663,6 +2663,8 @@
                 <input type="text" id="news-search-filter" placeholder="Search in titles..." style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit;min-width:180px">
             </div>
         </div>
+        <!-- Hidden select kept for JS compatibility -->
+        <select id="news-tag-filter" style="display:none"><option value="">All tags</option></select>
     </div>
     <div id="news-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px">
         <div class="loading" style="grid-column:1/-1;text-align:center;padding:30px">Loading news...</div>
@@ -10979,14 +10981,65 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 });
             }
 
-            // Populate tag dropdown
-            var tagSel = document.getElementById('news-tag-filter');
+            // Populate tag pills — show top tags (min 1 occurrence), sorted by frequency
+            var tagPillsContainer = document.getElementById('news-tag-pills');
+            var tagSel = document.getElementById('news-tag-filter'); // hidden, kept for compat
             var sortedTags = Object.keys(allTags).sort(function(a, b) { return allTags[b] - allTags[a]; });
-            for (var t = 0; t < sortedTags.length; t++) {
-                var opt = document.createElement('option');
-                opt.value = sortedTags[t];
-                opt.textContent = '#' + sortedTags[t] + ' (' + allTags[sortedTags[t]] + ')';
-                tagSel.appendChild(opt);
+            // "All tags" pill
+            var allTagPill = document.createElement('button');
+            allTagPill.className = 'page-btn active';
+            allTagPill.setAttribute('data-tag', '');
+            allTagPill.textContent = 'All';
+            tagPillsContainer.appendChild(allTagPill);
+            // Priority tags first: targets, methods, key drugs
+            var priorityTags = ['CORO1C','ROCK2','MAPK14','LIMK1','PFN1','CFL2','SMN2','UBA1','DiffDock','RFdiffusion','MolMIM','AlphaFold','fasudil','riluzole','4-AP'];
+            var shownTags = {};
+            // Add priority tags that exist in data
+            for (var pt = 0; pt < priorityTags.length; pt++) {
+                var ptKey = priorityTags[pt];
+                // case-insensitive lookup
+                var foundKey = null;
+                for (var tk in allTags) { if (tk.toLowerCase() === ptKey.toLowerCase()) { foundKey = tk; break; } }
+                if (foundKey && !shownTags[foundKey]) {
+                    shownTags[foundKey] = true;
+                    var pill = document.createElement('button');
+                    pill.className = 'page-btn';
+                    pill.setAttribute('data-tag', foundKey);
+                    pill.textContent = foundKey + ' (' + allTags[foundKey] + ')';
+                    tagPillsContainer.appendChild(pill);
+                    // also add to hidden select
+                    var opt = document.createElement('option');
+                    opt.value = foundKey;
+                    opt.textContent = foundKey;
+                    tagSel.appendChild(opt);
+                }
+            }
+            // Then remaining tags by frequency (up to 15 total shown)
+            for (var t = 0; t < sortedTags.length && Object.keys(shownTags).length < 15; t++) {
+                if (!shownTags[sortedTags[t]]) {
+                    shownTags[sortedTags[t]] = true;
+                    var pill2 = document.createElement('button');
+                    pill2.className = 'page-btn';
+                    pill2.setAttribute('data-tag', sortedTags[t]);
+                    pill2.textContent = sortedTags[t] + ' (' + allTags[sortedTags[t]] + ')';
+                    tagPillsContainer.appendChild(pill2);
+                    var opt2 = document.createElement('option');
+                    opt2.value = sortedTags[t];
+                    opt2.textContent = sortedTags[t];
+                    tagSel.appendChild(opt2);
+                }
+            }
+            // Wire tag pill click handlers
+            var tagPills = tagPillsContainer.querySelectorAll('.page-btn');
+            for (var tp = 0; tp < tagPills.length; tp++) {
+                tagPills[tp].addEventListener('click', function() {
+                    var allPills = tagPillsContainer.querySelectorAll('.page-btn');
+                    for (var b = 0; b < allPills.length; b++) allPills[b].classList.remove('active');
+                    this.classList.add('active');
+                    newsCurrentTag = this.dataset.tag || '';
+                    newsCurrentPage = 1;
+                    renderFilteredNews();
+                });
             }
 
             renderFilteredNews();
@@ -11056,11 +11109,31 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     function newsCatCls(cat) {
-        return {discovery:'badge-green', gpu_result:'badge-blue', hypothesis:'badge-amber', data_update:'badge-purple', announcement:'badge-gray'}[cat] || 'badge-gray';
+        return {
+            discovery:      'badge-green',
+            gpu_result:     'badge-blue',
+            computation:    'badge-purple',
+            cross_disease:  'badge-amber',
+            drug_discovery: 'badge-red',
+            mechanism:      'badge-gray',
+            hypothesis:     'badge-amber',
+            data_update:    'badge-purple',
+            announcement:   'badge-gray'
+        }[cat] || 'badge-gray';
     }
 
     function newsCatLabel(cat) {
-        return {discovery:'Discovery', gpu_result:'GPU Result', hypothesis:'Hypothesis', data_update:'Data Update', announcement:'Announcement'}[cat] || cat;
+        return {
+            discovery:      'Discovery',
+            gpu_result:     'GPU Result',
+            computation:    'Computation',
+            cross_disease:  'Cross-Disease',
+            drug_discovery: 'Drug Discovery',
+            mechanism:      'Mechanism',
+            hypothesis:     'Hypothesis',
+            data_update:    'Data Update',
+            announcement:   'Announcement'
+        }[cat] || cat;
     }
 
     function renderFilteredNews() {
