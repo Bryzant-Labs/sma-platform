@@ -27,7 +27,12 @@ logger = logging.getLogger(__name__)
 
 
 def _alias_in_text(alias: str, text: str) -> bool:
-    """Check alias with word boundaries to prevent substring false positives."""
+    """Check alias with word boundaries to prevent substring false positives.
+
+    IMPORTANT: `text` MUST already be uppercased before calling this function.
+    The lookbehind/lookahead uses [A-Z0-9] which is correct for uppercased text.
+    All call sites pass scan_text = "...".upper(), so this is always satisfied.
+    """
     pattern = r'(?<![A-Z0-9])' + re.escape(alias) + r'(?![A-Z0-9])'
     return bool(re.search(pattern, text))
 
@@ -244,9 +249,11 @@ TARGET_ALIASES: dict[str, str] = {
     "ACTIN ROD": "CFL2",
     "COFILIN ROD": "CFL2",
     # p53 pathway (Simon's work)
-    "MDM2": "TP53",
-    "MDM4": "TP53",
-    "MDMX": "TP53",
+    # MDM2 and MDM4 are now separate targets in the DB (confirmed 2026-03-22).
+    # They are regulators of TP53, NOT synonyms — map each to its own symbol.
+    "MDM2": "MDM2",
+    "MDM4": "MDM4",
+    "MDMX": "MDM4",  # MDMX is the alias for MDM4 (same protein)
     "P38 MAPK": "MAPK_PATHWAY",
     "P38": "MAPK_PATHWAY",
     "MAPK14": "MAPK_PATHWAY",
@@ -284,9 +291,13 @@ DRUG_TARGET_MAP: dict[str, str] = {
     "CELECOXIB": "TP53",
     "RILUZOLE": "SMN2",
     "OLESOXIME": "SMN_PROTEIN",
-    "4-AMINOPYRIDINE": "CORO1C",
-    "4-AP": "CORO1C",
-    "DALFAMPRIDINE": "CORO1C",
+    # 4-AP / dalfampridine: potassium channel blocker (Kv1.x/KCNA family).
+    # No KCNA target in DB. Best available SMA-relevant proxy = ROCK2,
+    # supported by DiffDock score (+0.64 vs ROCK2) and neuronal rescue data.
+    # Do NOT map to CORO1C — 4-AP has no known CORO1C mechanism.
+    "4-AMINOPYRIDINE": "ROCK2",
+    "4-AP": "ROCK2",
+    "DALFAMPRIDINE": "ROCK2",
     "RELDESEMTIV": "TNNT3",
     "CK-2127107": "TNNT3",
     "APITEGROMAB": "MSTN",
@@ -376,6 +387,32 @@ Journal: {journal}
 Abstract: {abstract}"""
 
 
+def _is_als_primary_paper(title: str, abstract: str) -> bool:
+    """Return True if this paper is primarily about ALS, not SMA.
+
+    ALS papers often mention "motor neuron", "riluzole", or "TDP-43" — terms
+    that also appear in SMA research. This function detects ALS-primary papers
+    so their claims can be rejected even when they share vocabulary with SMA.
+
+    A paper is ALS-primary if:
+      - It contains "amyotrophic lateral sclerosis" or "SOD1" (ALS model gene)
+        AND does NOT contain "spinal muscular atrophy", "SMN", or "nusinersen".
+    """
+    text = f"{title} {abstract}".lower()
+    als_markers = (
+        "amyotrophic lateral sclerosis" in text
+        or "sod1" in text  # SOD1 is the canonical ALS mouse model gene
+    )
+    sma_markers = (
+        "spinal muscular atrophy" in text
+        or " smn" in text
+        or "nusinersen" in text
+        or "risdiplam" in text
+        or "zolgensma" in text
+    )
+    return als_markers and not sma_markers
+
+
 def _claim_passes_quality_gate(claim: dict, title: str, abstract: str) -> bool:
     """Post-extraction quality gate: reject claims that are clearly not SMA-relevant.
 
@@ -385,6 +422,12 @@ def _claim_passes_quality_gate(claim: dict, title: str, abstract: str) -> bool:
     predicate = claim.get("predicate", "").lower()
     excerpt = claim.get("excerpt", "").lower()
     text = f"{title.lower()} {predicate} {excerpt}"
+
+    # Reject claims from ALS-primary papers.
+    # These pass the SMA relevance gate via shared terms ("motor neuron",
+    # "riluzole", "TDP-43") but are not SMA papers.
+    if _is_als_primary_paper(title, abstract):
+        return False
 
     # Reject claims about clearly non-SMA diseases
     non_sma_diseases = [
@@ -402,7 +445,7 @@ def _claim_passes_quality_gate(claim: dict, title: str, abstract: str) -> bool:
         if disease in text:
             # Allow if SMA is ALSO mentioned (cross-disease comparison)
             sma_check = f"{predicate} {excerpt} {abstract.lower()}"
-            if any(kw in sma_check for kw in ("sma", "spinal muscular", "smn", "motor neuron")):
+            if any(kw in sma_check for kw in ("spinal muscular atrophy", "smn1", "smn2", "nusinersen")):
                 continue
             return False
 
