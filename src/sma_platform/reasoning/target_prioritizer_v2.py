@@ -456,7 +456,7 @@ async def _score_novelty(target_id: str, novelty_cache: dict[str, dict]) -> tupl
 
     # Count claims with recent sources (last 2 years)
     from datetime import datetime, timedelta, timezone
-    cutoff = (datetime.now(timezone.utc) - timedelta(days=730)).strftime('%Y-%m-%d')
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=730)).date()
     recent_val = await fetchval(
         """SELECT COUNT(DISTINCT c.id)
            FROM claims c
