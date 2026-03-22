@@ -1077,8 +1077,8 @@
                 <div class="dp-node-status dp-status-green"></div>
                 <div class="dp-node-icon">&#9881;&#65039;</div>
                 <div class="dp-node-name">NIM Compute</div>
-                <div class="dp-node-count" id="dp-count-nim">11 NIMs</div>
-                <div class="dp-node-desc">DiffDock, AlphaFold2, ESMfold, RFdiffusion, GenMol</div>
+                <div class="dp-node-count" id="dp-count-nim">15 binders</div>
+                <div class="dp-node-desc">15 binders &bull; 20 molecules &bull; 58 structures predicted</div>
             </div>
             <div class="dp-arrow">&#8250;</div>
             <!-- Step 9: Experiment Design -->
@@ -2509,6 +2509,62 @@
         <th>Mismatches</th><th>Count</th><th>Risk Level</th><th>Percentage</th>
     </tr></thead>
     <tbody id="gpu-offtarget-body"><tr><td colspan="4" class="loading">Loading...</td></tr></tbody></table></div>
+
+    <!-- ===== NVIDIA NIM Compute Results ===== -->
+    <div style="margin-top:40px;padding-top:32px;border-top:2px solid var(--line)">
+        <h3 style="font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px;color:var(--text)">NVIDIA NIM Compute Results</h3>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:20px">Results from NVIDIA BioNeMo NIM API: RFdiffusion binder design, ProteinMPNN sequence design, ESMFold structure validation, MolMIM/GenMol molecule generation, DiffDock extended docking campaign. All data stored in PostgreSQL and queryable via REST API.</p>
+        <div id="nim-compute-overview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px">
+            <div class="loading" style="grid-column:1/-1">Loading NIM compute summary...</div>
+        </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Protein Binder Designs</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">RFdiffusion + ProteinMPNN + ESMFold | NVIDIA NIM API</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">15 binders designed for ROCK2, MAPK14, LIMK1</span></p>
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap" id="binder-target-filter">
+        <button class="page-btn active" data-binder-target="">All Targets</button>
+        <button class="page-btn" data-binder-target="ROCK2">ROCK2</button>
+        <button class="page-btn" data-binder-target="MAPK14">MAPK14</button>
+        <button class="page-btn" data-binder-target="LIMK1">LIMK1</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Target</th><th>Design</th><th>Length (aa)</th><th>MPNN Score</th><th>pLDDT Mean</th><th>pLDDT Range</th><th>Structure</th><th>Sequence</th>
+    </tr></thead>
+    <tbody id="gpu-binders-body"><tr><td colspan="9" class="loading">Loading binder designs...</td></tr></tbody></table></div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">AI-Generated Molecules</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">MolMIM / GenMol | NVIDIA NIM API</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">20 molecules generated via scaffold decoration</span></p>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Target</th><th>SMILES</th><th>Score</th><th>Scaffold</th><th>Method</th>
+    </tr></thead>
+    <tbody id="gpu-molecules-body"><tr><td colspan="6" class="loading">Loading generated molecules...</td></tr></tbody></table></div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Predicted Protein Structures</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">AlphaFold2 (58 targets) + Boltz-2 + ESMFold + RFdiffusion | NVIDIA NIM &amp; AlphaFold DB</span></p>
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap" id="struct-method-filter">
+        <button class="page-btn active" data-struct-method="">All Methods</button>
+        <button class="page-btn" data-struct-method="AlphaFold2">AlphaFold2</button>
+        <button class="page-btn" data-struct-method="ESMFold">ESMFold</button>
+        <button class="page-btn" data-struct-method="RFdiffusion">RFdiffusion</button>
+        <button class="page-btn" data-struct-method="Boltz-2">Boltz-2</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Target</th><th>UniProt</th><th>Method</th><th>pLDDT</th><th>Residues</th><th>Source</th><th>PDB</th>
+    </tr></thead>
+    <tbody id="gpu-structures-body"><tr><td colspan="8" class="loading">Loading protein structures...</td></tr></tbody></table></div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:24px 0 12px">Extended DiffDock Campaign</h3>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">DiffDock v2.2 | NVIDIA NIM API | 224 dockings across 8 targets</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">Best confidence closer to 0 = stronger predicted binding</span></p>
+    <div id="gpu-expdock-summary" class="screen-summary" style="margin-bottom:8px"><div class="loading">Loading campaign stats...</div></div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+        <input type="text" id="expdock-drug-filter" placeholder="Filter by drug..." style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+        <input type="text" id="expdock-target-filter" placeholder="Filter by target..." style="padding:4px 8px;border:1px solid var(--line);font-size:12px;border-radius:3px;background:var(--bg);color:var(--text);font-family:inherit">
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+        <th>#</th><th>Drug</th><th>Target</th><th>MW</th><th>Best Confidence</th><th>Avg Confidence</th><th>Poses</th><th>Campaign</th>
+    </tr></thead>
+    <tbody id="gpu-expdock-body"><tr><td colspan="8" class="loading">Loading extended docking results...</td></tr></tbody></table></div>
+    <div id="gpu-expdock-pagination"></div>
 </section>
 
 <section class="section" id="contact">
@@ -2727,7 +2783,7 @@
 
 <section class="section" id="nim-results">
     <div class="section-header"><h2 class="section-title">NVIDIA NIM Docking (DiffDock v2.2)</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="nim-results-count"></span></div>
-    <p class="section-desc">700 compound-target docking predictions via NVIDIA NIM API. Structure-based virtual screening using DiffDock v2.2 generative docking model on NVIDIA cloud infrastructure.</p>
+    <p class="section-desc">DiffDock v2.2 docking predictions via NVIDIA NIM API. Extended campaign: 224 dockings across 8 targets (ROCK2, MAPK14, LIMK1, SARM1, and more), plus 378-compound NIM batch screen. <a href="#gpu-results" onclick="showSection('gpu-results')" style="color:var(--accent)">View protein binders and AI-generated molecules in GPU Results &rarr;</a></p>
     <div id="nim-status-bar" style="margin-bottom:16px"></div>
     <div class="table-wrap"><table><thead><tr><th>#</th><th>Compound</th><th>Target</th><th>Confidence</th><th>Binding Energy</th><th>Pose Rank</th><th>Status</th></tr></thead>
     <tbody id="nim-results-body"><tr><td colspan="7" class="loading">Loading NIM docking results...</td></tr></tbody></table></div>
@@ -9905,6 +9961,214 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }).catch(function(e) {
             clearEl('gpu-offtarget-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Off-target data not available: ' + e.message})]));
             clearEl('gpu-offtarget-body').appendChild(el('tr', null, [el('td', {colSpan: 4, text: 'Error loading data'})]));
+        });
+
+        // --- NVIDIA NIM Compute Results ---
+        fetch(API + '/nims/nim-summary').then(function(r) { return r.json(); }).then(function(data) {
+            var overview = clearEl('nim-compute-overview');
+            var nimStats = [
+                {val: String(data.binders_designed || 0), label: 'Binders Designed', sub: 'ROCK2, MAPK14, LIMK1'},
+                {val: String(data.molecules_generated || 0), label: 'Molecules Generated', sub: 'MolMIM / GenMol'},
+                {val: String(data.structures_alphafold || 0), label: 'AlphaFold2 Structures', sub: 'All SMA targets'},
+                {val: String(data.structures_esmfold || 0), label: 'ESMFold Structures', sub: 'Binder candidates'},
+                {val: String(data.structures_boltz2 || 0), label: 'Boltz-2 Structures', sub: 'Complex co-folding'},
+                {val: String(data.extended_dockings || 0), label: 'Extended Dockings', sub: 'DiffDock v2.2'},
+            ];
+            for (var ns = 0; ns < nimStats.length; ns++) {
+                var ncard = el('div', {className: 'screen-stat'});
+                ncard.appendChild(el('div', {className: 'screen-stat-val highlight', text: nimStats[ns].val}));
+                ncard.appendChild(el('div', {className: 'screen-stat-label', text: nimStats[ns].label}));
+                var nsub = el('div', {text: nimStats[ns].sub});
+                nsub.style.cssText = 'font-size:9px;color:var(--muted);margin-top:2px';
+                ncard.appendChild(nsub);
+                overview.appendChild(ncard);
+            }
+            if (data.binders_designed) { setText('dp-count-nim', String(data.binders_designed) + ' binders'); }
+        }).catch(function() {});
+
+        // Load binders
+        var bindersAllData = [];
+        function renderBindersTable(bdata) {
+            var body = clearEl('gpu-binders-body');
+            if (!bdata || bdata.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'No binder designs available.'})]));
+                return;
+            }
+            for (var bi = 0; bi < bdata.length; bi++) {
+                var b = bdata[bi];
+                var plddt = b.plddt_mean != null ? Number(b.plddt_mean).toFixed(1) : '-';
+                var plddtCls = b.plddt_mean >= 85 ? 'badge-green' : b.plddt_mean >= 70 ? 'badge-amber' : 'badge-gray';
+                var mpnn = b.mpnn_score != null ? Number(b.mpnn_score).toFixed(4) : '-';
+                var range = (b.plddt_min != null && b.plddt_max != null) ? Number(b.plddt_min).toFixed(0) + '\u2013' + Number(b.plddt_max).toFixed(0) : '-';
+                var brow = el('tr');
+                brow.appendChild(td(String(bi+1), 'mono'));
+                brow.appendChild(tdBadge(b.target || '', b.target === 'MAPK14' ? 'badge-blue' : b.target === 'ROCK2' ? 'badge-green' : 'badge-amber'));
+                brow.appendChild(td(String(b.design || ''), 'mono'));
+                brow.appendChild(td(String(b.length || ''), 'mono'));
+                brow.appendChild(td(mpnn, 'mono'));
+                brow.appendChild(tdBadge(plddt, plddtCls));
+                brow.appendChild(td(range, 'mono', 'font-size:10px'));
+                brow.appendChild(tdBadge(b.has_structure ? 'YES' : 'NO', b.has_structure ? 'badge-green' : 'badge-gray'));
+                var seqTd = document.createElement('td');
+                var seq = b.sequence || '';
+                var seqSpan = el('span', {text: seq.length > 30 ? seq.substring(0,30) + '...' : seq});
+                seqSpan.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:10px;cursor:pointer;color:var(--accent)';
+                seqSpan.title = 'Click to expand full sequence';
+                (function(s, sp) {
+                    var exp = false;
+                    sp.addEventListener('click', function() {
+                        exp = !exp;
+                        sp.textContent = exp ? s : (s.length > 30 ? s.substring(0,30) + '...' : s);
+                    });
+                }(seq, seqSpan));
+                seqTd.appendChild(seqSpan);
+                brow.appendChild(seqTd);
+                body.appendChild(brow);
+            }
+        }
+        fetch(API + '/nims/binders?limit=100').then(function(r) { return r.json(); }).then(function(data) {
+            bindersAllData = data.binders || [];
+            renderBindersTable(bindersAllData);
+        }).catch(function(e) {
+            clearEl('gpu-binders-body').appendChild(el('tr', null, [el('td', {colSpan: 9, text: 'Error: ' + e.message})]));
+        });
+        var binderFilterBtns = document.querySelectorAll('#binder-target-filter [data-binder-target]');
+        for (var bfi = 0; bfi < binderFilterBtns.length; bfi++) {
+            binderFilterBtns[bfi].addEventListener('click', function() {
+                for (var bx = 0; bx < binderFilterBtns.length; bx++) binderFilterBtns[bx].classList.remove('active');
+                this.classList.add('active');
+                var btgt = this.getAttribute('data-binder-target');
+                renderBindersTable(btgt ? bindersAllData.filter(function(b) { return b.target === btgt; }) : bindersAllData);
+            });
+        }
+
+        // Load designed molecules
+        fetch(API + '/nims/designed-molecules?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('gpu-molecules-body');
+            var mols = data.molecules || [];
+            if (mols.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: 'No generated molecules available.'})]));
+                return;
+            }
+            for (var mi = 0; mi < mols.length; mi++) {
+                var m = mols[mi];
+                var mscore = m.score != null ? Number(m.score).toFixed(3) : '-';
+                var mscoreCls = m.score >= 0.6 ? 'badge-green' : m.score >= 0.4 ? 'badge-amber' : 'badge-gray';
+                var msmiles = (m.smiles || '').length > 30 ? m.smiles.substring(0,30) + '...' : (m.smiles || '-');
+                body.appendChild(el('tr', null, [
+                    td(String(mi+1), 'mono'),
+                    tdBadge(m.target || 'SMN2', 'badge-blue'),
+                    td(msmiles, 'mono', 'font-size:10px;max-width:200px'),
+                    tdBadge(mscore, mscoreCls),
+                    td((m.scaffold_smiles || '').length > 20 ? m.scaffold_smiles.substring(0,20) + '...' : (m.scaffold_smiles || '-'), 'mono', 'font-size:10px'),
+                    td(m.method || 'MolMIM', '', 'font-size:10px')
+                ]));
+            }
+        }).catch(function(e) {
+            clearEl('gpu-molecules-body').appendChild(el('tr', null, [el('td', {colSpan: 6, text: 'Error: ' + e.message})]));
+        });
+
+        // Load protein structures
+        var structAllData = [];
+        function renderStructuresTable(sdata) {
+            var body = clearEl('gpu-structures-body');
+            if (!sdata || sdata.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 8, className: 'loading', text: 'No structure data available.'})]));
+                return;
+            }
+            for (var si = 0; si < sdata.length; si++) {
+                var s = sdata[si];
+                var splddt = s.plddt_mean != null ? Number(s.plddt_mean).toFixed(1) : '-';
+                var splddtCls = s.plddt_mean >= 90 ? 'badge-green' : s.plddt_mean >= 70 ? 'badge-amber' : 'badge-gray';
+                var smethCls = s.method === 'AlphaFold2' ? 'badge-blue' : s.method === 'ESMFold' ? 'badge-green' : s.method === 'Boltz-2' ? 'badge-amber' : 'badge-gray';
+                body.appendChild(el('tr', null, [
+                    td(String(si+1), 'mono'),
+                    td(s.target || '', '', 'font-weight:700;font-family:"JetBrains Mono",monospace'),
+                    td(s.uniprot_id || '-', 'mono', 'font-size:10px'),
+                    tdBadge(s.method || '-', smethCls),
+                    tdBadge(splddt, splddtCls),
+                    td(s.residue_count ? String(s.residue_count) + ' aa' : '-', 'mono', 'font-size:10px'),
+                    td(s.source || '-', '', 'font-size:10px;color:var(--muted)'),
+                    tdBadge(s.has_pdb ? 'PDB' : '-', s.has_pdb ? 'badge-green' : 'badge-gray'),
+                ]));
+            }
+        }
+        fetch(API + '/nims/protein-structures?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+            structAllData = data.structures || [];
+            renderStructuresTable(structAllData);
+        }).catch(function(e) {
+            clearEl('gpu-structures-body').appendChild(el('tr', null, [el('td', {colSpan: 8, text: 'Error: ' + e.message})]));
+        });
+        var structFilterBtns = document.querySelectorAll('#struct-method-filter [data-struct-method]');
+        for (var smfi = 0; smfi < structFilterBtns.length; smfi++) {
+            structFilterBtns[smfi].addEventListener('click', function() {
+                for (var sx = 0; sx < structFilterBtns.length; sx++) structFilterBtns[sx].classList.remove('active');
+                this.classList.add('active');
+                var smeth = this.getAttribute('data-struct-method');
+                renderStructuresTable(smeth ? structAllData.filter(function(s) { return s.method === smeth; }) : structAllData);
+            });
+        }
+
+        // Load extended DiffDock dockings
+        var expDockAllData = [];
+        var expDockPage = 1;
+        var EXP_DOCK_PER_PAGE = 30;
+        function renderExpDockPage() {
+            var body = clearEl('gpu-expdock-body');
+            var fdrug = (document.getElementById('expdock-drug-filter') || {value:''}).value.toLowerCase();
+            var ftgt = (document.getElementById('expdock-target-filter') || {value:''}).value.toLowerCase();
+            var filtered = expDockAllData.filter(function(r) {
+                return (!fdrug || (r.drug||'').toLowerCase().indexOf(fdrug) !== -1) &&
+                       (!ftgt || (r.target||'').toLowerCase().indexOf(ftgt) !== -1);
+            });
+            if (filtered.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 8, className: 'loading', text: 'No results match filter.'})]));
+                renderPagination('gpu-expdock-pagination', 0, 1, function() {});
+                return;
+            }
+            var start = (expDockPage - 1) * EXP_DOCK_PER_PAGE;
+            var end = Math.min(start + EXP_DOCK_PER_PAGE, filtered.length);
+            for (var di = start; di < end; di++) {
+                var dr = filtered[di];
+                var bc = dr.best_confidence != null ? Number(dr.best_confidence).toFixed(3) : '-';
+                var ac = dr.avg_confidence != null ? Number(dr.avg_confidence).toFixed(3) : '-';
+                var bcCls = dr.best_confidence >= 0 ? 'badge-green' : dr.best_confidence >= -1 ? 'badge-amber' : 'badge-gray';
+                body.appendChild(el('tr', null, [
+                    td(String(di+1), 'mono'),
+                    td(dr.drug || '', '', 'font-weight:600'),
+                    td(dr.target || '', 'mono'),
+                    td(dr.mw ? Number(dr.mw).toFixed(0) + ' Da' : '-', 'mono', 'font-size:10px'),
+                    tdBadge(bc, bcCls),
+                    td(ac, 'mono', 'font-size:10px'),
+                    td(String(dr.num_poses || '-'), 'mono', 'font-size:10px'),
+                    td((dr.campaign || '').replace('_', ' '), '', 'font-size:9px;color:var(--muted)')
+                ]));
+            }
+            renderPagination('gpu-expdock-pagination', filtered.length, expDockPage, function(p) { expDockPage = p; renderExpDockPage(); });
+        }
+        fetch(API + '/nims/extended-docking?limit=300').then(function(r) { return r.json(); }).then(function(data) {
+            var sumDiv = clearEl('gpu-expdock-summary');
+            var dstats = [
+                {val: String(data.total || 0), label: 'Total Dockings'},
+                {val: String(data.unique_drugs || 0), label: 'Unique Drugs'},
+                {val: String(data.unique_targets || 0), label: 'Targets Screened'},
+                {val: data.avg_confidence != null ? Number(data.avg_confidence).toFixed(3) : '-', label: 'Avg Confidence'},
+            ];
+            for (var ds = 0; ds < dstats.length; ds++) {
+                var dcard = el('div', {className: 'screen-stat'});
+                dcard.appendChild(el('div', {className: 'screen-stat-val', text: dstats[ds].val}));
+                dcard.appendChild(el('div', {className: 'screen-stat-label', text: dstats[ds].label}));
+                sumDiv.appendChild(dcard);
+            }
+            expDockAllData = data.results || [];
+            renderExpDockPage();
+            var drugInput = document.getElementById('expdock-drug-filter');
+            var tgtInput = document.getElementById('expdock-target-filter');
+            if (drugInput) drugInput.addEventListener('keyup', function() { expDockPage = 1; renderExpDockPage(); });
+            if (tgtInput) tgtInput.addEventListener('keyup', function() { expDockPage = 1; renderExpDockPage(); });
+        }).catch(function(e) {
+            clearEl('gpu-expdock-summary').appendChild(el('div', {className: 'empty-state'}, [el('p', {text: 'Extended docking data not available: ' + e.message})]));
+            clearEl('gpu-expdock-body').appendChild(el('tr', null, [el('td', {colSpan: 8, text: 'Error loading data'})]));
         });
     }
 
