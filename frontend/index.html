@@ -278,7 +278,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <!-- 2D Molecule Rendering -->
-    <script src="https://unpkg.com/smiles-drawer@2.1.7/dist/smiles-drawer.min.js"></script>
     <!-- 3D Protein Structure Viewer -->
     <script src="https://unpkg.com/ngl@2.3.0/dist/ngl.js"></script>
     <style>
@@ -671,28 +670,6 @@
         .hero-ask-result h3:first-child { margin-top: 0; }
         .freshness-badge { text-align: center; font-size: 11px; color: var(--muted); margin-top: 12px; }
         .freshness-badge .freshness-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4caf50; margin-right: 4px; vertical-align: middle; }
-        .mission-stats { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; padding: 24px 0; margin: 32px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-        .mission-stat { text-align: center; }
-        .mission-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--text); }
-        .mission-stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-top: 2px; }
-        .diff-section { margin: 40px 0; }
-        .diff-section h3 { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; text-align: center; }
-        .diff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-        .diff-card { background: var(--panel); border: 1px solid var(--line); padding: 24px; }
-        .diff-card-icon { font-size: 20px; margin-bottom: 8px; }
-        .diff-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-        .diff-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-        .pipeline-section { margin: 40px 0 24px; }
-        .pipeline-section h3 { font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; text-align: center; }
-        .pipeline-track { display: flex; gap: 0; overflow-x: auto; border: 1px solid var(--line); background: var(--panel); }
-        .pipeline-phase { flex: 1; min-width: 160px; padding: 16px; border-right: 1px solid var(--line); position: relative; }
-        .pipeline-phase:last-child { border-right: none; }
-        .pipeline-phase-num { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-        .pipeline-phase-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-        .pipeline-phase-status { display: inline-block; padding: 1px 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
-        .pipeline-complete { background: var(--green-bg); color: var(--green); }
-        .pipeline-progress { background: var(--amber-bg); color: var(--amber); }
-        .pipeline-planned { background: var(--gray-bg); color: var(--gray); }
         .pipeline-arrow { position: absolute; right: -8px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--muted); z-index: 1; }
 
         /* Research tab styles */
@@ -871,12 +848,6 @@
             .stat-value { font-size: 15px; }
             .header-meta { text-align: left; }
             .mission-hero h2 { font-size: 22px; }
-            .mission-stats { gap: 16px; }
-            .mission-stat-val { font-size: 20px; }
-            .pipeline-track { flex-direction: column; }
-            .pipeline-phase { border-right: none; border-bottom: 1px solid var(--line); }
-            .pipeline-phase:last-child { border-bottom: none; }
-            .pipeline-arrow { display: none; }
         }
 
         /* ===== Discovery Pipeline Visualization ===== */
@@ -11467,6 +11438,20 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                             uniLink.textContent = 'UniProt';
                             links_td.appendChild(uniLink);
                         }
+                        if (s.uniprot_id && window.openNglViewer) {
+                            var btn3d = document.createElement('button');
+                            btn3d.className = 'view3d-btn';
+                            btn3d.title = 'View 3D structure via AlphaFold';
+                            btn3d.innerHTML = '&#9674; 3D';
+                            btn3d.style.cssText = 'margin-left:8px;font-size:10px;padding:2px 6px;cursor:pointer;background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:3px';
+                            (function(uid, sym) {
+                                btn3d.addEventListener('click', function(e) {
+                                    e.stopPropagation();
+                                    window.openNglViewer(uid, sym, null);
+                                });
+                            })(s.uniprot_id, s.symbol);
+                            links_td.appendChild(btn3d);
+                        }
 
                         var row = el('tr', {className: 'adv-row'});
                         var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
@@ -14211,7 +14196,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         // observeScreeningBody(); // DISABLED: SmilesDrawer not rendering
         // observeGpuMolecules(); // DISABLED: SmilesDrawer not rendering, using table view instead
         observeForStructures('gpu-structures-body');
-        observeForStructures('structures-body');
+        // structures-body: 3D buttons now added inline in renderRows
     }
 
     if (document.readyState === 'loading') {
@@ -14225,9 +14210,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     if (typeof origShowSection === 'function') {
         window.showSection = function(section) {
             origShowSection.apply(this, arguments);
-            if (section === 'screening') { // observeScreeningBody(); // DISABLED: SmilesDrawer not rendering }
+            // if (section === 'screening') { observeScreeningBody(); } // DISABLED: SmilesDrawer not rendering
             if (section === "gpu-results") { observeForStructures("gpu-structures-body"); }
-            if (section === 'structures') { observeForStructures('structures-body'); }
+            // structures-body: 3D buttons added inline in renderRows
         };
     }
 
