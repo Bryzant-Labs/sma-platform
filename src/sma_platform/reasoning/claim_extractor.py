@@ -10,6 +10,7 @@ Schema reference:
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -19,6 +20,7 @@ import httpx
 
 from ..core.config import settings
 from ..core.database import execute, fetch, fetchrow
+from ..core.llm_client import call_llm
 
 logger = logging.getLogger(__name__)
 
@@ -340,18 +342,54 @@ Journal: {journal}
 Abstract: {abstract}"""
 
 
+def _claim_passes_quality_gate(claim: dict, title: str, abstract: str) -> bool:
+    """Post-extraction quality gate: reject claims that are clearly not SMA-relevant.
+
+    This catches garbage that slips through the pre-filter — e.g., a paper
+    about "motor proteins in breast cancer" that mentions "motor" but isn't SMA.
+    """
+    predicate = claim.get("predicate", "").lower()
+    excerpt = claim.get("excerpt", "").lower()
+    text = f"{predicate} {excerpt}"
+
+    # Reject claims about clearly non-SMA diseases
+    non_sma_diseases = [
+        "breast cancer", "prostate cancer", "colorectal", "melanoma",
+        "leukemia", "lymphoma", "hepatocellular", "glioblastoma",
+        "pancreatic cancer", "lung cancer", "ovarian cancer",
+        "parkinson", "alzheimer", "huntington",
+        "diabetes", "obesity", "atherosclerosis",
+    ]
+    for disease in non_sma_diseases:
+        if disease in text:
+            # Allow if SMA is ALSO mentioned (cross-disease comparison)
+            sma_check = f"{predicate} {excerpt} {abstract.lower()}"
+            if any(kw in sma_check for kw in ("sma", "spinal muscular", "smn", "motor neuron")):
+                continue
+            return False
+
+    # Reject extremely generic claims
+    if len(predicate) < 20:
+        return False
+
+    # Confidence floor — LLM-assigned confidence below 0.3 is usually noise
+    if claim.get("confidence", 0.5) < 0.3:
+        return False
+
+    return True
+
+
 async def extract_claims_from_abstract(
     source_id: str,
     title: str,
     abstract: str,
     journal: str | None = None,
 ) -> list[dict]:
-    """Extract claims from a single paper abstract using Claude."""
-    api_key = settings.anthropic_api_key or os.environ.get("ANTHROPIC_API_KEY", "")
-    if not api_key:
-        logger.warning("ANTHROPIC_API_KEY not set — skipping claim extraction")
-        return []
+    """Extract claims from a single paper abstract using multi-LLM pipeline.
 
+    Uses Groq/Gemini/OpenAI for bulk extraction (cheap/fast) with automatic
+    fallback. Quality gates filter out non-SMA garbage before storage.
+    """
     if not abstract or len(abstract.strip()) < 50:
         logger.info("Abstract too short for %s, skipping", source_id)
         return []
@@ -367,46 +405,37 @@ async def extract_claims_from_abstract(
         abstract=abstract,
     )
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        resp = await client.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={
-                "x-api-key": api_key,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
-            },
-            json={
-                "model": "claude-haiku-4-5-20251001",
-                "max_tokens": 4096,
-                "messages": [{"role": "user", "content": prompt}],
-            },
-        )
-
-    if resp.status_code != 200:
-        logger.error("Claude API error %d: %s", resp.status_code, resp.text[:200])
+    content, provider_used = await call_llm(prompt)
+    if not content:
         return []
 
     try:
-        body = resp.json()
-        content = body["content"][0]["text"].strip()
         # Strip markdown code fences if present
         if content.startswith("```"):
             lines = content.split("\n")
-            # Remove first line (```json) and last line (```)
             lines = [l for l in lines if not l.strip().startswith("```")]
             content = "\n".join(lines).strip()
-        logger.debug("Claude raw response (first 200 chars): %s", content[:200])
+        logger.debug("LLM response via %s (first 200 chars): %s", provider_used, content[:200])
         claims = json.loads(content)
         if not isinstance(claims, list):
             claims = [claims]
+
+        # Post-extraction quality gate
+        original_count = len(claims)
+        claims = [c for c in claims if _claim_passes_quality_gate(c, title or "", abstract)]
+        if original_count != len(claims):
+            logger.info(
+                "Quality gate filtered %d/%d claims for %s",
+                original_count - len(claims), original_count, source_id,
+            )
+
+        # Tag each claim with extraction metadata
+        for c in claims:
+            c["_extraction_model"] = provider_used
+
         return claims
     except (json.JSONDecodeError, KeyError, IndexError) as e:
-        raw = ""
-        try:
-            raw = resp.json()["content"][0]["text"][:300]
-        except Exception:
-            raw = resp.text[:300]
-        logger.error("Failed to parse claims: %s | Raw: %s", e, raw)
+        logger.error("Failed to parse claims from %s: %s | Raw: %s", provider_used, e, content[:300])
         return []
 
 
@@ -500,7 +529,7 @@ async def process_source(source_id: str) -> int:
                     "subject_label": subject,
                     "object_label": obj,
                     "related_targets": claim.get("related_targets", []),
-                    "extraction_model": "claude-haiku-4-5-20251001",
+                    "extraction_model": claim.get("_extraction_model", "unknown"),
                     "extracted_at": datetime.now(timezone.utc).isoformat(),
                     "source_paper_id": str(source["id"]),
                 }),
@@ -677,12 +706,17 @@ async def process_all_unprocessed() -> dict:
     processed = 0
     errors = 0
 
-    for row in rows:
+    for i, row in enumerate(rows):
         row = dict(row)
         try:
             count = await process_source(row["id"])
             total_claims += count
             processed += 1
+            # Rate-limit: pause between extractions to stay under Groq/Gemini limits
+            # Groq free: 12K TPM → ~10 abstracts/min at ~1.2K tokens each
+            if i > 0 and i % 8 == 0:
+                logger.info("Processed %d/%d sources (%d claims), pausing for rate limit...", processed, len(rows), total_claims)
+                await asyncio.sleep(15)
         except Exception as e:
             logger.error("Failed to process source %s: %s", row["id"], e)
             errors += 1

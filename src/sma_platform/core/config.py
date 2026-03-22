@@ -15,6 +15,14 @@ class Settings(BaseSettings):
     # LLM (for agents)
     anthropic_api_key: str = ""
     openai_api_key: str = ""
+    groq_api_key: str = ""
+    gemini_api_key: str = ""
+
+    # LLM routing: which provider to use for claim extraction
+    # Options: "groq", "gemini", "openai", "anthropic"
+    extraction_llm: str = "groq"
+    # Whether to run Claude validation on extracted claims (costs API credits)
+    validate_with_claude: bool = False
 
     # Slack notifications
     slack_bot_token: str = ""
