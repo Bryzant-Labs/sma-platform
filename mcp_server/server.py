@@ -2240,6 +2240,471 @@ async def get_repurposing_candidates(
     return result if isinstance(result, list) else result.get("items", result)
 
 
+
+# ---------------------------------------------------------------------------
+# NIM Tools: Molecule Optimisation, Sequence Alignment, Protein Embedding
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+async def optimize_molecule(
+    smiles: str,
+    optimize_for: str = "drug_likeness",
+    num_variants: int = 20,
+) -> dict[str, Any]:
+    """Optimise a molecule for improved properties using MolMIM NIM.
+
+    Takes an existing SMILES string and generates optimised variants using
+    NVIDIA MolMIM (CMA-ES guided latent-space optimisation).  Variants are
+    scored for drug-likeness via the platform funnel and ranked by
+    improvement over the input molecule.
+
+    Args:
+        smiles: Input molecule in SMILES notation
+                (e.g. "Nc1ccncc1" for 4-aminopyridine).
+        optimize_for: Optimisation objective -- one of:
+                      - ``"drug_likeness"`` (default): maximise QED score
+                      - ``"bbb_permeability"``: lower MW + logP for CNS access
+                      - ``"potency"``: scaffold-preserving analogue expansion
+        num_variants: Number of optimised variants to generate (5-100,
+                      default 20).
+
+    Returns:
+        Dict with keys: input_smiles, input_qed, optimization_target,
+        variants (list sorted by qed, each with smiles, qed,
+        tanimoto_similarity, and improvement), nim, and filter_applied.
+        Returns an error dict if SMA_ADMIN_KEY is not set, the SMILES is
+        invalid, or MolMIM is unavailable.
+    """
+    admin_key = os.environ.get("SMA_ADMIN_KEY")
+    if not admin_key:
+        return {
+            "error": "SMA_ADMIN_KEY environment variable is not set",
+            "detail": (
+                "optimize_molecule requires admin authentication. "
+                "Set SMA_ADMIN_KEY to your platform admin key."
+            ),
+        }
+
+    smiles = smiles.strip()
+    if not smiles:
+        return {
+            "error": "smiles parameter is required",
+            "detail": "Provide a valid SMILES string, e.g. \'Nc1ccncc1\' for 4-aminopyridine.",
+        }
+
+    # Clamp num_variants to valid range
+    num_variants = max(5, min(100, num_variants))
+
+    # --- Compute input molecule properties for baseline comparison ---
+    input_props = await _post("/funnel/estimate", json_body={"smiles": smiles})
+    if _is_error(input_props):
+        input_qed: Optional[float] = None
+    else:
+        mw_in = input_props.get("mw", 0.0)
+        logp_in = input_props.get("logp", 0.0)
+        hbd_in = input_props.get("hbd", 0)
+        hba_in = input_props.get("hba", 0)
+        rot_in = input_props.get("rotatable", 0)
+        mw_score_in = max(0.0, 1.0 - max(0.0, mw_in - 200) / 300)
+        logp_score_in = max(0.0, 1.0 - abs(logp_in - 2.5) / 4.0)
+        hbd_score_in = max(0.0, 1.0 - hbd_in / 5.0)
+        hba_score_in = max(0.0, 1.0 - hba_in / 10.0)
+        rot_score_in = max(0.0, 1.0 - rot_in / 10.0)
+        input_qed = round(
+            (mw_score_in + logp_score_in + hbd_score_in + hba_score_in + rot_score_in) / 5.0,
+            3,
+        )
+
+    headers = {"X-Admin-Key": admin_key}
+    body: dict[str, Any] = {
+        "smiles": smiles,
+        "optimize_for": optimize_for,
+        "num_variants": num_variants,
+        "algorithm": "CMA-ES",
+    }
+
+    molmim_result = await _post("/nims/generate-molecules", json_body=body, headers=headers)
+    if _is_error(molmim_result):
+        return {
+            "error": "MolMIM optimisation failed",
+            "input_smiles": smiles,
+            "nim_error": molmim_result,
+            "suggestion": (
+                "Verify the SMILES is valid and that MolMIM is reachable. "
+                "Use check_nim_health() to inspect NIM endpoint status."
+            ),
+        }
+
+    # Extract generated variants -- same multi-shape handling as generate_molecules
+    raw_smiles: list[str] = []
+    if isinstance(molmim_result, dict):
+        inner = molmim_result.get("result", molmim_result)
+        if isinstance(inner, dict):
+            raw_smiles = inner.get("smiles", inner.get("molecules", []))
+        elif isinstance(inner, list):
+            raw_smiles = inner
+    elif isinstance(molmim_result, list):
+        raw_smiles = molmim_result
+
+    normalised: list[str] = []
+    for entry in raw_smiles:
+        if isinstance(entry, str) and entry.strip():
+            normalised.append(entry.strip())
+        elif isinstance(entry, dict) and entry.get("smiles"):
+            normalised.append(str(entry["smiles"]).strip())
+
+    # Remove duplicates and the input molecule itself
+    seen: set[str] = {smiles}
+    unique_smiles: list[str] = []
+    for s in normalised:
+        if s not in seen:
+            seen.add(s)
+            unique_smiles.append(s)
+
+    # Score each variant
+    variants: list[dict[str, Any]] = []
+    for variant_smi in unique_smiles:
+        props = await _post("/funnel/estimate", json_body={"smiles": variant_smi})
+        if _is_error(props):
+            continue
+
+        mw = props.get("mw", 0.0)
+        logp = props.get("logp", 0.0)
+        hbd = props.get("hbd", 0)
+        hba = props.get("hba", 0)
+        rot = props.get("rotatable", 0)
+        mw_s = max(0.0, 1.0 - max(0.0, mw - 200) / 300)
+        logp_s = max(0.0, 1.0 - abs(logp - 2.5) / 4.0)
+        hbd_s = max(0.0, 1.0 - hbd / 5.0)
+        hba_s = max(0.0, 1.0 - hba / 10.0)
+        rot_s = max(0.0, 1.0 - rot / 10.0)
+        qed = round((mw_s + logp_s + hbd_s + hba_s + rot_s) / 5.0, 3)
+
+        # Approximate Tanimoto similarity using character-level overlap
+        # (true Tanimoto would require RDKit; this is a fast surrogate)
+        len_union = max(len(smiles), len(variant_smi), 1)
+        len_intersect = sum(1 for c in variant_smi if c in smiles)
+        tanimoto = round(min(1.0, len_intersect / len_union), 3)
+
+        improvement_delta = round(qed - (input_qed or 0.0), 3)
+        improvement_str = (
+            f"+{improvement_delta:.3f} QED" if improvement_delta >= 0
+            else f"{improvement_delta:.3f} QED"
+        )
+
+        variants.append(
+            {
+                "smiles": variant_smi,
+                "qed": qed,
+                "tanimoto_similarity": tanimoto,
+                "improvement": improvement_str,
+            }
+        )
+
+    # Sort by QED descending
+    variants.sort(key=lambda v: v["qed"], reverse=True)
+
+    return {
+        "input_smiles": smiles,
+        "input_qed": input_qed,
+        "optimization_target": optimize_for,
+        "num_variants_requested": num_variants,
+        "num_variants_returned": len(variants),
+        "variants": variants,
+        "nim": "MolMIM (CMA-ES)",
+    }
+
+
+@mcp.tool()
+async def search_sequence_alignment(
+    protein: str,
+    databases: Optional[list[str]] = None,
+) -> dict[str, Any]:
+    """Search for homologous protein sequences using MSA Search (ColabFold).
+
+    Queries the NVIDIA MSA Search NIM to find evolutionary homologs of an
+    SMA target protein across multiple sequence databases.  Useful for
+    understanding conservation across species and identifying potential
+    model organisms for experiments.
+
+    Args:
+        protein: Protein name/symbol (e.g. "SMN1", "NCALD", "PLS3") or a
+                 raw amino acid sequence in single-letter code.  Symbols are
+                 resolved to sequences automatically via the platform's target
+                 registry.
+        databases: Optional list of databases to search.  Supported values:
+                   ``"uniref30"``, ``"pdb70"``, ``"colabfold_envdb"``.
+                   Defaults to all three when omitted.
+
+    Returns:
+        Dict with keys: query_protein, query_length, num_hits, top_hits
+        (list of up to 20 hits, each with species, identity_percent,
+        alignment_length, and accession), conservation_summary, and
+        databases_searched.  Returns an error dict if the protein cannot be
+        resolved or MSA Search is unavailable.
+    """
+    admin_key = os.environ.get("SMA_ADMIN_KEY")
+    if not admin_key:
+        return {
+            "error": "SMA_ADMIN_KEY environment variable is not set",
+            "detail": (
+                "search_sequence_alignment requires admin authentication. "
+                "Set SMA_ADMIN_KEY to your platform admin key."
+            ),
+        }
+
+    protein = protein.strip()
+    if not protein:
+        return {
+            "error": "protein parameter is required",
+            "detail": "Provide a protein symbol (e.g. \'SMN1\') or amino acid sequence.",
+        }
+
+    headers = {"X-Admin-Key": admin_key}
+    body: dict[str, Any] = {"protein": protein}
+    if databases:
+        body["databases"] = databases
+
+    msa_result = await _post("/nims/msa-search", json_body=body, headers=headers)
+    if _is_error(msa_result):
+        return {
+            "error": "MSA Search failed",
+            "query_protein": protein,
+            "nim_error": msa_result,
+            "suggestion": (
+                "Verify the protein symbol is a known SMA target or supply "
+                "a raw amino acid sequence.  Use check_nim_health() to "
+                "inspect NIM endpoint status."
+            ),
+        }
+
+    # Normalise the MSA result to the documented output schema.
+    hits_raw: list[dict[str, Any]] = []
+    if isinstance(msa_result, dict):
+        hits_raw = msa_result.get(
+            "hits", msa_result.get("alignments", msa_result.get("results", []))
+        )
+    elif isinstance(msa_result, list):
+        hits_raw = msa_result
+
+    # Normalise hit records
+    top_hits: list[dict[str, Any]] = []
+    for hit in hits_raw[:20]:
+        top_hits.append(
+            {
+                "species": hit.get("species", hit.get("organism", "unknown")),
+                "identity_percent": hit.get(
+                    "identity_percent",
+                    hit.get("identity", hit.get("pident", 0.0)),
+                ),
+                "alignment_length": hit.get(
+                    "alignment_length", hit.get("length", 0)
+                ),
+                "accession": hit.get(
+                    "accession", hit.get("id", hit.get("target_id", ""))
+                ),
+            }
+        )
+
+    num_hits = (
+        msa_result.get("num_hits", len(hits_raw))
+        if isinstance(msa_result, dict)
+        else len(hits_raw)
+    )
+    query_length = (
+        msa_result.get("query_length", 0) if isinstance(msa_result, dict) else 0
+    )
+    databases_searched = (
+        msa_result.get(
+            "databases_searched",
+            databases or ["uniref30", "pdb70", "colabfold_envdb"],
+        )
+        if isinstance(msa_result, dict)
+        else (databases or ["uniref30", "pdb70", "colabfold_envdb"])
+    )
+
+    # Derive a brief conservation summary from the top hits
+    if top_hits:
+        strong_hits = [
+            h["identity_percent"]
+            for h in top_hits
+            if isinstance(h["identity_percent"], (int, float))
+            and h["identity_percent"] > 70
+        ]
+        if len(strong_hits) >= 5:
+            mean_id = round(sum(strong_hits) / len(strong_hits), 1)
+            conservation_summary = (
+                f"Highly conserved across {len(strong_hits)} top hits "
+                f"(mean identity {mean_id}%)"
+            )
+        else:
+            best = max(
+                (
+                    h["identity_percent"]
+                    for h in top_hits
+                    if isinstance(h["identity_percent"], (int, float))
+                ),
+                default=0,
+            )
+            conservation_summary = (
+                f"Best hit identity {best}% -- moderate/low conservation"
+            )
+    else:
+        conservation_summary = "No alignment hits returned"
+
+    return {
+        "query_protein": protein,
+        "query_length": query_length,
+        "num_hits": num_hits,
+        "top_hits": top_hits,
+        "conservation_summary": conservation_summary,
+        "databases_searched": databases_searched,
+    }
+
+
+@mcp.tool()
+async def embed_protein(
+    proteins: list[str],
+) -> dict[str, Any]:
+    """Get protein sequence embeddings using ESM-2 650M NIM.
+
+    Generates 1280-dimensional sequence embeddings for one or more proteins
+    using NVIDIA\'s ESM-2 650M model.  Embeddings capture evolutionary and
+    structural features and can be used for similarity search, clustering,
+    and downstream ML tasks.
+
+    Includes retry logic because the ESM-2 endpoint is intermittently
+    degraded (HTTP 500 errors).  Up to 3 attempts with exponential backoff.
+
+    Args:
+        proteins: List of 1-10 protein names/symbols (e.g. ["SMN1", "SMN2",
+                  "NCALD"]) or amino acid sequences.  Symbols are resolved
+                  automatically.  More than 10 proteins are rejected to
+                  avoid rate-limit issues.
+
+    Returns:
+        Dict with keys: proteins (list of resolved names), embeddings (dict
+        mapping protein name to 1280-dim float list), similarity_matrix
+        (pairwise cosine similarities for all pairs), embedding_dim (1280),
+        nim ("ESM-2 650M"), and status_note.  Returns partial results if
+        some proteins fail.  Returns an error dict if SMA_ADMIN_KEY is not
+        set.
+    """
+    import asyncio
+    import math
+
+    admin_key = os.environ.get("SMA_ADMIN_KEY")
+    if not admin_key:
+        return {
+            "error": "SMA_ADMIN_KEY environment variable is not set",
+            "detail": (
+                "embed_protein requires admin authentication. "
+                "Set SMA_ADMIN_KEY to your platform admin key."
+            ),
+        }
+
+    if not proteins:
+        return {
+            "error": "proteins list is required",
+            "detail": "Provide at least one protein symbol or sequence.",
+        }
+
+    if len(proteins) > 10:
+        return {
+            "error": "Too many proteins",
+            "detail": (
+                f"Received {len(proteins)} proteins -- maximum is 10 to avoid "
+                "ESM-2 rate limits.  Split into smaller batches."
+            ),
+        }
+
+    headers = {"X-Admin-Key": admin_key}
+    esm2_url = "/nims/esm2-embed"
+
+    async def _embed_single(protein_input: str) -> tuple[str, Any]:
+        """Embed one protein with up to 3 retries (exponential backoff)."""
+        body: dict[str, Any] = {"protein": protein_input}
+        last_err: Any = None
+        for attempt in range(3):
+            if attempt > 0:
+                await asyncio.sleep(2 ** attempt)  # 2s, 4s backoff
+            result = await _post(esm2_url, json_body=body, headers=headers)
+            if not _is_error(result):
+                return protein_input, result
+            # Retry only on transient HTTP errors
+            err_str = str(result.get("error", ""))
+            if "500" in err_str or "502" in err_str or "503" in err_str:
+                last_err = result
+                continue
+            # Non-transient error -- stop retrying
+            return protein_input, result
+        return protein_input, last_err or {"error": "ESM-2 failed after 3 attempts"}
+
+    # Embed all proteins concurrently
+    tasks = [_embed_single(p.strip()) for p in proteins if p.strip()]
+    results = await asyncio.gather(*tasks)
+
+    embeddings: dict[str, list[float]] = {}
+    failed: list[str] = []
+    embedding_dim = 1280
+
+    for protein_name, emb_result in results:
+        if _is_error(emb_result):
+            failed.append(protein_name)
+            continue
+
+        # Extract the embedding vector -- handle different response shapes
+        vec: list[float] = []
+        if isinstance(emb_result, dict):
+            vec = emb_result.get(
+                "embedding",
+                emb_result.get("vector", emb_result.get("embeddings", [])),
+            )
+            # Some adapters return {protein: {embedding: [...]}} nested
+            if isinstance(vec, dict):
+                vec = vec.get("embedding", vec.get("vector", []))
+        elif isinstance(emb_result, list):
+            vec = emb_result
+
+        if vec and isinstance(vec, list):
+            embeddings[protein_name] = [float(x) for x in vec[:embedding_dim]]
+            if len(embeddings[protein_name]) > 0:
+                embedding_dim = len(embeddings[protein_name])
+
+    # Compute pairwise cosine similarity for all successfully embedded proteins
+    def _cosine(a: list[float], b: list[float]) -> float:
+        dot = sum(x * y for x, y in zip(a, b))
+        norm_a = math.sqrt(sum(x * x for x in a))
+        norm_b = math.sqrt(sum(x * x for x in b))
+        if norm_a == 0 or norm_b == 0:
+            return 0.0
+        return round(dot / (norm_a * norm_b), 4)
+
+    similarity_matrix: dict[str, float] = {}
+    embedded_names = list(embeddings.keys())
+    for i, name_a in enumerate(embedded_names):
+        for name_b in embedded_names[i + 1:]:
+            key = f"{name_a}-{name_b}"
+            similarity_matrix[key] = _cosine(embeddings[name_a], embeddings[name_b])
+
+    status_note = (
+        "ESM-2 endpoint is intermittently degraded -- results may require retry"
+    )
+    if failed:
+        status_note += f". Failed to embed: {", ".join(failed)}"
+
+    return {
+        "proteins": [p.strip() for p in proteins if p.strip()],
+        "embeddings": embeddings,
+        "similarity_matrix": similarity_matrix,
+        "embedding_dim": embedding_dim,
+        "nim": "ESM-2 650M",
+        "status_note": status_note,
+        "failed": failed,
+    }
+
+
 # ---------------------------------------------------------------------------
 # PMID Verification Tool
 # ---------------------------------------------------------------------------

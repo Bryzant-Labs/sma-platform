@@ -56,3 +56,6 @@ docs/private/
 *.pptx
 docs/presentations/SMA_Research_Platform*
 docs/presentations/generate_*.py
+
+# Private preprint drafts — never commit
+docs/preprint-*
