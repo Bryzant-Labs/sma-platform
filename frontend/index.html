@@ -14208,8 +14208,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     // ── Init ─────────────────────────────────────────────────────────────────
     function init() {
-        observeScreeningBody();
-        observeGpuMolecules();
+        // observeScreeningBody(); // DISABLED: SmilesDrawer not rendering
+        // observeGpuMolecules(); // DISABLED: SmilesDrawer not rendering, using table view instead
         observeForStructures('gpu-structures-body');
         observeForStructures('structures-body');
     }
@@ -14225,8 +14225,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     if (typeof origShowSection === 'function') {
         window.showSection = function(section) {
             origShowSection.apply(this, arguments);
-            if (section === 'screening') { observeScreeningBody(); }
-            if (section === 'gpu-results') { observeGpuMolecules(); observeForStructures('gpu-structures-body'); }
+            if (section === 'screening') { // observeScreeningBody(); // DISABLED: SmilesDrawer not rendering }
+            if (section === 'gpu-results') { // observeGpuMolecules(); // DISABLED: SmilesDrawer not rendering, using table view instead observeForStructures('gpu-structures-body'); }
             if (section === 'structures') { observeForStructures('structures-body'); }
         };
     }
