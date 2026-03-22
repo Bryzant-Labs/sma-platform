@@ -13926,6 +13926,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     // Expose showSection globally for onclick handlers and other scripts
     window.showSection = showSection;
+    window.pathwayNodeClick = typeof pathwayNodeClick !== "undefined" ? pathwayNodeClick : function(){};
 })();
 </script>
 
