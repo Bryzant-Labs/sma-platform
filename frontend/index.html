@@ -3626,7 +3626,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }).catch(function() {});
 
     // ============ Homepage News Highlights (always load) ============
-    fetch(API + '/news?featured=true&limit=3').then(function(r) { return r.json(); }).then(function(data) {
+    fetch(API + '/news?per_page=12').then(function(r) { return r.json(); }).then(function(data) {
         var grid = document.getElementById('home-news-grid');
         if (!grid || !data.posts || !data.posts.length) return;
         var posts = data.posts;
@@ -7949,16 +7949,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
                     // SVG or SMILES display
                     var svgDiv = document.createElement('div');
-                    svgDiv.style.cssText = 'width:100%;height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;overflow:hidden;background:#1a1f2e;border-radius:6px';
-                    if (m.smiles && window.SmilesDrawer) {
-                        var cvs = document.createElement('canvas');
-                        cvs.width = 220; cvs.height = 140;
-                        cvs.style.cssText = 'max-width:100%;max-height:100%';
-                        svgDiv.appendChild(cvs);
-                        try {
-                            var sd = new SmilesDrawer.Drawer({width:220,height:140,bondThickness:1.2,fontSizeLarge:9,fontSizeSmall:6,padding:10,atomVisualization:'default',compactDrawing:false,themes:{dark:{C:'#d1d5db',O:'#ef4444',N:'#3b82f6',S:'#eab308',P:'#f97316',F:'#22d3ee',Cl:'#22c55e',Br:'#a855f7',I:'#a855f7',H:'#9ca3af',BACKGROUND:'#1a1f2e'}}});
-                            SmilesDrawer.parse(m.smiles, function(tree) { sd.draw(tree, cvs, 'dark'); });
-                        } catch(e) { cvs.remove(); svgDiv.textContent = m.smiles.substring(0,60) + '...'; }
+                    svgDiv.style.cssText = 'width:100%;height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;overflow:hidden;background:#1a1f2e;border-radius:6px;border:1px solid #334155';
+                    if (m.svg_2d) {
+                        svgDiv.innerHTML = m.svg_2d;
+                        var svgEl = svgDiv.querySelector('svg');
+                        if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.maxHeight = '100%'; }
                     } else {
                         svgDiv.innerHTML = '<span style="font-family:var(--mono);font-size:9px;color:var(--muted);word-break:break-all;max-height:100%;overflow:hidden">' + (m.smiles || '').substring(0, 80) + '</span>';
                     }
