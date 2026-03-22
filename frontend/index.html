@@ -14077,7 +14077,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             o.autoView();
             if (footerEl) footerEl.textContent = 'Source: ' + url + ' \u2022 Drag to rotate \u2022 Scroll to zoom \u2022 Right-drag to pan';
         }).catch(function(err) {
-            if (footerEl) footerEl.textContent = 'Failed to load structure: ' + (err.message || err);
+            if (footerEl) footerEl.textContent = "Structure not available in AlphaFold DB. Try alphafold.ebi.ac.uk or UniProt for this protein.";
         });
     };
 
