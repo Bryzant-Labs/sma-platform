@@ -1,6 +1,6 @@
 # SMA Research Platform — Roadmap
 
-> Last updated: 2026-03-20
+> Last updated: 2026-03-22
 
 ## Milestone Tracker
 
@@ -12,7 +12,7 @@
 | ClinicalTrials.gov v2 adapter (449 trials) | DONE | Feb 2026 |
 | GEO dataset metadata adapter | DONE | Feb 2026 |
 | bioRxiv/medRxiv scanner | DONE | Mar 2026 |
-| LLM claim extraction (25,054 claims) | DONE | Mar 2026 |
+| LLM claim extraction (5,915 clean claims) | DONE | Mar 2026 |
 | Evidence scoring (method weights + tier multipliers) | DONE | Feb 2026 |
 | Knowledge graph (428 edges, 34 relation types) | DONE | Feb 2026 |
 | UCM Parquet pipeline (HuggingFace) | DONE | Mar 2026 |
@@ -23,7 +23,7 @@
 
 | Deliverable | Status | Date |
 |------------|--------|------|
-| Mechanistic hypothesis generator (515 cards) | DONE | Mar 2026 |
+| Mechanistic hypothesis generator (1,272 cards) | DONE | Mar 2026 |
 | Splice Variant Predictor (rule-based + ESM-2) | DONE | Mar 2026 |
 | Auto-Discovery pipeline (spikes, confirmations, novel) | DONE | Mar 2026 |
 | Computational screening (21,228 molecules) | DONE | Mar 2026 |
@@ -42,9 +42,9 @@
 | Clinical trial results parsing (56 with results) | DONE | Mar 2026 |
 | Patent literature (578 patents via Google Patents) | DONE | Mar 2026 |
 | AlphaFold protein structures (7 proteins, v6) | DONE | Mar 2026 |
-| MCP Server (29 tools, REST-based) | DONE | Mar 2026 |
+| MCP Server (32 tools, REST-based) | DONE | Mar 2026 |
 | Claim re-scoring (SMA relevance) | DONE | Mar 2026 |
-| Hypothesis upgrade (Sonnet 4.6, 515 hypotheses) | DONE | Mar 2026 |
+| Hypothesis upgrade (Sonnet 4.6, 1,272 hypotheses) | DONE | Mar 2026 |
 
 ### MG: GPU Compute Infrastructure (MOSTLY COMPLETE)
 
