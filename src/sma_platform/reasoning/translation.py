@@ -55,7 +55,7 @@ REGULATORY_PATHWAYS = [
         benefits=[
             "7 years market exclusivity (FDA) / 10 years (EMA)",
             "Tax credits for clinical development costs (25% FDA)",
-            "Waived PDUFA filing fees (~$3M saved)",
+            "Waived PDUFA filing fees",
             "Protocol assistance from FDA/EMA",
         ],
         sma_relevance="All 3 approved SMA drugs have orphan designation. Essential for any SMA therapeutic.",
@@ -132,9 +132,9 @@ REGULATORY_PATHWAYS = [
         ],
         timeline="Voucher awarded upon approval",
         benefits=[
-            "Priority Review Voucher — transferable, sellable ($100M-350M value)",
+            "Priority Review Voucher — transferable and sellable",
             "Accelerates review of ANY future application (not just SMA)",
-            "Major financial incentive for rare disease development",
+            "Major incentive for rare disease development",
         ],
         sma_relevance="Significant financial incentive. Nusinersen and onasemnogene both received PRVs.",
         current_sma_drugs=["Nusinersen", "Onasemnogene"],
@@ -171,7 +171,6 @@ class GrantTemplate:
     name: str
     funder: str
     mechanism: str              # R01, R21, U01, etc.
-    budget_range: str
     duration_years: int
     sma_fit: str
     key_sections: list[str]
@@ -183,7 +182,6 @@ GRANT_TEMPLATES = [
         name="NIH R01 — SMA Therapeutic Target Validation",
         funder="NINDS (National Institute of Neurological Disorders and Stroke)",
         mechanism="R01",
-        budget_range="$250K-$500K/year direct costs",
         duration_years=5,
         sma_fit="Validate novel targets identified by the platform (e.g., NCALD, PLS3, NEDD4L)",
         key_sections=[
@@ -204,7 +202,6 @@ GRANT_TEMPLATES = [
         name="NIH R21 — Exploratory SMA Bioelectric Therapy",
         funder="NINDS",
         mechanism="R21 (Exploratory/Developmental)",
-        budget_range="$275K total (2 years)",
         duration_years=2,
         sma_fit="Test the bioelectric reprogramming hypothesis from Phase 7.5",
         key_sections=[
@@ -224,7 +221,6 @@ GRANT_TEMPLATES = [
         name="CureSMA Basic Research Grant",
         funder="Cure SMA Foundation",
         mechanism="Basic Research Grant",
-        budget_range="$100K-$200K/year",
         duration_years=2,
         sma_fit="Any novel SMA biology or therapeutic approach",
         key_sections=[
@@ -244,7 +240,6 @@ GRANT_TEMPLATES = [
         name="ERC Starting Grant — Computational SMA",
         funder="European Research Council",
         mechanism="StG (Starting Grant)",
-        budget_range="Up to 1.5M EUR over 5 years",
         duration_years=5,
         sma_fit="Computational approaches to SMA drug discovery",
         key_sections=[
@@ -275,7 +270,6 @@ class ValidationLevel:
     assays: list[str]
     evidence_required: str
     timeline: str
-    cost_estimate: str
     go_no_go: str
 
 
@@ -288,7 +282,6 @@ VALIDATION_PIPELINE = [
         assays=["Evidence graph score", "Digital twin simulation", "Docking prediction", "RNA-binding prediction"],
         evidence_required="Composite evidence score >= 40%, positive digital twin prediction",
         timeline="1 day (automated)",
-        cost_estimate="$0 (platform built-in)",
         go_no_go="Score >= 40% AND digital twin functional improvement > 5% → proceed",
     ),
     ValidationLevel(
@@ -299,7 +292,6 @@ VALIDATION_PIPELINE = [
         assays=["RNA-Binding Fluorescence Polarization", "SMN Protein ELISA", "Thermal shift assay"],
         evidence_required="Measurable binding/activity at < 10 uM concentration",
         timeline="1-2 weeks",
-        cost_estimate="$1,000-5,000",
         go_no_go="KD or EC50 < 10 uM → proceed to cell-based",
     ),
     ValidationLevel(
@@ -310,7 +302,6 @@ VALIDATION_PIPELINE = [
         assays=["SMN2 Splicing Reporter", "Motor Neuron Survival (iPSC-MN)", "NMJ Formation Assay"],
         evidence_required="Significant effect vs vehicle with dose-response",
         timeline="2-4 weeks",
-        cost_estimate="$5,000-25,000",
         go_no_go="EC50 < 1 uM AND >2-fold SMN increase AND no cytotoxicity → proceed",
     ),
     ValidationLevel(
@@ -321,7 +312,6 @@ VALIDATION_PIPELINE = [
         assays=["SMA Mouse Survival Study (delta7)", "Motor neuron count", "NMJ analysis"],
         evidence_required="Significant survival extension AND motor function improvement vs vehicle",
         timeline="2-3 months",
-        cost_estimate="$50,000-200,000",
         go_no_go="p<0.05 survival extension AND >20% motor function improvement → IND-enabling",
     ),
     ValidationLevel(
@@ -331,7 +321,6 @@ VALIDATION_PIPELINE = [
         assays=["GLP toxicology", "PK/PD", "Manufacturing scale-up", "IND filing"],
         evidence_required="Clean safety profile, predictable PK, scalable manufacturing",
         timeline="12-18 months",
-        cost_estimate="$1M-5M",
         go_no_go="IND approved by FDA → Phase 1 clinical trial",
     ),
 ]
@@ -350,28 +339,13 @@ def get_regulatory_pathways() -> dict[str, Any]:
             "Orphan Drug Designation (always)",
             "Breakthrough Therapy (if clinical evidence of superiority)",
             "RMAT (for gene/cell therapies)",
-            "Pediatric Rare Disease PRV (upon approval — $100M+ value)",
+            "Pediatric Rare Disease PRV (upon approval)",
         ],
         "insight": "All SMA therapeutics should pursue Orphan Drug Designation (guaranteed for SMA) + "
                    "Breakthrough Therapy (if preliminary clinical data exists). Gene therapies should "
-                   "add RMAT. The Pediatric Rare Disease PRV alone can fund further development.",
+                   "add RMAT. The Pediatric Rare Disease PRV provides a significant incentive for "
+                   "rare disease development.",
     }
-
-
-def _budget_key(g: GrantTemplate) -> float:
-    """Extract approximate max budget for sorting."""
-    try:
-        # Budget format: "$250K-$500K/year direct costs" or "Up to 1.5M EUR over 5 years"
-        raw = g.budget_range.replace('€', '').replace('$', '').replace(',', '')
-        parts = raw.split('-')
-        last = parts[-1].strip().split('/')[0].split()[0]
-        if 'M' in last:
-            return float(last.replace('M', '')) * 1000
-        elif 'K' in last:
-            return float(last.replace('K', ''))
-        return float(last)
-    except (ValueError, IndexError):
-        return 0
 
 
 def get_grant_templates() -> dict[str, Any]:
@@ -380,9 +354,8 @@ def get_grant_templates() -> dict[str, Any]:
         "total_templates": len(GRANT_TEMPLATES),
         "templates": [asdict(g) for g in GRANT_TEMPLATES],
         "quickest_funding": asdict(min(GRANT_TEMPLATES, key=lambda x: x.duration_years)),
-        "largest_budget": asdict(max(GRANT_TEMPLATES, key=_budget_key)),
         "insight": "Start with Cure SMA Basic Research Grant (fastest, most flexible) to generate "
-                   "preliminary data, then apply for NIH R01 (larger budget, longer term). "
+                   "preliminary data, then apply for NIH R01 (longer term, broader scope). "
                    "European researchers should consider ERC Starting Grant for computational approaches.",
     }
 
@@ -393,12 +366,11 @@ def get_validation_pipeline() -> dict[str, Any]:
         "total_levels": len(VALIDATION_PIPELINE),
         "levels": [asdict(v) for v in VALIDATION_PIPELINE],
         "total_timeline": "~18-24 months from computational validation to IND",
-        "total_cost": "$1.1M-5.2M estimated from Level 1 to IND",
         "platform_contribution": "Level 1 (computational validation) is fully automated by the platform. "
                                  "This eliminates months of manual literature review and target prioritization.",
-        "insight": "The platform provides Level 1 validation for free — every hypothesis, target, "
-                   "and compound is automatically scored. This compresses the traditional 1-2 year "
-                   "target identification phase to days. The real cost starts at Level 2 (wet lab).",
+        "insight": "The platform provides Level 1 validation automatically — every hypothesis, target, "
+                   "and compound is scored. This compresses the traditional 1-2 year target identification "
+                   "phase to days, accelerating the path to wet-lab validation.",
     }
 
 
@@ -422,7 +394,6 @@ def validate_hypothesis(hypothesis_id: str, evidence_score: float,
             ["RNA-Binding Fluorescence Polarization", "SMN Protein ELISA"]
             if level_1_pass else []
         ),
-        "estimated_cost_to_next_gate": "$1,000-5,000" if level_1_pass else "$0",
     }
 
 
@@ -435,41 +406,37 @@ GRANT_FORMATS: dict[str, dict[str, Any]] = {
     "NIH_R01": {
         "funder": "NINDS (National Institute of Neurological Disorders and Stroke)",
         "mechanism": "R01",
-        "budget_range": "$250K-$500K/year direct costs",
         "duration_years": 5,
         "sections": [
             "specific_aim", "significance", "innovation",
-            "approach", "timeline", "budget_estimate",
+            "approach", "timeline",
         ],
     },
     "NIH_R21": {
         "funder": "NINDS",
         "mechanism": "R21 (Exploratory/Developmental)",
-        "budget_range": "$275K total (2 years)",
         "duration_years": 2,
         "sections": [
             "specific_aim", "significance", "innovation",
-            "approach", "timeline", "budget_estimate",
+            "approach", "timeline",
         ],
     },
     "ERC_StG": {
         "funder": "European Research Council",
         "mechanism": "Starting Grant",
-        "budget_range": "Up to 1.5M EUR over 5 years",
         "duration_years": 5,
         "sections": [
             "specific_aim", "significance", "innovation",
-            "approach", "timeline", "budget_estimate",
+            "approach", "timeline",
         ],
     },
     "CURE_SMA": {
         "funder": "Cure SMA Foundation",
         "mechanism": "Basic Research Grant",
-        "budget_range": "$100K-$200K/year",
         "duration_years": 2,
         "sections": [
             "specific_aim", "significance", "innovation",
-            "approach", "timeline", "budget_estimate",
+            "approach", "timeline",
         ],
     },
 }
@@ -701,8 +668,7 @@ def _build_approach(
         for exp in top_exps:
             assay = exp.get("recommended_assay", "")
             gap = exp.get("missing_evidence_type", "")
-            cost = exp.get("estimated_cost", "")
-            exp_lines.append(f"  - {assay} (fills {gap} evidence gap; est. {cost})")
+            exp_lines.append(f"  - {assay} (fills {gap} evidence gap)")
         if exp_lines:
             parts.append(
                 f"Platform-identified evidence gaps for {symbol} and recommended "
@@ -818,56 +784,11 @@ def _build_budget_estimate(
     grant_format: str,
     screening_hits: list[dict],
 ) -> str:
-    """Compose a budget summary."""
-    fmt = GRANT_FORMATS.get(grant_format, GRANT_FORMATS["NIH_R01"])
-    duration = fmt["duration_years"]
-    budget_range = fmt["budget_range"]
-    has_hits = len(screening_hits) > 0
-
-    if grant_format == "CURE_SMA":
-        return (
-            f"Budget: {budget_range} for {duration} years.\n"
-            f"Major costs: iPSC-MN differentiation and maintenance ($30K/yr), "
-            f"compound synthesis/purchase ($15K/yr), assay reagents and consumables "
-            f"($25K/yr), personnel (1 postdoc at 50% effort, $40K/yr), "
-            f"computational resources ($5K/yr)."
-        )
-    elif grant_format == "NIH_R21":
-        return (
-            f"Budget: {budget_range}.\n"
-            f"Year 1 ($150K): iPSC-MN assays ($40K), virtual screening compute ($10K), "
-            f"compound purchase ($20K), personnel ($60K), supplies ($20K).\n"
-            f"Year 2 ($125K): Combination studies ($30K), ADMET profiling ($25K), "
-            f"personnel ($50K), publication costs ($5K), travel ($15K)."
-        )
-    elif grant_format == "ERC_StG":
-        return (
-            f"Budget: {budget_range}.\n"
-            f"Personnel (60%): 1 postdoc (5 yr), 1 PhD student (4 yr), 1 technician (3 yr).\n"
-            f"Consumables (25%): iPSC culture, screening compounds, mouse studies.\n"
-            f"Equipment (10%): Computational GPU cluster access, plate reader.\n"
-            f"Travel and dissemination (5%): Conferences, open access fees."
-        )
-    else:
-        # NIH_R01 default
-        total_low = 250 * duration
-        total_high = 500 * duration
-        mouse_line = ""
-        if duration >= 3:
-            mouse_line = (
-                f"Years 3-{duration}: SMA mouse colony ($30K/yr), behavioral testing "
-                f"equipment ($15K), histology ($20K/yr).\n"
-            )
-        return (
-            f"Budget: {budget_range} for {duration} years "
-            f"(${total_low}K-${total_high}K total direct costs).\n"
-            f"Personnel: PI (15% effort), 1 postdoc (100%), 1 research technician (50%).\n"
-            f"Years 1-2: iPSC-MN assays ($50K/yr), compound screening ($30K/yr), "
-            f"ADMET profiling ($25K/yr).\n"
-            + mouse_line
-            + f"Computational: GPU compute and platform hosting ($10K/yr).\n"
-            f"Other: Publication costs, conference travel, subaward (if applicable)."
-        )
+    """Budget details are available upon request from the research team."""
+    return (
+        "Budget details are available upon request from the research team. "
+        "See the funding agency guidelines for allowable costs and budget caps."
+    )
 
 
 async def generate_grant_export(
@@ -1071,10 +992,6 @@ async def generate_grant_export(
             symbol=sym,
             screening_hits=screening_hits,
             grant_format=grant_format,
-        ),
-        "budget_estimate": _build_budget_estimate(
-            grant_format=grant_format,
-            screening_hits=screening_hits,
         ),
     }
 

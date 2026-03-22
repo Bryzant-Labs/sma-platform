@@ -5,7 +5,8 @@ Automatically converts platform hypotheses into structured experimental
 proposals with assays, model systems, readouts, and go/no-go criteria.
 
 Takes a hypothesis ID, analyzes its type/content, and generates a concrete
-experimental proposal that bridges computational prediction to wet lab.
+experimental proposal that bridges computational prediction to wet lab
+validation through a tiered escalation strategy.
 """
 
 from __future__ import annotations
@@ -99,9 +100,33 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "SPR is preferred for initial screening; ITC for mechanistic characterization."
         ),
         "model_systems": [
-            {"name": "Recombinant purified proteins (SPR)", "tier": "primary", "cost_usd": 3000, "time_weeks": 3},
-            {"name": "HEK293T co-IP validation", "tier": "secondary", "cost_usd": 2000, "time_weeks": 2},
-            {"name": "iPSC-MN proximity ligation assay", "tier": "tertiary", "cost_usd": 8000, "time_weeks": 6},
+            {
+                "name": "Recombinant purified proteins (SPR)",
+                "tier": "primary",
+                "time_weeks": 3,
+                "protocol_notes": (
+                    "His-tag or Avi-tag capture on NTA or SA chip recommended for SMN-domain proteins. "
+                    "Run at minimum 5 analyte concentrations spanning 10x above and below expected KD."
+                ),
+            },
+            {
+                "name": "HEK293T co-IP validation",
+                "tier": "secondary",
+                "time_weeks": 2,
+                "protocol_notes": (
+                    "Transfect both FLAG- and GFP-tagged constructs; use anti-FLAG pulldown with GFP immunoblot. "
+                    "Include RNase A treatment to distinguish RNA-bridged from direct interactions."
+                ),
+            },
+            {
+                "name": "iPSC-MN proximity ligation assay",
+                "tier": "tertiary",
+                "time_weeks": 6,
+                "protocol_notes": (
+                    "PLA enables single-molecule resolution of endogenous interactions in motor neuron soma and axons. "
+                    "Use Duolink PLA with antibody pairs validated in prior co-IP; include isotype controls."
+                ),
+            },
         ],
         "primary_readout": "Equilibrium dissociation constant (KD) in nM range",
         "secondary_readouts": [
@@ -116,12 +141,30 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "borderline": "KD 500 nM - 10 uM — optimize constructs, try alternative binding partners",
         },
         "timeline_weeks": 4,
-        "estimated_cost_usd": 5000,
         "required_reagents": [
             "Purified recombinant target protein (>90% purity, 1 mg)",
             "Purified interacting partner protein (>90% purity, 1 mg)",
             "SPR sensor chip (CM5 or NTA for His-tagged proteins)",
             "Running buffer optimized for target stability",
+        ],
+        "controls": [
+            "Positive control: known SMN binding partner (e.g., Gemin2) at saturating concentration",
+            "Negative control: BSA or unrelated protein of similar MW at identical concentration series",
+            "Buffer blank: running buffer injections for double-referencing baseline subtraction",
+        ],
+        "statistical_requirements": (
+            "Minimum n=3 independent protein preparations; fit 1:1 Langmuir or two-state model; "
+            "report 95% CI on KD; ANOVA across replicates with post-hoc Tukey for multi-condition comparisons."
+        ),
+        "critical_parameters": [
+            "Protein glycosylation state and post-translational modifications — use mammalian expression system if relevant",
+            "Buffer composition: SMN Tudor domain requires low-salt buffer (50 mM NaCl) to maintain stability",
+            "Ligand orientation on chip — reversed orientation experiment required to rule out steric artefacts",
+        ],
+        "common_pitfalls": [
+            "SMN self-oligomerization can mask binary interaction signals — use truncated Tudor domain constructs",
+            "RNA contamination in protein preps can bridge interactions non-specifically — treat with RNase A before assay",
+            "Non-specific binding to SPR chip matrix inflates apparent affinity — always run reference channel subtraction",
         ],
     },
     "expression": {
@@ -132,9 +175,33 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "positives from post-transcriptional regulation."
         ),
         "model_systems": [
-            {"name": "SMA patient fibroblasts (Type I/II/III)", "tier": "primary", "cost_usd": 1500, "time_weeks": 2},
-            {"name": "iPSC-derived motor neurons", "tier": "secondary", "cost_usd": 8000, "time_weeks": 8},
-            {"name": "SMA mouse spinal cord tissue", "tier": "tertiary", "cost_usd": 15000, "time_weeks": 12},
+            {
+                "name": "SMA patient fibroblasts (Type I/II/III)",
+                "tier": "primary",
+                "time_weeks": 2,
+                "protocol_notes": (
+                    "Use passage-matched controls (p4-p8); include at least 3 SMA donors and 3 healthy donors. "
+                    "Passage number critically affects gene expression — document passage for all experiments."
+                ),
+            },
+            {
+                "name": "iPSC-derived motor neurons",
+                "tier": "secondary",
+                "time_weeks": 8,
+                "protocol_notes": (
+                    "Differentiate to HB9+/ChAT+ motor neurons using established NIH3T3-Shh/FGF8 protocol. "
+                    "Validate motor neuron purity by flow cytometry (>70% HB9+ required) before RNA extraction."
+                ),
+            },
+            {
+                "name": "SMA mouse spinal cord tissue",
+                "tier": "tertiary",
+                "time_weeks": 12,
+                "protocol_notes": (
+                    "Dissect lumbar L3-L5 ventral horn for motor neuron-enriched tissue; snap-freeze in liquid nitrogen. "
+                    "Sex-balance cohorts — SMN-delta7 females have 10-15% longer survival than males."
+                ),
+            },
         ],
         "primary_readout": "mRNA fold-change vs healthy control (normalized to GAPDH/ACTB)",
         "secondary_readouts": [
@@ -148,13 +215,32 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "borderline": "1.2-1.5 fold — validate in motor neurons, consider single-cell resolution",
         },
         "timeline_weeks": 3,
-        "estimated_cost_usd": 2500,
         "required_reagents": [
             "Validated qPCR primers (target gene + 2 housekeeping genes)",
             "Primary antibody against target protein (validated for Western)",
             "SMA patient fibroblast cell lines (Coriell repository)",
             "RNA extraction kit (TRIzol or column-based)",
             "cDNA synthesis kit + SYBR Green or TaqMan master mix",
+        ],
+        "controls": [
+            "Positive control: nusinersen-treated SMA cells for SMN upregulation baseline",
+            "Negative control: scrambled siRNA or empty vector in matched cell line",
+            "Housekeeping genes: GAPDH and ACTB; validate stability with NormFinder before use",
+        ],
+        "statistical_requirements": (
+            "Minimum n=3 biological replicates (independent cell passages or animals); "
+            "use ddCt method with efficiency correction; Student's t-test or Mann-Whitney for 2 groups, "
+            "one-way ANOVA for 3+ groups; report exact p-values and effect size (Cohen's d)."
+        ),
+        "critical_parameters": [
+            "RNA integrity number (RIN) must be >= 8.0 before proceeding to RT-qPCR",
+            "Primer efficiency must be 90-110% — validate with standard curve before biological comparisons",
+            "Cell confluence at harvest — harvest at 70-80% confluence; over-confluent cultures alter expression profiles",
+        ],
+        "common_pitfalls": [
+            "SMN1/SMN2 paralog ambiguity — design primers in exon 7 junction to distinguish or use isoform-specific TaqMan",
+            "SMA fibroblasts downregulate marker genes with passage — always passage-match and document carefully",
+            "Post-transcriptional regulation can uncouple mRNA and protein changes — always validate both levels",
         ],
     },
     "drug_efficacy": {
@@ -165,9 +251,33 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "EC50/IC50 values for compound potency ranking."
         ),
         "model_systems": [
-            {"name": "SMA patient fibroblasts (SMN-deficient)", "tier": "primary", "cost_usd": 2000, "time_weeks": 2},
-            {"name": "iPSC-derived motor neurons (SMA Type I)", "tier": "secondary", "cost_usd": 12000, "time_weeks": 8},
-            {"name": "SMN-delta7 mouse model", "tier": "tertiary", "cost_usd": 50000, "time_weeks": 16},
+            {
+                "name": "SMA patient fibroblasts (SMN-deficient)",
+                "tier": "primary",
+                "time_weeks": 2,
+                "protocol_notes": (
+                    "Use 384-well format for dose-response (8-point, 3-fold dilution series); "
+                    "seed at 1,000 cells/well; treat for 72h before CellTiter-Glo readout."
+                ),
+            },
+            {
+                "name": "iPSC-derived motor neurons (SMA Type I)",
+                "tier": "secondary",
+                "time_weeks": 8,
+                "protocol_notes": (
+                    "Plate on laminin-coated surfaces; assess motor neuron-specific survival by HB9-GFP reporter "
+                    "or immunostaining (ChAT/HB9 double positive); automated image analysis required for throughput."
+                ),
+            },
+            {
+                "name": "SMN-delta7 mouse model",
+                "tier": "tertiary",
+                "time_weeks": 16,
+                "protocol_notes": (
+                    "ICV or IP dosing at P1-P3 for CNS penetration; use litter-matched vehicle controls; "
+                    "primary endpoints are survival and hindlimb clasping score at P7/P14."
+                ),
+            },
         ],
         "primary_readout": "EC50 for SMN protein rescue or cell viability improvement",
         "secondary_readouts": [
@@ -182,13 +292,32 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "borderline": "EC50 1-10 uM — medicinal chemistry optimization needed; test in motor neurons",
         },
         "timeline_weeks": 4,
-        "estimated_cost_usd": 5000,
         "required_reagents": [
             "Test compound (>95% purity, 10 mg for dose-response)",
             "Positive control (nusinersen or risdiplam analog for benchmarking)",
             "CellTiter-Glo 2.0 reagent",
             "SMA patient cell lines (3 genotypes minimum)",
             "DMSO-tolerant culture media",
+        ],
+        "controls": [
+            "Positive control: risdiplam at 100 nM (established EC50 benchmark in patient fibroblasts)",
+            "Negative control: DMSO vehicle at matched concentration (max 0.1% v/v)",
+            "Cytotoxicity counter-screen: CellTox Green parallel assay to separate viability from proliferation effects",
+        ],
+        "statistical_requirements": (
+            "Minimum n=3 independent experiments in technical triplicate; "
+            "fit 4-parameter logistic (4PL) curve for EC50/Hill slope; "
+            "report 95% CI on EC50; Z'-factor >= 0.5 required for assay acceptance."
+        ),
+        "critical_parameters": [
+            "DMSO tolerance threshold — SMA patient fibroblasts show toxicity above 0.1% DMSO; validate tolerance first",
+            "Compound solubility — confirm solubility at top concentration in assay medium, not just DMSO stock",
+            "Timing of compound addition relative to differentiation stage — add at Day 10 post-differentiation for iPSC-MN",
+        ],
+        "common_pitfalls": [
+            "SMN ELISA cross-reactivity: most commercial kits cannot distinguish SMN1 and SMN2 protein products",
+            "Apparent EC50 improvement from reduced cell seeding density artifacts — normalize to vehicle-matched cell count",
+            "4-AP (positive control comparator) has narrow therapeutic window — include in counter-screen for off-target effects",
         ],
     },
     "splicing": {
@@ -199,9 +328,33 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "screening of splicing modifiers with luciferase readout."
         ),
         "model_systems": [
-            {"name": "SMN2 minigene reporter in HEK293T", "tier": "primary", "cost_usd": 2000, "time_weeks": 2},
-            {"name": "SMA patient fibroblasts (endogenous SMN2)", "tier": "secondary", "cost_usd": 2500, "time_weeks": 3},
-            {"name": "iPSC-derived motor neurons", "tier": "tertiary", "cost_usd": 10000, "time_weeks": 8},
+            {
+                "name": "SMN2 minigene reporter in HEK293T",
+                "tier": "primary",
+                "time_weeks": 2,
+                "protocol_notes": (
+                    "Use the 654 bp SMN2 minigene (Singh lab) or dual-luciferase version for quantitative readout; "
+                    "transfect at 70% confluence and harvest at 48h post-transfection for optimal expression."
+                ),
+            },
+            {
+                "name": "SMA patient fibroblasts (endogenous SMN2)",
+                "tier": "secondary",
+                "time_weeks": 3,
+                "protocol_notes": (
+                    "Endogenous SMN2 splicing is influenced by passage and confluency — standardize harvest conditions. "
+                    "Use Coriell lines GM03813 (SMA Type I, 3x SMN2) as primary reference line."
+                ),
+            },
+            {
+                "name": "iPSC-derived motor neurons",
+                "tier": "tertiary",
+                "time_weeks": 8,
+                "protocol_notes": (
+                    "Splicing modulators may have different efficacy in post-mitotic motor neurons due to altered "
+                    "hnRNP and SR protein expression — validate in both dividing and differentiated states."
+                ),
+            },
         ],
         "primary_readout": "Exon 7 inclusion ratio (FL-SMN / delta7-SMN by densitometry or qPCR)",
         "secondary_readouts": [
@@ -216,7 +369,6 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "borderline": "1.2-2.0 fold — optimize ASO/compound, check concentration dependence",
         },
         "timeline_weeks": 3,
-        "estimated_cost_usd": 3000,
         "required_reagents": [
             "Splice-specific primer pairs (FL-SMN2 and delta7-SMN2)",
             "SMN2 minigene reporter plasmid (if using reporter assay)",
@@ -224,18 +376,62 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "RNA extraction + RT-PCR reagents",
             "Anti-SMN antibody (2B1 clone) for Western validation",
         ],
+        "controls": [
+            "Positive control: nusinersen ASO at 10 nM (well-characterized exon 7 inclusion benchmark)",
+            "Negative control: scrambled ASO or DMSO vehicle matched to treatment condition",
+            "Splicing specificity control: RBFOX2 knockdown to verify splicing machinery integrity",
+        ],
+        "statistical_requirements": (
+            "Minimum n=3 independent transfections or treatments as biological replicates; "
+            "quantify gel bands by densitometry (ImageJ) or droplet digital PCR for precision; "
+            "paired t-test for FL vs delta7 ratio change; report percent exon inclusion (PSI) with SD."
+        ),
+        "critical_parameters": [
+            "ISS-N1 occupancy — ASO length and chemistry (2'-MOE vs LNA) critically affect ISS-N1 blocking efficiency",
+            "Cellular concentration of hnRNP A1/A2 — these splicing repressors compete with exon 7 inclusion; measure baseline",
+            "SMN2 copy number in cell lines — use lines with 2-3 copies for consistent baseline; avoid >4 copy lines",
+        ],
+        "common_pitfalls": [
+            "SMN1/SMN2 co-amplification: standard primers amplify both paralogs — use SMN2-specific junction primers or allele-specific qPCR",
+            "Minigene context artefacts: minigene results don't always translate to endogenous locus — confirm in patient cells before advancing",
+            "Off-target splicing: broad splicing modulators (e.g., TG003) alter hundreds of exons — run rMATS on RNA-seq before advancing",
+        ],
     },
     "general": {
         "assay": "Target-specific functional assay (phenotypic or biochemical)",
         "rationale": (
             "When the hypothesis mechanism is not clearly categorized, a target-specific "
-            "functional assay is recommended. Start with the cheapest informative readout "
-            "and escalate based on results."
+            "functional assay is recommended. Start with the most informative readout "
+            "for the proposed mechanism and escalate based on results."
         ),
         "model_systems": [
-            {"name": "SMA patient fibroblasts", "tier": "primary", "cost_usd": 1500, "time_weeks": 2},
-            {"name": "iPSC-derived motor neurons", "tier": "secondary", "cost_usd": 10000, "time_weeks": 8},
-            {"name": "SMA mouse model (delta7 or Taiwanese)", "tier": "tertiary", "cost_usd": 50000, "time_weeks": 16},
+            {
+                "name": "SMA patient fibroblasts",
+                "tier": "primary",
+                "time_weeks": 2,
+                "protocol_notes": (
+                    "Fibroblasts are suitable for biochemical readouts but lack motor neuron identity; "
+                    "interpret results as a disease-context screen, not a definitive functional validation."
+                ),
+            },
+            {
+                "name": "iPSC-derived motor neurons",
+                "tier": "secondary",
+                "time_weeks": 8,
+                "protocol_notes": (
+                    "Confirm motor neuron identity by HB9/ChAT co-staining and electrophysiology (action potential firing); "
+                    "at least 3 independent iPSC lines from different donors required for biological validity."
+                ),
+            },
+            {
+                "name": "SMA mouse model (delta7 or Taiwanese)",
+                "tier": "tertiary",
+                "time_weeks": 16,
+                "protocol_notes": (
+                    "Delta7 model is severe (P15 median survival); Taiwanese model is intermediate (P21-P28). "
+                    "Choose model based on intervention window — very early interventions suit delta7, later-onset effects suit Taiwanese."
+                ),
+            },
         ],
         "primary_readout": "Target protein level or activity measurement",
         "secondary_readouts": [
@@ -249,11 +445,30 @@ ASSAY_TEMPLATES: dict[str, dict[str, Any]] = {
             "borderline": "Trend in expected direction but not significant — increase N or use more sensitive assay",
         },
         "timeline_weeks": 4,
-        "estimated_cost_usd": 5000,
         "required_reagents": [
             "Target-specific antibody (validated for Western/IF)",
             "SMA patient cell lines",
             "Appropriate positive and negative controls",
+        ],
+        "controls": [
+            "Positive control: known SMA-relevant perturbation (e.g., SMN knockdown) to confirm assay sensitivity",
+            "Negative control: isotype antibody control or scrambled siRNA for specificity",
+            "Vehicle control: matched solvent at identical concentration to compound-treated groups",
+        ],
+        "statistical_requirements": (
+            "Minimum n=3 biological replicates (independent experiments, not technical replicates); "
+            "state primary statistical test in advance (pre-registration preferred); "
+            "power calculation required for animal studies (alpha=0.05, power=0.8, effect size from pilot)."
+        ),
+        "critical_parameters": [
+            "Disease-relevant cell passage — use early passage (p3-p6) SMA fibroblasts to preserve disease phenotype",
+            "Protein extraction method — RIPA vs NP-40 lysis buffers yield different soluble fractions for SMA proteins",
+            "Antibody validation in SMA context — confirm antibody detects correct band by knockdown or overexpression control",
+        ],
+        "common_pitfalls": [
+            "Conflating correlation with causation in SMA — always include loss-of-function and gain-of-function arms",
+            "SMN protein stability varies with cell cycle phase — harvest cells at consistent growth phase",
+            "Non-cell-autonomous effects in mixed cultures — use purified motor neuron populations for mechanistic studies",
         ],
     },
 }
@@ -482,7 +697,6 @@ async def propose_experiment(hypothesis_id: str) -> dict[str, Any]:
             "secondary_readouts": template["secondary_readouts"],
             "go_nogo_criteria": template["go_nogo"],
             "estimated_timeline_weeks": template["timeline_weeks"],
-            "estimated_cost_usd": template["estimated_cost_usd"],
             "required_reagents": reagents,
             "reagent_availability": {
                 "antibodies_known": bool(reagent_info),
@@ -493,48 +707,228 @@ async def propose_experiment(hypothesis_id: str) -> dict[str, Any]:
         "supporting_evidence": supporting_claims,
         "relevant_literature": literature + platform_sources,
         "modality_suggestion": modality,
-        "escalation_path": _build_escalation_path(category, template["estimated_cost_usd"]),
+        "escalation_path": _build_escalation_path(category),
     }
 
 
-def _build_escalation_path(category: str, current_cost: int) -> list[dict[str, Any]]:
+def _build_escalation_path(category: str) -> list[dict[str, Any]]:
     """Build a step-by-step escalation path from initial experiment to in vivo."""
     steps = []
 
     if category == "splicing":
         steps = [
-            {"step": 1, "assay": "Minigene reporter (HEK293T)", "cost_usd": 2000, "time_weeks": 2, "gate": "Exon 7 inclusion >= 2-fold"},
-            {"step": 2, "assay": "Endogenous splicing (patient fibroblasts)", "cost_usd": 2500, "time_weeks": 3, "gate": "Confirmed in patient cells"},
-            {"step": 3, "assay": "iPSC-MN splicing + survival", "cost_usd": 10000, "time_weeks": 8, "gate": "Motor neuron benefit"},
-            {"step": 4, "assay": "SMA mouse model (delta7)", "cost_usd": 50000, "time_weeks": 16, "gate": "Survival extension >= 30%"},
+            {
+                "step": 1,
+                "assay": "Minigene reporter (HEK293T)",
+                "time_weeks": 2,
+                "gate": "Exon 7 inclusion >= 2-fold",
+                "technical_notes": (
+                    "Use the Singh lab 654 bp SMN2 minigene; test ISS-N1 blocking ASOs at 5 concentrations (0.1-100 nM). "
+                    "Quantify FL vs delta7 by RT-PCR gel densitometry (3 independent transfections)."
+                ),
+            },
+            {
+                "step": 2,
+                "assay": "Endogenous splicing (patient fibroblasts)",
+                "time_weeks": 3,
+                "gate": "Confirmed in patient cells",
+                "technical_notes": (
+                    "Gymnotic ASO delivery (no lipofection) at 1-10 uM for 72h to reflect in vivo delivery. "
+                    "Measure PSI by ddPCR for higher precision than gel densitometry."
+                ),
+            },
+            {
+                "step": 3,
+                "assay": "iPSC-MN splicing + survival",
+                "time_weeks": 8,
+                "gate": "Motor neuron benefit",
+                "technical_notes": (
+                    "Validate splicing correction in HB9+/ChAT+ motor neurons specifically — "
+                    "use fluorescence-activated cell sorting before RNA extraction to eliminate non-neuronal contamination."
+                ),
+            },
+            {
+                "step": 4,
+                "assay": "SMA mouse model (delta7)",
+                "time_weeks": 16,
+                "gate": "Survival extension >= 30%",
+                "technical_notes": (
+                    "ICV injection at P1-P2 for CNS delivery; use n >= 10 per group for survival curves. "
+                    "Run Kaplan-Meier with log-rank test; also assess weight gain and hindlimb clasping as functional endpoints."
+                ),
+            },
         ]
     elif category == "binding":
         steps = [
-            {"step": 1, "assay": "SPR binding kinetics", "cost_usd": 3000, "time_weeks": 3, "gate": "KD < 500 nM"},
-            {"step": 2, "assay": "Co-IP in motor neurons", "cost_usd": 5000, "time_weeks": 4, "gate": "Confirmed cellular interaction"},
-            {"step": 3, "assay": "Functional consequence assay", "cost_usd": 8000, "time_weeks": 6, "gate": "Phenotypic effect"},
-            {"step": 4, "assay": "In vivo validation (mouse)", "cost_usd": 50000, "time_weeks": 16, "gate": "Motor function improvement"},
+            {
+                "step": 1,
+                "assay": "SPR binding kinetics",
+                "time_weeks": 3,
+                "gate": "KD < 500 nM",
+                "technical_notes": (
+                    "Immobilize lower-MW partner on chip to minimize steric effects; "
+                    "run at least 3 independent protein preparations to distinguish biological from technical variability."
+                ),
+            },
+            {
+                "step": 2,
+                "assay": "Co-IP in motor neurons",
+                "time_weeks": 4,
+                "gate": "Confirmed cellular interaction",
+                "technical_notes": (
+                    "Perform co-IP from iPSC-MN nuclear and cytoplasmic fractions separately — "
+                    "SMN-complex interactions are predominantly nuclear (Gems), while some are cytoplasmic (axonal)."
+                ),
+            },
+            {
+                "step": 3,
+                "assay": "Functional consequence assay",
+                "time_weeks": 6,
+                "gate": "Phenotypic effect",
+                "technical_notes": (
+                    "Disrupt interaction using domain-deletion mutant or blocking peptide rather than full knockout, "
+                    "to isolate the specific interaction's functional contribution from all protein functions."
+                ),
+            },
+            {
+                "step": 4,
+                "assay": "In vivo validation (mouse)",
+                "time_weeks": 16,
+                "gate": "Motor function improvement",
+                "technical_notes": (
+                    "Assess motor function by rotarod, open-field locomotion, and grip strength at P21, P30, P60. "
+                    "Confirm target engagement by co-IP from spinal cord tissue at study endpoint."
+                ),
+            },
         ]
     elif category == "expression":
         steps = [
-            {"step": 1, "assay": "RT-qPCR + Western (fibroblasts)", "cost_usd": 1500, "time_weeks": 2, "gate": "Expression change >= 1.5-fold"},
-            {"step": 2, "assay": "iPSC-MN expression profiling", "cost_usd": 8000, "time_weeks": 8, "gate": "Confirmed in motor neurons"},
-            {"step": 3, "assay": "Functional rescue assay", "cost_usd": 10000, "time_weeks": 8, "gate": "Survival or morphology improvement"},
-            {"step": 4, "assay": "SMA mouse tissue analysis", "cost_usd": 25000, "time_weeks": 12, "gate": "In vivo expression correlation"},
+            {
+                "step": 1,
+                "assay": "RT-qPCR + Western (fibroblasts)",
+                "time_weeks": 2,
+                "gate": "Expression change >= 1.5-fold",
+                "technical_notes": (
+                    "Include 3 SMA donor lines and 3 age-matched healthy controls; "
+                    "validate 2 reference genes (GAPDH + ACTB) using geNorm stability analysis before normalization."
+                ),
+            },
+            {
+                "step": 2,
+                "assay": "iPSC-MN expression profiling",
+                "time_weeks": 8,
+                "gate": "Confirmed in motor neurons",
+                "technical_notes": (
+                    "Compare expression at Day 14 (immature MN) and Day 35 (mature MN) post-differentiation — "
+                    "some SMA gene expression changes are maturation-dependent and not visible in early cultures."
+                ),
+            },
+            {
+                "step": 3,
+                "assay": "Functional rescue assay",
+                "time_weeks": 8,
+                "gate": "Survival or morphology improvement",
+                "technical_notes": (
+                    "Lentiviral overexpression or siRNA knockdown for causal testing; "
+                    "include SMN2 overexpression as positive control to benchmark magnitude of rescue."
+                ),
+            },
+            {
+                "step": 4,
+                "assay": "SMA mouse tissue analysis",
+                "time_weeks": 12,
+                "gate": "In vivo expression correlation",
+                "technical_notes": (
+                    "Compare spinal cord expression at P7 (pre-symptomatic) and P12 (symptomatic) to identify "
+                    "whether changes are causative or compensatory; use LCM to isolate ventral horn motor neurons."
+                ),
+            },
         ]
     elif category == "drug_efficacy":
         steps = [
-            {"step": 1, "assay": "Dose-response (fibroblasts)", "cost_usd": 2000, "time_weeks": 2, "gate": "EC50 < 1 uM"},
-            {"step": 2, "assay": "iPSC-MN survival assay", "cost_usd": 12000, "time_weeks": 8, "gate": ">= 30% survival improvement"},
-            {"step": 3, "assay": "ADMET profiling", "cost_usd": 15000, "time_weeks": 4, "gate": "Drug-like properties"},
-            {"step": 4, "assay": "SMA mouse efficacy study", "cost_usd": 50000, "time_weeks": 16, "gate": "Survival + motor function"},
+            {
+                "step": 1,
+                "assay": "Dose-response (fibroblasts)",
+                "time_weeks": 2,
+                "gate": "EC50 < 1 uM",
+                "technical_notes": (
+                    "Run 8-point dose-response (3-fold dilution, top 10 uM) in triplicate; "
+                    "confirm DMSO tolerance <= 0.1% before run; include risdiplam at 10 nM as reference compound."
+                ),
+            },
+            {
+                "step": 2,
+                "assay": "iPSC-MN survival assay",
+                "time_weeks": 8,
+                "gate": ">= 30% survival improvement",
+                "technical_notes": (
+                    "Use automated imaging (Opera Phenix or IN Cell Analyzer) to count HB9+ cells; "
+                    "treat at Day 14 post-differentiation and score at Day 21 to capture motor neuron degeneration window."
+                ),
+            },
+            {
+                "step": 3,
+                "assay": "ADMET profiling",
+                "time_weeks": 4,
+                "gate": "Drug-like properties",
+                "technical_notes": (
+                    "Prioritize CNS penetration (P-gp efflux ratio < 2, Papp A-to-B > 10 x10-6 cm/s in MDCK-MDR1 assay). "
+                    "SMA therapeutics must reach spinal motor neurons — log P 1-3 and MW < 400 Da are key targets."
+                ),
+            },
+            {
+                "step": 4,
+                "assay": "SMA mouse efficacy study",
+                "time_weeks": 16,
+                "gate": "Survival + motor function",
+                "technical_notes": (
+                    "Use n >= 12 per group; dose from P1 to endpoint; measure survival, weight, hindlimb clasping, NMJ "
+                    "innervation (bungarotoxin staining at L3-L5), and SMN protein in spinal cord at necropsy."
+                ),
+            },
         ]
     else:
         steps = [
-            {"step": 1, "assay": "Initial phenotypic screen", "cost_usd": 2000, "time_weeks": 3, "gate": "Detectable effect"},
-            {"step": 2, "assay": "Motor neuron validation", "cost_usd": 10000, "time_weeks": 8, "gate": "Motor neuron relevance"},
-            {"step": 3, "assay": "Mechanism characterization", "cost_usd": 10000, "time_weeks": 8, "gate": "Understood mechanism"},
-            {"step": 4, "assay": "In vivo validation", "cost_usd": 50000, "time_weeks": 16, "gate": "Phenotypic rescue"},
+            {
+                "step": 1,
+                "assay": "Initial phenotypic screen",
+                "time_weeks": 3,
+                "gate": "Detectable effect",
+                "technical_notes": (
+                    "Choose the simplest quantifiable readout tied to the proposed mechanism; "
+                    "run in SMA fibroblasts first with 3 SMA donors and 3 controls to establish baseline variability."
+                ),
+            },
+            {
+                "step": 2,
+                "assay": "Motor neuron validation",
+                "time_weeks": 8,
+                "gate": "Motor neuron relevance",
+                "technical_notes": (
+                    "Replicate the fibroblast finding in iPSC-MN — use at least 2 independent SMA iPSC lines. "
+                    "If effect disappears in motor neurons, revise hypothesis before advancing."
+                ),
+            },
+            {
+                "step": 3,
+                "assay": "Mechanism characterization",
+                "time_weeks": 8,
+                "gate": "Understood mechanism",
+                "technical_notes": (
+                    "Define whether the effect is cell-autonomous (motor neuron intrinsic) or non-cell-autonomous "
+                    "(astrocyte/microglia-dependent) using co-culture experiments with SMA glia."
+                ),
+            },
+            {
+                "step": 4,
+                "assay": "In vivo validation",
+                "time_weeks": 16,
+                "gate": "Phenotypic rescue",
+                "technical_notes": (
+                    "Select mouse model based on intervention window; use complementary behavioral and "
+                    "histological endpoints (motor neuron count, NMJ integrity, and survival)."
+                ),
+            },
         ]
 
     return steps
@@ -602,7 +996,6 @@ async def batch_propose(tier: str = "A") -> dict[str, Any]:
     proposals.sort(key=lambda p: (priority_order.get(p["priority"], 3), -p.get("composite_score", 0)))
 
     # Summary stats
-    total_cost = sum(p["proposal"]["estimated_cost_usd"] for p in proposals)
     total_weeks = max((p["proposal"]["estimated_timeline_weeks"] for p in proposals), default=0)
     categories = {}
     for p in proposals:
@@ -614,7 +1007,6 @@ async def batch_propose(tier: str = "A") -> dict[str, Any]:
         "total_proposals": len(proposals),
         "errors": errors,
         "summary": {
-            "total_estimated_cost_usd": total_cost,
             "longest_timeline_weeks": total_weeks,
             "categories": categories,
             "high_priority_count": sum(1 for p in proposals if p["priority"] == "high"),

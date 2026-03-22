@@ -14,6 +14,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 from datetime import datetime, timezone
 
 import httpx
@@ -23,6 +24,13 @@ from ..core.database import execute, fetch, fetchrow
 from ..core.llm_client import call_llm
 
 logger = logging.getLogger(__name__)
+
+
+def _alias_in_text(alias: str, text: str) -> bool:
+    """Check alias with word boundaries to prevent substring false positives."""
+    pattern = r'(?<![A-Z0-9])' + re.escape(alias) + r'(?![A-Z0-9])'
+    return bool(re.search(pattern, text))
+
 
 # Keywords that indicate SMA relevance in a paper abstract.
 # Used as a post-extraction filter to reject claims from unrelated papers.
@@ -83,7 +91,6 @@ TARGET_ALIASES: dict[str, str] = {
     "NEUROCALCIN DELTA": "NCALD",
     "NEUROCALCIN": "NCALD",
     "UBE1": "UBA1",
-    "UBIQUITIN": "UBA1",
     "CORONIN": "CORO1C",
     "CORONIN-1C": "CORO1C",
     "MTOR": "MTOR_PATHWAY",
@@ -107,7 +114,6 @@ TARGET_ALIASES: dict[str, str] = {
     "MIEAP": "SPATA18",
     "LDH-A": "LDHA",
     "LACTATE DEHYDROGENASE A": "LDHA",
-    "LACTATE DEHYDROGENASE": "LDHA",
     "CALPASTATIN": "CAST",
     "NEDD4-2": "NEDD4L",
     "NEDD4.2": "NEDD4L",
@@ -117,9 +123,7 @@ TARGET_ALIASES: dict[str, str] = {
     # Additional gene name aliases for improved linking
     "SMN": "SMN1",
     "SURVIVAL MOTOR NEURON PROTEIN": "SMN1",
-    "GEMIN": "SMN1",
     "GEMIN1": "SMN1",
-    "GEMS": "SMN1",
     "FULL-LENGTH SMN": "SMN1",
     "FL-SMN": "SMN1",
     "DELTA7 SMN": "SMN2",
@@ -132,7 +136,6 @@ TARGET_ALIASES: dict[str, str] = {
     "HTRA2": "HTRA2",
     "OMI": "HTRA2",
     "ZPR1": "ZPR1",
-    "ZINC FINGER PROTEIN": "ZPR1",
     "SENATAXIN": "SETX",
     "FUS": "FUS",
     "FUSED IN SARCOMA": "FUS",
@@ -160,9 +163,6 @@ TARGET_ALIASES: dict[str, str] = {
     "UPS": "UBA1",
     "UBIQUITIN PROTEASOME PATHWAY": "UBA1",
     "UBIQUITIN LIGASE": "UBA1",
-    "PROTEASOME": "UBA1",
-    "PROTEASOMAL DEGRADATION": "UBA1",
-    "AUTOPHAGY": "MTOR_PATHWAY",
     "PI3K/AKT": "MTOR_PATHWAY",
     "PI3K-AKT": "MTOR_PATHWAY",
     "PI3K/AKT/MTOR": "MTOR_PATHWAY",
@@ -172,10 +172,12 @@ TARGET_ALIASES: dict[str, str] = {
     "ERK1/2": "MAPK_PATHWAY",
     "RAS-MAPK": "MAPK_PATHWAY",
     "RAS/MAPK": "MAPK_PATHWAY",
-    "RHO GTPASE": "CORO1C",
-    "ROCK": "CORO1C",
-    "RHO/ROCK": "CORO1C",
-    "RHO KINASE": "CORO1C",
+    "RHO GTPASE": "ROCK2",
+    "ROCK": "ROCK2",
+    "ROCK2": "ROCK2",
+    "RHO/ROCK": "ROCK2",
+    "RHO KINASE": "ROCK2",
+    "RHO-ASSOCIATED KINASE": "ROCK2",
     "ACTIN DYNAMICS": "PLS3",
     "ACTIN CYTOSKELETON": "PLS3",
     "F-ACTIN": "PLS3",
@@ -229,6 +231,33 @@ TARGET_ALIASES: dict[str, str] = {
     "NFL LIGHT CHAIN": "NEFL",
     "PHOSPHORYLATED NEUROFILAMENT": "NEFH",
     "PNFH": "NEFH",
+    # Actin pathway targets (sprint additions)
+    "PROFILIN": "PFN1",
+    "PROFILIN-1": "PFN1",
+    "PROFILIN 1": "PFN1",
+    "PROFILIN1": "PFN1",
+    "PFN1": "PFN1",
+    "COFILIN": "CFL2",
+    "COFILIN-2": "CFL2",
+    "COFILIN 2": "CFL2",
+    "CFL2": "CFL2",
+    "ACTIN ROD": "CFL2",
+    "COFILIN ROD": "CFL2",
+    # p53 pathway (Simon's work)
+    "MDM2": "TP53",
+    "MDM4": "TP53",
+    "MDMX": "TP53",
+    "P38 MAPK": "MAPK_PATHWAY",
+    "P38": "MAPK_PATHWAY",
+    "MAPK14": "MAPK_PATHWAY",
+    # Necroptosis
+    "RIPK1": "RIPK1",
+    "RIP KINASE": "RIPK1",
+    "NECROPTOSIS": "RIPK1",
+    "SARM1": "SARM1",
+    "WALLERIAN DEGENERATION": "SARM1",
+    # Complement pathway
+    "C1Q": "C1Q",
 }
 
 # Drug names → their primary mechanism-of-action target.
@@ -262,6 +291,11 @@ DRUG_TARGET_MAP: dict[str, str] = {
     "CK-2127107": "TNNT3",
     "APITEGROMAB": "MSTN",
     "SRK-015": "MSTN",
+    "FASUDIL": "ROCK2",
+    "MW150": "MAPK_PATHWAY",
+    "PANOBINOSTAT": "HDAC_PATHWAY",
+    "PIFITHRIN": "TP53",
+    "PIFITHRIN-ALPHA": "TP53",
 }
 
 
@@ -350,7 +384,7 @@ def _claim_passes_quality_gate(claim: dict, title: str, abstract: str) -> bool:
     """
     predicate = claim.get("predicate", "").lower()
     excerpt = claim.get("excerpt", "").lower()
-    text = f"{predicate} {excerpt}"
+    text = f"{title.lower()} {predicate} {excerpt}"
 
     # Reject claims about clearly non-SMA diseases
     non_sma_diseases = [
@@ -358,7 +392,11 @@ def _claim_passes_quality_gate(claim: dict, title: str, abstract: str) -> bool:
         "leukemia", "lymphoma", "hepatocellular", "glioblastoma",
         "pancreatic cancer", "lung cancer", "ovarian cancer",
         "parkinson", "alzheimer", "huntington",
+        "amyotrophic lateral sclerosis",
         "diabetes", "obesity", "atherosclerosis",
+        "carcinoma", "glioma", "sarcoma", "myeloma", "mesothelioma",
+        "renal cell", "bladder cancer", "cervical cancer",
+        "this paper is not about", "not about spinal muscular",
     ]
     for disease in non_sma_diseases:
         if disease in text:
@@ -372,8 +410,8 @@ def _claim_passes_quality_gate(claim: dict, title: str, abstract: str) -> bool:
     if len(predicate) < 20:
         return False
 
-    # Confidence floor — LLM-assigned confidence below 0.3 is usually noise
-    if claim.get("confidence", 0.5) < 0.3:
+    # Confidence floor — LLM-assigned confidence below 0.4 is usually noise
+    if claim.get("confidence", 0.5) < 0.4:
         return False
 
     return True
@@ -490,14 +528,14 @@ async def process_source(source_id: str) -> int:
                 scan_text = f"{predicate} {claim.get('excerpt', '')}".upper()
                 # Check target aliases in scan text (longest first to avoid partial matches)
                 for alias in sorted(TARGET_ALIASES.keys(), key=len, reverse=True):
-                    if alias in scan_text:
+                    if _alias_in_text(alias, scan_text):
                         subject_id = await _resolve_target_id(TARGET_ALIASES[alias])
                         if subject_id:
                             break
                 # Check drug names in scan text
                 if subject_id is None:
                     for drug_name, target_sym in DRUG_TARGET_MAP.items():
-                        if drug_name in scan_text:
+                        if _alias_in_text(drug_name, scan_text):
                             subject_id = await _resolve_target_id(target_sym)
                             if subject_id:
                                 break
@@ -547,8 +585,7 @@ async def process_source(source_id: str) -> int:
                     "llm_abstract_extraction",
                     json.dumps({"confidence": claim.get("confidence", 0.5)}),
                 )
-
-            stored += 1
+                stored += 1
 
         except Exception as e:
             logger.error("Failed to store claim: %s", e)
@@ -631,19 +668,19 @@ async def relink_all_claims() -> dict:
             if scan_text.strip():
                 # Check exact target symbols in text
                 for symbol, tid in target_lookup.items():
-                    if symbol in scan_text:
+                    if _alias_in_text(symbol, scan_text):
                         subject_id = tid
                         break
                 # Check aliases in text (longest first to avoid partial matches)
                 if subject_id is None:
                     for alias in sorted_aliases:
-                        if alias in scan_text:
+                        if _alias_in_text(alias, scan_text):
                             subject_id = alias_to_id[alias]
                             break
                 # Check drug names in text → MOA target
                 if subject_id is None:
                     for drug_name, target_sym in DRUG_TARGET_MAP.items():
-                        if drug_name in scan_text:
+                        if _alias_in_text(drug_name, scan_text):
                             subject_id = target_lookup.get(target_sym)
                             if subject_id:
                                 break
