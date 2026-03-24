@@ -164,7 +164,7 @@ async def trigger_trials_ingestion():
                 trial["title"],
                 trial["status"],
                 trial["phase"],
-                json.dumps(trial["conditions"]),
+                trial["conditions"],
                 json.dumps(trial["interventions"]),
                 trial["sponsor"],
                 trial.get("start_date"),
