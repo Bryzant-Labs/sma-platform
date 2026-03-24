@@ -31,11 +31,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 logger = logging.getLogger(__name__)
 
 # --- Configuration ---
-NVIDIA_API_KEY = os.environ.get(
-    "NVIDIA_API_KEY",
-    "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",
-)
-NVIDIA_API_KEY_BACKUP = "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"
+NVIDIA_API_KEY = os.environ.get("NVIDIA_API_KEY", "")
+NVIDIA_API_KEY_BACKUP = os.environ.get("NVIDIA_API_KEY_BACKUP", "")
+if not NVIDIA_API_KEY:
+    raise RuntimeError("NVIDIA_API_KEY environment variable is required")
 
 DIFFDOCK_URL = "https://health.api.nvidia.com/v1/biology/mit/diffdock"
 NUM_POSES = 20  # NEVER use 5 — always 20 for validation
