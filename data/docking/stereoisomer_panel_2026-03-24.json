@@ -1,0 +1,145 @@
+{
+  "campaign": "Stereoisomer Panel: H-1152 enantiomers vs LIMK2 + ROCK2",
+  "date": "2026-03-24",
+  "status": "PARTIAL \u2014 API quota exhausted, docking pending re-run",
+  "rationale": "H-1152 has 2 stereocenters (C4-CF3, C2-pyridine on piperidine ring). genmol_119 is the (R,S) enantiomer that scored +1.058 on LIMK2 and +0.509 on ROCK2. This panel enumerates all 4 stereoisomers to determine if stereochemistry drives binding affinity (eutomer vs distomer analysis).",
+  "parent_compound": {
+    "name": "H-1152",
+    "smiles_racemic": "CC(C)C(=O)N1CCC(C(F)(F)F)CC1c1ccncc1",
+    "num_stereocenters": 2,
+    "num_stereoisomers": 4,
+    "cas": "871543-07-6 (dihydrochloride)",
+    "known_activity": "ROCK inhibitor (Ki = 1.6 nM for ROCK2)"
+  },
+  "stereoisomers": [
+    {
+      "smiles": "CC(C)C(=O)N1CC[C@H](C(F)(F)F)C[C@@H]1c1ccncc1",
+      "config": "(S,R)",
+      "chiral_centers": [
+        {
+          "atom_idx": 8,
+          "assignment": "S"
+        },
+        {
+          "atom_idx": 14,
+          "assignment": "R"
+        }
+      ],
+      "is_genmol_119": false,
+      "name": "H1152_SR",
+      "mw": 300.32,
+      "logp": 3.58,
+      "relationship": "enantiomer"
+    },
+    {
+      "smiles": "CC(C)C(=O)N1CC[C@@H](C(F)(F)F)C[C@@H]1c1ccncc1",
+      "config": "(R,R)",
+      "chiral_centers": [
+        {
+          "atom_idx": 8,
+          "assignment": "R"
+        },
+        {
+          "atom_idx": 14,
+          "assignment": "R"
+        }
+      ],
+      "is_genmol_119": false,
+      "name": "H1152_RR",
+      "mw": 300.32,
+      "logp": 3.58,
+      "relationship": "diastereomer"
+    },
+    {
+      "smiles": "CC(C)C(=O)N1CC[C@H](C(F)(F)F)C[C@H]1c1ccncc1",
+      "config": "(S,S)",
+      "chiral_centers": [
+        {
+          "atom_idx": 8,
+          "assignment": "S"
+        },
+        {
+          "atom_idx": 14,
+          "assignment": "S"
+        }
+      ],
+      "is_genmol_119": false,
+      "name": "H1152_SS",
+      "mw": 300.32,
+      "logp": 3.58,
+      "relationship": "diastereomer"
+    },
+    {
+      "smiles": "CC(C)C(=O)N1CC[C@@H](C(F)(F)F)C[C@H]1c1ccncc1",
+      "config": "(R,S)",
+      "chiral_centers": [
+        {
+          "atom_idx": 8,
+          "assignment": "R"
+        },
+        {
+          "atom_idx": 14,
+          "assignment": "S"
+        }
+      ],
+      "is_genmol_119": true,
+      "name": "genmol_119",
+      "mw": 300.32,
+      "logp": 3.58,
+      "relationship": "original"
+    }
+  ],
+  "existing_docking_data": {
+    "genmol_119_RS": {
+      "LIMK2": {
+        "top_confidence": 1.058,
+        "mean_confidence": null,
+        "positive_poses": null,
+        "source": "genmol_limk2_docking_2026-03-24.json"
+      },
+      "ROCK2": {
+        "top_confidence": 0.509,
+        "mean_confidence": -0.704,
+        "positive_poses": 1,
+        "source": "cross_dock_rock2_2026-03-24.json"
+      }
+    }
+  },
+  "docking_config": {
+    "diffdock_version": "v2.2 (NVIDIA NIM)",
+    "num_poses_per_docking": 20,
+    "time_divisions": 20,
+    "steps": 18,
+    "total_dockings_planned": 8,
+    "targets": [
+      "LIMK2 (P53671 kinase domain)",
+      "ROCK2 (O75116 kinase domain)"
+    ]
+  },
+  "limk2_results": "PENDING \u2014 run scripts/dock_stereoisomers.py when API quota refreshes",
+  "rock2_results": "PENDING \u2014 run scripts/dock_stereoisomers.py when API quota refreshes",
+  "analysis": {
+    "preliminary_notes": [
+      "genmol_119 (R,S) has strong LIMK2 binding (+1.058) \u2014 highest in entire GenMol campaign",
+      "ROCK2 binding is moderate (+0.509) \u2014 only 1/20 poses positive",
+      "Enantiomer (S,R) may show similar or different affinity \u2014 DiffDock is stereoaware",
+      "Diastereomers (R,R) and (S,S) have different 3D shapes \u2014 likely different binding",
+      "If >0.3 confidence difference between best and worst \u2192 significant stereopreference"
+    ],
+    "ip_implications": {
+      "if_strong_stereopreference": "Pure eutomer (best enantiomer) would be ~2x more potent than racemic mixture. This is the esomeprazole strategy: same compound, better enantiomer, new patent. Commercial H-1152 is sold as racemate \u2014 nobody has characterized individual enantiomers.",
+      "if_weak_stereopreference": "Racemic H-1152 (commercial) would have similar activity. Less IP differentiation, but easier to develop (no chiral synthesis needed)."
+    },
+    "enantiomer_pairs": {
+      "(R,S) <-> (S,R)": "Mirror images \u2014 same physical properties, different binding",
+      "(R,R) <-> (S,S)": "Mirror images \u2014 same physical properties, different binding",
+      "(R,S) vs (R,R)": "Diastereomers \u2014 different physical properties (mp, solubility, etc.)"
+    }
+  },
+  "re_run_instructions": {
+    "command": "export NVIDIA_API_KEY='<key>' && python scripts/dock_stereoisomers.py",
+    "script": "scripts/dock_stereoisomers.py",
+    "estimated_time": "2-5 minutes (8 dockings at ~15-30s each)",
+    "note": "NVIDIA API quota refreshes daily. Re-run when 403 errors stop."
+  }
+}
