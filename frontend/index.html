@@ -1047,6 +1047,7 @@
             <a href="/advisory" class="nav-link" data-section="advisory">Advisory Pack</a>
             <a href="/analytics" class="nav-link" data-section="analytics">Analytics</a>
             <a href="/links" class="nav-link" data-section="links">Links</a>
+            <a href="/api-guide" class="nav-link" data-section="api-guide">API Guide</a>
             <a href="/write" class="nav-link" data-section="write">Write</a>
             <a href="/versions" class="nav-link" data-section="versions">Versions</a>
             <a href="/directions" class="nav-link" data-section="directions">Directions</a>
@@ -3233,12 +3234,276 @@
     <div id="growth-compute" style="margin-bottom:32px"></div>
 </section>
 
+<section class="section" id="api-guide">
+    <div class="section-header"><h2 class="section-title">API Guide for Researchers</h2></div>
+    <p class="section-desc">Query our evidence graph programmatically. No authentication required for read access. All endpoints return JSON under <code>/api/v2</code>.</p>
+
+    <!-- Quick Start -->
+    <div style="background:var(--blue-bg);border:1px solid #bfdbfe;padding:20px 24px;margin:20px 0">
+        <h3 style="font-size:14px;font-weight:700;margin:0 0 12px;color:var(--blue)">Quick Start &mdash; 3 Commands</h3>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;background:var(--panel);padding:16px;border:1px solid var(--line);overflow-x:auto">
+            <div style="color:var(--muted)"># 1. Platform overview</div>
+            <div>curl -s https://sma-research.info/api/v2/stats | python3 -m json.tool</div>
+            <br>
+            <div style="color:var(--muted)"># 2. Ranked molecular targets</div>
+            <div>curl -s "https://sma-research.info/api/v2/scores?mode=discovery" | python3 -m json.tool</div>
+            <br>
+            <div style="color:var(--muted)"># 3. Search drug efficacy claims</div>
+            <div>curl -s "https://sma-research.info/api/v2/claims?claim_type=drug_efficacy&amp;limit=10" | python3 -m json.tool</div>
+        </div>
+    </div>
+
+    <!-- Interactive links -->
+    <div style="display:flex;gap:12px;margin:16px 0;flex-wrap:wrap">
+        <a href="/api/v2/docs" target="_blank" style="display:inline-block;padding:8px 16px;background:var(--accent);color:#fff;text-decoration:none;font-size:12px;font-weight:600">Swagger UI (Interactive)</a>
+        <a href="/api/v2/redoc" target="_blank" style="display:inline-block;padding:8px 16px;background:var(--panel);color:var(--text);border:1px solid var(--line);text-decoration:none;font-size:12px;font-weight:600">ReDoc Reference</a>
+        <a href="/api/v2/openapi.json" target="_blank" style="display:inline-block;padding:8px 16px;background:var(--panel);color:var(--text);border:1px solid var(--line);text-decoration:none;font-size:12px;font-weight:600">OpenAPI JSON</a>
+    </div>
+
+    <!-- Endpoint categories -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Core Data Endpoints</h3>
+    <div id="api-core-endpoints" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /stats</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Platform overview counts for all major tables</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s <span id="api-base-url">https://sma-research.info/api/v2</span>/stats</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /targets</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">All molecular targets. Params: <code>target_type</code>, <code>limit</code> (1-2000), <code>offset</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../targets?target_type=gene&amp;limit=200"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /targets/symbol/{symbol}</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Single target by gene symbol (e.g., ROCK2, LIMK1, SMN2)</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../targets/symbol/ROCK2"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /targets/{id}/deep-dive</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Full target view: claims, hypotheses, drugs, trials, network edges</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /claims</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Search claims. Params: <code>claim_type</code>, <code>confidence_min</code>, <code>target</code>, <code>q</code>, <code>enriched</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../claims?claim_type=drug_efficacy&amp;confidence_min=0.8&amp;enriched=true"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /hypotheses</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Ranked hypotheses. Params: <code>status</code>, <code>limit</code>, <code>offset</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../hypotheses?limit=20"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /scores</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">7-dimension target prioritization. Params: <code>mode</code> (discovery|clinical), <code>min_score</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../scores?mode=discovery"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /drugs</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Drugs and therapies. Params: <code>approval_status</code>, <code>drug_type</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../drugs?approval_status=approved"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /trials</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Clinical trials from ClinicalTrials.gov</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /sources</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">PubMed literature sources. Params: <code>source_type</code>, <code>limit</code>, <code>offset</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /news</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Research highlights and discoveries. Also: <code>/news/rss</code> for RSS feed</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /search</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Semantic + keyword hybrid search. Params: <code>q</code>, <code>mode</code> (semantic|keyword|hybrid)</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../search?q=ROCK+inhibitor&amp;mode=hybrid"</div>
+        </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Computational Biology</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /structures</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Predicted protein structures with pLDDT scores. Params: <code>symbol</code>, <code>min_plddt</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /pockets, /pockets/druggable</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Binding pockets from fpocket analysis. Filter by <code>symbol</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /splice/predict?variant=c.6T&gt;C</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">SMN2 splice variant effect prediction. Also: <code>/splice/known-variants</code>, <code>/splice/elements</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /molecules/browser</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">AI-designed molecules (GenMol). Params: <code>target</code>, <code>bbb_only</code>, <code>min_qed</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /dock/score</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Pharmacophore scoring against 7 binding pockets. Params: <code>pocket</code>, <code>limit</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /interactions/target/{symbol}</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Protein-protein and drug-target interaction network for a gene</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /cascade/predict</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Predict downstream signaling cascade effects. Params: <code>gene</code>, <code>perturbation</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /screen/dual-target</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Dual-target screening candidates and synergy predictions</div>
+        </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Data Export</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /export/{table}?fmt=csv</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Bulk download as CSV or JSON. Tables: targets, drugs, trials, claims, hypotheses, graph_edges, drug_outcomes, cross_species_targets, target_scores, molecule_screenings</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../export/claims?fmt=csv&amp;limit=5000" -o sma_claims.csv</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /export/target/{symbol}?fmt=bibtex</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Export all evidence for a target as JSON, CSV, or BibTeX citations</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../export/target/ROCK2?fmt=bibtex"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /molecules/browser/export?fmt=sdf</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Download AI-designed molecules as SDF (for cheminformatics tools) or CSV</div>
+        </div>
+    </div>
+
+    <!-- Claim types reference -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Claim Type Reference</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
+        <code style="background:var(--green-bg);color:var(--green);padding:4px 10px;font-size:11px;border:1px solid #bbf7d0">gene_expression</code>
+        <code style="background:var(--blue-bg);color:var(--blue);padding:4px 10px;font-size:11px;border:1px solid #bfdbfe">protein_interaction</code>
+        <code style="background:var(--blue-bg);color:var(--blue);padding:4px 10px;font-size:11px;border:1px solid #bfdbfe">pathway_membership</code>
+        <code style="background:var(--purple-bg);color:var(--purple);padding:4px 10px;font-size:11px;border:1px solid #e9d5ff">drug_target</code>
+        <code style="background:var(--purple-bg);color:var(--purple);padding:4px 10px;font-size:11px;border:1px solid #e9d5ff">drug_efficacy</code>
+        <code style="background:var(--amber-bg);color:var(--amber);padding:4px 10px;font-size:11px;border:1px solid #fde68a">biomarker</code>
+        <code style="background:var(--teal-bg);color:var(--teal);padding:4px 10px;font-size:11px;border:1px solid #99f6e4">splicing_event</code>
+        <code style="background:var(--green-bg);color:var(--green);padding:4px 10px;font-size:11px;border:1px solid #bbf7d0">neuroprotection</code>
+        <code style="background:var(--green-bg);color:var(--green);padding:4px 10px;font-size:11px;border:1px solid #bbf7d0">motor_function</code>
+        <code style="background:var(--red-bg);color:var(--red);padding:4px 10px;font-size:11px;border:1px solid #fecaca">survival</code>
+        <code style="background:var(--red-bg);color:var(--red);padding:4px 10px;font-size:11px;border:1px solid #fecaca">safety</code>
+        <code style="background:var(--blue-bg);color:var(--blue);padding:4px 10px;font-size:11px;border:1px solid #bfdbfe">functional_interaction</code>
+        <code style="background:var(--gray-bg);color:var(--gray);padding:4px 10px;font-size:11px;border:1px solid #d1d5db">other</code>
+    </div>
+
+    <!-- Python example -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Python Example</h3>
+    <pre style="background:var(--panel);border:1px solid var(--line);padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;overflow-x:auto"><span style="color:var(--blue)">import</span> requests
+
+BASE = <span style="color:var(--green)">"https://sma-research.info/api/v2"</span>
+
+<span style="color:var(--muted)"># Get scored and ranked targets</span>
+scores = requests.get(f<span style="color:var(--green)">"{BASE}/scores"</span>, params={<span style="color:var(--green)">"mode"</span>: <span style="color:var(--green)">"discovery"</span>}).json()
+
+<span style="color:var(--blue)">for</span> t <span style="color:var(--blue)">in</span> scores[:10]:
+    print(f<span style="color:var(--green)">"{t['symbol']:10s} score={t['composite_score']:.3f}"</span>)
+
+<span style="color:var(--muted)"># Search high-confidence drug efficacy claims</span>
+claims = requests.get(f<span style="color:var(--green)">"{BASE}/claims"</span>, params={
+    <span style="color:var(--green)">"claim_type"</span>: <span style="color:var(--green)">"drug_efficacy"</span>,
+    <span style="color:var(--green)">"confidence_min"</span>: 0.8,
+    <span style="color:var(--green)">"enriched"</span>: True,
+    <span style="color:var(--green)">"limit"</span>: 100
+}).json()
+
+<span style="color:var(--blue)">for</span> c <span style="color:var(--blue)">in</span> claims:
+    print(f<span style="color:var(--green)">"[{c['confidence']:.2f}] {c['predicate'][:80]}"</span>)
+
+<span style="color:var(--muted)"># Deep-dive: full evidence for a target</span>
+target = requests.get(f<span style="color:var(--green)">"{BASE}/targets/symbol/ROCK2"</span>).json()
+dive = requests.get(f<span style="color:var(--green)">"{BASE}/targets/{target['id']}/deep-dive"</span>).json()
+print(f<span style="color:var(--green)">"Claims: {len(dive['claims'])}, Hypotheses: {len(dive['hypotheses'])}"</span>)</pre>
+
+    <!-- R example -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">R Example</h3>
+    <pre style="background:var(--panel);border:1px solid var(--line);padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;overflow-x:auto"><span style="color:var(--blue)">library</span>(httr)
+<span style="color:var(--blue)">library</span>(jsonlite)
+
+base_url &lt;- <span style="color:var(--green)">"https://sma-research.info/api/v2"</span>
+
+<span style="color:var(--muted)"># All targets with discovery-mode scores</span>
+scores &lt;- fromJSON(content(
+  GET(paste0(base_url, <span style="color:var(--green)">"/scores"</span>), query = list(mode = <span style="color:var(--green)">"discovery"</span>)),
+  <span style="color:var(--green)">"text"</span>
+))
+
+<span style="color:var(--muted)"># Top 10 by composite score</span>
+top10 &lt;- head(scores[order(-scores$composite_score), ], 10)
+print(top10[, c(<span style="color:var(--green)">"symbol"</span>, <span style="color:var(--green)">"composite_score"</span>)])
+
+<span style="color:var(--muted)"># Export as CSV</span>
+resp &lt;- GET(paste0(base_url, <span style="color:var(--green)">"/export/targets"</span>), query = list(fmt = <span style="color:var(--green)">"csv"</span>, limit = 5000))
+writeLines(content(resp, <span style="color:var(--green)">"text"</span>), <span style="color:var(--green)">"sma_targets.csv"</span>)</pre>
+
+    <!-- Rate limits & citation -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Rate Limits & Access</h3>
+    <div style="background:var(--panel);border:1px solid var(--line);padding:16px 20px;font-size:13px;line-height:1.8">
+        <strong>No authentication</strong> required for all GET endpoints.<br>
+        <strong>No formal rate limiting</strong> &mdash; but please stay under ~10 req/sec sustained.<br>
+        <strong>CORS</strong> is restricted to sma-research.info. Use server-side calls or curl from other domains.<br>
+        <strong>Bulk downloads:</strong> Use <code>/export</code> endpoints instead of paginating through <code>/claims</code>.<br>
+        <strong>Write access</strong> (POST/PUT) requires an admin API key. Contact christian@bryzant.com if needed.
+    </div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Citation</h3>
+    <div style="background:var(--panel);border:1px solid var(--line);padding:16px 20px">
+        <p style="font-size:13px;margin:0 0 12px">If you use data from this platform, please cite:</p>
+        <pre style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;margin:0;overflow-x:auto">Fischer, C. (2026). SMA Research Platform &mdash; Open Evidence Graph
+for Spinal Muscular Atrophy. https://sma-research.info
+Bryzant Labs. Accessed [date].</pre>
+        <details style="margin-top:12px">
+            <summary style="font-size:12px;font-weight:600;cursor:pointer;color:var(--accent)">BibTeX</summary>
+            <pre style="font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;margin-top:8px;overflow-x:auto">@misc{fischer2026sma,
+  author = {Fischer, Christian},
+  title = {{SMA Research Platform --- Open Evidence Graph for SMA}},
+  year = {2026},
+  url = {https://sma-research.info},
+  note = {Accessed: 2026-03-25}
+}</pre>
+        </details>
+    </div>
+
+    <!-- Live API test -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Try It Live</h3>
+    <div style="background:var(--panel);border:1px solid var(--line);padding:16px 20px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <span style="font-size:12px;font-weight:600;color:var(--green)">GET</span>
+            <span style="font-size:12px;color:var(--muted)">/api/v2/</span>
+            <select id="api-try-endpoint" style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:4px 8px;border:1px solid var(--line)">
+                <option value="stats">stats</option>
+                <option value="targets?limit=5">targets?limit=5</option>
+                <option value="targets/symbol/ROCK2">targets/symbol/ROCK2</option>
+                <option value="claims?claim_type=drug_efficacy&limit=3">claims?claim_type=drug_efficacy&limit=3</option>
+                <option value="hypotheses?limit=3">hypotheses?limit=3</option>
+                <option value="scores?mode=discovery">scores?mode=discovery</option>
+                <option value="drugs?approval_status=approved">drugs?approval_status=approved</option>
+                <option value="structures?min_plddt=80&limit=5">structures?min_plddt=80&limit=5</option>
+                <option value="splice/predict?variant=c.6T>C">splice/predict?variant=c.6T>C</option>
+                <option value="screen/pipeline-stats">screen/pipeline-stats</option>
+                <option value="molecules/browser/stats">molecules/browser/stats</option>
+                <option value="news?limit=3">news?limit=3</option>
+            </select>
+            <button onclick="(function(){var ep=document.getElementById('api-try-endpoint').value;var out=document.getElementById('api-try-output');out.textContent='Loading...';fetch('/api/v2/'+ep).then(function(r){return r.json()}).then(function(d){out.textContent=JSON.stringify(d,null,2)}).catch(function(e){out.textContent='Error: '+e.message})})()" style="padding:6px 14px;background:var(--accent);color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer">Send</button>
+        </div>
+        <pre id="api-try-output" style="font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;margin-top:12px;max-height:400px;overflow:auto;background:var(--bg);padding:12px;border:1px solid var(--line-light);white-space:pre-wrap;word-break:break-word">Select an endpoint and click Send to try the API.</pre>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);margin-top:24px">Full documentation: <a href="/api/v2/docs" style="color:var(--accent)">Swagger UI</a> | <a href="/api/v2/redoc" style="color:var(--accent)">ReDoc</a> | Last updated: 2026-03-25</p>
+</section>
+
 </main>
 
 <footer class="site-footer"><div class="container">
     <div class="footer-row">
         <div class="footer-text">SMA Research Platform &mdash; Evidence-first. No marketing.</div>
-        <div class="footer-text"><a href="/api/v2/stats">API</a> &middot; <a href="/api/v2/docs">Docs</a> &middot; <a href="/links/">Links</a> &middot; <a href="https://github.com/Bryzant-Labs/sma-platform" target="_blank" rel="noopener">Data & API</a> &middot; Data updated via automated daily pipeline</div>
+        <div class="footer-text"><a href="/api/v2/stats">API</a> &middot; <a href="/api/v2/docs">Docs</a> &middot; <a href="/api-guide">API Guide</a> &middot; <a href="/links/">Links</a> &middot; <a href="https://github.com/Bryzant-Labs/sma-platform" target="_blank" rel="noopener">Data & API</a> &middot; Data updated via automated daily pipeline</div>
     </div>
     <div class="footer-row" style="margin-top:12px;gap:24px">
         <a href="#" class="footer-text" onclick="document.getElementById('legal-overlay').style.display='flex';document.getElementById('legal-tab-impressum').click();return false;">Impressum</a>
