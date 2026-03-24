@@ -11029,8 +11029,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 })(bdata[bi], bi);
             }
         }
-        fetch(API + '/nims/binders?limit=100').then(function(r) { return r.json(); }).then(function(data) {
-            bindersAllData = data.binders || [];
+        fetch(API + '/nims/binders').then(function(r) { return r.json(); }).then(function(data) {
+            bindersAllData = Array.isArray(data) ? data : (data.binders || []);
             renderBindersTable(bindersAllData);
         }).catch(function(e) {
             clearEl('gpu-binders-body').appendChild(el('tr', null, [el('td', {colSpan: 9, text: 'Error: ' + e.message})]));
@@ -11152,8 +11152,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             else if (sortBy === 'score') filtered.sort(function(a, b) { return (b.score || 0) - (a.score || 0); });
             renderMolsTable(filtered);
         }
-        fetch(API + '/nims/designed-molecules?limit=200').then(function(r) { return r.json(); }).then(function(data) {
-            molsAllData = data.molecules || [];
+        fetch(API + '/nims/molecules').then(function(r) { return r.json(); }).then(function(data) {
+            molsAllData = Array.isArray(data) ? data : (data.molecules || []);
             // Populate filter dropdowns
             var tgtSet = {}, methSet = {};
             for (var mi = 0; mi < molsAllData.length; mi++) {
@@ -11413,9 +11413,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             renderPagination('gpu-expdock-pagination', filtered.length, expDockPage, function(p) { expDockPage = p; renderExpDockPage(); });
         }
 
-        fetch(API + '/nims/extended-docking?limit=300').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/nims/dockings').then(function(r) { return r.json(); }).then(function(data) {
             var sumDiv = clearEl('gpu-expdock-summary');
-            var results = data.results || [];
+            var results = Array.isArray(data) ? data : (data.results || []);
             var posHits = results.filter(function(r) { return r.best_confidence >= 0; }).length;
             var dstats = [
                 {val: String(data.total || 0), label: 'Total Dockings'},
@@ -12417,8 +12417,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         statusBar.appendChild(statusBadge);
 
         // Try to load results from GPU jobs endpoint
-        fetch(API + '/nims/extended-docking?limit=300').then(function(r) { return r.json(); }).then(function(data) {
-            var results = data.results || [];
+        fetch(API + '/nims/dockings').then(function(r) { return r.json(); }).then(function(data) {
+            var results = Array.isArray(data) ? data : (data.results || []);
 
             // Update status bar
             statusBar = clearEl('nim-status-bar');
