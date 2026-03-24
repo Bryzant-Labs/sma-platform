@@ -658,8 +658,7 @@ async def _fetch_molecules(limit: int = 200) -> dict:
         d = dict(r)
         d["target"] = d.pop("target_symbol", d.get("target", ""))
         d["bbb"] = d.get("bbb_permeable", False)
-        # Remove large SVG from list response
-        d.pop("svg_2d", None)
+        # Keep svg_2d for frontend rendering (dark-theme 2D structures)
         molecules.append(d)
     return {"molecules": molecules}
 

@@ -11091,7 +11091,29 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     row.style.cursor = 'pointer';
                     row.appendChild(td(String(idx+1), 'mono'));
                     row.appendChild(tdBadge(m.target || 'SMN2', 'badge-blue'));
-                    row.appendChild(td(msmiles, 'mono', 'font-size:10px;max-width:200px'));
+                    var smilesCell = document.createElement('td');
+                    smilesCell.style.cssText = 'max-width:210px;vertical-align:middle';
+                    smilesCell.title = m.smiles || '';
+                    if (m.svg_2d) {
+                        var svgWrap = document.createElement('div');
+                        svgWrap.style.cssText = 'width:200px;height:120px;background:#1a1f2e;border-radius:4px;border:1px solid #334155;overflow:hidden;display:flex;align-items:center;justify-content:center';
+                        try {
+                            var parser = new DOMParser();
+                            var svgDoc = parser.parseFromString(m.svg_2d, 'image/svg+xml');
+                            var svgNode = svgDoc.documentElement;
+                            if (svgNode && svgNode.tagName === 'svg') {
+                                svgNode.style.maxWidth = '100%';
+                                svgNode.style.maxHeight = '100%';
+                                svgWrap.appendChild(document.importNode(svgNode, true));
+                            }
+                        } catch(e) { svgWrap.textContent = msmiles; }
+                        smilesCell.appendChild(svgWrap);
+                    } else {
+                        smilesCell.textContent = msmiles;
+                        smilesCell.className = 'mono';
+                        smilesCell.style.fontSize = '10px';
+                    }
+                    row.appendChild(smilesCell);
                     row.appendChild(tdBadge(qed, qedCls));
                     row.appendChild(td(mw !== '-' ? mw + ' Da' : '-', 'mono', 'font-size:10px'));
                     row.appendChild(tdBadge(bbb, bbbCls));
@@ -14597,14 +14619,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         if (row.dataset.sdDone) return;
         row.dataset.sdDone = '1';
         var tds = row.querySelectorAll('td');
-        // #, Target, SMILES, Score, Scaffold, Method
         if (tds.length < 3) return;
         var smilesTd = tds[2];
+        // Skip if cell already has an SVG (rendered server-side)
+        if (smilesTd.querySelector('svg') || smilesTd.querySelector('div[style*="1a1f2e"]')) return;
         var smiles = (smilesTd.getAttribute('title') || smilesTd.textContent || '').trim();
-        // The full smiles is stored as title on the td (set truncated as text)
-        // Let's try both
         if (!smiles || smiles === '-') return;
-        // If it looks truncated (ends with ...) skip (not reliable)
         smilesTd.textContent = '';
         smilesTd.style.maxWidth = '210px';
         smilesTd.style.verticalAlign = 'middle';
@@ -14614,14 +14634,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     function observeGpuMolecules() {
-        var tbody = document.getElementById('gpu-molecules-body');
-        if (!tbody) return;
-        tbody.querySelectorAll('tr').forEach(patchGpuMolRow);
-        new MutationObserver(function(muts) {
-            muts.forEach(function(m) {
-                m.addedNodes.forEach(function(n) { if (n.nodeType === 1 && n.tagName === 'TR') patchGpuMolRow(n); });
-            });
-        }).observe(tbody, { childList: true });
+        // Disabled: GPU molecules now render SVGs server-side via DOMParser in renderMolsTable.
+        // patchGpuMolRow was overwriting SVG cells with SmilesDrawer canvases.
     }
 
     // ── Init ─────────────────────────────────────────────────────────────────
