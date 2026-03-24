@@ -59,3 +59,6 @@ docs/presentations/generate_*.py
 
 # Private preprint drafts — never commit
 docs/preprint-*
+
+# Private collaboration research — never commit
+docs/research/collaboration-*

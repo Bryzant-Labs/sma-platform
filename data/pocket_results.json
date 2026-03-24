@@ -1,0 +1,5343 @@
+{
+  "LRPN4_Q6UXI1": {
+    "pdb_file": "LRPN4_Q6UXI1.pdb",
+    "symbol": "LRPN4",
+    "pocket_count": 7,
+    "top_score": 68.64,
+    "top_probability": 0.987,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 68.64,
+        "probability": 0.987,
+        "sas_points": 147,
+        "surf_atoms": 70,
+        "center": [
+          12.1683,
+          9.4954,
+          6.2801
+        ],
+        "residues": "A_103 A_134 A_136 A_138 A_150 A_152 A_154 A_156 A_165 A_167 A_173 A_36 A_38 A_40 A_48 A_49 A_51 A_55 A_57 A_63 A_66 A_67 A_70 A_73 A_76 A_77 A_78 A_80 A_87 A_89 A_91",
+        "residue_count": 31
+      },
+      {
+        "rank": 2,
+        "score": 5.32,
+        "probability": 0.206,
+        "sas_points": 61,
+        "surf_atoms": 40,
+        "center": [
+          21.8857,
+          -7.2132,
+          18.2278
+        ],
+        "residues": "A_140 A_141 A_142 A_178 A_180 A_181 A_182 A_185 A_186 A_190 A_191 A_192 A_194 A_82 A_83 A_85",
+        "residue_count": 16
+      },
+      {
+        "rank": 3,
+        "score": 3.41,
+        "probability": 0.097,
+        "sas_points": 44,
+        "surf_atoms": 29,
+        "center": [
+          -6.6502,
+          2.2707,
+          -1.6863
+        ],
+        "residues": "A_100 A_102 A_124 A_126 A_157 A_158 A_159 A_161 A_257 A_261 A_262 A_270 A_271",
+        "residue_count": 13
+      },
+      {
+        "rank": 4,
+        "score": 3.04,
+        "probability": 0.081,
+        "sas_points": 39,
+        "surf_atoms": 22,
+        "center": [
+          12.2676,
+          -3.9802,
+          15.6418
+        ],
+        "residues": "A_118 A_135 A_137 A_138 A_139 A_189 A_191 A_200 A_201 A_202 A_85 A_86",
+        "residue_count": 12
+      },
+      {
+        "rank": 5,
+        "score": 3.03,
+        "probability": 0.08,
+        "sas_points": 32,
+        "surf_atoms": 21,
+        "center": [
+          -2.6632,
+          3.0838,
+          9.6373
+        ],
+        "residues": "A_101 A_121 A_122 A_124 A_125 A_126 A_128 A_132 A_133 A_233 A_234 A_258 A_91",
+        "residue_count": 13
+      },
+      {
+        "rank": 6,
+        "score": 1.26,
+        "probability": 0.011,
+        "sas_points": 20,
+        "surf_atoms": 15,
+        "center": [
+          -14.465,
+          -4.3307,
+          -18.3765
+        ],
+        "residues": "A_266 A_267 A_268 A_276 A_281 A_282 A_286 A_287 A_288",
+        "residue_count": 9
+      },
+      {
+        "rank": 7,
+        "score": 1.25,
+        "probability": 0.011,
+        "sas_points": 24,
+        "surf_atoms": 16,
+        "center": [
+          3.557,
+          18.8167,
+          12.8233
+        ],
+        "residues": "A_37 A_39 A_54 A_56 A_92",
+        "residue_count": 5
+      }
+    ]
+  },
+  "RAPSN_Q13702": {
+    "pdb_file": "RAPSN_Q13702.pdb",
+    "symbol": "RAPSN",
+    "pocket_count": 8,
+    "top_score": 63.72,
+    "top_probability": 0.985,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 63.72,
+        "probability": 0.985,
+        "sas_points": 298,
+        "surf_atoms": 117,
+        "center": [
+          -2.0269,
+          2.5548,
+          1.086
+        ],
+        "residues": "A_124 A_127 A_128 A_131 A_134 A_135 A_164 A_167 A_168 A_170 A_171 A_174 A_175 A_177 A_203 A_204 A_207 A_210 A_211 A_214 A_217 A_218 A_241 A_243 A_244 A_247 A_250 A_251 A_254 A_257 A_258 A_281 A_283 A_284 A_287 A_290 A_291 A_294 A_321 A_324 A_327 A_51 A_54 A_55 A_59 A_91 A_94 A_95 A_97 A_99",
+        "residue_count": 50
+      },
+      {
+        "rank": 2,
+        "score": 1.97,
+        "probability": 0.035,
+        "sas_points": 31,
+        "surf_atoms": 18,
+        "center": [
+          7.7639,
+          16.3248,
+          1.557
+        ],
+        "residues": "A_17 A_20 A_201 A_202 A_203 A_239 A_241 A_55",
+        "residue_count": 8
+      },
+      {
+        "rank": 3,
+        "score": 1.94,
+        "probability": 0.034,
+        "sas_points": 26,
+        "surf_atoms": 17,
+        "center": [
+          -9.8167,
+          -14.0596,
+          5.3681
+        ],
+        "residues": "A_175 A_177 A_323 A_326 A_352 A_356 A_361 A_369 A_370 A_371 A_372",
+        "residue_count": 11
+      },
+      {
+        "rank": 4,
+        "score": 1.86,
+        "probability": 0.03,
+        "sas_points": 14,
+        "surf_atoms": 9,
+        "center": [
+          12.7672,
+          -3.9298,
+          -14.9221
+        ],
+        "residues": "A_109 A_110 A_115 A_118 A_122 A_152 A_83",
+        "residue_count": 7
+      },
+      {
+        "rank": 5,
+        "score": 1.69,
+        "probability": 0.024,
+        "sas_points": 31,
+        "surf_atoms": 13,
+        "center": [
+          -21.6407,
+          8.5906,
+          5.3158
+        ],
+        "residues": "A_266 A_269 A_270 A_273 A_289 A_292 A_296 A_311",
+        "residue_count": 8
+      },
+      {
+        "rank": 6,
+        "score": 1.69,
+        "probability": 0.024,
+        "sas_points": 30,
+        "surf_atoms": 18,
+        "center": [
+          -27.1073,
+          -6.0193,
+          0.3569
+        ],
+        "residues": "A_306 A_309 A_310 A_313 A_336 A_347 A_348",
+        "residue_count": 7
+      },
+      {
+        "rank": 7,
+        "score": 1.55,
+        "probability": 0.019,
+        "sas_points": 16,
+        "surf_atoms": 11,
+        "center": [
+          10.8362,
+          16.5867,
+          -9.3644
+        ],
+        "residues": "A_14 A_17 A_29 A_48 A_51",
+        "residue_count": 5
+      },
+      {
+        "rank": 8,
+        "score": 1.25,
+        "probability": 0.011,
+        "sas_points": 23,
+        "surf_atoms": 15,
+        "center": [
+          -18.4172,
+          -11.0106,
+          -4.3328
+        ],
+        "residues": "A_317 A_322 A_325 A_329 A_351 A_354 A_355 A_358",
+        "residue_count": 8
+      }
+    ]
+  },
+  "LY96_Q9Y6Y9": {
+    "pdb_file": "LY96_Q9Y6Y9.pdb",
+    "symbol": "LY96",
+    "pocket_count": 1,
+    "top_score": 61.08,
+    "top_probability": 0.983,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 61.08,
+        "probability": 0.983,
+        "sas_points": 169,
+        "surf_atoms": 65,
+        "center": [
+          -2.1754,
+          2.4683,
+          -1.8549
+        ],
+        "residues": "A_104 A_113 A_117 A_119 A_121 A_124 A_126 A_131 A_132 A_133 A_135 A_147 A_149 A_151 A_153 A_32 A_44 A_46 A_48 A_52 A_54 A_61 A_63 A_65 A_71 A_74 A_76 A_78 A_80 A_94",
+        "residue_count": 30
+      }
+    ]
+  },
+  "PLS3_P13797": {
+    "pdb_file": "PLS3_P13797.pdb",
+    "symbol": "PLS3",
+    "pocket_count": 9,
+    "top_score": 43.3,
+    "top_probability": 0.954,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 43.3,
+        "probability": 0.954,
+        "sas_points": 269,
+        "surf_atoms": 113,
+        "center": [
+          0.2944,
+          -1.7592,
+          -5.8418
+        ],
+        "residues": "A_100 A_102 A_103 A_104 A_105 A_106 A_120 A_121 A_125 A_174 A_207 A_208 A_209 A_210 A_212 A_214 A_225 A_226 A_228 A_229 A_232 A_233 A_236 A_237 A_240 A_241 A_243 A_244 A_247 A_26 A_269 A_270 A_364 A_367 A_39 A_396 A_401 A_404 A_405 A_408 A_411 A_412 A_413 A_415 A_417 A_418 A_42 A_43",
+        "residue_count": 48
+      },
+      {
+        "rank": 2,
+        "score": 8.16,
+        "probability": 0.368,
+        "sas_points": 76,
+        "surf_atoms": 41,
+        "center": [
+          2.3341,
+          15.4094,
+          1.1015
+        ],
+        "residues": "A_244 A_245 A_246 A_262 A_265 A_266 A_272 A_392 A_394 A_396 A_400 A_417 A_418 A_419 A_420 A_421 A_491",
+        "residue_count": 17
+      },
+      {
+        "rank": 3,
+        "score": 7.95,
+        "probability": 0.356,
+        "sas_points": 27,
+        "surf_atoms": 29,
+        "center": [
+          -14.4046,
+          2.6804,
+          -11.3726
+        ],
+        "residues": "A_26 A_27 A_29 A_31 A_33 A_35 A_36 A_413 A_427 A_431 A_442 A_447 A_448 A_71",
+        "residue_count": 14
+      },
+      {
+        "rank": 4,
+        "score": 7.75,
+        "probability": 0.345,
+        "sas_points": 51,
+        "surf_atoms": 22,
+        "center": [
+          14.5136,
+          -3.1013,
+          0.5422
+        ],
+        "residues": "A_132 A_135 A_136 A_169 A_172 A_235 A_238 A_239 A_242 A_372 A_375",
+        "residue_count": 11
+      },
+      {
+        "rank": 5,
+        "score": 4.8,
+        "probability": 0.175,
+        "sas_points": 51,
+        "surf_atoms": 29,
+        "center": [
+          -6.1213,
+          -19.6777,
+          -9.2014
+        ],
+        "residues": "A_106 A_107 A_108 A_109 A_110 A_117 A_119 A_19 A_213 A_223 A_224 A_225 A_226",
+        "residue_count": 13
+      },
+      {
+        "rank": 6,
+        "score": 3.95,
+        "probability": 0.127,
+        "sas_points": 30,
+        "surf_atoms": 22,
+        "center": [
+          -11.5901,
+          -2.337,
+          9.4389
+        ],
+        "residues": "A_502 A_505 A_506 A_509 A_599 A_601 A_617 A_621 A_628",
+        "residue_count": 9
+      },
+      {
+        "rank": 7,
+        "score": 3.73,
+        "probability": 0.115,
+        "sas_points": 40,
+        "surf_atoms": 21,
+        "center": [
+          1.6255,
+          0.9834,
+          9.3938
+        ],
+        "residues": "A_174 A_175 A_176 A_177 A_206 A_207 A_401 A_402 A_405 A_594 A_603 A_604",
+        "residue_count": 12
+      },
+      {
+        "rank": 8,
+        "score": 2.09,
+        "probability": 0.039,
+        "sas_points": 26,
+        "surf_atoms": 13,
+        "center": [
+          -9.4797,
+          -4.9352,
+          3.5871
+        ],
+        "residues": "A_202 A_205 A_211 A_212 A_409 A_410 A_505 A_599",
+        "residue_count": 8
+      },
+      {
+        "rank": 9,
+        "score": 1.28,
+        "probability": 0.011,
+        "sas_points": 21,
+        "surf_atoms": 15,
+        "center": [
+          -8.6563,
+          -14.7591,
+          -20.8494
+        ],
+        "residues": "A_101 A_16 A_20 A_23 A_81 A_94 A_97 A_98",
+        "residue_count": 8
+      }
+    ]
+  },
+  "GALNT6_Q8NCL4": {
+    "pdb_file": "GALNT6_Q8NCL4.pdb",
+    "symbol": "GALNT6",
+    "pocket_count": 11,
+    "top_score": 40.65,
+    "top_probability": 0.948,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 40.65,
+        "probability": 0.948,
+        "sas_points": 147,
+        "surf_atoms": 76,
+        "center": [
+          0.1873,
+          -3.4287,
+          6.2064
+        ],
+        "residues": "A_184 A_185 A_186 A_188 A_217 A_246 A_248 A_249 A_269 A_271 A_298 A_327 A_328 A_329 A_331 A_355 A_357 A_358 A_378 A_379 A_380 A_381 A_382 A_383 A_407 A_409 A_410 A_412 A_413 A_414 A_415 A_417 A_424 A_428",
+        "residue_count": 34
+      },
+      {
+        "rank": 2,
+        "score": 8.34,
+        "probability": 0.379,
+        "sas_points": 45,
+        "surf_atoms": 22,
+        "center": [
+          -1.3884,
+          -2.636,
+          25.1703
+        ],
+        "residues": "A_132 A_135 A_139 A_140 A_144 A_148 A_189 A_190 A_221 A_223",
+        "residue_count": 10
+      },
+      {
+        "rank": 3,
+        "score": 7.45,
+        "probability": 0.329,
+        "sas_points": 79,
+        "surf_atoms": 34,
+        "center": [
+          -23.9758,
+          8.5502,
+          8.62
+        ],
+        "residues": "A_101 A_104 A_105 A_155 A_157 A_159 A_161 A_165 A_166 A_168 A_170 A_202 A_203 A_276 A_277 A_280 A_96 A_99",
+        "residue_count": 18
+      },
+      {
+        "rank": 4,
+        "score": 3.18,
+        "probability": 0.087,
+        "sas_points": 25,
+        "surf_atoms": 18,
+        "center": [
+          25.7713,
+          -4.1437,
+          -9.0747
+        ],
+        "residues": "A_445 A_448 A_498 A_499 A_500 A_529 A_531 A_535 A_622",
+        "residue_count": 9
+      },
+      {
+        "rank": 5,
+        "score": 2.6,
+        "probability": 0.061,
+        "sas_points": 36,
+        "surf_atoms": 26,
+        "center": [
+          -4.8106,
+          8.8877,
+          0.1614
+        ],
+        "residues": "A_296 A_297 A_298 A_299 A_316 A_317 A_318 A_319 A_331 A_399 A_409",
+        "residue_count": 11
+      },
+      {
+        "rank": 6,
+        "score": 1.76,
+        "probability": 0.027,
+        "sas_points": 40,
+        "surf_atoms": 17,
+        "center": [
+          -22.6383,
+          7.2245,
+          -7.2052
+        ],
+        "residues": "A_168 A_169 A_170 A_281 A_284 A_285 A_288 A_346 A_348 A_400",
+        "residue_count": 10
+      },
+      {
+        "rank": 7,
+        "score": 1.66,
+        "probability": 0.023,
+        "sas_points": 37,
+        "surf_atoms": 20,
+        "center": [
+          -10.3,
+          -4.814,
+          -19.9195
+        ],
+        "residues": "A_391 A_392 A_393 A_394 A_395 A_396 A_473 A_475 A_479 A_75 A_76",
+        "residue_count": 11
+      },
+      {
+        "rank": 8,
+        "score": 1.6,
+        "probability": 0.021,
+        "sas_points": 28,
+        "surf_atoms": 13,
+        "center": [
+          18.3554,
+          5.3018,
+          -4.7834
+        ],
+        "residues": "A_516 A_532 A_533 A_546 A_548 A_549 A_550 A_552",
+        "residue_count": 8
+      },
+      {
+        "rank": 9,
+        "score": 1.53,
+        "probability": 0.018,
+        "sas_points": 7,
+        "surf_atoms": 12,
+        "center": [
+          -5.5352,
+          3.3837,
+          -2.7166
+        ],
+        "residues": "A_295 A_296 A_298 A_321 A_331 A_351 A_353 A_354 A_399",
+        "residue_count": 9
+      },
+      {
+        "rank": 10,
+        "score": 1.33,
+        "probability": 0.013,
+        "sas_points": 33,
+        "surf_atoms": 20,
+        "center": [
+          5.4422,
+          2.1809,
+          -22.7497
+        ],
+        "residues": "A_439 A_478 A_481 A_482 A_486 A_488 A_490 A_493 A_571",
+        "residue_count": 9
+      },
+      {
+        "rank": 11,
+        "score": 0.98,
+        "probability": 0.005,
+        "sas_points": 7,
+        "surf_atoms": 12,
+        "center": [
+          -17.3866,
+          8.1472,
+          13.5855
+        ],
+        "residues": "A_105 A_154 A_156 A_199 A_203 A_273 A_274 A_276",
+        "residue_count": 8
+      }
+    ]
+  },
+  "CORO1C_Q9ULV4": {
+    "pdb_file": "CORO1C_Q9ULV4.pdb",
+    "symbol": "CORO1C",
+    "pocket_count": 4,
+    "top_score": 36.85,
+    "top_probability": 0.938,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 36.85,
+        "probability": 0.938,
+        "sas_points": 209,
+        "surf_atoms": 91,
+        "center": [
+          -0.3728,
+          -2.1791,
+          1.0406
+        ],
+        "residues": "A_135 A_136 A_137 A_138 A_140 A_179 A_180 A_181 A_182 A_184 A_223 A_225 A_226 A_270 A_271 A_272 A_273 A_274 A_275 A_276 A_319 A_321 A_322 A_323 A_35 A_365 A_366 A_367 A_37 A_385 A_387 A_39 A_40 A_41 A_42 A_85 A_86 A_87 A_88 A_90",
+        "residue_count": 40
+      },
+      {
+        "rank": 2,
+        "score": 3.08,
+        "probability": 0.082,
+        "sas_points": 36,
+        "surf_atoms": 22,
+        "center": [
+          11.7955,
+          -8.7423,
+          -10.5189
+        ],
+        "residues": "A_18 A_22 A_324 A_326 A_334 A_336 A_345 A_347 A_63 A_64 A_66",
+        "residue_count": 11
+      },
+      {
+        "rank": 3,
+        "score": 1.83,
+        "probability": 0.029,
+        "sas_points": 24,
+        "surf_atoms": 10,
+        "center": [
+          -9.169,
+          -5.6788,
+          14.6539
+        ],
+        "residues": "A_183 A_187 A_188 A_209 A_226 A_229 A_230 A_250",
+        "residue_count": 8
+      },
+      {
+        "rank": 4,
+        "score": 1.52,
+        "probability": 0.018,
+        "sas_points": 18,
+        "surf_atoms": 12,
+        "center": [
+          -11.884,
+          -5.3706,
+          -9.757
+        ],
+        "residues": "A_143 A_144 A_400 A_402 A_89 A_91 A_92",
+        "residue_count": 7
+      }
+    ]
+  },
+  "ACTR2_P61160": {
+    "pdb_file": "ACTR2_P61160.pdb",
+    "symbol": "ACTR2",
+    "pocket_count": 8,
+    "top_score": 35.76,
+    "top_probability": 0.934,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 35.76,
+        "probability": 0.934,
+        "sas_points": 105,
+        "surf_atoms": 63,
+        "center": [
+          -1.9576,
+          -0.192,
+          -3.1898
+        ],
+        "residues": "A_12 A_13 A_14 A_141 A_15 A_158 A_16 A_160 A_161 A_162 A_163 A_165 A_17 A_186 A_19 A_217 A_218 A_304 A_305 A_306 A_307 A_309 A_31 A_310 A_350 A_351 A_354 A_77",
+        "residue_count": 28
+      },
+      {
+        "rank": 2,
+        "score": 2.98,
+        "probability": 0.078,
+        "sas_points": 34,
+        "surf_atoms": 23,
+        "center": [
+          -15.1063,
+          3.1732,
+          10.3594
+        ],
+        "residues": "A_111 A_137 A_138 A_139 A_140 A_143 A_147 A_172 A_361 A_365 A_371 A_389",
+        "residue_count": 12
+      },
+      {
+        "rank": 3,
+        "score": 2.97,
+        "probability": 0.077,
+        "sas_points": 18,
+        "surf_atoms": 17,
+        "center": [
+          0.7645,
+          -7.5968,
+          -9.9144
+        ],
+        "residues": "A_16 A_161 A_17 A_210 A_211 A_214 A_33 A_35 A_62 A_65 A_72",
+        "residue_count": 11
+      },
+      {
+        "rank": 4,
+        "score": 2.52,
+        "probability": 0.057,
+        "sas_points": 9,
+        "surf_atoms": 12,
+        "center": [
+          -13.3608,
+          -5.4641,
+          -1.0313
+        ],
+        "residues": "A_110 A_112 A_115 A_119 A_123 A_13 A_77 A_79 A_85",
+        "residue_count": 9
+      },
+      {
+        "rank": 5,
+        "score": 2.16,
+        "probability": 0.042,
+        "sas_points": 37,
+        "surf_atoms": 15,
+        "center": [
+          14.7034,
+          10.3286,
+          -22.1646
+        ],
+        "residues": "A_200 A_234 A_235 A_240 A_241 A_255 A_256 A_257 A_260",
+        "residue_count": 9
+      },
+      {
+        "rank": 6,
+        "score": 1.64,
+        "probability": 0.022,
+        "sas_points": 31,
+        "surf_atoms": 22,
+        "center": [
+          -9.0369,
+          29.0309,
+          2.0984
+        ],
+        "residues": "A_287 A_291 A_294 A_295 A_298 A_325 A_329 A_330 A_339 A_340 A_341",
+        "residue_count": 11
+      },
+      {
+        "rank": 7,
+        "score": 1.11,
+        "probability": 0.007,
+        "sas_points": 24,
+        "surf_atoms": 15,
+        "center": [
+          -4.0342,
+          18.9836,
+          -12.8681
+        ],
+        "residues": "A_263 A_266 A_267 A_277 A_280 A_320 A_324",
+        "residue_count": 7
+      },
+      {
+        "rank": 8,
+        "score": 1.05,
+        "probability": 0.006,
+        "sas_points": 16,
+        "surf_atoms": 14,
+        "center": [
+          -17.1099,
+          6.9058,
+          1.6297
+        ],
+        "residues": "A_111 A_113 A_114 A_140 A_167 A_174 A_176 A_179",
+        "residue_count": 8
+      }
+    ]
+  },
+  "ACTG1_P63261": {
+    "pdb_file": "ACTG1_P63261.pdb",
+    "symbol": "ACTG1",
+    "pocket_count": 7,
+    "top_score": 33.23,
+    "top_probability": 0.92,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 33.23,
+        "probability": 0.92,
+        "sas_points": 109,
+        "surf_atoms": 58,
+        "center": [
+          -0.7068,
+          -1.6417,
+          3.449
+        ],
+        "residues": "A_11 A_13 A_137 A_14 A_15 A_154 A_156 A_157 A_159 A_16 A_18 A_182 A_210 A_213 A_214 A_30 A_301 A_302 A_303 A_305 A_306 A_336 A_339",
+        "residue_count": 23
+      },
+      {
+        "rank": 2,
+        "score": 8.19,
+        "probability": 0.37,
+        "sas_points": 50,
+        "surf_atoms": 24,
+        "center": [
+          10.4323,
+          4.3163,
+          -12.6924
+        ],
+        "residues": "A_133 A_135 A_136 A_139 A_143 A_168 A_346 A_351 A_352 A_355 A_375",
+        "residue_count": 11
+      },
+      {
+        "rank": 3,
+        "score": 4.07,
+        "probability": 0.133,
+        "sas_points": 44,
+        "surf_atoms": 25,
+        "center": [
+          -1.4039,
+          0.8609,
+          12.9473
+        ],
+        "residues": "A_15 A_157 A_16 A_183 A_186 A_206 A_207 A_210 A_32 A_69",
+        "residue_count": 10
+      },
+      {
+        "rank": 4,
+        "score": 1.49,
+        "probability": 0.017,
+        "sas_points": 28,
+        "surf_atoms": 16,
+        "center": [
+          4.0299,
+          11.1822,
+          -9.9744
+        ],
+        "residues": "A_107 A_110 A_111 A_116 A_136 A_172 A_175 A_374 A_375",
+        "residue_count": 9
+      },
+      {
+        "rank": 5,
+        "score": 1.34,
+        "probability": 0.013,
+        "sas_points": 32,
+        "surf_atoms": 12,
+        "center": [
+          -22.2961,
+          -3.0412,
+          -6.6175
+        ],
+        "residues": "A_259 A_262 A_263 A_275 A_276 A_315 A_316 A_320",
+        "residue_count": 8
+      },
+      {
+        "rank": 6,
+        "score": 1.13,
+        "probability": 0.008,
+        "sas_points": 23,
+        "surf_atoms": 16,
+        "center": [
+          14.8083,
+          2.9571,
+          17.5852
+        ],
+        "residues": "A_50 A_52 A_53 A_54 A_57 A_84 A_87 A_88 A_92",
+        "residue_count": 9
+      },
+      {
+        "rank": 7,
+        "score": 0.77,
+        "probability": 0.002,
+        "sas_points": 8,
+        "surf_atoms": 12,
+        "center": [
+          5.5681,
+          10.1763,
+          0.6981
+        ],
+        "residues": "A_106 A_107 A_108 A_111 A_119 A_12 A_74 A_76",
+        "residue_count": 8
+      }
+    ]
+  },
+  "SARM1_Q6SZW1": {
+    "pdb_file": "SARM1_Q6SZW1.pdb",
+    "symbol": "SARM1",
+    "pocket_count": 4,
+    "top_score": 32.99,
+    "top_probability": 0.919,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 32.99,
+        "probability": 0.919,
+        "sas_points": 212,
+        "surf_atoms": 80,
+        "center": [
+          -23.1791,
+          -3.9427,
+          11.5838
+        ],
+        "residues": "A_103 A_110 A_114 A_149 A_150 A_152 A_153 A_154 A_157 A_189 A_190 A_193 A_221 A_224 A_225 A_228 A_231 A_232 A_265 A_269 A_272 A_311 A_312 A_315 A_316 A_317 A_318 A_321 A_322 A_323 A_326 A_352 A_96",
+        "residue_count": 33
+      },
+      {
+        "rank": 2,
+        "score": 13.24,
+        "probability": 0.596,
+        "sas_points": 104,
+        "surf_atoms": 45,
+        "center": [
+          3.0292,
+          19.6974,
+          -18.4339
+        ],
+        "residues": "A_444 A_445 A_446 A_447 A_448 A_467 A_470 A_471 A_474 A_500 A_501 A_504 A_526 A_527 A_528 A_530 A_531",
+        "residue_count": 17
+      },
+      {
+        "rank": 3,
+        "score": 2.34,
+        "probability": 0.05,
+        "sas_points": 48,
+        "surf_atoms": 25,
+        "center": [
+          -3.846,
+          3.5951,
+          -10.1379
+        ],
+        "residues": "A_334 A_336 A_337 A_342 A_376 A_377 A_380 A_382 A_386 A_472 A_475 A_476",
+        "residue_count": 12
+      },
+      {
+        "rank": 4,
+        "score": 2.0,
+        "probability": 0.036,
+        "sas_points": 44,
+        "surf_atoms": 20,
+        "center": [
+          -42.9757,
+          -7.1925,
+          13.5205
+        ],
+        "residues": "A_101 A_102 A_105 A_108 A_112 A_3 A_60 A_64 A_67 A_68 A_71 A_98",
+        "residue_count": 12
+      }
+    ]
+  },
+  "UBA1_P22314": {
+    "pdb_file": "UBA1_P22314.pdb",
+    "symbol": "UBA1",
+    "pocket_count": 24,
+    "top_score": 30.65,
+    "top_probability": 0.905,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 30.65,
+        "probability": 0.905,
+        "sas_points": 126,
+        "surf_atoms": 56,
+        "center": [
+          2.1296,
+          -4.7865,
+          -4.0903
+        ],
+        "residues": "A_474 A_475 A_477 A_478 A_479 A_503 A_504 A_505 A_506 A_509 A_511 A_512 A_515 A_516 A_528 A_550 A_551 A_552 A_57 A_574 A_575 A_576 A_577 A_580 A_600 A_851 A_889 A_891 A_893",
+        "residue_count": 29
+      },
+      {
+        "rank": 2,
+        "score": 9.17,
+        "probability": 0.421,
+        "sas_points": 70,
+        "surf_atoms": 35,
+        "center": [
+          3.0861,
+          29.1534,
+          -25.6875
+        ],
+        "residues": "A_220 A_221 A_222 A_235 A_252 A_254 A_288 A_289 A_290 A_291 A_740 A_742 A_743 A_744 A_746 A_747",
+        "residue_count": 16
+      },
+      {
+        "rank": 3,
+        "score": 5.13,
+        "probability": 0.195,
+        "sas_points": 48,
+        "surf_atoms": 24,
+        "center": [
+          24.365,
+          1.1515,
+          -25.6706
+        ],
+        "residues": "A_651 A_654 A_655 A_659 A_690 A_693 A_694 A_698 A_709 A_713 A_772 A_844",
+        "residue_count": 12
+      },
+      {
+        "rank": 4,
+        "score": 3.88,
+        "probability": 0.123,
+        "sas_points": 36,
+        "surf_atoms": 21,
+        "center": [
+          -20.6583,
+          4.4402,
+          26.9571
+        ],
+        "residues": "A_166 A_167 A_168 A_192 A_337 A_340 A_341 A_345 A_346",
+        "residue_count": 9
+      },
+      {
+        "rank": 5,
+        "score": 3.52,
+        "probability": 0.103,
+        "sas_points": 50,
+        "surf_atoms": 24,
+        "center": [
+          -8.5538,
+          -23.3466,
+          -16.966
+        ],
+        "residues": "A_1030 A_1031 A_1032 A_1033 A_1035 A_557 A_561 A_562 A_587 A_590 A_591",
+        "residue_count": 11
+      },
+      {
+        "rank": 6,
+        "score": 3.29,
+        "probability": 0.092,
+        "sas_points": 46,
+        "surf_atoms": 20,
+        "center": [
+          -13.3217,
+          -20.3357,
+          15.9688
+        ],
+        "residues": "A_449 A_451 A_463 A_464 A_467 A_491 A_494 A_495 A_496 A_542",
+        "residue_count": 10
+      },
+      {
+        "rank": 7,
+        "score": 2.79,
+        "probability": 0.069,
+        "sas_points": 32,
+        "surf_atoms": 20,
+        "center": [
+          -31.5107,
+          -6.7903,
+          13.789
+        ],
+        "residues": "A_350 A_385 A_388 A_389 A_432 A_433 A_436 A_439",
+        "residue_count": 8
+      },
+      {
+        "rank": 8,
+        "score": 2.65,
+        "probability": 0.063,
+        "sas_points": 43,
+        "surf_atoms": 29,
+        "center": [
+          -11.7267,
+          4.8061,
+          28.7674
+        ],
+        "residues": "A_102 A_103 A_104 A_105 A_127 A_151 A_165 A_166 A_167 A_168 A_171 A_78 A_79 A_81",
+        "residue_count": 14
+      },
+      {
+        "rank": 9,
+        "score": 2.55,
+        "probability": 0.059,
+        "sas_points": 35,
+        "surf_atoms": 21,
+        "center": [
+          2.497,
+          -6.9813,
+          15.54
+        ],
+        "residues": "A_117 A_119 A_134 A_137 A_517 A_518 A_520 A_535 A_538 A_539",
+        "residue_count": 10
+      },
+      {
+        "rank": 10,
+        "score": 2.47,
+        "probability": 0.055,
+        "sas_points": 34,
+        "surf_atoms": 17,
+        "center": [
+          20.3888,
+          16.8032,
+          -10.2711
+        ],
+        "residues": "A_41 A_759 A_760 A_763 A_863 A_867 A_877 A_878 A_879 A_880",
+        "residue_count": 10
+      },
+      {
+        "rank": 11,
+        "score": 2.41,
+        "probability": 0.053,
+        "sas_points": 41,
+        "surf_atoms": 21,
+        "center": [
+          -9.2229,
+          24.9548,
+          -4.0611
+        ],
+        "residues": "A_211 A_212 A_243 A_245 A_246 A_247 A_294 A_295 A_296 A_297",
+        "residue_count": 10
+      },
+      {
+        "rank": 12,
+        "score": 2.23,
+        "probability": 0.045,
+        "sas_points": 32,
+        "surf_atoms": 18,
+        "center": [
+          16.2837,
+          13.8968,
+          -28.6733
+        ],
+        "residues": "A_635 A_636 A_647 A_651 A_717 A_721 A_722 A_725 A_869",
+        "residue_count": 9
+      },
+      {
+        "rank": 13,
+        "score": 2.15,
+        "probability": 0.042,
+        "sas_points": 16,
+        "surf_atoms": 12,
+        "center": [
+          -30.1703,
+          16.91,
+          19.6578
+        ],
+        "residues": "A_310 A_311 A_330 A_331 A_334 A_365 A_369 A_373",
+        "residue_count": 8
+      },
+      {
+        "rank": 14,
+        "score": 2.1,
+        "probability": 0.04,
+        "sas_points": 24,
+        "surf_atoms": 23,
+        "center": [
+          -4.0502,
+          12.5173,
+          -2.691
+        ],
+        "residues": "A_213 A_214 A_417 A_60 A_601 A_602 A_603 A_604 A_61 A_892",
+        "residue_count": 10
+      },
+      {
+        "rank": 15,
+        "score": 2.08,
+        "probability": 0.039,
+        "sas_points": 15,
+        "surf_atoms": 19,
+        "center": [
+          -21.9021,
+          -0.3474,
+          3.7872
+        ],
+        "residues": "A_319 A_322 A_426 A_427 A_428 A_430 A_904 A_908 A_911 A_923 A_936",
+        "residue_count": 11
+      },
+      {
+        "rank": 16,
+        "score": 1.76,
+        "probability": 0.027,
+        "sas_points": 34,
+        "surf_atoms": 16,
+        "center": [
+          2.9313,
+          13.5602,
+          26.6304
+        ],
+        "residues": "A_100 A_145 A_155 A_158 A_159 A_74 A_97 A_98",
+        "residue_count": 8
+      },
+      {
+        "rank": 17,
+        "score": 1.5,
+        "probability": 0.017,
+        "sas_points": 25,
+        "surf_atoms": 15,
+        "center": [
+          -17.0867,
+          0.3994,
+          24.1436
+        ],
+        "residues": "A_166 A_191 A_192 A_390 A_392 A_393 A_81",
+        "residue_count": 7
+      },
+      {
+        "rank": 18,
+        "score": 1.33,
+        "probability": 0.013,
+        "sas_points": 16,
+        "surf_atoms": 9,
+        "center": [
+          34.7292,
+          17.172,
+          -22.8298
+        ],
+        "residues": "A_715 A_754 A_791 A_792 A_794 A_796",
+        "residue_count": 6
+      },
+      {
+        "rank": 19,
+        "score": 1.31,
+        "probability": 0.012,
+        "sas_points": 18,
+        "surf_atoms": 24,
+        "center": [
+          26.3093,
+          9.6236,
+          -8.7836
+        ],
+        "residues": "A_39 A_40 A_41 A_766 A_767 A_782 A_784 A_857 A_860",
+        "residue_count": 9
+      },
+      {
+        "rank": 20,
+        "score": 1.2,
+        "probability": 0.009,
+        "sas_points": 10,
+        "surf_atoms": 13,
+        "center": [
+          -24.0503,
+          12.626,
+          19.495
+        ],
+        "residues": "A_169 A_197 A_310 A_330 A_333 A_334 A_337 A_423",
+        "residue_count": 8
+      },
+      {
+        "rank": 21,
+        "score": 1.16,
+        "probability": 0.008,
+        "sas_points": 28,
+        "surf_atoms": 12,
+        "center": [
+          -19.6545,
+          -6.84,
+          25.7728
+        ],
+        "residues": "A_108 A_110 A_111 A_346 A_391 A_446 A_452 A_81",
+        "residue_count": 8
+      },
+      {
+        "rank": 22,
+        "score": 1.08,
+        "probability": 0.006,
+        "sas_points": 27,
+        "surf_atoms": 15,
+        "center": [
+          28.9085,
+          19.3613,
+          -29.0947
+        ],
+        "residues": "A_715 A_719 A_720 A_723 A_752 A_753 A_754 A_796 A_797 A_798 A_799",
+        "residue_count": 11
+      },
+      {
+        "rank": 23,
+        "score": 1.05,
+        "probability": 0.006,
+        "sas_points": 19,
+        "surf_atoms": 11,
+        "center": [
+          -21.897,
+          -15.3743,
+          -2.4357
+        ],
+        "residues": "A_594 A_611 A_612 A_912 A_915 A_916",
+        "residue_count": 6
+      },
+      {
+        "rank": 24,
+        "score": 0.9,
+        "probability": 0.003,
+        "sas_points": 27,
+        "surf_atoms": 17,
+        "center": [
+          -28.2022,
+          -23.4253,
+          -21.4957
+        ],
+        "residues": "A_1051 A_947 A_950 A_951 A_956 A_957 A_958 A_983",
+        "residue_count": 8
+      }
+    ]
+  },
+  "SETX_Q7Z333": {
+    "pdb_file": "SETX_Q7Z333.pdb",
+    "symbol": "SETX",
+    "pocket_count": 26,
+    "top_score": 28.48,
+    "top_probability": 0.889,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 28.48,
+        "probability": 0.889,
+        "sas_points": 138,
+        "surf_atoms": 76,
+        "center": [
+          -16.0446,
+          -2.0016,
+          13.8512
+        ],
+        "residues": "A_1079 A_1080 A_1081 A_1500 A_1965 A_1966 A_1968 A_1969 A_1970 A_1971 A_2008 A_2009 A_2011 A_2012 A_2015 A_2019 A_2181 A_2182 A_2185 A_2210 A_2258 A_2259 A_2378 A_2379 A_2381",
+        "residue_count": 25
+      },
+      {
+        "rank": 2,
+        "score": 21.74,
+        "probability": 0.817,
+        "sas_points": 128,
+        "surf_atoms": 47,
+        "center": [
+          2.304,
+          8.4568,
+          8.9911
+        ],
+        "residues": "A_1498 A_1499 A_1751 A_1754 A_1755 A_1758 A_1882 A_1883 A_1885 A_1886 A_1888 A_1889 A_2008 A_2010 A_2048 A_2154 A_2156 A_2157 A_2185 A_2187 A_2190 A_2213 A_2214 A_2215 A_2216 A_2225",
+        "residue_count": 26
+      },
+      {
+        "rank": 3,
+        "score": 9.53,
+        "probability": 0.439,
+        "sas_points": 88,
+        "surf_atoms": 36,
+        "center": [
+          33.8755,
+          8.4512,
+          -28.8266
+        ],
+        "residues": "A_246 A_291 A_294 A_295 A_298 A_359 A_361 A_383 A_390 A_394 A_402 A_405 A_409 A_412 A_413 A_416",
+        "residue_count": 16
+      },
+      {
+        "rank": 4,
+        "score": 5.6,
+        "probability": 0.223,
+        "sas_points": 33,
+        "surf_atoms": 18,
+        "center": [
+          49.9829,
+          -1.7492,
+          -20.7089
+        ],
+        "residues": "A_418 A_419 A_421 A_422 A_426 A_429 A_469 A_472 A_474 A_477 A_478",
+        "residue_count": 11
+      },
+      {
+        "rank": 5,
+        "score": 5.36,
+        "probability": 0.208,
+        "sas_points": 53,
+        "surf_atoms": 26,
+        "center": [
+          32.3553,
+          12.2736,
+          -45.1809
+        ],
+        "residues": "A_235 A_281 A_284 A_287 A_323 A_326 A_327 A_353 A_357 A_404",
+        "residue_count": 10
+      },
+      {
+        "rank": 6,
+        "score": 4.76,
+        "probability": 0.173,
+        "sas_points": 78,
+        "surf_atoms": 37,
+        "center": [
+          49.0232,
+          19.1171,
+          -25.2499
+        ],
+        "residues": "A_388 A_391 A_392 A_395 A_396 A_397 A_456 A_460 A_463 A_464 A_467 A_502 A_528 A_530 A_534 A_537",
+        "residue_count": 16
+      },
+      {
+        "rank": 7,
+        "score": 3.78,
+        "probability": 0.118,
+        "sas_points": 63,
+        "surf_atoms": 21,
+        "center": [
+          36.6005,
+          -1.2255,
+          -20.2539
+        ],
+        "residues": "A_298 A_299 A_300 A_301 A_302 A_303 A_374 A_378 A_379 A_382 A_383 A_416 A_420",
+        "residue_count": 13
+      },
+      {
+        "rank": 8,
+        "score": 3.77,
+        "probability": 0.117,
+        "sas_points": 31,
+        "surf_atoms": 23,
+        "center": [
+          -25.3556,
+          9.7307,
+          -6.9442
+        ],
+        "residues": "A_1915 A_1916 A_1917 A_1919 A_1944 A_1948 A_1951 A_1955 A_1957 A_2201",
+        "residue_count": 10
+      },
+      {
+        "rank": 9,
+        "score": 3.72,
+        "probability": 0.114,
+        "sas_points": 62,
+        "surf_atoms": 31,
+        "center": [
+          -3.402,
+          13.7257,
+          22.2333
+        ],
+        "residues": "A_1503 A_1504 A_1506 A_2211 A_2212 A_2213 A_2214 A_2215 A_2218 A_2221 A_2375 A_2401 A_2404 A_2407",
+        "residue_count": 14
+      },
+      {
+        "rank": 10,
+        "score": 3.48,
+        "probability": 0.101,
+        "sas_points": 10,
+        "surf_atoms": 12,
+        "center": [
+          47.9773,
+          7.9892,
+          -38.6898
+        ],
+        "residues": "A_324 A_325 A_328 A_411 A_435 A_436 A_439 A_458",
+        "residue_count": 8
+      },
+      {
+        "rank": 11,
+        "score": 2.57,
+        "probability": 0.059,
+        "sas_points": 31,
+        "surf_atoms": 16,
+        "center": [
+          24.4316,
+          10.1524,
+          -44.9051
+        ],
+        "residues": "A_165 A_168 A_233 A_235 A_236 A_239 A_282 A_352 A_353",
+        "residue_count": 9
+      },
+      {
+        "rank": 12,
+        "score": 2.41,
+        "probability": 0.052,
+        "sas_points": 42,
+        "surf_atoms": 22,
+        "center": [
+          -16.3193,
+          -10.2888,
+          -11.5
+        ],
+        "residues": "A_1981 A_1984 A_1985 A_1999 A_2000 A_2001 A_2035 A_2040 A_2149",
+        "residue_count": 9
+      },
+      {
+        "rank": 13,
+        "score": 2.28,
+        "probability": 0.047,
+        "sas_points": 50,
+        "surf_atoms": 25,
+        "center": [
+          23.7822,
+          11.3838,
+          -9.73
+        ],
+        "residues": "A_1779 A_1780 A_1782 A_1783 A_1785 A_1787 A_1789 A_1842 A_1843 A_1860 A_367 A_368",
+        "residue_count": 12
+      },
+      {
+        "rank": 14,
+        "score": 1.87,
+        "probability": 0.031,
+        "sas_points": 19,
+        "surf_atoms": 11,
+        "center": [
+          -22.054,
+          -8.6916,
+          19.852
+        ],
+        "residues": "A_1079 A_1080 A_1081 A_2258 A_2287 A_2416",
+        "residue_count": 6
+      },
+      {
+        "rank": 15,
+        "score": 1.81,
+        "probability": 0.028,
+        "sas_points": 5,
+        "surf_atoms": 9,
+        "center": [
+          4.9844,
+          -11.6085,
+          -46.0497
+        ],
+        "residues": "A_122 A_125 A_216 A_219 A_58 A_62",
+        "residue_count": 6
+      },
+      {
+        "rank": 16,
+        "score": 1.74,
+        "probability": 0.026,
+        "sas_points": 29,
+        "surf_atoms": 19,
+        "center": [
+          3.4663,
+          -4.3535,
+          0.1447
+        ],
+        "residues": "A_1888 A_2045 A_2046 A_2047 A_2048 A_2061 A_2062 A_2157 A_2160 A_2162",
+        "residue_count": 10
+      },
+      {
+        "rank": 17,
+        "score": 1.73,
+        "probability": 0.025,
+        "sas_points": 25,
+        "surf_atoms": 16,
+        "center": [
+          14.0517,
+          12.6511,
+          -4.2898
+        ],
+        "residues": "A_1698 A_1699 A_1702 A_1787 A_1808 A_1840 A_1842 A_1862 A_1887",
+        "residue_count": 9
+      },
+      {
+        "rank": 18,
+        "score": 1.68,
+        "probability": 0.024,
+        "sas_points": 33,
+        "surf_atoms": 20,
+        "center": [
+          7.477,
+          16.4288,
+          21.6173
+        ],
+        "residues": "A_1506 A_1509 A_1716 A_1717 A_1720 A_1721 A_1757 A_1761 A_1764 A_2216 A_2218",
+        "residue_count": 11
+      },
+      {
+        "rank": 19,
+        "score": 1.66,
+        "probability": 0.023,
+        "sas_points": 25,
+        "surf_atoms": 14,
+        "center": [
+          -21.4691,
+          -13.5337,
+          28.7633
+        ],
+        "residues": "A_2286 A_2289 A_2291 A_2292 A_2334 A_2336 A_2341 A_2383 A_2417",
+        "residue_count": 9
+      },
+      {
+        "rank": 20,
+        "score": 1.62,
+        "probability": 0.022,
+        "sas_points": 26,
+        "surf_atoms": 15,
+        "center": [
+          -5.6151,
+          -15.7595,
+          -7.5505
+        ],
+        "residues": "A_2036 A_2037 A_2042 A_2064 A_2067 A_2068 A_2144 A_2147",
+        "residue_count": 8
+      },
+      {
+        "rank": 21,
+        "score": 1.53,
+        "probability": 0.018,
+        "sas_points": 26,
+        "surf_atoms": 13,
+        "center": [
+          27.1126,
+          10.1438,
+          17.982
+        ],
+        "residues": "A_1710 A_1714 A_1763 A_1769 A_1772 A_1831 A_1834 A_1836",
+        "residue_count": 8
+      },
+      {
+        "rank": 22,
+        "score": 1.31,
+        "probability": 0.012,
+        "sas_points": 33,
+        "surf_atoms": 16,
+        "center": [
+          13.6086,
+          3.528,
+          9.138
+        ],
+        "residues": "A_1496 A_1498 A_1762 A_1806 A_1809 A_1879 A_1880 A_1881 A_1882",
+        "residue_count": 9
+      },
+      {
+        "rank": 23,
+        "score": 1.17,
+        "probability": 0.009,
+        "sas_points": 28,
+        "surf_atoms": 16,
+        "center": [
+          -11.8522,
+          -8.2432,
+          -47.7982
+        ],
+        "residues": "A_21 A_24 A_30 A_31 A_34 A_64 A_67 A_68 A_71",
+        "residue_count": 9
+      },
+      {
+        "rank": 24,
+        "score": 1.13,
+        "probability": 0.008,
+        "sas_points": 22,
+        "surf_atoms": 12,
+        "center": [
+          8.244,
+          24.4056,
+          4.3929
+        ],
+        "residues": "A_1700 A_1704 A_1725 A_1728 A_1748 A_1749",
+        "residue_count": 6
+      },
+      {
+        "rank": 25,
+        "score": 0.99,
+        "probability": 0.005,
+        "sas_points": 22,
+        "surf_atoms": 13,
+        "center": [
+          -45.4523,
+          61.045,
+          3.0234
+        ],
+        "residues": "A_1549 A_1550 A_1551 A_1552 A_1568",
+        "residue_count": 5
+      },
+      {
+        "rank": 26,
+        "score": 0.9,
+        "probability": 0.004,
+        "sas_points": 21,
+        "surf_atoms": 14,
+        "center": [
+          9.9233,
+          4.4411,
+          -50.5588
+        ],
+        "residues": "A_127 A_130 A_131 A_134 A_162 A_163 A_164 A_227",
+        "residue_count": 8
+      }
+    ]
+  },
+  "NCALD_P61601": {
+    "pdb_file": "NCALD_P61601.pdb",
+    "symbol": "NCALD",
+    "pocket_count": 3,
+    "top_score": 25.29,
+    "top_probability": 0.864,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 25.29,
+        "probability": 0.864,
+        "sas_points": 166,
+        "surf_atoms": 67,
+        "center": [
+          -6.258,
+          -3.6043,
+          -0.7371
+        ],
+        "residues": "A_100 A_101 A_103 A_104 A_107 A_108 A_128 A_131 A_180 A_183 A_184 A_185 A_30 A_33 A_34 A_37 A_38 A_43 A_48 A_51 A_52 A_55 A_56 A_64 A_68 A_72 A_85 A_89 A_92 A_97",
+        "residue_count": 30
+      },
+      {
+        "rank": 2,
+        "score": 1.85,
+        "probability": 0.03,
+        "sas_points": 23,
+        "surf_atoms": 15,
+        "center": [
+          -17.3938,
+          3.6428,
+          13.209
+        ],
+        "residues": "A_12 A_15 A_31 A_8 A_81 A_82 A_83",
+        "residue_count": 7
+      },
+      {
+        "rank": 3,
+        "score": 1.52,
+        "probability": 0.018,
+        "sas_points": 31,
+        "surf_atoms": 13,
+        "center": [
+          -12.5611,
+          6.8248,
+          -0.1555
+        ],
+        "residues": "A_103 A_19 A_71 A_74 A_87 A_88 A_91 A_99",
+        "residue_count": 8
+      }
+    ]
+  },
+  "LDHA_P00338": {
+    "pdb_file": "LDHA_P00338.pdb",
+    "symbol": "LDHA",
+    "pocket_count": 5,
+    "top_score": 24.15,
+    "top_probability": 0.85,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 24.15,
+        "probability": 0.85,
+        "sas_points": 140,
+        "surf_atoms": 59,
+        "center": [
+          4.2617,
+          2.9343,
+          2.2753
+        ],
+        "residues": "A_136 A_137 A_138 A_139 A_165 A_166 A_169 A_193 A_194 A_195 A_234 A_235 A_238 A_239 A_241 A_242 A_245 A_247 A_248 A_249 A_250 A_251 A_252 A_31 A_95 A_97 A_99",
+        "residue_count": 27
+      },
+      {
+        "rank": 2,
+        "score": 11.09,
+        "probability": 0.512,
+        "sas_points": 100,
+        "surf_atoms": 41,
+        "center": [
+          -3.8646,
+          -1.0762,
+          13.1301
+        ],
+        "residues": "A_116 A_119 A_120 A_247 A_248 A_26 A_27 A_29 A_30 A_31 A_32 A_51 A_52 A_53 A_54 A_57 A_83 A_95 A_96 A_97 A_99",
+        "residue_count": 21
+      },
+      {
+        "rank": 3,
+        "score": 7.56,
+        "probability": 0.335,
+        "sas_points": 79,
+        "surf_atoms": 35,
+        "center": [
+          -2.3476,
+          9.1417,
+          -9.9755
+        ],
+        "residues": "A_164 A_165 A_167 A_168 A_171 A_182 A_183 A_186 A_187 A_188 A_251 A_254 A_255 A_258 A_270 A_271 A_272",
+        "residue_count": 17
+      },
+      {
+        "rank": 4,
+        "score": 1.67,
+        "probability": 0.023,
+        "sas_points": 37,
+        "surf_atoms": 17,
+        "center": [
+          14.9112,
+          -0.7338,
+          -12.1426
+        ],
+        "residues": "A_195 A_197 A_199 A_201 A_219 A_228 A_231 A_232 A_235 A_315",
+        "residue_count": 10
+      },
+      {
+        "rank": 5,
+        "score": 1.4,
+        "probability": 0.015,
+        "sas_points": 27,
+        "surf_atoms": 9,
+        "center": [
+          -0.3502,
+          5.0832,
+          -20.4155
+        ],
+        "residues": "A_188 A_203 A_205 A_304 A_306",
+        "residue_count": 5
+      }
+    ]
+  },
+  "ANK3_Q12955": {
+    "pdb_file": "ANK3_Q12955.pdb",
+    "symbol": "ANK3",
+    "pocket_count": 10,
+    "top_score": 24.04,
+    "top_probability": 0.849,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 24.04,
+        "probability": 0.849,
+        "sas_points": 205,
+        "surf_atoms": 94,
+        "center": [
+          -7.0978,
+          -12.8629,
+          -28.45
+        ],
+        "residues": "A_498 A_500 A_508 A_529 A_530 A_531 A_533 A_538 A_541 A_562 A_564 A_566 A_571 A_574 A_575 A_597 A_599 A_604 A_607 A_608 A_630 A_632 A_637 A_640 A_866 A_868 A_869 A_873 A_874 A_888 A_889 A_891 A_892 A_895 A_897 A_898 A_900",
+        "residue_count": 37
+      },
+      {
+        "rank": 2,
+        "score": 18.58,
+        "probability": 0.755,
+        "sas_points": 150,
+        "surf_atoms": 69,
+        "center": [
+          1.6278,
+          -14.4096,
+          8.6978
+        ],
+        "residues": "A_366 A_368 A_373 A_376 A_398 A_399 A_401 A_406 A_409 A_410 A_430 A_432 A_434 A_438 A_439 A_442 A_443 A_463 A_465 A_467 A_472 A_475 A_903 A_936 A_937 A_940 A_941",
+        "residue_count": 27
+      },
+      {
+        "rank": 3,
+        "score": 14.35,
+        "probability": 0.635,
+        "sas_points": 96,
+        "surf_atoms": 48,
+        "center": [
+          -33.7886,
+          -4.5184,
+          -49.5929
+        ],
+        "residues": "A_696 A_698 A_706 A_727 A_729 A_731 A_736 A_739 A_740 A_760 A_762 A_764 A_769 A_772 A_857 A_858 A_859 A_860",
+        "residue_count": 18
+      },
+      {
+        "rank": 4,
+        "score": 9.9,
+        "probability": 0.458,
+        "sas_points": 95,
+        "surf_atoms": 36,
+        "center": [
+          2.3211,
+          2.1843,
+          31.4493
+        ],
+        "residues": "A_267 A_269 A_273 A_274 A_277 A_278 A_298 A_300 A_302 A_307 A_310 A_311 A_340 A_963 A_966 A_967 A_970 A_971",
+        "residue_count": 18
+      },
+      {
+        "rank": 5,
+        "score": 8.52,
+        "probability": 0.387,
+        "sas_points": 82,
+        "surf_atoms": 36,
+        "center": [
+          6.6244,
+          14.4741,
+          36.9066
+        ],
+        "residues": "A_174 A_204 A_207 A_208 A_211 A_232 A_233 A_234 A_236 A_241 A_244 A_245 A_969 A_970 A_973",
+        "residue_count": 15
+      },
+      {
+        "rank": 6,
+        "score": 3.0,
+        "probability": 0.079,
+        "sas_points": 35,
+        "surf_atoms": 20,
+        "center": [
+          2.2584,
+          -10.5625,
+          20.022
+        ],
+        "residues": "A_333 A_335 A_343 A_364 A_366 A_368 A_373 A_376 A_377",
+        "residue_count": 9
+      },
+      {
+        "rank": 7,
+        "score": 2.86,
+        "probability": 0.072,
+        "sas_points": 40,
+        "surf_atoms": 20,
+        "center": [
+          -44.8229,
+          -6.1628,
+          -51.1658
+        ],
+        "residues": "A_762 A_764 A_772 A_795 A_797 A_802 A_805 A_855 A_857",
+        "residue_count": 9
+      },
+      {
+        "rank": 8,
+        "score": 1.88,
+        "probability": 0.031,
+        "sas_points": 35,
+        "surf_atoms": 16,
+        "center": [
+          19.9463,
+          39.0006,
+          36.0322
+        ],
+        "residues": "A_104 A_106 A_108 A_113 A_116 A_146 A_73 A_75 A_83",
+        "residue_count": 9
+      },
+      {
+        "rank": 9,
+        "score": 1.81,
+        "probability": 0.028,
+        "sas_points": 25,
+        "surf_atoms": 13,
+        "center": [
+          -21.5027,
+          -5.2688,
+          -46.0075
+        ],
+        "residues": "A_665 A_673 A_694 A_696 A_698 A_703 A_706",
+        "residue_count": 7
+      },
+      {
+        "rank": 10,
+        "score": 1.25,
+        "probability": 0.01,
+        "sas_points": 25,
+        "surf_atoms": 15,
+        "center": [
+          12.9534,
+          26.546,
+          37.8961
+        ],
+        "residues": "A_141 A_145 A_149 A_172 A_174 A_179 A_182 A_183",
+        "residue_count": 8
+      }
+    ]
+  },
+  "SULF1_Q8IWU6": {
+    "pdb_file": "SULF1_Q8IWU6.pdb",
+    "symbol": "SULF1",
+    "pocket_count": 11,
+    "top_score": 23.45,
+    "top_probability": 0.841,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 23.45,
+        "probability": 0.841,
+        "sas_points": 118,
+        "surf_atoms": 55,
+        "center": [
+          12.2166,
+          0.0597,
+          3.3753
+        ],
+        "residues": "A_106 A_107 A_108 A_109 A_145 A_165 A_167 A_225 A_226 A_227 A_319 A_328 A_329 A_330 A_415 A_52 A_745 A_747 A_748 A_749 A_753 A_770 A_772 A_86",
+        "residue_count": 24
+      },
+      {
+        "rank": 2,
+        "score": 11.89,
+        "probability": 0.544,
+        "sas_points": 122,
+        "surf_atoms": 52,
+        "center": [
+          5.6921,
+          18.8124,
+          -19.3625
+        ],
+        "residues": "A_418 A_431 A_433 A_434 A_435 A_777 A_792 A_793 A_794 A_796 A_798 A_814 A_815 A_817 A_819 A_822 A_823 A_826 A_830 A_833 A_865 A_866 A_869",
+        "residue_count": 23
+      },
+      {
+        "rank": 3,
+        "score": 5.14,
+        "probability": 0.195,
+        "sas_points": 50,
+        "surf_atoms": 24,
+        "center": [
+          -4.0951,
+          8.302,
+          -24.4782
+        ],
+        "residues": "A_786 A_788 A_800 A_802 A_817 A_821 A_824 A_825",
+        "residue_count": 8
+      },
+      {
+        "rank": 4,
+        "score": 5.0,
+        "probability": 0.187,
+        "sas_points": 42,
+        "surf_atoms": 21,
+        "center": [
+          22.3737,
+          -0.1286,
+          -6.8739
+        ],
+        "residues": "A_263 A_264 A_265 A_266 A_271 A_325 A_327 A_741 A_766 A_767 A_768 A_769",
+        "residue_count": 12
+      },
+      {
+        "rank": 5,
+        "score": 4.18,
+        "probability": 0.14,
+        "sas_points": 43,
+        "surf_atoms": 25,
+        "center": [
+          40.7447,
+          19.2923,
+          -14.0866
+        ],
+        "residues": "A_614 A_615 A_618 A_620 A_626 A_628 A_632 A_633 A_639 A_643 A_646",
+        "residue_count": 11
+      },
+      {
+        "rank": 6,
+        "score": 2.79,
+        "probability": 0.069,
+        "sas_points": 23,
+        "surf_atoms": 12,
+        "center": [
+          -0.2253,
+          -19.7125,
+          12.8473
+        ],
+        "residues": "A_186 A_193 A_233 A_288 A_291 A_295",
+        "residue_count": 6
+      },
+      {
+        "rank": 7,
+        "score": 2.33,
+        "probability": 0.049,
+        "sas_points": 29,
+        "surf_atoms": 15,
+        "center": [
+          -8.9384,
+          8.5313,
+          -21.4693
+        ],
+        "residues": "A_409 A_410 A_781 A_783 A_786 A_788 A_825 A_828",
+        "residue_count": 8
+      },
+      {
+        "rank": 8,
+        "score": 1.98,
+        "probability": 0.035,
+        "sas_points": 34,
+        "surf_atoms": 17,
+        "center": [
+          -5.7087,
+          -11.252,
+          -7.5916
+        ],
+        "residues": "A_341 A_343 A_55 A_60 A_61 A_67 A_71 A_76 A_77 A_78",
+        "residue_count": 10
+      },
+      {
+        "rank": 9,
+        "score": 1.8,
+        "probability": 0.028,
+        "sas_points": 13,
+        "surf_atoms": 15,
+        "center": [
+          -6.4681,
+          1.1547,
+          8.2502
+        ],
+        "residues": "A_139 A_142 A_143 A_218 A_47 A_49 A_91 A_94 A_95",
+        "residue_count": 9
+      },
+      {
+        "rank": 10,
+        "score": 1.01,
+        "probability": 0.005,
+        "sas_points": 23,
+        "surf_atoms": 14,
+        "center": [
+          85.0396,
+          -17.3249,
+          -7.5287
+        ],
+        "residues": "A_682 A_683 A_684 A_685",
+        "residue_count": 4
+      },
+      {
+        "rank": 11,
+        "score": 0.94,
+        "probability": 0.004,
+        "sas_points": 21,
+        "surf_atoms": 13,
+        "center": [
+          16.6433,
+          14.5719,
+          -8.9147
+        ],
+        "residues": "A_259 A_263 A_773 A_795",
+        "residue_count": 4
+      }
+    ]
+  },
+  "LIMK1_P53667": {
+    "pdb_file": "LIMK1_P53667.pdb",
+    "symbol": "LIMK1",
+    "pocket_count": 11,
+    "top_score": 21.7,
+    "top_probability": 0.816,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 21.7,
+        "probability": 0.816,
+        "sas_points": 141,
+        "surf_atoms": 72,
+        "center": [
+          -6.9896,
+          9.4336,
+          1.2169
+        ],
+        "residues": "A_345 A_346 A_347 A_348 A_349 A_350 A_351 A_353 A_366 A_368 A_377 A_380 A_381 A_384 A_397 A_411 A_413 A_414 A_416 A_419 A_420 A_460 A_462 A_464 A_465 A_467 A_477 A_478 A_480 A_481 A_511 A_512",
+        "residue_count": 32
+      },
+      {
+        "rank": 2,
+        "score": 5.97,
+        "probability": 0.243,
+        "sas_points": 50,
+        "surf_atoms": 27,
+        "center": [
+          -25.9563,
+          -7.8586,
+          18.6057
+        ],
+        "residues": "A_100 A_120 A_124 A_165 A_225 A_228 A_251 A_253 A_325 A_96 A_97 A_98",
+        "residue_count": 12
+      },
+      {
+        "rank": 3,
+        "score": 3.74,
+        "probability": 0.115,
+        "sas_points": 47,
+        "surf_atoms": 26,
+        "center": [
+          7.235,
+          2.6609,
+          -28.5042
+        ],
+        "residues": "A_561 A_563 A_581 A_584 A_585 A_587 A_588 A_624 A_627 A_628 A_631 A_637",
+        "residue_count": 12
+      },
+      {
+        "rank": 4,
+        "score": 3.23,
+        "probability": 0.089,
+        "sas_points": 28,
+        "surf_atoms": 18,
+        "center": [
+          17.1175,
+          1.7312,
+          -20.9114
+        ],
+        "residues": "A_567 A_571 A_572 A_573 A_575 A_576 A_577 A_580 A_581 A_625 A_629",
+        "residue_count": 11
+      },
+      {
+        "rank": 5,
+        "score": 2.3,
+        "probability": 0.048,
+        "sas_points": 30,
+        "surf_atoms": 13,
+        "center": [
+          19.8118,
+          2.029,
+          -24.175
+        ],
+        "residues": "A_567 A_573 A_575 A_577 A_629",
+        "residue_count": 5
+      },
+      {
+        "rank": 6,
+        "score": 2.12,
+        "probability": 0.04,
+        "sas_points": 7,
+        "surf_atoms": 12,
+        "center": [
+          -30.5581,
+          -14.9955,
+          31.0914
+        ],
+        "residues": "A_159 A_162 A_164 A_216 A_218 A_221 A_256",
+        "residue_count": 7
+      },
+      {
+        "rank": 7,
+        "score": 1.66,
+        "probability": 0.023,
+        "sas_points": 40,
+        "surf_atoms": 21,
+        "center": [
+          -11.9166,
+          -2.2019,
+          20.6774
+        ],
+        "residues": "A_119 A_120 A_122 A_332 A_333 A_334 A_335 A_338 A_358 A_360 A_361",
+        "residue_count": 11
+      },
+      {
+        "rank": 8,
+        "score": 1.34,
+        "probability": 0.013,
+        "sas_points": 27,
+        "surf_atoms": 15,
+        "center": [
+          -5.9104,
+          -6.5807,
+          -16.0873
+        ],
+        "residues": "A_449 A_452 A_453 A_528 A_596 A_597 A_598",
+        "residue_count": 7
+      },
+      {
+        "rank": 9,
+        "score": 1.13,
+        "probability": 0.008,
+        "sas_points": 24,
+        "surf_atoms": 16,
+        "center": [
+          -30.234,
+          2.2519,
+          26.8347
+        ],
+        "residues": "A_104 A_108 A_110 A_112 A_130 A_132 A_85 A_86",
+        "residue_count": 8
+      },
+      {
+        "rank": 10,
+        "score": 0.89,
+        "probability": 0.003,
+        "sas_points": 21,
+        "surf_atoms": 11,
+        "center": [
+          -1.2844,
+          15.0889,
+          -20.3509
+        ],
+        "residues": "A_513 A_514 A_521 A_550 A_555 A_556 A_559",
+        "residue_count": 7
+      },
+      {
+        "rank": 11,
+        "score": 0.6,
+        "probability": 0.001,
+        "sas_points": 16,
+        "surf_atoms": 9,
+        "center": [
+          -28.5083,
+          10.8699,
+          18.2868
+        ],
+        "residues": "A_105 A_107 A_407 A_87 A_89",
+        "residue_count": 5
+      }
+    ]
+  },
+  "RIPK1_Q13546": {
+    "pdb_file": "RIPK1_Q13546.pdb",
+    "symbol": "RIPK1",
+    "pocket_count": 5,
+    "top_score": 18.11,
+    "top_probability": 0.744,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 18.11,
+        "probability": 0.744,
+        "sas_points": 115,
+        "surf_atoms": 49,
+        "center": [
+          -13.7452,
+          -0.8561,
+          1.8289
+        ],
+        "residues": "A_102 A_140 A_142 A_143 A_145 A_155 A_156 A_186 A_23 A_24 A_26 A_27 A_28 A_31 A_43 A_45 A_92 A_94 A_95 A_97 A_98 A_99",
+        "residue_count": 22
+      },
+      {
+        "rank": 2,
+        "score": 2.28,
+        "probability": 0.047,
+        "sas_points": 18,
+        "surf_atoms": 21,
+        "center": [
+          -9.1961,
+          3.4503,
+          10.1738
+        ],
+        "residues": "A_155 A_156 A_157 A_158 A_67 A_70 A_76 A_78 A_90 A_92",
+        "residue_count": 10
+      },
+      {
+        "rank": 3,
+        "score": 2.21,
+        "probability": 0.044,
+        "sas_points": 47,
+        "surf_atoms": 24,
+        "center": [
+          -12.3253,
+          -13.1885,
+          5.2922
+        ],
+        "residues": "A_172 A_173 A_176 A_177 A_183 A_184 A_186 A_25 A_26 A_27 A_30",
+        "residue_count": 11
+      },
+      {
+        "rank": 4,
+        "score": 1.91,
+        "probability": 0.032,
+        "sas_points": 23,
+        "surf_atoms": 18,
+        "center": [
+          4.8301,
+          -3.0084,
+          2.4776
+        ],
+        "residues": "A_137 A_189 A_193 A_194 A_197 A_203 A_205 A_209 A_213",
+        "residue_count": 9
+      },
+      {
+        "rank": 5,
+        "score": 1.18,
+        "probability": 0.009,
+        "sas_points": 18,
+        "surf_atoms": 8,
+        "center": [
+          -24.8165,
+          -4.5673,
+          12.7447
+        ],
+        "residues": "A_14 A_17 A_20 A_44 A_87",
+        "residue_count": 5
+      }
+    ]
+  },
+  "DNMT3B_Q9UBC3": {
+    "pdb_file": "DNMT3B_Q9UBC3.pdb",
+    "symbol": "DNMT3B",
+    "pocket_count": 8,
+    "top_score": 16.99,
+    "top_probability": 0.715,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 16.99,
+        "probability": 0.715,
+        "sas_points": 149,
+        "surf_atoms": 79,
+        "center": [
+          7.7422,
+          1.8382,
+          -15.2026
+        ],
+        "residues": "A_579 A_580 A_581 A_582 A_583 A_584 A_605 A_606 A_607 A_610 A_648 A_649 A_650 A_651 A_652 A_655 A_657 A_658 A_697 A_698 A_699 A_700 A_701 A_731 A_732 A_733 A_773 A_775 A_776 A_777 A_829 A_831 A_832 A_833 A_834",
+        "residue_count": 35
+      },
+      {
+        "rank": 2,
+        "score": 6.47,
+        "probability": 0.274,
+        "sas_points": 65,
+        "surf_atoms": 33,
+        "center": [
+          9.6806,
+          -4.0438,
+          7.6274
+        ],
+        "residues": "A_559 A_561 A_562 A_564 A_676 A_679 A_680 A_683 A_684 A_692 A_694 A_713 A_714 A_715 A_716 A_738",
+        "residue_count": 16
+      },
+      {
+        "rank": 3,
+        "score": 6.44,
+        "probability": 0.272,
+        "sas_points": 54,
+        "surf_atoms": 26,
+        "center": [
+          0.1565,
+          -7.9944,
+          2.7265
+        ],
+        "residues": "A_550 A_551 A_553 A_556 A_559 A_561 A_716 A_717 A_719 A_737 A_738 A_739 A_742 A_743",
+        "residue_count": 14
+      },
+      {
+        "rank": 4,
+        "score": 3.24,
+        "probability": 0.089,
+        "sas_points": 31,
+        "surf_atoms": 22,
+        "center": [
+          -9.7437,
+          8.8772,
+          15.4613
+        ],
+        "residues": "A_492 A_494 A_495 A_496 A_497 A_526 A_527 A_542 A_567 A_568 A_569 A_570 A_572 A_847 A_848",
+        "residue_count": 15
+      },
+      {
+        "rank": 5,
+        "score": 3.16,
+        "probability": 0.086,
+        "sas_points": 38,
+        "surf_atoms": 25,
+        "center": [
+          -15.3645,
+          -15.9074,
+          -12.2457
+        ],
+        "residues": "A_233 A_236 A_239 A_263 A_266 A_268 A_295 A_297",
+        "residue_count": 8
+      },
+      {
+        "rank": 6,
+        "score": 3.05,
+        "probability": 0.081,
+        "sas_points": 33,
+        "surf_atoms": 24,
+        "center": [
+          -10.7227,
+          5.1989,
+          -3.1277
+        ],
+        "residues": "A_467 A_468 A_469 A_594 A_747 A_749 A_752 A_837 A_840 A_841 A_844",
+        "residue_count": 11
+      },
+      {
+        "rank": 7,
+        "score": 2.32,
+        "probability": 0.048,
+        "sas_points": 34,
+        "surf_atoms": 22,
+        "center": [
+          -9.5026,
+          16.5904,
+          6.9058
+        ],
+        "residues": "A_472 A_473 A_474 A_490 A_492 A_493 A_494 A_495 A_496 A_50 A_595 A_847 A_852 A_853",
+        "residue_count": 14
+      },
+      {
+        "rank": 8,
+        "score": 0.93,
+        "probability": 0.004,
+        "sas_points": 21,
+        "surf_atoms": 15,
+        "center": [
+          3.7404,
+          8.4457,
+          14.1442
+        ],
+        "residues": "A_567 A_571 A_573 A_643 A_690 A_691 A_849 A_850",
+        "residue_count": 8
+      }
+    ]
+  },
+  "ROCK2_2F2U": {
+    "pdb_file": "ROCK2_2F2U.pdb",
+    "symbol": "ROCK2",
+    "pocket_count": 20,
+    "top_score": 16.14,
+    "top_probability": 0.693,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 16.14,
+        "probability": 0.693,
+        "sas_points": 66,
+        "surf_atoms": 34,
+        "center": [
+          48.5928,
+          95.2677,
+          123.7878
+        ],
+        "residues": "B_100 B_103 B_106 B_119 B_153 B_169 B_170 B_172 B_176 B_218 B_221 B_231 B_232 B_384 B_385 B_387 B_98 B_99",
+        "residue_count": 18
+      },
+      {
+        "rank": 2,
+        "score": 13.17,
+        "probability": 0.594,
+        "sas_points": 70,
+        "surf_atoms": 30,
+        "center": [
+          15.5183,
+          71.7308,
+          125.3534
+        ],
+        "residues": "A_100 A_106 A_119 A_121 A_153 A_169 A_171 A_172 A_176 A_218 A_219 A_221 A_231 A_232 A_384 A_385 A_98 A_99",
+        "residue_count": 18
+      },
+      {
+        "rank": 3,
+        "score": 9.96,
+        "probability": 0.461,
+        "sas_points": 76,
+        "surf_atoms": 31,
+        "center": [
+          15.895,
+          80.1413,
+          120.06
+        ],
+        "residues": "A_100 A_101 A_102 A_103 A_104 A_106 A_121 A_123 A_133 A_136 A_140 A_214 A_216 A_219 A_232 A_234 A_235",
+        "residue_count": 17
+      },
+      {
+        "rank": 4,
+        "score": 6.84,
+        "probability": 0.294,
+        "sas_points": 30,
+        "surf_atoms": 15,
+        "center": [
+          64.2381,
+          92.4884,
+          133.0665
+        ],
+        "residues": "B_111 B_114 B_118 B_156 B_157 B_87 B_92",
+        "residue_count": 7
+      },
+      {
+        "rank": 5,
+        "score": 6.41,
+        "probability": 0.27,
+        "sas_points": 31,
+        "surf_atoms": 14,
+        "center": [
+          0.7541,
+          73.6394,
+          134.6972
+        ],
+        "residues": "A_111 A_114 A_118 A_156 A_157 A_87 A_92",
+        "residue_count": 7
+      },
+      {
+        "rank": 6,
+        "score": 5.17,
+        "probability": 0.197,
+        "sas_points": 79,
+        "surf_atoms": 37,
+        "center": [
+          45.8808,
+          86.1912,
+          117.22
+        ],
+        "residues": "B_102 B_103 B_133 B_136 B_213 B_214 B_216 B_232 B_234 B_235 B_249 B_250 B_251 B_252 B_253 B_257",
+        "residue_count": 16
+      },
+      {
+        "rank": 7,
+        "score": 3.85,
+        "probability": 0.121,
+        "sas_points": 48,
+        "surf_atoms": 28,
+        "center": [
+          -1.0839,
+          85.5879,
+          120.6674
+        ],
+        "residues": "A_138 A_139 A_141 A_142 A_146 A_37 A_38 A_39 A_40 A_411 A_412 A_414 A_42 A_45",
+        "residue_count": 14
+      },
+      {
+        "rank": 8,
+        "score": 3.48,
+        "probability": 0.101,
+        "sas_points": 38,
+        "surf_atoms": 22,
+        "center": [
+          10.4502,
+          98.7246,
+          133.7803
+        ],
+        "residues": "A_162 A_163 A_396 A_397 A_398 A_400 A_404 A_406 A_407 A_55 A_56 A_59",
+        "residue_count": 12
+      },
+      {
+        "rank": 9,
+        "score": 3.37,
+        "probability": 0.095,
+        "sas_points": 40,
+        "surf_atoms": 26,
+        "center": [
+          30.1478,
+          83.9892,
+          99.688
+        ],
+        "residues": "A_262 A_263 A_304 A_307 A_308 B_263 B_303 B_304 B_307 B_308",
+        "residue_count": 10
+      },
+      {
+        "rank": 10,
+        "score": 2.51,
+        "probability": 0.057,
+        "sas_points": 23,
+        "surf_atoms": 22,
+        "center": [
+          63.0477,
+          77.6129,
+          133.3863
+        ],
+        "residues": "B_159 B_160 B_161 B_414 B_47 B_48 B_51 B_83 B_86 B_87",
+        "residue_count": 10
+      },
+      {
+        "rank": 11,
+        "score": 2.46,
+        "probability": 0.054,
+        "sas_points": 32,
+        "surf_atoms": 21,
+        "center": [
+          53.259,
+          68.247,
+          134.0664
+        ],
+        "residues": "B_162 B_397 B_398 B_399 B_400 B_406 B_407 B_55 B_56 B_59",
+        "residue_count": 10
+      },
+      {
+        "rank": 12,
+        "score": 2.39,
+        "probability": 0.052,
+        "sas_points": 34,
+        "surf_atoms": 21,
+        "center": [
+          64.8909,
+          79.599,
+          120.3509
+        ],
+        "residues": "B_138 B_141 B_142 B_146 B_38 B_39 B_40 B_412 B_414 B_42 B_45",
+        "residue_count": 11
+      },
+      {
+        "rank": 13,
+        "score": 2.11,
+        "probability": 0.04,
+        "sas_points": 28,
+        "surf_atoms": 26,
+        "center": [
+          0.6857,
+          89.7079,
+          133.385
+        ],
+        "residues": "A_125 A_160 A_161 A_407 A_47 A_48 A_51 A_52 A_55 A_82 A_83 A_86",
+        "residue_count": 12
+      },
+      {
+        "rank": 14,
+        "score": 1.96,
+        "probability": 0.034,
+        "sas_points": 31,
+        "surf_atoms": 14,
+        "center": [
+          26.6244,
+          69.4291,
+          115.1318
+        ],
+        "residues": "A_178 A_217 A_218 A_253 A_255 A_256 A_286 A_292 A_295",
+        "residue_count": 9
+      },
+      {
+        "rank": 15,
+        "score": 1.81,
+        "probability": 0.028,
+        "sas_points": 33,
+        "surf_atoms": 16,
+        "center": [
+          46.8539,
+          109.0942,
+          122.9767
+        ],
+        "residues": "B_174 B_179 B_180 B_183 B_184 B_371 B_373 B_374 B_383",
+        "residue_count": 9
+      },
+      {
+        "rank": 16,
+        "score": 1.8,
+        "probability": 0.028,
+        "sas_points": 19,
+        "surf_atoms": 12,
+        "center": [
+          47.262,
+          81.3724,
+          124.48
+        ],
+        "residues": "B_101 B_102 B_104 B_123 B_124 B_127 B_128 B_133 B_136",
+        "residue_count": 9
+      },
+      {
+        "rank": 17,
+        "score": 1.57,
+        "probability": 0.02,
+        "sas_points": 33,
+        "surf_atoms": 19,
+        "center": [
+          38.0283,
+          97.8654,
+          114.5927
+        ],
+        "residues": "B_178 B_181 B_217 B_218 B_253 B_255 B_256 B_286 B_292",
+        "residue_count": 9
+      },
+      {
+        "rank": 18,
+        "score": 1.54,
+        "probability": 0.019,
+        "sas_points": 30,
+        "surf_atoms": 16,
+        "center": [
+          19.5736,
+          58.4215,
+          124.6149
+        ],
+        "residues": "A_174 A_179 A_180 A_183 A_184 A_371 A_372 A_373 A_374 A_383",
+        "residue_count": 10
+      },
+      {
+        "rank": 19,
+        "score": 1.02,
+        "probability": 0.005,
+        "sas_points": 15,
+        "surf_atoms": 9,
+        "center": [
+          13.0817,
+          83.3265,
+          136.8046
+        ],
+        "residues": "A_107 A_122 A_161 A_164 A_166 A_89",
+        "residue_count": 6
+      },
+      {
+        "rank": 20,
+        "score": 0.95,
+        "probability": 0.004,
+        "sas_points": 31,
+        "surf_atoms": 15,
+        "center": [
+          4.5485,
+          62.763,
+          124.1479
+        ],
+        "residues": "A_154 A_170 A_171 A_223 A_224 A_225 A_229 A_365",
+        "residue_count": 8
+      }
+    ]
+  },
+  "ROCK2_O75116": {
+    "pdb_file": "ROCK2_O75116.pdb",
+    "symbol": "ROCK2",
+    "pocket_count": 11,
+    "top_score": 16.1,
+    "top_probability": 0.691,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 16.1,
+        "probability": 0.691,
+        "sas_points": 82,
+        "surf_atoms": 41,
+        "center": [
+          -12.8854,
+          -10.4299,
+          4.9116
+        ],
+        "residues": "A_100 A_101 A_106 A_119 A_121 A_153 A_169 A_170 A_172 A_176 A_178 A_218 A_219 A_221 A_231 A_232 A_384 A_385 A_387 A_98 A_99",
+        "residue_count": 21
+      },
+      {
+        "rank": 2,
+        "score": 7.79,
+        "probability": 0.347,
+        "sas_points": 85,
+        "surf_atoms": 37,
+        "center": [
+          -10.6013,
+          -2.6159,
+          -1.2276
+        ],
+        "residues": "A_100 A_101 A_102 A_103 A_104 A_105 A_106 A_121 A_123 A_133 A_136 A_214 A_216 A_219 A_232 A_234 A_235 A_251 A_252 A_99",
+        "residue_count": 20
+      },
+      {
+        "rank": 3,
+        "score": 2.3,
+        "probability": 0.048,
+        "sas_points": 59,
+        "surf_atoms": 26,
+        "center": [
+          4.6601,
+          33.7851,
+          -31.8816
+        ],
+        "residues": "A_1207 A_1209 A_1215 A_1229 A_1231 A_1294 A_1295 A_1296 A_1297 A_1317 A_1319 A_1321 A_1324 A_1326",
+        "residue_count": 14
+      },
+      {
+        "rank": 4,
+        "score": 2.07,
+        "probability": 0.038,
+        "sas_points": 31,
+        "surf_atoms": 15,
+        "center": [
+          21.0254,
+          31.4632,
+          -32.1889
+        ],
+        "residues": "A_1159 A_1160 A_1162 A_1173 A_1197 A_1198 A_1237 A_1239 A_1327",
+        "residue_count": 9
+      },
+      {
+        "rank": 5,
+        "score": 1.96,
+        "probability": 0.034,
+        "sas_points": 27,
+        "surf_atoms": 17,
+        "center": [
+          -9.438,
+          -24.008,
+          6.213
+        ],
+        "residues": "A_174 A_179 A_180 A_183 A_184 A_222 A_371 A_372 A_373 A_383",
+        "residue_count": 10
+      },
+      {
+        "rank": 6,
+        "score": 1.95,
+        "probability": 0.034,
+        "sas_points": 29,
+        "surf_atoms": 16,
+        "center": [
+          -16.4698,
+          16.8381,
+          9.8478
+        ],
+        "residues": "A_162 A_397 A_398 A_400 A_406 A_407 A_55 A_59",
+        "residue_count": 8
+      },
+      {
+        "rank": 7,
+        "score": 1.85,
+        "probability": 0.03,
+        "sas_points": 31,
+        "surf_atoms": 16,
+        "center": [
+          -0.985,
+          -14.1527,
+          -4.3834
+        ],
+        "residues": "A_178 A_217 A_218 A_255 A_256 A_286 A_290 A_291 A_292 A_295",
+        "residue_count": 10
+      },
+      {
+        "rank": 8,
+        "score": 1.64,
+        "probability": 0.022,
+        "sas_points": 39,
+        "surf_atoms": 23,
+        "center": [
+          -8.8921,
+          3.9871,
+          9.7298
+        ],
+        "residues": "A_102 A_103 A_104 A_105 A_122 A_124 A_127 A_164 A_394 A_395",
+        "residue_count": 10
+      },
+      {
+        "rank": 9,
+        "score": 1.56,
+        "probability": 0.019,
+        "sas_points": 25,
+        "surf_atoms": 23,
+        "center": [
+          -26.7114,
+          7.8706,
+          10.5766
+        ],
+        "residues": "A_159 A_160 A_161 A_414 A_48 A_51 A_55 A_83 A_86 A_87",
+        "residue_count": 10
+      },
+      {
+        "rank": 10,
+        "score": 1.55,
+        "probability": 0.019,
+        "sas_points": 35,
+        "surf_atoms": 28,
+        "center": [
+          -27.344,
+          3.9021,
+          -3.9107
+        ],
+        "residues": "A_138 A_139 A_141 A_142 A_146 A_37 A_38 A_39 A_40 A_411 A_412 A_42 A_45",
+        "residue_count": 13
+      },
+      {
+        "rank": 11,
+        "score": 1.52,
+        "probability": 0.018,
+        "sas_points": 16,
+        "surf_atoms": 10,
+        "center": [
+          -20.4691,
+          -14.6935,
+          -18.9998
+        ],
+        "residues": "A_203 A_206 A_207 A_273 A_277 A_344 A_345",
+        "residue_count": 7
+      }
+    ]
+  },
+  "TMEM41B_Q5BJD5": {
+    "pdb_file": "TMEM41B_Q5BJD5.pdb",
+    "symbol": "TMEM41B",
+    "pocket_count": 6,
+    "top_score": 15.39,
+    "top_probability": 0.672,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 15.39,
+        "probability": 0.672,
+        "sas_points": 61,
+        "surf_atoms": 36,
+        "center": [
+          -21.9988,
+          -4.1598,
+          3.1683
+        ],
+        "residues": "A_186 A_189 A_190 A_193 A_197 A_200 A_201 A_203 A_204 A_210 A_214 A_215 A_218 A_219 A_222 A_224",
+        "residue_count": 16
+      },
+      {
+        "rank": 2,
+        "score": 9.65,
+        "probability": 0.446,
+        "sas_points": 53,
+        "surf_atoms": 26,
+        "center": [
+          6.6327,
+          10.5391,
+          -0.6265
+        ],
+        "residues": "A_102 A_116 A_117 A_120 A_123 A_124 A_135 A_68 A_71 A_72 A_75 A_86 A_87 A_88 A_98",
+        "residue_count": 15
+      },
+      {
+        "rank": 3,
+        "score": 9.17,
+        "probability": 0.421,
+        "sas_points": 72,
+        "surf_atoms": 38,
+        "center": [
+          -8.5083,
+          1.9105,
+          -4.3199
+        ],
+        "residues": "A_125 A_129 A_130 A_131 A_132 A_133 A_136 A_156 A_205 A_207 A_208 A_210 A_211 A_212 A_215 A_237 A_240 A_241 A_244",
+        "residue_count": 19
+      },
+      {
+        "rank": 4,
+        "score": 8.56,
+        "probability": 0.39,
+        "sas_points": 53,
+        "surf_atoms": 36,
+        "center": [
+          -0.6187,
+          5.6362,
+          9.471
+        ],
+        "residues": "A_118 A_119 A_122 A_123 A_126 A_127 A_162 A_165 A_166 A_60 A_63 A_64 A_67 A_68",
+        "residue_count": 14
+      },
+      {
+        "rank": 5,
+        "score": 5.32,
+        "probability": 0.206,
+        "sas_points": 51,
+        "surf_atoms": 27,
+        "center": [
+          -13.2401,
+          8.2545,
+          10.1505
+        ],
+        "residues": "A_126 A_127 A_128 A_163 A_166 A_167 A_170 A_171 A_174 A_175 A_217 A_57",
+        "residue_count": 12
+      },
+      {
+        "rank": 6,
+        "score": 1.17,
+        "probability": 0.009,
+        "sas_points": 20,
+        "surf_atoms": 12,
+        "center": [
+          -2.782,
+          -9.8802,
+          -4.4768
+        ],
+        "residues": "A_149 A_150 A_153 A_234 A_235 A_238",
+        "residue_count": 6
+      }
+    ]
+  },
+  "BCL2L1_Q07817": {
+    "pdb_file": "BCL2L1_Q07817.pdb",
+    "symbol": "BCL2L1",
+    "pocket_count": 4,
+    "top_score": 14.86,
+    "top_probability": 0.655,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 14.86,
+        "probability": 0.655,
+        "sas_points": 78,
+        "surf_atoms": 40,
+        "center": [
+          5.9457,
+          -4.3907,
+          -3.8238
+        ],
+        "residues": "A_100 A_101 A_136 A_137 A_138 A_139 A_141 A_195 A_200 A_203 A_206 A_207 A_210 A_93 A_96 A_97",
+        "residue_count": 16
+      },
+      {
+        "rank": 2,
+        "score": 10.31,
+        "probability": 0.478,
+        "sas_points": 55,
+        "surf_atoms": 40,
+        "center": [
+          2.8044,
+          3.142,
+          8.5887
+        ],
+        "residues": "A_108 A_111 A_112 A_125 A_126 A_129 A_130 A_142 A_146 A_213 A_214 A_217 A_218 A_221 A_222 A_225",
+        "residue_count": 16
+      },
+      {
+        "rank": 3,
+        "score": 3.44,
+        "probability": 0.099,
+        "sas_points": 43,
+        "surf_atoms": 17,
+        "center": [
+          -4.2244,
+          5.592,
+          -17.5929
+        ],
+        "residues": "A_1 A_183 A_187 A_188 A_189 A_4 A_5 A_80 A_81 A_83 A_86",
+        "residue_count": 11
+      },
+      {
+        "rank": 4,
+        "score": 2.74,
+        "probability": 0.067,
+        "sas_points": 52,
+        "surf_atoms": 38,
+        "center": [
+          -6.9248,
+          -6.3103,
+          5.1524
+        ],
+        "residues": "A_102 A_105 A_106 A_109 A_148 A_149 A_152 A_153 A_16 A_19 A_20 A_98",
+        "residue_count": 12
+      }
+    ]
+  },
+  "MDM2_Q00987": {
+    "pdb_file": "MDM2_Q00987.pdb",
+    "symbol": "MDM2",
+    "pocket_count": 2,
+    "top_score": 14.85,
+    "top_probability": 0.654,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 14.85,
+        "probability": 0.654,
+        "sas_points": 41,
+        "surf_atoms": 36,
+        "center": [
+          -1.3892,
+          4.7684,
+          -15.4305
+        ],
+        "residues": "A_100 A_197 A_198 A_201 A_205 A_54 A_57 A_58 A_61 A_62 A_67 A_75 A_91 A_93 A_96 A_99",
+        "residue_count": 16
+      },
+      {
+        "rank": 2,
+        "score": 2.08,
+        "probability": 0.039,
+        "sas_points": 38,
+        "surf_atoms": 23,
+        "center": [
+          -8.7498,
+          9.1766,
+          -7.3144
+        ],
+        "residues": "A_100 A_104 A_191 A_192 A_193 A_194 A_197 A_25 A_26 A_50",
+        "residue_count": 10
+      }
+    ]
+  },
+  "CASP3_P42574": {
+    "pdb_file": "CASP3_P42574.pdb",
+    "symbol": "CASP3",
+    "pocket_count": 3,
+    "top_score": 14.82,
+    "top_probability": 0.653,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 14.82,
+        "probability": 0.653,
+        "sas_points": 89,
+        "surf_atoms": 45,
+        "center": [
+          11.776,
+          3.3126,
+          -11.1177
+        ],
+        "residues": "A_120 A_121 A_122 A_123 A_128 A_161 A_163 A_165 A_166 A_204 A_205 A_206 A_207 A_251 A_256 A_61 A_62 A_63 A_64",
+        "residue_count": 19
+      },
+      {
+        "rank": 2,
+        "score": 2.11,
+        "probability": 0.04,
+        "sas_points": 35,
+        "surf_atoms": 21,
+        "center": [
+          -3.0409,
+          12.4689,
+          -3.7257
+        ],
+        "residues": "A_124 A_125 A_136 A_137 A_140 A_164 A_195 A_197 A_266 A_268",
+        "residue_count": 10
+      },
+      {
+        "rank": 3,
+        "score": 1.92,
+        "probability": 0.033,
+        "sas_points": 22,
+        "surf_atoms": 9,
+        "center": [
+          -15.5038,
+          11.4863,
+          5.502
+        ],
+        "residues": "A_145 A_152 A_189 A_191 A_192",
+        "residue_count": 5
+      }
+    ]
+  },
+  "AGRN_O00468": {
+    "pdb_file": "AGRN_O00468.pdb",
+    "symbol": "AGRN",
+    "pocket_count": 19,
+    "top_score": 14.36,
+    "top_probability": 0.636,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 14.36,
+        "probability": 0.636,
+        "sas_points": 107,
+        "surf_atoms": 45,
+        "center": [
+          -16.0362,
+          -18.1419,
+          -25.4217
+        ],
+        "residues": "A_251 A_254 A_255 A_257 A_268 A_269 A_270 A_271 A_272 A_303 A_304 A_306 A_478 A_479 A_480 A_481 A_482 A_489 A_490 A_491",
+        "residue_count": 20
+      },
+      {
+        "rank": 2,
+        "score": 7.21,
+        "probability": 0.315,
+        "sas_points": 101,
+        "surf_atoms": 52,
+        "center": [
+          24.0958,
+          18.3179,
+          -23.9935
+        ],
+        "residues": "A_801 A_815 A_816 A_832 A_835 A_839 A_841 A_842 A_843 A_845 A_846 A_848 A_926 A_928 A_933 A_935 A_943 A_945 A_946 A_949 A_952 A_953 A_956",
+        "residue_count": 23
+      },
+      {
+        "rank": 3,
+        "score": 6.07,
+        "probability": 0.249,
+        "sas_points": 71,
+        "surf_atoms": 37,
+        "center": [
+          44.6022,
+          -11.0743,
+          -8.538
+        ],
+        "residues": "A_1354 A_1355 A_1356 A_1357 A_1361 A_1362 A_1363 A_1364 A_1368 A_1370 A_1378 A_1380 A_1381 A_1543 A_1544 A_1545 A_1546 A_1547",
+        "residue_count": 18
+      },
+      {
+        "rank": 4,
+        "score": 4.28,
+        "probability": 0.145,
+        "sas_points": 49,
+        "surf_atoms": 29,
+        "center": [
+          -6.6864,
+          43.3627,
+          -8.8289
+        ],
+        "residues": "A_1103 A_1106 A_1112 A_1113 A_1116 A_1170 A_1171 A_1174 A_1178 A_1187 A_1188 A_1189 A_1190",
+        "residue_count": 13
+      },
+      {
+        "rank": 5,
+        "score": 4.04,
+        "probability": 0.132,
+        "sas_points": 55,
+        "surf_atoms": 28,
+        "center": [
+          7.3331,
+          -60.0295,
+          -11.0382
+        ],
+        "residues": "A_567 A_568 A_569 A_570 A_571 A_594 A_599 A_600 A_602 A_603 A_605 A_606 A_607 A_611 A_612 A_613",
+        "residue_count": 16
+      },
+      {
+        "rank": 6,
+        "score": 3.72,
+        "probability": 0.114,
+        "sas_points": 14,
+        "surf_atoms": 14,
+        "center": [
+          -30.0167,
+          32.1377,
+          -41.3578
+        ],
+        "residues": "A_124 A_128 A_133 A_56 A_58 A_61 A_63 A_65",
+        "residue_count": 8
+      },
+      {
+        "rank": 7,
+        "score": 3.07,
+        "probability": 0.082,
+        "sas_points": 38,
+        "surf_atoms": 18,
+        "center": [
+          24.5536,
+          21.0064,
+          -30.0072
+        ],
+        "residues": "A_816 A_830 A_844 A_846 A_942 A_943 A_944 A_949 A_953 A_957",
+        "residue_count": 10
+      },
+      {
+        "rank": 8,
+        "score": 2.86,
+        "probability": 0.072,
+        "sas_points": 44,
+        "surf_atoms": 20,
+        "center": [
+          -8.0443,
+          27.9901,
+          -50.9465
+        ],
+        "residues": "A_104 A_176 A_178 A_179 A_181 A_195 A_197 A_231 A_31 A_33",
+        "residue_count": 10
+      },
+      {
+        "rank": 9,
+        "score": 2.37,
+        "probability": 0.051,
+        "sas_points": 26,
+        "surf_atoms": 18,
+        "center": [
+          -3.0223,
+          39.6741,
+          -3.9881
+        ],
+        "residues": "A_1112 A_1113 A_1114 A_1116 A_1188 A_1189 A_1190 A_1205 A_1207",
+        "residue_count": 9
+      },
+      {
+        "rank": 10,
+        "score": 2.3,
+        "probability": 0.048,
+        "sas_points": 24,
+        "surf_atoms": 18,
+        "center": [
+          -45.2671,
+          5.9699,
+          31.9704
+        ],
+        "residues": "A_1883 A_1884 A_1885 A_1911 A_1913 A_1914 A_1916 A_2045 A_2046",
+        "residue_count": 9
+      },
+      {
+        "rank": 11,
+        "score": 2.18,
+        "probability": 0.043,
+        "sas_points": 23,
+        "surf_atoms": 17,
+        "center": [
+          -34.9002,
+          4.4949,
+          23.4493
+        ],
+        "residues": "A_1880 A_1931 A_1933 A_1935 A_2011 A_2013 A_2015 A_2019 A_2021",
+        "residue_count": 9
+      },
+      {
+        "rank": 12,
+        "score": 2.11,
+        "probability": 0.04,
+        "sas_points": 36,
+        "surf_atoms": 24,
+        "center": [
+          7.3628,
+          -11.7587,
+          18.0279
+        ],
+        "residues": "A_1612 A_1613 A_1615 A_1619 A_1620 A_1621 A_1622 A_1811 A_1813 A_1814 A_1815",
+        "residue_count": 11
+      },
+      {
+        "rank": 13,
+        "score": 1.94,
+        "probability": 0.034,
+        "sas_points": 47,
+        "surf_atoms": 27,
+        "center": [
+          1.4041,
+          -9.6943,
+          26.2245
+        ],
+        "residues": "A_1616 A_1617 A_1618 A_1619 A_1620 A_1628 A_1630 A_1634 A_1635 A_1636 A_1811 A_1814 A_1816 A_1823",
+        "residue_count": 14
+      },
+      {
+        "rank": 14,
+        "score": 1.93,
+        "probability": 0.033,
+        "sas_points": 46,
+        "surf_atoms": 31,
+        "center": [
+          -33.5315,
+          15.7833,
+          23.715
+        ],
+        "residues": "A_1931 A_1935 A_1936 A_1937 A_1938 A_1939 A_1941 A_1956 A_1961 A_2023 A_2025 A_2026 A_2027 A_2028",
+        "residue_count": 14
+      },
+      {
+        "rank": 15,
+        "score": 1.49,
+        "probability": 0.017,
+        "sas_points": 43,
+        "surf_atoms": 18,
+        "center": [
+          -21.7515,
+          34.7012,
+          -15.2844
+        ],
+        "residues": "A_1146 A_1147 A_1148 A_1154 A_1161 A_1164 A_1165 A_1168 A_87 A_90",
+        "residue_count": 10
+      },
+      {
+        "rank": 16,
+        "score": 1.41,
+        "probability": 0.015,
+        "sas_points": 23,
+        "surf_atoms": 19,
+        "center": [
+          43.273,
+          -9.0617,
+          6.8589
+        ],
+        "residues": "A_1379 A_1380 A_1408 A_1497 A_1498 A_1500 A_1503 A_1512 A_1513 A_1514 A_1515",
+        "residue_count": 11
+      },
+      {
+        "rank": 17,
+        "score": 1.27,
+        "probability": 0.011,
+        "sas_points": 31,
+        "surf_atoms": 20,
+        "center": [
+          16.6685,
+          -15.0606,
+          -2.446
+        ],
+        "residues": "A_1573 A_1574 A_1575 A_1576 A_1580 A_1581 A_1582 A_1583 A_1605 A_1606 A_1607",
+        "residue_count": 11
+      },
+      {
+        "rank": 18,
+        "score": 1.21,
+        "probability": 0.009,
+        "sas_points": 28,
+        "surf_atoms": 11,
+        "center": [
+          -25.8456,
+          35.288,
+          -44.6454
+        ],
+        "residues": "A_102 A_124 A_133 A_134 A_61 A_63 A_99",
+        "residue_count": 7
+      },
+      {
+        "rank": 19,
+        "score": 0.9,
+        "probability": 0.003,
+        "sas_points": 31,
+        "surf_atoms": 19,
+        "center": [
+          -0.7964,
+          -0.9097,
+          3.882
+        ],
+        "residues": "A_1647 A_1679 A_1683 A_1684 A_1765 A_1766 A_1768 A_1773 A_1774 A_1777 A_1778",
+        "residue_count": 11
+      }
+    ]
+  },
+  "CTNNA1_P35221": {
+    "pdb_file": "CTNNA1_P35221.pdb",
+    "symbol": "CTNNA1",
+    "pocket_count": 18,
+    "top_score": 13.28,
+    "top_probability": 0.598,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 13.28,
+        "probability": 0.598,
+        "sas_points": 108,
+        "surf_atoms": 52,
+        "center": [
+          4.2173,
+          -18.8297,
+          -42.9427
+        ],
+        "residues": "A_104 A_108 A_111 A_115 A_124 A_128 A_131 A_135 A_139 A_28 A_32 A_35 A_36 A_39 A_42 A_55 A_58 A_61 A_62 A_65 A_68 A_69 A_72",
+        "residue_count": 23
+      },
+      {
+        "rank": 2,
+        "score": 6.91,
+        "probability": 0.298,
+        "sas_points": 64,
+        "surf_atoms": 24,
+        "center": [
+          8.6913,
+          18.465,
+          12.4196
+        ],
+        "residues": "A_328 A_329 A_332 A_380 A_381 A_384 A_388 A_513 A_514 A_517 A_518 A_521 A_626 A_641 A_645",
+        "residue_count": 15
+      },
+      {
+        "rank": 3,
+        "score": 4.84,
+        "probability": 0.177,
+        "sas_points": 33,
+        "surf_atoms": 13,
+        "center": [
+          -1.6821,
+          13.228,
+          20.4499
+        ],
+        "residues": "A_326 A_392 A_395 A_521 A_522 A_525 A_544 A_548",
+        "residue_count": 8
+      },
+      {
+        "rank": 4,
+        "score": 4.67,
+        "probability": 0.168,
+        "sas_points": 40,
+        "surf_atoms": 24,
+        "center": [
+          -17.5552,
+          -6.5625,
+          2.7833
+        ],
+        "residues": "A_213 A_216 A_217 A_220 A_247 A_250 A_455 A_456 A_459 A_460 A_463 A_490",
+        "residue_count": 12
+      },
+      {
+        "rank": 5,
+        "score": 3.2,
+        "probability": 0.088,
+        "sas_points": 34,
+        "surf_atoms": 19,
+        "center": [
+          -8.4099,
+          -21.6068,
+          -31.6954
+        ],
+        "residues": "A_138 A_139 A_142 A_146 A_25 A_28 A_72 A_75 A_76 A_79",
+        "residue_count": 10
+      },
+      {
+        "rank": 6,
+        "score": 3.09,
+        "probability": 0.083,
+        "sas_points": 66,
+        "surf_atoms": 32,
+        "center": [
+          -11.5536,
+          -0.2684,
+          -8.2002
+        ],
+        "residues": "A_202 A_205 A_206 A_209 A_213 A_267 A_270 A_448 A_451 A_452 A_455",
+        "residue_count": 11
+      },
+      {
+        "rank": 7,
+        "score": 2.73,
+        "probability": 0.067,
+        "sas_points": 50,
+        "surf_atoms": 34,
+        "center": [
+          -15.6473,
+          -3.296,
+          -9.9288
+        ],
+        "residues": "A_202 A_206 A_209 A_210 A_213 A_250 A_251 A_254 A_257 A_264 A_266 A_267 A_270 A_452",
+        "residue_count": 14
+      },
+      {
+        "rank": 8,
+        "score": 2.69,
+        "probability": 0.065,
+        "sas_points": 29,
+        "surf_atoms": 14,
+        "center": [
+          -4.8004,
+          16.7354,
+          0.7395
+        ],
+        "residues": "A_277 A_278 A_315 A_318 A_319 A_435 A_436 A_439",
+        "residue_count": 8
+      },
+      {
+        "rank": 9,
+        "score": 2.0,
+        "probability": 0.036,
+        "sas_points": 36,
+        "surf_atoms": 23,
+        "center": [
+          -2.5336,
+          0.0317,
+          14.1533
+        ],
+        "residues": "A_394 A_395 A_397 A_398 A_495 A_496 A_499 A_500 A_547 A_550 A_551 A_554",
+        "residue_count": 12
+      },
+      {
+        "rank": 10,
+        "score": 1.88,
+        "probability": 0.031,
+        "sas_points": 24,
+        "surf_atoms": 12,
+        "center": [
+          -1.766,
+          27.4896,
+          3.0024
+        ],
+        "residues": "A_313 A_317 A_320 A_321 A_334 A_337 A_338 A_341",
+        "residue_count": 8
+      },
+      {
+        "rank": 11,
+        "score": 1.63,
+        "probability": 0.022,
+        "sas_points": 30,
+        "surf_atoms": 28,
+        "center": [
+          40.871,
+          -16.5807,
+          -3.2806
+        ],
+        "residues": "A_763 A_766 A_840 A_843 A_844 A_855 A_856 A_857 A_858 A_859",
+        "residue_count": 10
+      },
+      {
+        "rank": 12,
+        "score": 1.61,
+        "probability": 0.021,
+        "sas_points": 38,
+        "surf_atoms": 18,
+        "center": [
+          -15.4837,
+          -3.2656,
+          -4.3453
+        ],
+        "residues": "A_209 A_213 A_247 A_250 A_251 A_452 A_455 A_456 A_459",
+        "residue_count": 9
+      },
+      {
+        "rank": 13,
+        "score": 1.56,
+        "probability": 0.019,
+        "sas_points": 20,
+        "surf_atoms": 15,
+        "center": [
+          -10.9443,
+          -1.1645,
+          -14.5915
+        ],
+        "residues": "A_202 A_206 A_264 A_267 A_270 A_271",
+        "residue_count": 6
+      },
+      {
+        "rank": 14,
+        "score": 1.54,
+        "probability": 0.019,
+        "sas_points": 43,
+        "surf_atoms": 17,
+        "center": [
+          12.6275,
+          17.7652,
+          -9.2117
+        ],
+        "residues": "A_283 A_286 A_290 A_369 A_372 A_376 A_379 A_890 A_895",
+        "residue_count": 9
+      },
+      {
+        "rank": 15,
+        "score": 1.36,
+        "probability": 0.013,
+        "sas_points": 25,
+        "surf_atoms": 14,
+        "center": [
+          -7.8834,
+          -18.2456,
+          -23.8244
+        ],
+        "residues": "A_142 A_143 A_146 A_193 A_194 A_197 A_24 A_25",
+        "residue_count": 8
+      },
+      {
+        "rank": 16,
+        "score": 1.35,
+        "probability": 0.013,
+        "sas_points": 24,
+        "surf_atoms": 17,
+        "center": [
+          13.4942,
+          12.5145,
+          6.2314
+        ],
+        "residues": "A_380 A_383 A_507 A_509 A_510 A_630 A_637 A_638 A_642",
+        "residue_count": 9
+      },
+      {
+        "rank": 17,
+        "score": 1.08,
+        "probability": 0.006,
+        "sas_points": 35,
+        "surf_atoms": 20,
+        "center": [
+          40.4973,
+          18.5244,
+          24.6157
+        ],
+        "residues": "A_661 A_663 A_667 A_669 A_672 A_738 A_739 A_796 A_797 A_798",
+        "residue_count": 10
+      },
+      {
+        "rank": 18,
+        "score": 0.72,
+        "probability": 0.001,
+        "sas_points": 17,
+        "surf_atoms": 10,
+        "center": [
+          -23.5106,
+          -10.8199,
+          -17.508
+        ],
+        "residues": "A_10 A_151 A_154 A_155 A_158 A_252 A_256",
+        "residue_count": 7
+      }
+    ]
+  },
+  "MAPK14_Q16539": {
+    "pdb_file": "MAPK14_Q16539.pdb",
+    "symbol": "MAPK14",
+    "pocket_count": 11,
+    "top_score": 12.73,
+    "top_probability": 0.578,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 12.73,
+        "probability": 0.578,
+        "sas_points": 111,
+        "surf_atoms": 58,
+        "center": [
+          4.8213,
+          0.3536,
+          -5.2052
+        ],
+        "residues": "A_104 A_106 A_108 A_109 A_110 A_112 A_154 A_155 A_157 A_167 A_168 A_169 A_171 A_30 A_31 A_32 A_33 A_35 A_36 A_38 A_51 A_53 A_71 A_74 A_75 A_84",
+        "residue_count": 26
+      },
+      {
+        "rank": 2,
+        "score": 3.45,
+        "probability": 0.1,
+        "sas_points": 49,
+        "surf_atoms": 22,
+        "center": [
+          15.3295,
+          9.1111,
+          -17.5523
+        ],
+        "residues": "A_21 A_23 A_3 A_345 A_350 A_45 A_5 A_6 A_8 A_88 A_89 A_90 A_91",
+        "residue_count": 13
+      },
+      {
+        "rank": 3,
+        "score": 3.36,
+        "probability": 0.095,
+        "sas_points": 29,
+        "surf_atoms": 22,
+        "center": [
+          5.5415,
+          11.7475,
+          -4.7466
+        ],
+        "residues": "A_107 A_165 A_351 A_357 A_78 A_79 A_80 A_81 A_83 A_85 A_86 A_87",
+        "residue_count": 12
+      },
+      {
+        "rank": 4,
+        "score": 3.01,
+        "probability": 0.079,
+        "sas_points": 52,
+        "surf_atoms": 20,
+        "center": [
+          8.5087,
+          8.9224,
+          3.0523
+        ],
+        "residues": "A_107 A_108 A_109 A_110 A_159 A_163 A_165 A_357 A_360 A_81",
+        "residue_count": 10
+      },
+      {
+        "rank": 5,
+        "score": 2.96,
+        "probability": 0.077,
+        "sas_points": 15,
+        "surf_atoms": 17,
+        "center": [
+          -24.9944,
+          -7.2443,
+          0.8884
+        ],
+        "residues": "A_191 A_192 A_195 A_197 A_198 A_232 A_250 A_259 A_291",
+        "residue_count": 9
+      },
+      {
+        "rank": 6,
+        "score": 2.6,
+        "probability": 0.061,
+        "sas_points": 30,
+        "surf_atoms": 14,
+        "center": [
+          3.6113,
+          3.1264,
+          14.5696
+        ],
+        "residues": "A_116 A_120 A_122 A_126 A_159 A_160 A_162",
+        "residue_count": 7
+      },
+      {
+        "rank": 7,
+        "score": 2.2,
+        "probability": 0.043,
+        "sas_points": 54,
+        "surf_atoms": 24,
+        "center": [
+          -3.4803,
+          -7.5138,
+          -5.1242
+        ],
+        "residues": "A_150 A_152 A_155 A_168 A_171 A_172 A_175 A_178 A_179 A_184 A_185 A_189 A_35 A_67",
+        "residue_count": 14
+      },
+      {
+        "rank": 8,
+        "score": 2.09,
+        "probability": 0.039,
+        "sas_points": 31,
+        "surf_atoms": 16,
+        "center": [
+          -1.5351,
+          15.1645,
+          8.4887
+        ],
+        "residues": "A_129 A_132 A_133 A_136 A_311 A_313 A_316 A_81 A_82",
+        "residue_count": 9
+      },
+      {
+        "rank": 9,
+        "score": 1.71,
+        "probability": 0.025,
+        "sas_points": 18,
+        "surf_atoms": 17,
+        "center": [
+          -12.3928,
+          -11.9163,
+          -3.2415
+        ],
+        "residues": "A_179 A_181 A_184 A_186 A_189 A_193 A_194 A_228",
+        "residue_count": 8
+      },
+      {
+        "rank": 10,
+        "score": 1.54,
+        "probability": 0.019,
+        "sas_points": 28,
+        "surf_atoms": 21,
+        "center": [
+          -3.7406,
+          -8.3539,
+          6.8958
+        ],
+        "residues": "A_114 A_117 A_118 A_152 A_153 A_154 A_185 A_187 A_188 A_215 A_221",
+        "residue_count": 11
+      },
+      {
+        "rank": 11,
+        "score": 1.51,
+        "probability": 0.018,
+        "sas_points": 24,
+        "surf_atoms": 16,
+        "center": [
+          -14.458,
+          12.1051,
+          -0.6269
+        ],
+        "residues": "A_139 A_142 A_143 A_202 A_298 A_299 A_300",
+        "residue_count": 7
+      }
+    ]
+  },
+  "MUSK_O15146": {
+    "pdb_file": "MUSK_O15146.pdb",
+    "symbol": "MUSK",
+    "pocket_count": 11,
+    "top_score": 12.27,
+    "top_probability": 0.559,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 12.27,
+        "probability": 0.559,
+        "sas_points": 57,
+        "surf_atoms": 25,
+        "center": [
+          -13.5464,
+          -10.4582,
+          6.9276
+        ],
+        "residues": "A_291 A_579 A_581 A_607 A_657 A_658 A_659 A_661 A_662 A_729 A_732 A_744 A_746 A_747 A_750",
+        "residue_count": 15
+      },
+      {
+        "rank": 2,
+        "score": 11.94,
+        "probability": 0.546,
+        "sas_points": 151,
+        "surf_atoms": 60,
+        "center": [
+          4.2191,
+          4.8712,
+          -6.3232
+        ],
+        "residues": "A_125 A_128 A_130 A_136 A_137 A_138 A_139 A_141 A_673 A_793 A_796 A_797 A_798 A_800 A_803 A_804 A_805 A_806 A_814 A_820 A_821 A_822 A_823 A_824 A_825",
+        "residue_count": 25
+      },
+      {
+        "rank": 3,
+        "score": 9.72,
+        "probability": 0.45,
+        "sas_points": 96,
+        "surf_atoms": 42,
+        "center": [
+          -19.7687,
+          -7.4939,
+          -5.8589
+        ],
+        "residues": "A_548 A_550 A_551 A_554 A_585 A_586 A_622 A_626 A_721 A_722 A_723 A_724 A_725 A_730 A_743 A_744 A_745 A_747 A_748 A_763 A_764 A_765 A_779",
+        "residue_count": 23
+      },
+      {
+        "rank": 4,
+        "score": 7.79,
+        "probability": 0.348,
+        "sas_points": 98,
+        "surf_atoms": 46,
+        "center": [
+          -5.6845,
+          5.5945,
+          1.9381
+        ],
+        "residues": "A_131 A_133 A_136 A_209 A_211 A_287 A_288 A_292 A_664 A_668 A_750 A_751 A_753 A_754 A_800 A_801 A_804 A_805 A_806",
+        "residue_count": 19
+      },
+      {
+        "rank": 5,
+        "score": 2.22,
+        "probability": 0.045,
+        "sas_points": 20,
+        "surf_atoms": 14,
+        "center": [
+          -14.7901,
+          6.4757,
+          -15.626
+        ],
+        "residues": "A_539 A_543 A_756 A_764 A_766 A_774 A_775 A_812",
+        "residue_count": 8
+      },
+      {
+        "rank": 6,
+        "score": 1.61,
+        "probability": 0.021,
+        "sas_points": 18,
+        "surf_atoms": 19,
+        "center": [
+          -18.134,
+          1.0782,
+          -14.6346
+        ],
+        "residues": "A_543 A_544 A_545 A_548 A_764 A_769 A_773 A_774 A_777 A_779",
+        "residue_count": 10
+      },
+      {
+        "rank": 7,
+        "score": 1.48,
+        "probability": 0.017,
+        "sas_points": 26,
+        "surf_atoms": 13,
+        "center": [
+          -35.505,
+          14.0673,
+          44.9497
+        ],
+        "residues": "A_309 A_315 A_316 A_317 A_384 A_385 A_387",
+        "residue_count": 7
+      },
+      {
+        "rank": 8,
+        "score": 1.06,
+        "probability": 0.006,
+        "sas_points": 20,
+        "surf_atoms": 15,
+        "center": [
+          -17.8311,
+          -2.9183,
+          -11.3946
+        ],
+        "residues": "A_548 A_724 A_725 A_748 A_763 A_764 A_765 A_779",
+        "residue_count": 8
+      },
+      {
+        "rank": 9,
+        "score": 1.0,
+        "probability": 0.005,
+        "sas_points": 20,
+        "surf_atoms": 10,
+        "center": [
+          -55.6601,
+          23.6269,
+          41.286
+        ],
+        "residues": "A_377 A_392 A_393 A_432 A_437",
+        "residue_count": 5
+      },
+      {
+        "rank": 10,
+        "score": 0.97,
+        "probability": 0.005,
+        "sas_points": 7,
+        "surf_atoms": 11,
+        "center": [
+          -15.6598,
+          -15.7421,
+          -5.8798
+        ],
+        "residues": "A_630 A_633 A_638 A_716 A_723 A_741 A_742 A_743",
+        "residue_count": 8
+      },
+      {
+        "rank": 11,
+        "score": 0.79,
+        "probability": 0.002,
+        "sas_points": 6,
+        "surf_atoms": 10,
+        "center": [
+          -22.3286,
+          -7.96,
+          3.3181
+        ],
+        "residues": "A_584 A_586 A_587 A_589 A_609 A_746",
+        "residue_count": 6
+      }
+    ]
+  },
+  "MAPK14_1A9U": {
+    "pdb_file": "MAPK14_1A9U.pdb",
+    "symbol": "MAPK14",
+    "pocket_count": 7,
+    "top_score": 11.88,
+    "top_probability": 0.544,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 11.88,
+        "probability": 0.544,
+        "sas_points": 96,
+        "surf_atoms": 41,
+        "center": [
+          3.7984,
+          13.59,
+          30.3876
+        ],
+        "residues": "A_104 A_106 A_109 A_167 A_168 A_169 A_171 A_172 A_30 A_35 A_38 A_51 A_53 A_71 A_74 A_75 A_84",
+        "residue_count": 17
+      },
+      {
+        "rank": 2,
+        "score": 4.75,
+        "probability": 0.173,
+        "sas_points": 71,
+        "surf_atoms": 37,
+        "center": [
+          5.2435,
+          3.1296,
+          36.5258
+        ],
+        "residues": "A_107 A_108 A_109 A_157 A_158 A_159 A_163 A_165 A_351 A_352 A_48 A_78 A_79 A_80 A_81 A_83 A_85 A_87",
+        "residue_count": 18
+      },
+      {
+        "rank": 3,
+        "score": 3.8,
+        "probability": 0.119,
+        "sas_points": 38,
+        "surf_atoms": 19,
+        "center": [
+          3.2661,
+          18.2578,
+          54.2245
+        ],
+        "residues": "A_139 A_142 A_143 A_201 A_202 A_203 A_298 A_299 A_300 A_319",
+        "residue_count": 10
+      },
+      {
+        "rank": 4,
+        "score": 3.1,
+        "probability": 0.083,
+        "sas_points": 37,
+        "surf_atoms": 17,
+        "center": [
+          -13.8127,
+          19.4062,
+          37.5013
+        ],
+        "residues": "A_114 A_118 A_153 A_154 A_184 A_187 A_188 A_215 A_221",
+        "residue_count": 9
+      },
+      {
+        "rank": 5,
+        "score": 1.96,
+        "probability": 0.034,
+        "sas_points": 32,
+        "surf_atoms": 16,
+        "center": [
+          -1.0903,
+          1.4529,
+          48.6241
+        ],
+        "residues": "A_129 A_132 A_133 A_136 A_311 A_313 A_316 A_81 A_82",
+        "residue_count": 9
+      },
+      {
+        "rank": 6,
+        "score": 1.49,
+        "probability": 0.017,
+        "sas_points": 15,
+        "surf_atoms": 11,
+        "center": [
+          -14.3991,
+          3.95,
+          41.2038
+        ],
+        "residues": "A_116 A_122 A_126 A_162",
+        "residue_count": 4
+      },
+      {
+        "rank": 7,
+        "score": 1.34,
+        "probability": 0.013,
+        "sas_points": 29,
+        "surf_atoms": 17,
+        "center": [
+          17.6669,
+          3.5665,
+          26.7158
+        ],
+        "residues": "A_21 A_23 A_350 A_4 A_45 A_6 A_87 A_88",
+        "residue_count": 8
+      }
+    ]
+  },
+  "NEDD4L_Q96PU5": {
+    "pdb_file": "NEDD4L_Q96PU5.pdb",
+    "symbol": "NEDD4L",
+    "pocket_count": 11,
+    "top_score": 9.68,
+    "top_probability": 0.448,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 9.68,
+        "probability": 0.448,
+        "sas_points": 108,
+        "surf_atoms": 45,
+        "center": [
+          6.7613,
+          -15.0828,
+          -2.1807
+        ],
+        "residues": "A_100 A_103 A_35 A_37 A_38 A_756 A_759 A_762 A_763 A_771 A_773 A_774 A_776 A_777 A_778 A_807 A_97 A_99",
+        "residue_count": 18
+      },
+      {
+        "rank": 2,
+        "score": 8.33,
+        "probability": 0.378,
+        "sas_points": 90,
+        "surf_atoms": 46,
+        "center": [
+          -8.747,
+          -3.5415,
+          -13.289
+        ],
+        "residues": "A_733 A_745 A_747 A_748 A_750 A_751 A_846 A_900 A_901 A_904 A_938 A_939 A_940 A_941 A_968 A_970 A_971 A_972",
+        "residue_count": 18
+      },
+      {
+        "rank": 3,
+        "score": 4.43,
+        "probability": 0.154,
+        "sas_points": 57,
+        "surf_atoms": 39,
+        "center": [
+          -3.1287,
+          6.6235,
+          -6.7552
+        ],
+        "residues": "A_688 A_689 A_691 A_692 A_732 A_751 A_903 A_904 A_905 A_907 A_908 A_909 A_916 A_917 A_918 A_919 A_941 A_942 A_944",
+        "residue_count": 19
+      },
+      {
+        "rank": 4,
+        "score": 2.98,
+        "probability": 0.078,
+        "sas_points": 24,
+        "surf_atoms": 15,
+        "center": [
+          -8.0296,
+          5.9662,
+          18.7057
+        ],
+        "residues": "A_252 A_255 A_679 A_680 A_682 A_702 A_703",
+        "residue_count": 7
+      },
+      {
+        "rank": 5,
+        "score": 2.38,
+        "probability": 0.051,
+        "sas_points": 33,
+        "surf_atoms": 15,
+        "center": [
+          -23.8287,
+          10.3167,
+          -8.6887
+        ],
+        "residues": "A_597 A_598 A_601 A_850 A_851 A_855 A_893",
+        "residue_count": 7
+      },
+      {
+        "rank": 6,
+        "score": 2.12,
+        "probability": 0.04,
+        "sas_points": 44,
+        "surf_atoms": 16,
+        "center": [
+          13.1162,
+          35.4195,
+          12.9615
+        ],
+        "residues": "A_199 A_213 A_215 A_216 A_218 A_220 A_228 A_229 A_233",
+        "residue_count": 9
+      },
+      {
+        "rank": 7,
+        "score": 2.09,
+        "probability": 0.039,
+        "sas_points": 44,
+        "surf_atoms": 21,
+        "center": [
+          -2.6845,
+          6.4762,
+          28.6957
+        ],
+        "residues": "A_252 A_253 A_256 A_396 A_402 A_411 A_412 A_413",
+        "residue_count": 8
+      },
+      {
+        "rank": 8,
+        "score": 1.76,
+        "probability": 0.027,
+        "sas_points": 30,
+        "surf_atoms": 15,
+        "center": [
+          0.24,
+          -5.2775,
+          4.7022
+        ],
+        "residues": "A_684 A_694 A_697 A_753 A_814 A_815 A_819",
+        "residue_count": 7
+      },
+      {
+        "rank": 9,
+        "score": 1.68,
+        "probability": 0.024,
+        "sas_points": 37,
+        "surf_atoms": 23,
+        "center": [
+          -8.5117,
+          19.4623,
+          -27.2793
+        ],
+        "residues": "A_577 A_581 A_582 A_860 A_861 A_864 A_881 A_884 A_885 A_888",
+        "residue_count": 10
+      },
+      {
+        "rank": 10,
+        "score": 1.67,
+        "probability": 0.023,
+        "sas_points": 16,
+        "surf_atoms": 17,
+        "center": [
+          -8.9111,
+          -4.0299,
+          2.6222
+        ],
+        "residues": "A_694 A_695 A_732 A_734 A_735 A_738 A_815 A_816 A_820",
+        "residue_count": 9
+      },
+      {
+        "rank": 11,
+        "score": 1.42,
+        "probability": 0.015,
+        "sas_points": 24,
+        "surf_atoms": 11,
+        "center": [
+          18.9965,
+          -16.213,
+          -3.877
+        ],
+        "residues": "A_36 A_38 A_42 A_68 A_96 A_97 A_98",
+        "residue_count": 7
+      }
+    ]
+  },
+  "CD44_P16070": {
+    "pdb_file": "CD44_P16070.pdb",
+    "symbol": "CD44",
+    "pocket_count": 7,
+    "top_score": 5.96,
+    "top_probability": 0.242,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 5.96,
+        "probability": 0.242,
+        "sas_points": 72,
+        "surf_atoms": 32,
+        "center": [
+          0.7241,
+          2.7318,
+          5.7101
+        ],
+        "residues": "A_148 A_149 A_150 A_25 A_26 A_27 A_303 A_304 A_305 A_306 A_307 A_35 A_37 A_75 A_76 A_77 A_78",
+        "residue_count": 17
+      },
+      {
+        "rank": 2,
+        "score": 4.8,
+        "probability": 0.175,
+        "sas_points": 40,
+        "surf_atoms": 25,
+        "center": [
+          -6.1284,
+          -9.0931,
+          -2.0268
+        ],
+        "residues": "A_120 A_122 A_123 A_128 A_130 A_132 A_133 A_134 A_136 A_26 A_29 A_34 A_56",
+        "residue_count": 13
+      },
+      {
+        "rank": 3,
+        "score": 2.29,
+        "probability": 0.047,
+        "sas_points": 21,
+        "surf_atoms": 14,
+        "center": [
+          -3.88,
+          -1.7444,
+          9.3212
+        ],
+        "residues": "A_127 A_150 A_27 A_30 A_307 A_74 A_75 A_76",
+        "residue_count": 8
+      },
+      {
+        "rank": 4,
+        "score": 1.67,
+        "probability": 0.023,
+        "sas_points": 28,
+        "surf_atoms": 12,
+        "center": [
+          3.6574,
+          6.8055,
+          -11.8983
+        ],
+        "residues": "A_162 A_167 A_170 A_21 A_22 A_38 A_39 A_41 A_43",
+        "residue_count": 9
+      },
+      {
+        "rank": 5,
+        "score": 1.38,
+        "probability": 0.014,
+        "sas_points": 26,
+        "surf_atoms": 10,
+        "center": [
+          -2.2849,
+          15.4746,
+          3.7752
+        ],
+        "residues": "A_107 A_114 A_42 A_77 A_78 A_79 A_96",
+        "residue_count": 7
+      },
+      {
+        "rank": 6,
+        "score": 1.28,
+        "probability": 0.011,
+        "sas_points": 33,
+        "surf_atoms": 15,
+        "center": [
+          32.663,
+          9.8358,
+          -24.4603
+        ],
+        "residues": "A_10 A_5 A_6 A_656 A_659 A_663 A_9",
+        "residue_count": 7
+      },
+      {
+        "rank": 7,
+        "score": 0.56,
+        "probability": 0.0,
+        "sas_points": 18,
+        "surf_atoms": 11,
+        "center": [
+          28.9257,
+          14.0215,
+          -27.6141
+        ],
+        "residues": "A_10 A_6 A_7",
+        "residue_count": 3
+      }
+    ]
+  },
+  "CHRNA1_P02708": {
+    "pdb_file": "CHRNA1_P02708.pdb",
+    "symbol": "CHRNA1",
+    "pocket_count": 6,
+    "top_score": 5.16,
+    "top_probability": 0.196,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 5.16,
+        "probability": 0.196,
+        "sas_points": 15,
+        "surf_atoms": 13,
+        "center": [
+          0.3401,
+          4.1765,
+          -14.1637
+        ],
+        "residues": "A_146 A_162 A_164 A_198 A_225 A_227 A_57 A_60 A_70 A_72",
+        "residue_count": 10
+      },
+      {
+        "rank": 2,
+        "score": 4.63,
+        "probability": 0.166,
+        "sas_points": 46,
+        "surf_atoms": 24,
+        "center": [
+          19.7277,
+          15.2167,
+          -10.9129
+        ],
+        "residues": "A_113 A_165 A_169 A_170 A_210 A_212 A_213 A_218",
+        "residue_count": 8
+      },
+      {
+        "rank": 3,
+        "score": 1.87,
+        "probability": 0.031,
+        "sas_points": 37,
+        "surf_atoms": 14,
+        "center": [
+          -5.4884,
+          -4.6685,
+          -4.9419
+        ],
+        "residues": "A_195 A_229 A_233 A_234 A_283 A_62 A_63 A_65",
+        "residue_count": 8
+      },
+      {
+        "rank": 4,
+        "score": 1.85,
+        "probability": 0.03,
+        "sas_points": 21,
+        "surf_atoms": 15,
+        "center": [
+          -37.5932,
+          -10.4052,
+          27.9005
+        ],
+        "residues": "A_256 A_257 A_258 A_319 A_420 A_424 A_427",
+        "residue_count": 7
+      },
+      {
+        "rank": 5,
+        "score": 1.19,
+        "probability": 0.009,
+        "sas_points": 4,
+        "surf_atoms": 5,
+        "center": [
+          -9.9853,
+          -4.4361,
+          2.3666
+        ],
+        "residues": "A_155 A_280 A_283",
+        "residue_count": 3
+      },
+      {
+        "rank": 6,
+        "score": 1.12,
+        "probability": 0.007,
+        "sas_points": 25,
+        "surf_atoms": 11,
+        "center": [
+          -7.4077,
+          -0.0322,
+          9.0245
+        ],
+        "residues": "A_277 A_280 A_281 A_284 A_285 A_291 A_292 A_295",
+        "residue_count": 8
+      }
+    ]
+  },
+  "BCL2_P10415": {
+    "pdb_file": "BCL2_P10415.pdb",
+    "symbol": "BCL2",
+    "pocket_count": 5,
+    "top_score": 5.0,
+    "top_probability": 0.187,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 5.0,
+        "probability": 0.187,
+        "sas_points": 58,
+        "surf_atoms": 32,
+        "center": [
+          -0.5317,
+          -9.3864,
+          -11.6155
+        ],
+        "residues": "A_102 A_105 A_109 A_112 A_113 A_116 A_152 A_155 A_156 A_159 A_22 A_25 A_26",
+        "residue_count": 13
+      },
+      {
+        "rank": 2,
+        "score": 2.09,
+        "probability": 0.039,
+        "sas_points": 12,
+        "surf_atoms": 12,
+        "center": [
+          -11.053,
+          -5.5201,
+          -13.0984
+        ],
+        "residues": "A_104 A_112 A_115 A_133 A_137 A_149 A_153 A_217 A_220",
+        "residue_count": 9
+      },
+      {
+        "rank": 3,
+        "score": 1.85,
+        "probability": 0.03,
+        "sas_points": 28,
+        "surf_atoms": 18,
+        "center": [
+          -18.4002,
+          5.1637,
+          -8.2484
+        ],
+        "residues": "A_135 A_138 A_142 A_180 A_184 A_49",
+        "residue_count": 6
+      },
+      {
+        "rank": 4,
+        "score": 1.64,
+        "probability": 0.022,
+        "sas_points": 23,
+        "surf_atoms": 18,
+        "center": [
+          -17.5922,
+          -9.5288,
+          -3.5505
+        ],
+        "residues": "A_143 A_144 A_145 A_201 A_209 A_210 A_211 A_212 A_214",
+        "residue_count": 9
+      },
+      {
+        "rank": 5,
+        "score": 1.51,
+        "probability": 0.018,
+        "sas_points": 11,
+        "surf_atoms": 14,
+        "center": [
+          -8.7677,
+          -3.2167,
+          -18.9303
+        ],
+        "residues": "A_115 A_118 A_119 A_129 A_133 A_153 A_220 A_221 A_224",
+        "residue_count": 9
+      }
+    ]
+  },
+  "HTRA2_O43464": {
+    "pdb_file": "HTRA2_O43464.pdb",
+    "symbol": "HTRA2",
+    "pocket_count": 5,
+    "top_score": 4.5,
+    "top_probability": 0.159,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 4.5,
+        "probability": 0.159,
+        "sas_points": 50,
+        "surf_atoms": 35,
+        "center": [
+          -6.3785,
+          -11.6776,
+          5.0888
+        ],
+        "residues": "A_277 A_280 A_282 A_285 A_287 A_290 A_292 A_293 A_294 A_296 A_331 A_368 A_370 A_372 A_373 A_376",
+        "residue_count": 16
+      },
+      {
+        "rank": 2,
+        "score": 3.36,
+        "probability": 0.095,
+        "sas_points": 24,
+        "surf_atoms": 19,
+        "center": [
+          -10.5168,
+          -3.2583,
+          2.5868
+        ],
+        "residues": "A_225 A_226 A_228 A_292 A_294 A_364 A_365 A_366 A_368 A_424 A_428",
+        "residue_count": 11
+      },
+      {
+        "rank": 3,
+        "score": 2.35,
+        "probability": 0.05,
+        "sas_points": 23,
+        "surf_atoms": 20,
+        "center": [
+          -15.9393,
+          4.859,
+          1.0189
+        ],
+        "residues": "A_197 A_198 A_223 A_225 A_228 A_359 A_360 A_361 A_362 A_363 A_364",
+        "residue_count": 11
+      },
+      {
+        "rank": 4,
+        "score": 1.66,
+        "probability": 0.023,
+        "sas_points": 30,
+        "surf_atoms": 21,
+        "center": [
+          -15.3484,
+          1.7489,
+          -15.3478
+        ],
+        "residues": "A_192 A_221 A_222 A_231 A_233 A_341 A_342 A_345 A_346 A_349",
+        "residue_count": 10
+      },
+      {
+        "rank": 5,
+        "score": 1.51,
+        "probability": 0.018,
+        "sas_points": 30,
+        "surf_atoms": 22,
+        "center": [
+          -2.706,
+          0.3863,
+          13.7166
+        ],
+        "residues": "A_324 A_325 A_381 A_383 A_384 A_392 A_393 A_394 A_409 A_410",
+        "residue_count": 10
+      }
+    ]
+  },
+  "ZPR1_O75312": {
+    "pdb_file": "ZPR1_O75312.pdb",
+    "symbol": "ZPR1",
+    "pocket_count": 6,
+    "top_score": 4.46,
+    "top_probability": 0.156,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 4.46,
+        "probability": 0.156,
+        "sas_points": 66,
+        "surf_atoms": 28,
+        "center": [
+          -12.6435,
+          0.1499,
+          16.6384
+        ],
+        "residues": "A_101 A_103 A_201 A_203 A_204 A_205 A_207 A_217 A_219 A_221 A_69 A_70 A_71 A_97 A_99",
+        "residue_count": 15
+      },
+      {
+        "rank": 2,
+        "score": 3.7,
+        "probability": 0.113,
+        "sas_points": 47,
+        "surf_atoms": 26,
+        "center": [
+          -21.9665,
+          5.4749,
+          5.8793
+        ],
+        "residues": "A_120 A_121 A_122 A_137 A_141 A_200 A_202 A_232 A_90 A_91 A_92 A_94 A_96",
+        "residue_count": 13
+      },
+      {
+        "rank": 3,
+        "score": 2.38,
+        "probability": 0.051,
+        "sas_points": 44,
+        "surf_atoms": 24,
+        "center": [
+          -31.9126,
+          18.7431,
+          8.8703
+        ],
+        "residues": "A_140 A_49 A_50 A_52 A_60 A_62 A_76 A_78 A_85 A_87 A_89 A_91",
+        "residue_count": 12
+      },
+      {
+        "rank": 4,
+        "score": 1.47,
+        "probability": 0.016,
+        "sas_points": 26,
+        "surf_atoms": 16,
+        "center": [
+          18.06,
+          -5.3258,
+          -9.5163
+        ],
+        "residues": "A_300 A_304 A_328 A_329 A_330 A_409 A_411",
+        "residue_count": 7
+      },
+      {
+        "rank": 5,
+        "score": 1.34,
+        "probability": 0.013,
+        "sas_points": 21,
+        "surf_atoms": 9,
+        "center": [
+          22.3859,
+          -8.2724,
+          -25.1868
+        ],
+        "residues": "A_413 A_414 A_416 A_426 A_428 A_430",
+        "residue_count": 6
+      },
+      {
+        "rank": 6,
+        "score": 1.02,
+        "probability": 0.005,
+        "sas_points": 22,
+        "surf_atoms": 16,
+        "center": [
+          38.7213,
+          9.0264,
+          -11.952
+        ],
+        "residues": "A_338 A_340 A_365 A_368 A_371 A_383 A_384 A_387",
+        "residue_count": 8
+      }
+    ]
+  },
+  "CAST_O15446": {
+    "pdb_file": "CAST_O15446.pdb",
+    "symbol": "CAST",
+    "pocket_count": 1,
+    "top_score": 3.9,
+    "top_probability": 0.124,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 3.9,
+        "probability": 0.124,
+        "sas_points": 31,
+        "surf_atoms": 15,
+        "center": [
+          -7.1578,
+          1.8925,
+          -5.8583
+        ],
+        "residues": "A_115 A_117 A_45 A_51 A_53 A_56 A_59 A_61",
+        "residue_count": 8
+      }
+    ]
+  },
+  "LIMK1_kinase_390-638": {
+    "pdb_file": "LIMK1_kinase_390-638.pdb",
+    "symbol": "LIMK1",
+    "pocket_count": 5,
+    "top_score": 3.61,
+    "top_probability": 0.108,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 3.61,
+        "probability": 0.108,
+        "sas_points": 47,
+        "surf_atoms": 26,
+        "center": [
+          7.235,
+          2.6609,
+          -28.5042
+        ],
+        "residues": "A_561 A_563 A_581 A_584 A_585 A_587 A_588 A_624 A_627 A_628 A_631 A_637",
+        "residue_count": 12
+      },
+      {
+        "rank": 2,
+        "score": 3.23,
+        "probability": 0.089,
+        "sas_points": 28,
+        "surf_atoms": 18,
+        "center": [
+          17.1175,
+          1.7312,
+          -20.9114
+        ],
+        "residues": "A_567 A_571 A_572 A_573 A_575 A_576 A_577 A_580 A_581 A_625 A_629",
+        "residue_count": 11
+      },
+      {
+        "rank": 3,
+        "score": 2.3,
+        "probability": 0.048,
+        "sas_points": 30,
+        "surf_atoms": 13,
+        "center": [
+          19.8118,
+          2.029,
+          -24.175
+        ],
+        "residues": "A_567 A_573 A_575 A_577 A_629",
+        "residue_count": 5
+      },
+      {
+        "rank": 4,
+        "score": 1.34,
+        "probability": 0.013,
+        "sas_points": 27,
+        "surf_atoms": 15,
+        "center": [
+          -5.9104,
+          -6.5807,
+          -16.0873
+        ],
+        "residues": "A_449 A_452 A_453 A_528 A_596 A_597 A_598",
+        "residue_count": 7
+      },
+      {
+        "rank": 5,
+        "score": 0.89,
+        "probability": 0.003,
+        "sas_points": 21,
+        "surf_atoms": 11,
+        "center": [
+          -1.2844,
+          15.0889,
+          -20.3509
+        ],
+        "residues": "A_513 A_514 A_521 A_550 A_555 A_556 A_559",
+        "residue_count": 7
+      }
+    ]
+  },
+  "CASP9_P55211": {
+    "pdb_file": "CASP9_P55211.pdb",
+    "symbol": "CASP9",
+    "pocket_count": 5,
+    "top_score": 2.91,
+    "top_probability": 0.075,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 2.91,
+        "probability": 0.075,
+        "sas_points": 43,
+        "surf_atoms": 24,
+        "center": [
+          -1.1414,
+          -8.1542,
+          -11.1248
+        ],
+        "residues": "A_10 A_239 A_240 A_241 A_242 A_243 A_249 A_257 A_259 A_261 A_262 A_321 A_322 A_324",
+        "residue_count": 14
+      },
+      {
+        "rank": 2,
+        "score": 2.15,
+        "probability": 0.041,
+        "sas_points": 37,
+        "surf_atoms": 26,
+        "center": [
+          11.9841,
+          15.5307,
+          3.6776
+        ],
+        "residues": "A_306 A_309 A_310 A_312 A_356 A_359 A_362 A_365 A_394 A_395 A_396",
+        "residue_count": 11
+      },
+      {
+        "rank": 3,
+        "score": 1.94,
+        "probability": 0.033,
+        "sas_points": 21,
+        "surf_atoms": 17,
+        "center": [
+          -5.6772,
+          9.3251,
+          1.9713
+        ],
+        "residues": "A_381 A_384 A_385 A_388 A_401 A_402 A_403",
+        "residue_count": 7
+      },
+      {
+        "rank": 4,
+        "score": 1.28,
+        "probability": 0.011,
+        "sas_points": 16,
+        "surf_atoms": 18,
+        "center": [
+          1.3465,
+          0.5617,
+          -4.953
+        ],
+        "residues": "A_247 A_248 A_249 A_260 A_284 A_286 A_287 A_288 A_345 A_347 A_349",
+        "residue_count": 11
+      },
+      {
+        "rank": 5,
+        "score": 1.04,
+        "probability": 0.006,
+        "sas_points": 29,
+        "surf_atoms": 12,
+        "center": [
+          -15.1719,
+          5.1446,
+          19.1907
+        ],
+        "residues": "A_142 A_145 A_153 A_154 A_376 A_412 A_413",
+        "residue_count": 7
+      }
+    ]
+  },
+  "TP53_P04637": {
+    "pdb_file": "TP53_P04637.pdb",
+    "symbol": "TP53",
+    "pocket_count": 2,
+    "top_score": 2.89,
+    "top_probability": 0.074,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 2.89,
+        "probability": 0.074,
+        "sas_points": 34,
+        "surf_atoms": 14,
+        "center": [
+          13.0281,
+          -4.2074,
+          -5.1019
+        ],
+        "residues": "A_137 A_176 A_178 A_179 A_239 A_242 A_243",
+        "residue_count": 7
+      },
+      {
+        "rank": 2,
+        "score": 2.12,
+        "probability": 0.04,
+        "sas_points": 38,
+        "surf_atoms": 19,
+        "center": [
+          -14.0368,
+          -5.4654,
+          -3.7712
+        ],
+        "residues": "A_158 A_160 A_208 A_211 A_254 A_256 A_258 A_264 A_267 A_98 A_99",
+        "residue_count": 11
+      }
+    ]
+  },
+  "SPATA18_Q8TC71": {
+    "pdb_file": "SPATA18_Q8TC71.pdb",
+    "symbol": "SPATA18",
+    "pocket_count": 5,
+    "top_score": 2.37,
+    "top_probability": 0.051,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 2.37,
+        "probability": 0.051,
+        "sas_points": 37,
+        "surf_atoms": 19,
+        "center": [
+          5.6902,
+          -7.9947,
+          -15.1583
+        ],
+        "residues": "A_290 A_298 A_302 A_305 A_380 A_383 A_386 A_425 A_429",
+        "residue_count": 9
+      },
+      {
+        "rank": 2,
+        "score": 2.15,
+        "probability": 0.041,
+        "sas_points": 40,
+        "surf_atoms": 22,
+        "center": [
+          -4.0964,
+          1.3515,
+          4.1221
+        ],
+        "residues": "A_333 A_336 A_337 A_340 A_341 A_402 A_404 A_441 A_442 A_444",
+        "residue_count": 10
+      },
+      {
+        "rank": 3,
+        "score": 1.6,
+        "probability": 0.021,
+        "sas_points": 18,
+        "surf_atoms": 16,
+        "center": [
+          -7.8147,
+          3.3132,
+          -12.8363
+        ],
+        "residues": "A_306 A_307 A_310 A_471 A_482 A_483",
+        "residue_count": 6
+      },
+      {
+        "rank": 4,
+        "score": 1.29,
+        "probability": 0.012,
+        "sas_points": 29,
+        "surf_atoms": 9,
+        "center": [
+          19.3147,
+          -13.1286,
+          -10.8346
+        ],
+        "residues": "A_281 A_353 A_356 A_357 A_360 A_378 A_385",
+        "residue_count": 7
+      },
+      {
+        "rank": 5,
+        "score": 0.93,
+        "probability": 0.004,
+        "sas_points": 19,
+        "surf_atoms": 9,
+        "center": [
+          -16.5172,
+          0.5666,
+          -6.6653
+        ],
+        "residues": "A_314 A_315 A_318 A_332 A_457 A_470 A_485",
+        "residue_count": 7
+      }
+    ]
+  },
+  "MSTN_O14793": {
+    "pdb_file": "MSTN_O14793.pdb",
+    "symbol": "MSTN",
+    "pocket_count": 4,
+    "top_score": 2.03,
+    "top_probability": 0.037,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 2.03,
+        "probability": 0.037,
+        "sas_points": 34,
+        "surf_atoms": 18,
+        "center": [
+          17.952,
+          8.7503,
+          -17.4776
+        ],
+        "residues": "A_301 A_303 A_304 A_305 A_346 A_347 A_348 A_349 A_368 A_94 A_97",
+        "residue_count": 11
+      },
+      {
+        "rank": 2,
+        "score": 1.73,
+        "probability": 0.026,
+        "sas_points": 21,
+        "surf_atoms": 14,
+        "center": [
+          5.0512,
+          2.5798,
+          -24.6888
+        ],
+        "residues": "A_309 A_340 A_342 A_345 A_48 A_52 A_55 A_59",
+        "residue_count": 8
+      },
+      {
+        "rank": 3,
+        "score": 1.69,
+        "probability": 0.024,
+        "sas_points": 27,
+        "surf_atoms": 17,
+        "center": [
+          1.6117,
+          -7.806,
+          -16.7149
+        ],
+        "residues": "A_268 A_269 A_270 A_280 A_281 A_314 A_372 A_373 A_374",
+        "residue_count": 9
+      },
+      {
+        "rank": 4,
+        "score": 1.18,
+        "probability": 0.009,
+        "sas_points": 22,
+        "surf_atoms": 14,
+        "center": [
+          -25.4612,
+          8.8263,
+          14.0284
+        ],
+        "residues": "A_119 A_157 A_203 A_252",
+        "residue_count": 4
+      }
+    ]
+  },
+  "PFN1_P07737": {
+    "pdb_file": "PFN1_P07737.pdb",
+    "symbol": "PFN1",
+    "pocket_count": 2,
+    "top_score": 1.84,
+    "top_probability": 0.03,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 1.84,
+        "probability": 0.03,
+        "sas_points": 25,
+        "surf_atoms": 19,
+        "center": [
+          -11.3549,
+          1.6141,
+          12.3496
+        ],
+        "residues": "A_1 A_108 A_140 A_32 A_4",
+        "residue_count": 5
+      },
+      {
+        "rank": 2,
+        "score": 0.89,
+        "probability": 0.003,
+        "sas_points": 13,
+        "surf_atoms": 12,
+        "center": [
+          5.7392,
+          -5.1648,
+          -6.1833
+        ],
+        "residues": "A_100 A_101 A_102 A_121 A_74 A_87 A_88",
+        "residue_count": 7
+      }
+    ]
+  },
+  "SMN1_Q16637": {
+    "pdb_file": "SMN1_Q16637.pdb",
+    "symbol": "SMN1",
+    "pocket_count": 1,
+    "top_score": 1.81,
+    "top_probability": 0.029,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 1.81,
+        "probability": 0.029,
+        "sas_points": 8,
+        "surf_atoms": 19,
+        "center": [
+          -12.3132,
+          13.7535,
+          4.2111
+        ],
+        "residues": "A_102 A_109 A_127 A_130 A_132",
+        "residue_count": 5
+      }
+    ]
+  },
+  "SMN2_Q16637": {
+    "pdb_file": "SMN2_Q16637.pdb",
+    "symbol": "SMN2",
+    "pocket_count": 1,
+    "top_score": 1.81,
+    "top_probability": 0.029,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 1.81,
+        "probability": 0.029,
+        "sas_points": 8,
+        "surf_atoms": 19,
+        "center": [
+          -12.3132,
+          13.7535,
+          4.2111
+        ],
+        "residues": "A_102 A_109 A_127 A_130 A_132",
+        "residue_count": 5
+      }
+    ]
+  },
+  "IGF1_P05019": {
+    "pdb_file": "IGF1_P05019.pdb",
+    "symbol": "IGF1",
+    "pocket_count": 3,
+    "top_score": 1.77,
+    "top_probability": 0.027,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 1.77,
+        "probability": 0.027,
+        "sas_points": 12,
+        "surf_atoms": 9,
+        "center": [
+          5.7129,
+          5.7348,
+          -3.7266
+        ],
+        "residues": "A_100 A_105 A_53 A_58 A_61",
+        "residue_count": 5
+      },
+      {
+        "rank": 2,
+        "score": 1.19,
+        "probability": 0.009,
+        "sas_points": 18,
+        "surf_atoms": 16,
+        "center": [
+          24.9765,
+          -31.2846,
+          2.4577
+        ],
+        "residues": "A_15 A_16 A_19",
+        "residue_count": 3
+      },
+      {
+        "rank": 3,
+        "score": 1.17,
+        "probability": 0.008,
+        "sas_points": 33,
+        "surf_atoms": 14,
+        "center": [
+          8.2186,
+          2.2552,
+          -2.4197
+        ],
+        "residues": "A_100 A_102 A_105 A_42 A_53 A_61 A_64 A_65",
+        "residue_count": 8
+      }
+    ]
+  },
+  "BDNF_P23560": {
+    "pdb_file": "BDNF_P23560.pdb",
+    "symbol": "BDNF",
+    "pocket_count": 1,
+    "top_score": 1.6,
+    "top_probability": 0.021,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 1.6,
+        "probability": 0.021,
+        "sas_points": 36,
+        "surf_atoms": 16,
+        "center": [
+          -1.3118,
+          2.1813,
+          3.7712
+        ],
+        "residues": "A_148 A_152 A_153 A_155 A_183 A_185 A_212 A_232 A_233 A_234",
+        "residue_count": 10
+      }
+    ]
+  },
+  "FST_P19883": {
+    "pdb_file": "FST_P19883.pdb",
+    "symbol": "FST",
+    "pocket_count": 1,
+    "top_score": 1.58,
+    "top_probability": 0.02,
+    "pockets": [
+      {
+        "rank": 1,
+        "score": 1.58,
+        "probability": 0.02,
+        "sas_points": 23,
+        "surf_atoms": 21,
+        "center": [
+          -21.7279,
+          -3.7321,
+          23.377
+        ],
+        "residues": "A_207 A_208 A_209 A_211 A_234 A_235 A_239 A_240 A_242 A_263 A_264 A_265",
+        "residue_count": 12
+      }
+    ]
+  },
+  "ABI2_Q9NYB9": {
+    "pdb_file": "ABI2_Q9NYB9.pdb",
+    "symbol": "ABI2",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "C1QA_P02745": {
+    "pdb_file": "C1QA_P02745.pdb",
+    "symbol": "C1QA",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "CFL2_Q9Y281": {
+    "pdb_file": "CFL2_Q9Y281.pdb",
+    "symbol": "CFL2",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "CNTF_P26441": {
+    "pdb_file": "CNTF_P26441.pdb",
+    "symbol": "CNTF",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "FUS_P35637": {
+    "pdb_file": "FUS_P35637.pdb",
+    "symbol": "FUS",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "GDNF_P39905": {
+    "pdb_file": "GDNF_P39905.pdb",
+    "symbol": "GDNF",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "MDM4_O15151": {
+    "pdb_file": "MDM4_O15151.pdb",
+    "symbol": "MDM4",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "NEFH_P12036": {
+    "pdb_file": "NEFH_P12036.pdb",
+    "symbol": "NEFH",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "NEFL_P07196": {
+    "pdb_file": "NEFL_P07196.pdb",
+    "symbol": "NEFL",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "STMN2_Q93045": {
+    "pdb_file": "STMN2_Q93045.pdb",
+    "symbol": "STMN2",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  },
+  "TARDBP_Q13148": {
+    "pdb_file": "TARDBP_Q13148.pdb",
+    "symbol": "TARDBP",
+    "pocket_count": 0,
+    "top_score": 0,
+    "top_probability": 0,
+    "pockets": []
+  }
+}

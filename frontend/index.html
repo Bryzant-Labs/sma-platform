@@ -935,6 +935,7 @@
             <a href="/trials" class="nav-link" data-section="trials">Trials</a>
             <a href="/synthesis" class="nav-link" data-section="synthesis">Synthesis</a>
             <a href="/structures" class="nav-link" data-section="structures">Structures</a>
+            <a href="/pockets" class="nav-link" data-section="pockets">Pockets</a>
             <a href="/comparative" class="nav-link" data-section="comparative">Species</a>
         </div>
     </span>
@@ -1061,7 +1062,7 @@
                 <div class="dp-node-method">DiffDock v2.2</div>
             </div>
             <div class="dp-arrow">&#8594;</div>
-            <div class="dp-node" id="dp-nim" onclick="window.showSection('gpu-results')" title="View NIM compute results">
+            <div class="dp-node" id="dp-nim" onclick="window.showSection('gpu-results')" title="View computational results">
                 <div class="dp-node-name">Drug Design</div>
                 <div class="dp-node-method">GenMol &middot; RFdiffusion</div>
             </div>
@@ -1085,7 +1086,7 @@
 
 <section class="section" id="research">
     <div class="section-header"><h2 class="section-title">Research Directions</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span><span class="section-count">16 active directions</span></div>
-    <p class="section-desc">Cutting-edge research directions we are exploring &mdash; from spatial multi-omics to engineered probiotics. Each direction connects to specific molecular targets and therapeutic modalities.</p>
+    <p class="section-desc">Research directions under active exploration &mdash; from spatial multi-omics to engineered probiotics. Each direction connects to specific molecular targets and therapeutic modalities.</p>
 
     <!-- Experimental Validation Plan -->
     <div style="background:var(--panel);border:2px solid var(--accent);padding:20px;margin-bottom:24px;border-radius:4px">
@@ -2090,7 +2091,7 @@
 
 <section class="section" id="directions">
     <div class="section-header"><h2 class="section-title">Research Directions</h2><span style="font-size:10px;padding:2px 8px;background:#94a3b81a;color:#94a3b8;font-weight:600;margin-left:8px;vertical-align:middle">EXPLORATORY</span><span class="section-count" id="directions-count"></span></div>
-    <p class="section-desc">16 cutting-edge research directions connecting Querdenker thinking, Harvard-level insights, and unconventional approaches to SMA biology. Click any direction to see connected targets, claims, and hypotheses.</p>
+    <p class="section-desc">16 research directions spanning spatial multi-omics, regenerative biology, and computational approaches to SMA. Click any direction to see connected targets, claims, and hypotheses.</p>
     <div class="stats-grid" id="directions-categories"></div>
     <div class="directions-grid" id="directions-grid"><div class="loading" style="padding:30px;text-align:center">Loading research directions...</div></div>
     <div id="direction-detail" style="display:none;margin-top:24px">
@@ -2681,8 +2682,8 @@
 
     <!-- Panel: Overview (NIM stat cards — clickable to switch tabs) -->
     <div id="gpu-panel-overview">
-        <h3 style="font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px;color:var(--text)">NVIDIA NIM Compute Results</h3>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:20px">Results from NVIDIA BioNeMo NIM API: RFdiffusion binder design, ProteinMPNN sequence design, ESMFold structure validation, MolMIM/GenMol molecule generation, DiffDock extended docking campaign. All data stored in PostgreSQL and queryable via REST API. Click any card to view details.</p>
+        <h3 style="font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px;color:var(--text)">Computational Results Overview</h3>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:20px">Results from RFdiffusion binder design, ProteinMPNN sequence design, ESMFold structure validation, MolMIM/GenMol molecule generation, and DiffDock docking campaigns. All data stored in PostgreSQL and queryable via REST API. Click any card to view details.</p>
         <div id="nim-compute-overview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px">
             <div class="loading" style="grid-column:1/-1">Loading NIM compute summary...</div>
         </div>
@@ -2699,7 +2700,7 @@
         <tbody id="gpu-docking-body"><tr><td colspan="7" class="loading">Loading...</td></tr></tbody></table></div>
 
         <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:32px 0 12px">Extended DiffDock Campaign</h3>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">DiffDock v2.2 | NVIDIA NIM API | 112 dockings, 14 drugs, 8 targets</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">Best confidence closer to 0 = stronger predicted binding. Click any row for full details.</span></p>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">DiffDock v2.2 | 112 dockings, 14 drugs, 8 targets</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">Best confidence closer to 0 = stronger predicted binding. Click any row for full details.</span></p>
         <div id="expdock-heatmap" style="margin-bottom:16px;overflow-x:auto"><div class="loading">Loading heatmap...</div></div>
         <div id="gpu-expdock-positive-count" style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px"></div>
         <div id="gpu-expdock-summary" class="screen-summary" style="margin-bottom:8px"><div class="loading">Loading campaign stats...</div></div>
@@ -2725,7 +2726,7 @@
     <!-- Panel: Binders (expandable rows, sort by pLDDT/MPNN) -->
     <div id="gpu-panel-binders" style="display:none">
         <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 12px">Protein Binder Designs</h3>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">RFdiffusion + ProteinMPNN + ESMFold | NVIDIA NIM API</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">15 binders designed for ROCK2, MAPK14, LIMK1. Click any row for details.</span></p>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">RFdiffusion + ProteinMPNN + ESMFold</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">15 binders designed for ROCK2, MAPK14, LIMK1. Click any row for details.</span></p>
         <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" id="binder-target-filter">
             <button class="page-btn active" data-binder-target="">All Targets</button>
             <button class="page-btn" data-binder-target="ROCK2">ROCK2</button>
@@ -2744,7 +2745,7 @@
     <!-- Panel: Molecules (full filters, expandable, copy SMILES) -->
     <div id="gpu-panel-molecules" style="display:none">
         <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 12px">AI-Generated Molecules</h3>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">MolMIM / GenMol | NVIDIA NIM API</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">Click any row for full SMILES and properties.</span></p>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">MolMIM / GenMol</span> <span style="font-size:10px;color:var(--muted);margin-left:8px">Click any row for full SMILES and properties.</span></p>
         <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:flex-end">
             <div style="display:flex;flex-direction:column;gap:4px">
                 <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted)">Target</label>
@@ -2785,7 +2786,7 @@
     <!-- Panel: Structures (top 10 summary with link to /structures) -->
     <div id="gpu-panel-structures" style="display:none">
         <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 12px">Predicted Protein Structures</h3>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">AlphaFold2 (58 targets) + Boltz-2 + ESMFold + RFdiffusion | NVIDIA NIM &amp; AlphaFold DB</span></p>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="badge badge-blue">AlphaFold2 (58 targets) + Boltz-2 + ESMFold + RFdiffusion</span></p>
         <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap" id="struct-method-filter">
             <button class="page-btn active" data-struct-method="">All Methods</button>
             <button class="page-btn" data-struct-method="AlphaFold2">AlphaFold2</button>
@@ -2985,7 +2986,7 @@
         <br><br>
         <strong>Why this matters for SMA drug design:</strong> Three-dimensional protein structure directly determines which pockets small molecules can bind. Before computational structure prediction, only ~10% of proteins had experimentally solved structures. AlphaFold v6 and ESMfold now provide high-accuracy models for nearly all human proteins, enabling virtual screening and binder design even for targets without crystallographic data.
     </p>
-    <p style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5"><em>Structures predicted via AlphaFold DB v6 (EMBL-EBI), ESMfold v1 (NVIDIA NIM), and Boltz-2 (Chai Discovery). pLDDT scores from predicted structures. Pre-existing PDB structures retain original experimental resolution.</em></p>
+    <p style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5"><em>Structures predicted via AlphaFold DB v6 (EMBL-EBI), ESMfold v1, and Boltz-2 (Chai Discovery). pLDDT scores from predicted structures. Pre-existing PDB structures retain original experimental resolution.</em></p>
     <div id="structures-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px"></div>
     <div id="structures-filter-bar" style="display:none;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
         <div style="flex:1;min-width:180px">
@@ -3008,6 +3009,20 @@
         <th>Symbol</th><th>UniProt</th><th>Source</th><th>pLDDT</th><th>Residues</th><th>Druggability</th><th>Binders</th><th>Molecules</th><th>Links</th>
     </tr></thead>
     <tbody id="structures-body"><tr><td colspan="9" class="loading">Loading structures...</td></tr></tbody></table></div>
+</section>
+
+<section class="section" id="pockets">
+    <div class="section-header"><h2 class="section-title">Druggable Pockets</h2><span style="font-size:10px;padding:2px 8px;background:#16a34a1a;color:#16a34a;font-weight:600;margin-left:8px;vertical-align:middle">STRUCTURAL</span><span class="section-count" id="pockets-count"></span></div>
+    <p class="section-desc">
+        P2Rank-predicted binding pockets across 58 SMA target protein structures. Each protein is scored by pocket druggability probability (0-1) and pocket score. <strong style="color:#16a34a">Highly druggable</strong> (probability &ge; 0.8) targets have well-defined binding sites suitable for small molecule drug design. <strong style="color:#d97606">Druggable</strong> (0.5-0.8) targets may require optimized ligands. <strong style="color:#6b7280">Marginal</strong> (&lt; 0.5) pockets are shallow or solvent-exposed. Click any row to expand individual pocket details including residue composition and 3D center coordinates.
+    </p>
+    <p style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5"><em>Pocket predictions via P2Rank 2.5.1 with AlphaFold-optimized configuration. Druggable flag requires score &gt; 50 AND probability &gt; 0.8.</em></p>
+    <div id="pockets-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px"></div>
+    <div class="table-wrap"><table><thead><tr>
+        <th>Protein</th><th>Pockets Found</th><th>Top Score</th><th>Top Probability</th><th>Druggable</th><th>Details</th>
+    </tr></thead>
+    <tbody id="pockets-body"><tr><td colspan="6" class="loading">Loading pocket data...</td></tr></tbody></table></div>
+    <div id="pockets-detail-panel" style="display:none;margin-top:16px"></div>
 </section>
 
 <section class="section" id="synthesis">
@@ -3080,8 +3095,8 @@
 </section>
 
 <section class="section" id="nim-results">
-    <div class="section-header"><h2 class="section-title">NVIDIA NIM Docking (DiffDock v2.2)</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="nim-results-count"></span></div>
-    <p class="section-desc">DiffDock v2.2 docking predictions via NVIDIA NIM API. Extended campaign: 224 dockings across 8 targets (ROCK2, MAPK14, LIMK1, SARM1, and more), plus 378-compound NIM batch screen. <a href="#gpu-results" onclick="showSection('gpu-results')" style="color:var(--accent)">View protein binders and AI-generated molecules in GPU Results &rarr;</a></p>
+    <div class="section-header"><h2 class="section-title">DiffDock v2.2 Molecular Docking</h2><span style="font-size:10px;padding:2px 8px;background:#d976061a;color:#d97606;font-weight:600;margin-left:8px;vertical-align:middle">COMPUTATIONAL</span><span class="section-count" id="nim-results-count"></span></div>
+    <p class="section-desc">DiffDock v2.2 docking predictions. Extended campaign: 224 dockings across 8 targets (ROCK2, MAPK14, LIMK1, SARM1, and more), plus 378-compound batch screen. <a href="#gpu-results" onclick="showSection('gpu-results')" style="color:var(--accent)">View protein binders and AI-generated molecules in GPU Results &rarr;</a></p>
     <div id="nim-status-bar" style="margin-bottom:16px"></div>
     <div class="table-wrap"><table><thead><tr><th>#</th><th>Compound</th><th>Target</th><th>Confidence</th><th>Binding Energy</th><th>Pose Rank</th><th>Status</th></tr></thead>
     <tbody id="nim-results-body"><tr><td colspan="7" class="loading">Loading NIM docking results...</td></tr></tbody></table></div>
@@ -3736,8 +3751,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     fullLink.textContent = 'Open in Research Assistant \u2192';
                     fullLink.addEventListener('click', function(e) {
                         e.preventDefault();
-                        showSection('ask');
-                        document.getElementById('ask-query').value = q;
+                        showSection('search');
+                        document.getElementById('chat-input').value = q;
                     });
                     viewFull.appendChild(fullLink);
                     heroAnswer.appendChild(viewFull);
@@ -10901,7 +10916,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             clearEl('gpu-crispr-guides-body').appendChild(el('tr', null, [el('td', {colSpan: 8, className: 'loading', text: 'Guide data not available. Run CRISPR analysis to populate.'})]));
         });
 
-        // --- NVIDIA NIM Compute Results (clickable stat cards) ---
+        // --- Compute Results Overview (clickable stat cards) ---
         fetch(API + '/nims/nim-summary').then(function(r) { return r.json(); }).then(function(data) {
             var overview = clearEl('nim-compute-overview');
             var nimStats = [
@@ -11520,7 +11535,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                             var btn3d = document.createElement('button');
                             btn3d.className = 'view3d-btn';
                             btn3d.title = 'View 3D structure via AlphaFold';
-                            btn3d.innerHTML = '&#9674; 3D';
+                            btn3d.textContent = '◊ 3D';
                             btn3d.style.cssText = 'margin-left:8px;font-size:10px;padding:2px 6px;cursor:pointer;background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:3px';
                             (function(uid, sym) {
                                 btn3d.addEventListener('click', function(e) {
@@ -11629,6 +11644,174 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         });
     }
 
+
+    function loadPockets() {
+        if (loaded.pockets) return; loaded.pockets = true;
+
+        fetch(API + '/pockets/stats').then(function(r) { return r.json(); }).then(function(stats) {
+            var summary = clearEl('pockets-summary');
+            var cards = [
+                {val: stats.total_structures, label: 'Structures Analyzed'},
+                {val: stats.total_pockets, label: 'Total Pockets'},
+                {val: stats.druggability_distribution.highly_druggable, label: 'Highly Druggable'},
+                {val: stats.druggability_distribution.druggable, label: 'Druggable'},
+                {val: stats.avg_top_score, label: 'Avg Top Score'},
+                {val: stats.max_top_score, label: 'Max Score'},
+            ];
+            cards.forEach(function(c) {
+                var card = el('div', {style: 'background:var(--panel);border:1px solid var(--line);padding:12px;border-radius:6px;text-align:center'});
+                var val = el('div', {style: 'font-size:22px;font-weight:700;color:var(--accent)'});
+                val.textContent = c.val;
+                card.appendChild(val);
+                var lbl = el('div', {style: 'font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px'});
+                lbl.textContent = c.label;
+                card.appendChild(lbl);
+                summary.appendChild(card);
+            });
+            setText('pockets-count', stats.total_structures + ' proteins');
+        });
+
+        fetch(API + '/pockets?limit=200').then(function(r) { return r.json(); }).then(function(data) {
+            var body = clearEl('pockets-body');
+            var items = data.items || [];
+            if (!items.length) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: 'No pocket data available.'})]));
+                return;
+            }
+            items.forEach(function(p, idx) {
+                var row = el('tr', {style: 'cursor:pointer'});
+
+                // Protein symbol
+                var symbolTd = td(p.symbol, 'gene');
+                symbolTd.style.fontWeight = '700';
+                row.appendChild(symbolTd);
+
+                // Pocket count
+                row.appendChild(td(String(p.pocket_count)));
+
+                // Top score
+                var scoreColor = p.top_score > 50 ? '#16a34a' : (p.top_score > 20 ? '#d97606' : '#6b7280');
+                row.appendChild(td(String(p.top_score), '', 'font-weight:600;color:' + scoreColor));
+
+                // Top probability
+                var probColor = p.top_probability >= 0.8 ? '#16a34a' : (p.top_probability >= 0.5 ? '#d97606' : '#6b7280');
+                row.appendChild(td(p.top_probability.toFixed(3), '', 'color:' + probColor));
+
+                // Druggable badge
+                var drugTd = el('td');
+                if (p.druggable) {
+                    drugTd.appendChild(badgeEl('Druggable', 'badge-green'));
+                } else if (p.top_probability >= 0.5) {
+                    drugTd.appendChild(badgeEl('Moderate', 'badge-yellow'));
+                } else {
+                    drugTd.appendChild(badgeEl('Low', 'badge-gray'));
+                }
+                row.appendChild(drugTd);
+
+                // Expand button
+                var btnTd = el('td');
+                var btn = el('button', {style: 'font-size:11px;padding:3px 10px;background:var(--panel);color:var(--text-secondary);border:1px solid var(--line);cursor:pointer;border-radius:3px'});
+                btn.textContent = 'Expand';
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    togglePocketDetail(p.symbol, p.key, idx);
+                });
+                btnTd.appendChild(btn);
+                row.appendChild(btnTd);
+
+                body.appendChild(row);
+
+                // Hidden detail row
+                var detailRow = el('tr', {style: 'display:none'});
+                detailRow.id = 'pocket-detail-' + idx;
+                var detailTd = el('td', {colSpan: 6, style: 'padding:12px 16px;background:var(--panel)'});
+                detailRow.appendChild(detailTd);
+                body.appendChild(detailRow);
+            });
+        }).catch(function(e) {
+            clearEl('pockets-body').appendChild(el('tr', null, [el('td', {colSpan: 6, className: 'loading', text: 'Error loading pockets: ' + (e.message || e)})]));
+        });
+    }
+
+    function togglePocketDetail(symbol, key, idx) {
+        var detailRow = document.getElementById('pocket-detail-' + idx);
+        if (!detailRow) return;
+
+        if (detailRow.style.display !== 'none') {
+            detailRow.style.display = 'none';
+            return;
+        }
+        detailRow.style.display = '';
+        var cell = detailRow.firstChild;
+        // Clear previous content
+        while (cell.firstChild) cell.removeChild(cell.firstChild);
+
+        // Loading indicator
+        var loading = el('div', {style: 'color:var(--muted);font-size:12px'});
+        loading.textContent = 'Loading pocket details for ' + symbol + '...';
+        cell.appendChild(loading);
+
+        fetch(API + '/pockets/' + encodeURIComponent(symbol)).then(function(r) { return r.json(); }).then(function(data) {
+            while (cell.firstChild) cell.removeChild(cell.firstChild);
+
+            var structures = data.structures || [];
+            structures.forEach(function(struct) {
+                // Structure header
+                var header = el('div', {style: 'font-weight:700;font-size:13px;margin-bottom:8px;color:var(--text)'});
+                header.textContent = struct.pdb_file + ' — ' + struct.druggability + ' (' + struct.pocket_count + ' pockets)';
+                cell.appendChild(header);
+
+                // Pocket table
+                var tbl = el('table', {style: 'width:100%;font-size:12px;margin-bottom:12px'});
+                var thead = el('thead');
+                var hrow = el('tr');
+                ['Rank', 'Score', 'Probability', 'Residues', 'SAS Points', 'Center (x,y,z)'].forEach(function(h) {
+                    var th = el('th', {style: 'font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:4px 8px;border-bottom:1px solid var(--line);text-align:left'});
+                    th.textContent = h;
+                    hrow.appendChild(th);
+                });
+                thead.appendChild(hrow);
+                tbl.appendChild(thead);
+
+                var tbody = el('tbody');
+                (struct.pockets || []).forEach(function(pocket) {
+                    var prow = el('tr');
+
+                    // Rank
+                    prow.appendChild(td(String(pocket.rank), '', 'font-weight:600'));
+
+                    // Score with color
+                    var sc = pocket.score;
+                    var sColor = sc > 50 ? '#16a34a' : (sc > 20 ? '#d97606' : '#6b7280');
+                    prow.appendChild(td(sc.toFixed(2), '', 'color:' + sColor + ';font-weight:600'));
+
+                    // Probability with color
+                    var pr = pocket.probability;
+                    var pColor = pr >= 0.8 ? '#16a34a' : (pr >= 0.5 ? '#d97606' : '#6b7280');
+                    prow.appendChild(td(pr.toFixed(3), '', 'color:' + pColor));
+
+                    // Residue count
+                    prow.appendChild(td(pocket.residue_count + ' residues', '', 'font-size:11px'));
+
+                    // SAS points
+                    prow.appendChild(td(String(pocket.sas_points)));
+
+                    // Center coordinates
+                    var center = pocket.center || [0, 0, 0];
+                    prow.appendChild(td(center[0].toFixed(1) + ', ' + center[1].toFixed(1) + ', ' + center[2].toFixed(1), '', 'font-family:monospace;font-size:11px'));
+
+                    tbody.appendChild(prow);
+                });
+                tbl.appendChild(tbody);
+                cell.appendChild(tbl);
+            });
+        }).catch(function(e) {
+            while (cell.firstChild) cell.removeChild(cell.firstChild);
+            var err = el('div', {style: 'color:#ef4444;font-size:12px'});
+            err.textContent = 'Failed to load pocket details: ' + (e.message || e);
+            cell.appendChild(err);
+        });
+    }
     function loadSynthesis() {
         if (loaded.synthesis) return; loaded.synthesis = true;
 
@@ -12045,7 +12228,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     function renderNimResultsPage() {
         var body = clearEl('nim-results-body');
         if (nimResultsData.length === 0) {
-            body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No docking results available yet. Results will appear as NIM jobs complete.'})]));
+            body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'No docking results available yet. Results will appear as docking jobs complete.'})]));
             renderPagination('nim-results-pagination', 0, 1, function() {});
             return;
         }
@@ -12075,7 +12258,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
         // Status bar
         var statusBar = clearEl('nim-status-bar');
-        var statusBadge = el('span', {text: 'Running \u2014 700 compound-target docking campaign via NVIDIA NIM'});
+        var statusBadge = el('span', {text: 'Running \u2014 700 compound-target docking campaign'});
         statusBadge.style.cssText = 'display:inline-block;padding:6px 16px;font-size:12px;font-weight:600;background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber)';
         statusBar.appendChild(statusBadge);
 
@@ -12087,7 +12270,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             statusBar = clearEl('nim-status-bar');
             if (results.length > 0) {
                 var completedCount = results.filter(function(r) { return r.status === 'success' || r.status === 'completed'; }).length;
-                var badge2 = el('span', {text: 'DiffDock v2.2 NIM \u2014 ' + data.total + ' dockings, ' + completedCount + ' completed'});
+                var badge2 = el('span', {text: 'DiffDock v2.2 \u2014 ' + data.total + ' dockings, ' + completedCount + ' completed'});
                 badge2.style.cssText = 'display:inline-block;padding:6px 16px;font-size:12px;font-weight:600;background:var(--green-bg);color:var(--green);border:1px solid var(--green)';
                 statusBar.appendChild(badge2);
                 setText('nim-results-count', data.total + ' dockings');
@@ -12103,7 +12286,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         }).catch(function(e) {
             // API not available yet - show placeholder
             var body = clearEl('nim-results-body');
-            body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'NIM docking endpoint not available yet. Results will appear as the docking campaign completes.'})]));
+            body.appendChild(el('tr', null, [el('td', {colSpan: 7, className: 'loading', text: 'Docking endpoint not available yet. Results will appear as the docking campaign completes.'})]));
         });
     }
 
@@ -13110,16 +13293,16 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
         var MILESTONES = [
             { date: 'Mar 15, 2026', title: 'Platform launched', detail: '21 molecular targets, automated PubMed ingestion, 7-dimension target scoring' },
-            { date: 'Mar 16, 2026', title: 'GPU compute added', detail: 'ESM-2 structural prediction, SpliceAI splicing analysis, DiffDock v2.2, Boltz-2 — via NVIDIA NIMs' },
+            { date: 'Mar 16, 2026', title: 'GPU compute added', detail: 'ESM-2 structural prediction, SpliceAI splicing analysis, DiffDock v2.2, Boltz-2' },
             { date: 'Mar 20, 2026', title: 'Simon feedback + unified search', detail: 'First external researcher review, unified evidence search, AI chat interface' },
             { date: 'Mar 21, 2026', title: 'CORO1C double-hit model', detail: '50+ commits in one session, 138 total. CORO1C identified as novel actin pathway node. Cross-paper synthesis live.' },
             { date: 'Mar 22, 2026', title: 'Max Plan sprint', detail: '14K+ claims extracted, 367 AI-generated molecules, 15 protein binders, CORO1C validated in human ALS dataset' }
         ];
 
         var COMPUTE_RESOURCES = [
-            { label: 'NVIDIA NIMs used', value: '11', note: 'DiffDock v2.2, ESM-2, ESMfold, SpliceAI, OpenFold3, GenMol, and more' },
+            { label: 'ML models used', value: '11', note: 'DiffDock v2.2, ESM-2, ESMfold, SpliceAI, OpenFold3, GenMol, and more' },
             { label: 'DiffDock dockings', value: '4,500+', note: 'Structure-based virtual screening across 7 targets' },
-            { label: 'AI-generated molecules', value: '367', note: 'Via NVIDIA GenMol NIM' },
+            { label: 'AI-generated molecules', value: '367', note: 'Via GenMol generative model' },
             { label: 'Protein binders designed', value: '15', note: 'Computational binder design for SMN1, CORO1C, PLS3' },
             { label: 'Protein structures predicted', value: '92', note: 'Via AlphaFold DB + ESMfold NIM' }
         ];
@@ -13807,7 +13990,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         dualtarget: loadDualTarget, twin: loadDigitalTwin,
         labos: loadLabOs, federated: loadFederated, translate: loadTranslation,
         'gpu-results': loadGpuResults,
-        structures: loadStructures, synthesis: loadSynthesis,
+        structures: loadStructures, pockets: loadPockets, synthesis: loadSynthesis,
         synergy: loadSynergy,
         'nim-results': loadNimResults,
         news: loadNews,
@@ -13859,9 +14042,10 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         translate:   {title: 'Translation — SMA Research Platform', desc: 'Translational research pipeline from bench to bedside for SMA therapeutics.'},
         'gpu-results': {title: 'GPU Results — SMA Research Platform', desc: 'GPU-accelerated computation results for molecular docking, CRISPR off-target analysis, and MD simulations.'},
         structures:    {title: 'Protein Structures — SMA Research Platform', desc: '55 predicted 3D structures for SMA research targets via AlphaFold DB v6 and ESMfold NIM. pLDDT confidence scores, druggability assessment, binder design counts, and links to AlphaFold DB and UniProt.'},
+        pockets:     {title: 'Druggable Pockets u2014 SMA Research Platform', desc: 'P2Rank-predicted binding pockets across 58 SMA target protein structures. Druggability scoring, pocket residues, and 3D coordinates for structure-based drug design.'},
         synthesis:     {title: 'Cross-Paper Synthesis — SMA Research Platform', desc: 'Non-obvious connections across thousands of curated SMA claims. Co-occurring targets, shared mechanisms, temporal reinforcements, contradictions, and surprise connections from cross-paper analysis.'},
         synergy:       {title: 'Synergy Predictions — SMA Research Platform', desc: 'AI-predicted drug-target synergy scores combining docking affinity, literature evidence, pathway overlap, and claim support for SMA therapeutic combinations.'},
-        'nim-results': {title: 'NIM Docking Results — SMA Research Platform', desc: '700 compound-target docking predictions via NVIDIA NIM DiffDock v2.2 API. Structure-based virtual screening for SMA drug candidates.'},
+        'nim-results': {title: 'Docking Results — SMA Research Platform', desc: '700 compound-target docking predictions via DiffDock v2.2. Structure-based virtual screening for SMA drug candidates.'},
         news:          {title: 'News & Discoveries — SMA Research Platform', desc: 'Research highlights, computational discoveries, and community discussion on the SMA Research Platform.'},
         research:    {title: 'About — SMA Research Platform', desc: 'About the SMA Research Platform: mission, methodology, team, and open-source commitment.'},
         links:       {title: 'Links — SMA Research Platform', desc: 'Curated links to SMA databases, clinical trial registries, protein interaction networks, and research tools.'},
@@ -14176,7 +14360,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         var btn = document.createElement('button');
         btn.className = 'view3d-btn';
         btn.title = 'View 3D structure via AlphaFold';
-        btn.innerHTML = '&#9674; 3D';
+        btn.textContent = '◊ 3D';
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             window.openNglViewer(uniprotId, targetName, null);

@@ -326,6 +326,35 @@ SMA_QUERIES = [
     # --- Simon / Schoeneberg lab papers (2026-03-20) ---
     '"Simon C" AND "spinal muscular atrophy"',
     '"Schoeneberg" AND ("SMA" OR "motor neuron")',
+
+    # --- Actin cytoskeleton targets (2026-03-24, underrepresented) ---
+    '"ACTG1" AND "motor neuron"',
+    '"ACTR2" AND "neurodegeneration"',
+    '"ABI2" AND "actin" AND "neuron"',
+    '"cofilin-2" AND "motor neuron"',
+    '"CFL2" AND "spinal cord"',
+    '"LIMK1" AND "neurodegeneration"',
+    '"LIMK inhibitor" AND "neuron"',
+    '"profilin-1" AND "ALS"',
+    '"PFN1" AND "motor neuron"',
+    '"actin rod" AND "neurodegenerative"',
+    '"cofilin rod" AND "disease"',
+
+    # --- Selective vulnerability & non-neuronal cells (2026-03-24) ---
+    '"proprioceptive" AND "SMA"',
+    '"Ia afferent" AND "spinal muscular atrophy"',
+    '"selective vulnerability" AND "motor neuron" AND "SMA"',
+    '"astrocyte" AND "SMA" AND "spinal muscular atrophy"',
+    '"microglia" AND "SMA" AND "motor neuron"',
+
+    # --- ROCK / Fasudil pathway (2026-03-24) ---
+    '"ROCK inhibitor" AND "motor neuron disease"',
+    '"Fasudil" AND "neurodegeneration"',
+
+    # --- Underlinked modifier targets (2026-03-24) ---
+    '"STMN2" AND "stathmin" AND "motor neuron"',
+    '"NCALD" AND "neurocalcin" AND "SMA"',
+    '"PLS3" AND "plastin" AND "modifier" AND "SMA"',
 ]
 
 
