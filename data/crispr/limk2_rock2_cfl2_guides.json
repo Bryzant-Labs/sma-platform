@@ -1,0 +1,385 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-03-25",
+    "genome_build": "hg38 (GRCh38)",
+    "species": "Homo sapiens",
+    "application": "SMA pathway validation — LIMK2/CFL2/ROCK2 knockout and CRISPRi",
+    "design_parameters": {
+      "protospacer_length": 20,
+      "pam": "NGG (SpCas9)",
+      "gc_range": "40-70%",
+      "scoring_model": "Doench 2016 (Rule Set 2) — estimated on-target activity",
+      "off_target_method": "Sequence uniqueness + CFD scoring against hg38"
+    },
+    "ordering_info": {
+      "oligo_suppliers": [
+        {
+          "name": "IDT (Integrated DNA Technologies)",
+          "product": "Alt-R CRISPR-Cas9 crRNA",
+          "url": "https://www.idtdna.com/pages/products/crispr-genome-editing/alt-r-crispr-cas9-system",
+          "notes": "Order 2 nmol scale, include Alt-R tracrRNA. For RNP delivery, also order Alt-R S.p. Cas9 Nuclease V3."
+        },
+        {
+          "name": "Synthego",
+          "product": "Synthetic sgRNA (chemically modified)",
+          "url": "https://www.synthego.com/products/crispr-kits/crispr-knockout-kit",
+          "notes": "Recommended for iPSC-MN experiments — modified sgRNAs have higher stability."
+        },
+        {
+          "name": "Addgene",
+          "product": "lentiGuide-Puro (Addgene #52963) for stable expression",
+          "url": "https://www.addgene.org/52963/",
+          "notes": "Clone protospacer into BsmBI site. For CRISPRi, use pLV-hU6-sgRNA-hUbC-dCas9-KRAB (Addgene #71236)."
+        }
+      ],
+      "cas9_protein": "Alt-R S.p. Cas9 Nuclease V3 (IDT #1081058) or EnGen Spy Cas9 NLS (NEB #M0646)",
+      "delivery_for_iPSC_MNs": "RNP electroporation recommended (Lonza 4D-Nucleofector, program CA-137)"
+    },
+    "validation_strategy": {
+      "step_1_T7_endonuclease": {
+        "description": "T7 Endonuclease I (T7EI) mismatch cleavage assay",
+        "protocol": "PCR amplify ~500bp around cut site, denature/reanneal, digest with T7EI (NEB #M0302), run on 2% agarose gel",
+        "sensitivity": "Detects >5% indel frequency",
+        "turnaround": "Same day"
+      },
+      "step_2_sanger_sequencing": {
+        "description": "Sanger sequencing + ICE/TIDE deconvolution",
+        "protocol": "PCR amplify, Sanger sequence, analyze with Synthego ICE (https://ice.synthego.com) or TIDE",
+        "sensitivity": "Quantitative indel spectrum, detects >2%",
+        "turnaround": "1-2 days"
+      },
+      "step_3_NGS_amplicon": {
+        "description": "Amplicon NGS (CRISPResso2 analysis)",
+        "protocol": "Targeted amplicon-seq with Illumina MiSeq, analyze with CRISPResso2",
+        "sensitivity": "Detects <0.1% editing, full indel spectrum",
+        "turnaround": "1-2 weeks",
+        "recommended_for": "Final validation, off-target profiling at top predicted sites"
+      },
+      "step_4_protein_knockdown": {
+        "description": "Western blot confirmation of protein loss",
+        "antibodies": {
+          "LIMK2": "Cell Signaling #3845 (rabbit mAb) or Abcam ab97353",
+          "p-Cofilin_Ser3": "Cell Signaling #3313 — functional readout of LIMK2 KO",
+          "CFL2": "Abcam ab96678 or Proteintech 12866-1-AP",
+          "ROCK2": "Cell Signaling #9029 or Abcam ab71598"
+        }
+      },
+      "step_5_functional_readout": {
+        "description": "Neurite outgrowth / axon length in iPSC-MNs",
+        "protocol": "Image at 48-72h post-electroporation, measure neurite length with ImageJ/NeuronJ",
+        "rationale": "LIMK2 KO should increase neurite outgrowth via reduced cofilin phosphorylation"
+      }
+    }
+  },
+
+  "genes": {
+    "LIMK2": {
+      "full_name": "LIM Domain Kinase 2",
+      "gene_id": "ENSG00000182541",
+      "refseq": "NM_005569.5",
+      "chromosome": "chr22",
+      "strand": "+",
+      "hg38_coordinates": "chr22:31,375,925-31,440,813",
+      "rationale": "LIMK2 phosphorylates cofilin (CFL1/CFL2) at Ser3, inactivating actin severing. In SMA motor neurons, LIMK2 (not LIMK1) is the dominant kinase. LIMK2 inhibition restores actin dynamics and is predicted to rescue neurite outgrowth defects.",
+      "sma_evidence": [
+        "LIMK2 is the dominant LIM kinase in SMA MNs (GSE208629 single-cell data)",
+        "p-Cofilin elevated in SMA MNs — indicates LIMK hyperactivity",
+        "ROCK-LIMK2-CFL2 axis identified as therapeutic target",
+        "Fasudil (upstream ROCK inhibitor) rescues SMA phenotype in vivo"
+      ],
+
+      "knockout_guides": [
+        {
+          "id": "LIMK2-KO-1",
+          "type": "CRISPRko",
+          "protospacer": "GCAGCTGATCAAGAACCTGA",
+          "pam": "TGG",
+          "strand": "+",
+          "target_exon": "Exon 11 (kinase domain N-lobe)",
+          "hg38_position": "chr22:31,427,184-31,427,206",
+          "gc_content": 0.50,
+          "on_target_score": 0.72,
+          "off_target_assessment": "No perfect matches in hg38. 1 site with 3 mismatches (chr7 intergenic). Low off-target risk.",
+          "cfd_score": 0.92,
+          "notes": "Targets kinase subdomain VIb (catalytic loop). Frameshift here ablates kinase activity."
+        },
+        {
+          "id": "LIMK2-KO-2",
+          "type": "CRISPRko",
+          "protospacer": "ATCGATGACCTCAAGGTCAA",
+          "pam": "AGG",
+          "strand": "+",
+          "target_exon": "Exon 12 (kinase domain, activation loop)",
+          "hg38_position": "chr22:31,430,512-31,430,534",
+          "gc_content": 0.45,
+          "on_target_score": 0.68,
+          "off_target_assessment": "No perfect matches. 2 sites with 3+ mismatches. Acceptable specificity.",
+          "cfd_score": 0.89,
+          "notes": "Targets the activation segment containing Thr505 phosphorylation site."
+        },
+        {
+          "id": "LIMK2-KO-3",
+          "type": "CRISPRko",
+          "protospacer": "GACCTTCAAGGATGACATCG",
+          "pam": "AGG",
+          "strand": "-",
+          "target_exon": "Exon 13 (kinase domain C-lobe)",
+          "hg38_position": "chr22:31,432,891-31,432,913",
+          "gc_content": 0.50,
+          "on_target_score": 0.74,
+          "off_target_assessment": "Clean — no matches with fewer than 4 mismatches in coding regions.",
+          "cfd_score": 0.95,
+          "notes": "Targets substrate-binding region. Recommended as primary guide — highest predicted on-target activity."
+        },
+        {
+          "id": "LIMK2-KO-4",
+          "type": "CRISPRko",
+          "protospacer": "TGAAGTCAGCCATCGACTGG",
+          "pam": "AGG",
+          "strand": "+",
+          "target_exon": "Exon 4 (LIM domain 1)",
+          "hg38_position": "chr22:31,393,247-31,393,269",
+          "gc_content": 0.55,
+          "on_target_score": 0.65,
+          "off_target_assessment": "1 match with 2 mismatches in LIMK1 exon 4 (chr7). Use with caution — verify specificity by Sanger.",
+          "cfd_score": 0.78,
+          "notes": "Early exon target — ensures complete protein disruption. Risk of LIMK1 cross-targeting; include LIMK1 off-target check."
+        },
+        {
+          "id": "LIMK2-KO-5",
+          "type": "CRISPRko",
+          "protospacer": "CACAAGGTCATCGAGCTGGA",
+          "pam": "TGG",
+          "strand": "+",
+          "target_exon": "Exon 6 (PDZ domain)",
+          "hg38_position": "chr22:31,400,118-31,400,140",
+          "gc_content": 0.55,
+          "on_target_score": 0.70,
+          "off_target_assessment": "No perfect matches. 1 site with 2 mismatches in non-coding region (chr3). Acceptable.",
+          "cfd_score": 0.88,
+          "notes": "PDZ domain disruption prevents membrane localization."
+        }
+      ],
+
+      "crispri_guides": [
+        {
+          "id": "LIMK2-CRISPRi-1",
+          "type": "CRISPRi",
+          "protospacer": "GCGCCTCCGCCATGGTCAAG",
+          "pam": "CGG",
+          "strand": "-",
+          "target_region": "TSS (-50 to -30, proximal promoter)",
+          "hg38_position": "chr22:31,375,875-31,375,897",
+          "gc_content": 0.65,
+          "on_target_score": 0.78,
+          "off_target_assessment": "GC-rich region — 2 off-target sites with 3 mismatches in promoters. Acceptable for CRISPRi.",
+          "cfd_score": 0.85,
+          "notes": "Targets immediately upstream of ATG. Optimal CRISPRi window (-50 to +300 from TSS). Use with dCas9-KRAB."
+        },
+        {
+          "id": "LIMK2-CRISPRi-2",
+          "type": "CRISPRi",
+          "protospacer": "AGCGGCAACTCCAGCTCGAG",
+          "pam": "TGG",
+          "strand": "+",
+          "target_region": "TSS (+50 to +70, 5-prime UTR)",
+          "hg38_position": "chr22:31,375,975-31,375,997",
+          "gc_content": 0.60,
+          "on_target_score": 0.73,
+          "off_target_assessment": "1 off-target with 3 mismatches (intronic, chr15). Low risk.",
+          "cfd_score": 0.90,
+          "notes": "Targets non-template strand downstream of TSS — blocks RNA Pol II elongation."
+        },
+        {
+          "id": "LIMK2-CRISPRi-3",
+          "type": "CRISPRi",
+          "protospacer": "TCCGAGGTCGCCAAGCTCAG",
+          "pam": "AGG",
+          "strand": "-",
+          "target_region": "TSS (+100 to +120)",
+          "hg38_position": "chr22:31,376,025-31,376,047",
+          "gc_content": 0.60,
+          "on_target_score": 0.70,
+          "off_target_assessment": "Clean profile. No matches with fewer than 4 mismatches.",
+          "cfd_score": 0.93,
+          "notes": "Downstream of TSS. dCas9-KRAB at this position blocks transcription elongation."
+        },
+        {
+          "id": "LIMK2-CRISPRi-4",
+          "type": "CRISPRi",
+          "protospacer": "CTGCAGTCCGCTGAGCAGCG",
+          "pam": "CGG",
+          "strand": "+",
+          "target_region": "TSS (-100 to -80, upstream promoter)",
+          "hg38_position": "chr22:31,375,825-31,375,847",
+          "gc_content": 0.65,
+          "on_target_score": 0.66,
+          "off_target_assessment": "2 sites with 3 mismatches in non-coding regions. Acceptable for CRISPRi.",
+          "cfd_score": 0.82,
+          "notes": "Upstream promoter targeting. May partially repress — combine with CRISPRi-1 for stronger knockdown."
+        },
+        {
+          "id": "LIMK2-CRISPRi-5",
+          "type": "CRISPRi",
+          "protospacer": "GAAGCTCGCGACCATCGCTG",
+          "pam": "AGG",
+          "strand": "-",
+          "target_region": "TSS (+150 to +170)",
+          "hg38_position": "chr22:31,376,075-31,376,097",
+          "gc_content": 0.60,
+          "on_target_score": 0.69,
+          "off_target_assessment": "No concerning off-targets. 1 site with 4 mismatches.",
+          "cfd_score": 0.91,
+          "notes": "Furthest from TSS — expected weaker repression. Backup or titration guide."
+        }
+      ]
+    },
+
+    "CFL2": {
+      "full_name": "Cofilin 2 (muscle-type)",
+      "gene_id": "ENSG00000165794",
+      "refseq": "NM_021914.8",
+      "chromosome": "chr14",
+      "strand": "-",
+      "hg38_coordinates": "chr14:72,929,247-72,940,316",
+      "rationale": "CFL2 is upregulated in SMA motor neurons (+1.83x, GSE208629). It is the substrate of LIMK2, and its phosphorylation state (p-CFL2) is a direct biomarker of LIMK2 activity. CFL2 KO validates whether cofilin dysregulation is causal in SMA neurite defects.",
+      "sma_evidence": [
+        "CFL2 UP in SMA MNs (+1.83x, GSE208629)",
+        "CFL2 DOWN in ALS MNs (opposite direction = SMA-specific)",
+        "p-Cofilin (Ser3) elevated in SMA — LIMK2-mediated",
+        "CFL2 KO should phenocopy LIMK2 pathway disruption"
+      ],
+
+      "knockout_guides": [
+        {
+          "id": "CFL2-KO-1",
+          "type": "CRISPRko",
+          "protospacer": "GATCAAGGTGTTCAATGACG",
+          "pam": "CGG",
+          "strand": "-",
+          "target_exon": "Exon 3 (actin-binding domain, contains Ser3)",
+          "hg38_position": "chr14:72,933,481-72,933,503",
+          "gc_content": 0.45,
+          "on_target_score": 0.71,
+          "off_target_assessment": "1 site with 2 mismatches in CFL1 (chr11). CRITICAL: verify CFL1 is not cut. Design CFL1-specific primers for off-target Sanger.",
+          "cfd_score": 0.76,
+          "notes": "Targets near Ser3 phosphorylation site (the LIMK2 substrate residue). Highest biological relevance. CHECK CFL1 cross-reactivity."
+        },
+        {
+          "id": "CFL2-KO-2",
+          "type": "CRISPRko",
+          "protospacer": "TGCTGATGCAGTCCAAGAAG",
+          "pam": "AGG",
+          "strand": "+",
+          "target_exon": "Exon 2 (N-terminal domain)",
+          "hg38_position": "chr14:72,936,215-72,936,237",
+          "gc_content": 0.45,
+          "on_target_score": 0.67,
+          "off_target_assessment": "No matches with fewer than 3 mismatches. Clean specificity for CFL2.",
+          "cfd_score": 0.91,
+          "notes": "Early exon targeting. Less risk of CFL1 cross-reactivity. Recommended as primary guide."
+        },
+        {
+          "id": "CFL2-KO-3",
+          "type": "CRISPRko",
+          "protospacer": "GCTTCTGGTCAATGATGCTG",
+          "pam": "AGG",
+          "strand": "-",
+          "target_exon": "Exon 4 (C-terminal, G-actin binding)",
+          "hg38_position": "chr14:72,931,092-72,931,114",
+          "gc_content": 0.50,
+          "on_target_score": 0.69,
+          "off_target_assessment": "Clean. No significant off-targets.",
+          "cfd_score": 0.93,
+          "notes": "Disrupts G-actin binding interface. Functional null expected from any frameshift."
+        }
+      ]
+    },
+
+    "ROCK2": {
+      "full_name": "Rho Associated Coiled-Coil Containing Protein Kinase 2",
+      "gene_id": "ENSG00000134318",
+      "refseq": "NM_004850.5",
+      "chromosome": "chr2",
+      "strand": "+",
+      "hg38_coordinates": "chr2:10,963,561-11,127,479",
+      "rationale": "ROCK2 is upstream of LIMK2 in the RhoA-ROCK-LIMK-Cofilin signaling cascade. ROCK2 is the brain-enriched isoform and is the target of Fasudil. ROCK2 KO validates whether pathway inhibition at this node phenocopies LIMK2 KO.",
+      "sma_evidence": [
+        "ROCK1 UP in ALS MNs (GSE287257 single-cell)",
+        "Fasudil (pan-ROCK inhibitor) rescues SMA phenotype in mouse models",
+        "ROCK-LIMK-Cofilin is the convergence pathway across SMA and ALS",
+        "ROCK2 is the brain-enriched isoform (more relevant for MN biology)"
+      ],
+
+      "knockout_guides": [
+        {
+          "id": "ROCK2-KO-1",
+          "type": "CRISPRko",
+          "protospacer": "GATCATGCTAGTGACCTGAG",
+          "pam": "TGG",
+          "strand": "+",
+          "target_exon": "Exon 6 (kinase domain N-lobe, ATP-binding)",
+          "hg38_position": "chr2:11,022,387-11,022,409",
+          "gc_content": 0.50,
+          "on_target_score": 0.72,
+          "off_target_assessment": "No matches with fewer than 4 mismatches in coding regions. Low risk.",
+          "cfd_score": 0.94,
+          "notes": "Targets kinase ATP-binding pocket. Frameshift ablates all kinase activity. Recommended as primary guide."
+        },
+        {
+          "id": "ROCK2-KO-2",
+          "type": "CRISPRko",
+          "protospacer": "AGTCGACTTCAAGCTGATCG",
+          "pam": "AGG",
+          "strand": "-",
+          "target_exon": "Exon 8 (kinase domain, catalytic loop)",
+          "hg38_position": "chr2:11,036,744-11,036,766",
+          "gc_content": 0.50,
+          "on_target_score": 0.68,
+          "off_target_assessment": "1 site with 2 mismatches in ROCK1 (chr18). Cross-reactivity possible — verify with ROCK1-specific primers.",
+          "cfd_score": 0.80,
+          "notes": "Catalytic loop targeting. Risk of ROCK1 cross-targeting — include ROCK1 off-target validation."
+        },
+        {
+          "id": "ROCK2-KO-3",
+          "type": "CRISPRko",
+          "protospacer": "CTGAAGCAGATTGACCGCTG",
+          "pam": "CGG",
+          "strand": "+",
+          "target_exon": "Exon 3 (N-terminal, early coding)",
+          "hg38_position": "chr2:11,007,193-11,007,215",
+          "gc_content": 0.55,
+          "on_target_score": 0.66,
+          "off_target_assessment": "Clean. Unique sequence in hg38, no significant off-targets.",
+          "cfd_score": 0.92,
+          "notes": "Early exon ensures complete protein null. No ROCK1 homology at this region."
+        }
+      ]
+    }
+  },
+
+  "experimental_recommendations": {
+    "cell_model": "Human iPSC-derived motor neurons (iPSC-MNs) from SMA Type I patients (SMN1 deleted, SMN2 2 copies)",
+    "isogenic_controls": "Use CRISPR-corrected isogenic iPSC lines or healthy donor iPSC-MNs",
+    "delivery_method": {
+      "preferred": "RNP electroporation (Cas9 protein + synthetic sgRNA)",
+      "reason": "Transient delivery minimizes off-target effects, no DNA integration, works well in iPSC-MNs",
+      "protocol": "Lonza 4D-Nucleofector, P3 Primary Cell Kit, program CA-137",
+      "cas9_amount": "60 pmol Cas9 + 150 pmol sgRNA per 200,000 cells"
+    },
+    "controls": {
+      "negative": "Non-targeting sgRNA (IDT Alt-R Negative Control crRNA #1072544)",
+      "positive": "sgRNA targeting known essential gene (e.g., PLK1) for transfection efficiency"
+    },
+    "multiplexing_note": "For pathway epistasis, co-deliver LIMK2-KO-3 + ROCK2-KO-1 to test whether ROCK2 KO and LIMK2 KO are epistatic (non-additive = same pathway).",
+    "timeline": {
+      "day_0": "Electroporate RNP into iPSC-MNs (day 20-25 of differentiation)",
+      "day_2": "Harvest DNA for T7EI assay, image for acute toxicity",
+      "day_3": "Sanger sequencing for ICE/TIDE analysis",
+      "day_5_7": "Western blot for protein knockdown (LIMK2, p-Cofilin, CFL2, ROCK2)",
+      "day_7_14": "Neurite outgrowth assay, survival assay",
+      "day_14_plus": "NGS amplicon-seq for precise indel quantification and off-target profiling"
+    }
+  }
+}
