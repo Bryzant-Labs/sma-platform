@@ -578,3 +578,71 @@ async def check_alphafold_complexes():
         "found": len(found),
         "complexes": results,
     }
+
+
+# ---------------------------------------------------------------------------
+# Summary endpoints for GPU Results overview page
+# ---------------------------------------------------------------------------
+
+
+@router.get("/nim-summary")
+async def nim_compute_summary():
+    """Aggregated stats for the GPU Results overview cards."""
+    from ...core.database import fetchrow
+
+    binders = await fetchrow("SELECT COUNT(*) as n FROM designed_binders")
+    molecules = await fetchrow("SELECT COUNT(*) as n FROM designed_molecules")
+    structures_af = await fetchrow(
+        "SELECT COUNT(*) as n FROM protein_structures WHERE source ILIKE '%alphafold%'"
+    )
+    structures_esm = await fetchrow(
+        "SELECT COUNT(*) as n FROM protein_structures WHERE source ILIKE '%esmfold%' OR source ILIKE '%esm%fold%'"
+    )
+    structures_total = await fetchrow("SELECT COUNT(*) as n FROM protein_structures")
+    dockings = await fetchrow("SELECT COUNT(*) as n FROM diffdock_extended")
+    splice = await fetchrow("SELECT COUNT(*) as n FROM splice_scores")
+    screenings = await fetchrow("SELECT COUNT(*) as n FROM molecule_screenings")
+
+    return {
+        "binders_designed": binders["n"] if binders else 0,
+        "molecules_generated": molecules["n"] if molecules else 0,
+        "structures_alphafold": structures_af["n"] if structures_af else 0,
+        "structures_esmfold": structures_esm["n"] if structures_esm else 0,
+        "structures_total": structures_total["n"] if structures_total else 0,
+        "dockings_total": dockings["n"] if dockings else 0,
+        "splice_variants_scored": splice["n"] if splice else 0,
+        "compounds_screened": screenings["n"] if screenings else 0,
+    }
+
+
+@router.get("/binders")
+async def list_binders():
+    """List all designed protein binders."""
+    from ...core.database import fetch
+
+    rows = await fetch(
+        "SELECT * FROM designed_binders ORDER BY plddt_mean DESC NULLS LAST"
+    )
+    return [dict(r) for r in rows]
+
+
+@router.get("/molecules")
+async def list_molecules():
+    """List all AI-generated molecules."""
+    from ...core.database import fetch
+
+    rows = await fetch(
+        "SELECT * FROM designed_molecules ORDER BY qed DESC NULLS LAST LIMIT 200"
+    )
+    return [dict(r) for r in rows]
+
+
+@router.get("/dockings")
+async def list_dockings():
+    """List extended DiffDock campaign results."""
+    from ...core.database import fetch
+
+    rows = await fetch(
+        "SELECT * FROM diffdock_extended ORDER BY best_confidence DESC NULLS LAST LIMIT 300"
+    )
+    return [dict(r) for r in rows]
