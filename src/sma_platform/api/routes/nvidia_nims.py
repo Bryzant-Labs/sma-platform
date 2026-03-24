@@ -15,7 +15,7 @@ Endpoints for running NVIDIA BioNeMo NIM jobs:
 """
 
 import logging
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional
 
@@ -587,62 +587,191 @@ async def check_alphafold_complexes():
 
 @router.get("/nim-summary")
 async def nim_compute_summary():
-    """Aggregated stats for the GPU Results overview cards."""
-    from ...core.database import fetchrow
+    """Aggregated stats for the GPU Results overview cards.
 
-    binders = await fetchrow("SELECT COUNT(*) as n FROM designed_binders")
-    molecules = await fetchrow("SELECT COUNT(*) as n FROM designed_molecules")
-    structures_af = await fetchrow(
-        "SELECT COUNT(*) as n FROM protein_structures WHERE source ILIKE '%alphafold%'"
-    )
-    structures_esm = await fetchrow(
-        "SELECT COUNT(*) as n FROM protein_structures WHERE source ILIKE '%esmfold%' OR source ILIKE '%esm%fold%'"
-    )
-    structures_total = await fetchrow("SELECT COUNT(*) as n FROM protein_structures")
-    dockings = await fetchrow("SELECT COUNT(*) as n FROM diffdock_extended")
-    splice = await fetchrow("SELECT COUNT(*) as n FROM splice_scores")
-    screenings = await fetchrow("SELECT COUNT(*) as n FROM molecule_screenings")
+    Returns field names matching the frontend expectations:
+    - binders_designed, molecules_generated
+    - structures_alphafold, structures_esmfold, structures_boltz2
+    - extended_dockings (= diffdock_extended count)
+    """
+    from ...core.database import fetchval
+
+    binders_n = await fetchval("SELECT COUNT(*) FROM designed_binders") or 0
+    molecules_n = await fetchval("SELECT COUNT(*) FROM designed_molecules") or 0
+    structures_af = await fetchval(
+        "SELECT COUNT(*) FROM protein_structures WHERE source ILIKE '%alphafold%'"
+    ) or 0
+    structures_esm = await fetchval(
+        "SELECT COUNT(*) FROM protein_structures WHERE source ILIKE '%esmfold%' OR source ILIKE '%esm%fold%'"
+    ) or 0
+    structures_boltz = await fetchval(
+        "SELECT COUNT(*) FROM protein_structures WHERE source ILIKE '%boltz%'"
+    ) or 0
+    dockings_n = await fetchval("SELECT COUNT(*) FROM diffdock_extended") or 0
 
     return {
-        "binders_designed": binders["n"] if binders else 0,
-        "molecules_generated": molecules["n"] if molecules else 0,
-        "structures_alphafold": structures_af["n"] if structures_af else 0,
-        "structures_esmfold": structures_esm["n"] if structures_esm else 0,
-        "structures_total": structures_total["n"] if structures_total else 0,
-        "dockings_total": dockings["n"] if dockings else 0,
-        "splice_variants_scored": splice["n"] if splice else 0,
-        "compounds_screened": screenings["n"] if screenings else 0,
+        "binders_designed": binders_n,
+        "molecules_generated": molecules_n,
+        "structures_alphafold": structures_af,
+        "structures_esmfold": structures_esm,
+        "structures_boltz2": structures_boltz,
+        "extended_dockings": dockings_n,
     }
 
 
 @router.get("/binders")
-async def list_binders():
-    """List all designed protein binders."""
+async def list_binders(
+    limit: int = Query(default=100, ge=1, le=500),
+):
+    """List all designed protein binders.
+
+    Returns ``{"binders": [...]}`` with field names the frontend expects:
+    target, design, has_structure (derived from pdb_path).
+    """
     from ...core.database import fetch
 
     rows = await fetch(
-        "SELECT * FROM designed_binders ORDER BY plddt_mean DESC NULLS LAST"
+        "SELECT * FROM designed_binders ORDER BY plddt_mean DESC NULLS LAST LIMIT $1",
+        limit,
     )
-    return [dict(r) for r in rows]
+    binders = []
+    for r in rows:
+        d = dict(r)
+        # Map DB column names to frontend field names
+        d["target"] = d.pop("target_symbol", d.get("target", ""))
+        d["design"] = d.get("design_number") or d.get("design", "")
+        d["has_structure"] = bool(d.get("pdb_path"))
+        binders.append(d)
+    return {"binders": binders}
+
+
+async def _fetch_molecules(limit: int = 200) -> dict:
+    """Shared logic for molecule list endpoints."""
+    from ...core.database import fetch
+
+    rows = await fetch(
+        "SELECT * FROM designed_molecules ORDER BY qed DESC NULLS LAST LIMIT $1",
+        limit,
+    )
+    molecules = []
+    for r in rows:
+        d = dict(r)
+        d["target"] = d.pop("target_symbol", d.get("target", ""))
+        d["bbb"] = d.get("bbb_permeable", False)
+        # Remove large SVG from list response
+        d.pop("svg_2d", None)
+        molecules.append(d)
+    return {"molecules": molecules}
 
 
 @router.get("/molecules")
-async def list_molecules():
-    """List all AI-generated molecules."""
-    from ...core.database import fetch
+async def list_molecules(
+    limit: int = Query(default=200, ge=1, le=1000),
+):
+    """List all AI-generated molecules.
 
-    rows = await fetch(
-        "SELECT * FROM designed_molecules ORDER BY qed DESC NULLS LAST LIMIT 200"
-    )
-    return [dict(r) for r in rows]
+    Returns ``{"molecules": [...]}`` with field names the frontend expects.
+    """
+    return await _fetch_molecules(limit)
+
+
+@router.get("/designed-molecules")
+async def list_designed_molecules(
+    limit: int = Query(default=200, ge=1, le=1000),
+):
+    """Alias for /molecules — the frontend uses this path."""
+    return await _fetch_molecules(limit)
 
 
 @router.get("/dockings")
 async def list_dockings():
-    """List extended DiffDock campaign results."""
+    """List extended DiffDock campaign results (legacy endpoint)."""
     from ...core.database import fetch
 
     rows = await fetch(
         "SELECT * FROM diffdock_extended ORDER BY best_confidence DESC NULLS LAST LIMIT 300"
     )
     return [dict(r) for r in rows]
+
+
+@router.get("/extended-docking")
+async def extended_docking_results(
+    limit: int = Query(default=300, ge=1, le=1000),
+):
+    """Extended DiffDock campaign results for the GPU Results section.
+
+    Returns ``{"total": N, "unique_drugs": N, "unique_targets": N,
+    "avg_confidence": float, "results": [...]}`` with field names
+    matching the frontend: drug (from drug_name), target (from target_symbol).
+    """
+    from ...core.database import fetch, fetchval
+
+    total = await fetchval("SELECT COUNT(*) FROM diffdock_extended") or 0
+    unique_drugs = await fetchval(
+        "SELECT COUNT(DISTINCT drug_name) FROM diffdock_extended"
+    ) or 0
+    unique_targets = await fetchval(
+        "SELECT COUNT(DISTINCT target_symbol) FROM diffdock_extended"
+    ) or 0
+    avg_conf = await fetchval(
+        "SELECT ROUND(AVG(best_confidence)::numeric, 4) FROM diffdock_extended"
+    )
+
+    rows = await fetch(
+        "SELECT * FROM diffdock_extended ORDER BY best_confidence DESC NULLS LAST LIMIT $1",
+        limit,
+    )
+    results = []
+    for r in rows:
+        d = dict(r)
+        d["drug"] = d.pop("drug_name", d.get("drug", ""))
+        d["target"] = d.pop("target_symbol", d.get("target", ""))
+        results.append(d)
+
+    return {
+        "total": total,
+        "unique_drugs": unique_drugs,
+        "unique_targets": unique_targets,
+        "avg_confidence": float(avg_conf) if avg_conf is not None else None,
+        "results": results,
+    }
+
+
+@router.get("/protein-structures")
+async def list_protein_structures(
+    limit: int = Query(default=200, ge=1, le=500),
+):
+    """List predicted protein structures for the GPU Results section.
+
+    Returns ``{"structures": [...]}`` with field names the frontend expects:
+    target (from target_symbol/symbol), method (from method_label/source),
+    has_pdb (derived from pdb_path or alphafold_url).
+    """
+    from ...core.database import fetch
+
+    rows = await fetch(
+        "SELECT * FROM protein_structures ORDER BY plddt_mean DESC NULLS LAST LIMIT $1",
+        limit,
+    )
+    structures = []
+    for r in rows:
+        d = dict(r)
+        sym = d.pop("target_symbol", d.get("symbol", d.get("target", "")))
+        d["target"] = sym
+        # Derive method from source if not present
+        src = d.get("source", "") or ""
+        if "method" not in d or not d["method"]:
+            if "alphafold" in src.lower():
+                d["method"] = "AlphaFold2"
+            elif "esmfold" in src.lower() or "esm" in src.lower():
+                d["method"] = "ESMFold"
+            elif "boltz" in src.lower():
+                d["method"] = "Boltz-2"
+            elif "rfdiffusion" in src.lower():
+                d["method"] = "RFdiffusion"
+            else:
+                d["method"] = src or "Unknown"
+        d["has_pdb"] = bool(d.get("pdb_path") or d.get("alphafold_url"))
+        d["uniprot_id"] = d.get("uniprot_id", "")
+        structures.append(d)
+    return {"structures": structures}

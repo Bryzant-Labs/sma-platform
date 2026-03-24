@@ -105,7 +105,7 @@ async def trigger_biorxiv_ingestion(days_back: int = Query(default=7, ge=1, le=9
                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                    ON CONFLICT (source_type, external_id) DO UPDATE
                    SET title = excluded.title, abstract = excluded.abstract, updated_at = CURRENT_TIMESTAMP""",
-                "biorxiv",
+                "preprint",
                 p["doi"],
                 p["title"],
                 p["authors"] if isinstance(p["authors"], list) else [],

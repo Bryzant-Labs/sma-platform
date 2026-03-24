@@ -83,6 +83,7 @@ async def _ensure_tables() -> None:
 # ---------------------------------------------------------------------------
 
 def _guide_row(row) -> dict:
+    meta = row["metadata"] if isinstance(row["metadata"], dict) else json.loads(row["metadata"] or "{}")
     return {
         "id": row["id"],
         "strategy_id": row["strategy_id"],
@@ -92,11 +93,17 @@ def _guide_row(row) -> dict:
         "position": row["position"],
         "region": row["region"],
         "gc_pct": row["gc_pct"],
+        # Frontend compat aliases
+        "gc_content": row["gc_pct"],
+        "specificity_score": meta.get("specificity_score"),
+        "off_target_count": meta.get("off_target_count", 0),
+        "target_gene": meta.get("target_gene", "SMN2"),
+        "strategy": meta.get("strategy", "SpCas9"),
         "on_target_score": row["on_target_score"],
         "cfd_score": row["cfd_score"],
         "motifs": list(row["motifs"]) if row["motifs"] else [],
         "notes": row["notes"],
-        "metadata": row["metadata"] if isinstance(row["metadata"], dict) else json.loads(row["metadata"] or "{}"),
+        "metadata": meta,
     }
 
 
@@ -197,6 +204,8 @@ async def get_crispr_guides(
     for row in rows:
         d = _guide_row(row)
         d["strategy_name"] = row["strategy_name"]
+        # Frontend reads g.strategy for filter/display
+        d["strategy"] = row["strategy_name"] or d.get("strategy", "SpCas9")
         guides.append(d)
 
     return {
