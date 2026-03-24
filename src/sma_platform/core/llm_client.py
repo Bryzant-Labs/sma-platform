@@ -119,20 +119,32 @@ async def _call_anthropic(api_key: str, prompt: str, max_tokens: int, model: str
 
 
 async def _call_gemini(api_key: str, prompt: str, max_tokens: int, model: str) -> str | None:
-    """Call Google Gemini API."""
+    """Call Google Gemini API with retry on 429."""
+    import asyncio
+
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
-    async with httpx.AsyncClient(timeout=90.0) as client:
-        resp = await client.post(
-            url,
-            headers={"Content-Type": "application/json"},
-            json={
-                "contents": [{"parts": [{"text": prompt}]}],
-                "generationConfig": {
-                    "maxOutputTokens": max_tokens,
-                    "temperature": 0.1,
+    delays = [15, 30, 45, 60, 75]
+
+    for attempt in range(len(delays) + 1):
+        async with httpx.AsyncClient(timeout=90.0) as client:
+            resp = await client.post(
+                url,
+                headers={"Content-Type": "application/json"},
+                json={
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {
+                        "maxOutputTokens": max_tokens,
+                        "temperature": 0.1,
+                    },
                 },
-            },
-        )
+            )
+        if resp.status_code == 429 and attempt < len(delays):
+            delay = delays[attempt]
+            logger.warning("Gemini 429 rate limit, retry %d/%d in %ds", attempt + 1, len(delays), delay)
+            await asyncio.sleep(delay)
+            continue
+        break
+
     if resp.status_code != 200:
         logger.error("Gemini API error %d: %s", resp.status_code, resp.text[:200])
         return None
