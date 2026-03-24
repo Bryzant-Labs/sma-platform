@@ -1,0 +1,2639 @@
+{
+  "query_proteins": [
+    "CFL2",
+    "LIMK2",
+    "PFN2",
+    "RAC1",
+    "ROCK1",
+    "ROCK2"
+  ],
+  "network_stats": {
+    "total_unique_partners": 148,
+    "total_unique_edges": 216,
+    "total_hub_nodes": 52,
+    "hubs_in_existing_targets": 2,
+    "new_hub_discoveries": 50,
+    "new_druggable_hubs": 19,
+    "existing_targets_validated": 6,
+    "total_new_partners": 142
+  },
+  "hub_nodes": [
+    {
+      "gene": "RHOA",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.999,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "LIMK1",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.998,
+      "in_existing_targets": true,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "CFL1",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.995,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RHOC",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.954,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "RND3",
+      "n_query_proteins": 3,
+      "query_proteins": [
+        "CFL2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.999,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "CDC42",
+      "n_query_proteins": 3,
+      "query_proteins": [
+        "CFL2",
+        "RAC1",
+        "ROCK1"
+      ],
+      "best_score": 0.935,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "PAK1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.999,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "WASL",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "RAC1"
+      ],
+      "best_score": 0.997,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PPP1R12A",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.996,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "ACTB",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "PFN2"
+      ],
+      "best_score": 0.996,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ACTG1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "PFN2"
+      ],
+      "best_score": 0.996,
+      "in_existing_targets": true,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CTTN",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "RAC1"
+      ],
+      "best_score": 0.996,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL2",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.984,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PAK2",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.983,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "VASP",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "PFN2"
+      ],
+      "best_score": 0.969,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SLC9A1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.966,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL12B",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.958,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PTEN",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.954,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "MYL9",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.953,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CTNNB1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.953,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "GAB1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.95,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RHOB",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.946,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "PAK4",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2"
+      ],
+      "best_score": 0.943,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "NFKB1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.936,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PAK6",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.934,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PAK3",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.931,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "MYL12A",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.93,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PPP1CB",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.928,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "MAPK3",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.927,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PPP1CC",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.926,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "VAV2",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "RAC1",
+        "ROCK1"
+      ],
+      "best_score": 0.926,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RELA",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.925,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PPP1CA",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.923,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "MAPK1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.922,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PPP1R12C",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.921,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYLPF",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.919,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP5K1A",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.916,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIKFYVE",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.915,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL7",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.915,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL10",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.913,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP4K2B",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.913,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL5",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.911,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP5K1C",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.907,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP4K2C",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.903,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP4K2A",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.903,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP5K1B",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.902,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "WAS",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "RAC1"
+      ],
+      "best_score": 0.898,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SRC",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "RAC1"
+      ],
+      "best_score": 0.856,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "FMNL1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "PFN2",
+        "RAC1"
+      ],
+      "best_score": 0.847,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RND1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.796,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "ARHGEF1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.795,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RHOBTB1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.758,
+      "in_existing_targets": false,
+      "druggability": [
+        "unknown"
+      ]
+    }
+  ],
+  "new_druggable_targets": [
+    {
+      "gene": "RHOA",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.999,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "RHOC",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.954,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "RND3",
+      "n_query_proteins": 3,
+      "query_proteins": [
+        "CFL2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.999,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "CDC42",
+      "n_query_proteins": 3,
+      "query_proteins": [
+        "CFL2",
+        "RAC1",
+        "ROCK1"
+      ],
+      "best_score": 0.935,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "PAK1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.999,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PPP1R12A",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.996,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "PAK2",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.983,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PTEN",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.954,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "RHOB",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.946,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "PAK4",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2"
+      ],
+      "best_score": 0.943,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PAK6",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.934,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PAK3",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.931,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PPP1CB",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.928,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "MAPK3",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.927,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PPP1CC",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.926,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "PPP1CA",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.923,
+      "in_existing_targets": false,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "MAPK1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.922,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "SRC",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "RAC1"
+      ],
+      "best_score": 0.856,
+      "in_existing_targets": false,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "RND1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.796,
+      "in_existing_targets": false,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    }
+  ],
+  "all_new_partners": [
+    {
+      "gene": "RHOA",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.999,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "CFL1",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.995,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RHOC",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.954,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "RND3",
+      "n_query_proteins": 3,
+      "query_proteins": [
+        "CFL2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.999,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "CDC42",
+      "n_query_proteins": 3,
+      "query_proteins": [
+        "CFL2",
+        "RAC1",
+        "ROCK1"
+      ],
+      "best_score": 0.935,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "PAK1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.999,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "WASL",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "RAC1"
+      ],
+      "best_score": 0.997,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PPP1R12A",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.996,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "ACTB",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "PFN2"
+      ],
+      "best_score": 0.996,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CTTN",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "RAC1"
+      ],
+      "best_score": 0.996,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL2",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.984,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PAK2",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.983,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "VASP",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "PFN2"
+      ],
+      "best_score": 0.969,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SLC9A1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.966,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL12B",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.958,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PTEN",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.954,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "MYL9",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.953,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CTNNB1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.953,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "GAB1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.95,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RHOB",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.946,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "PAK4",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2"
+      ],
+      "best_score": 0.943,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "NFKB1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.936,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PAK6",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.934,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PAK3",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "LIMK2",
+        "RAC1"
+      ],
+      "best_score": 0.931,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "MYL12A",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.93,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PPP1CB",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.928,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "MAPK3",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.927,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PPP1CC",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.926,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "VAV2",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "RAC1",
+        "ROCK1"
+      ],
+      "best_score": 0.926,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RELA",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.925,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PPP1CA",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.923,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "MAPK1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.922,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PPP1R12C",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.921,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYLPF",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.919,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP5K1A",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.916,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIKFYVE",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.915,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL7",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.915,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL10",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.913,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP4K2B",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.913,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYL5",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.911,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP5K1C",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.907,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP4K2C",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.903,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP4K2A",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.903,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PIP5K1B",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.902,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "WAS",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "RAC1"
+      ],
+      "best_score": 0.898,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SRC",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "RAC1"
+      ],
+      "best_score": 0.856,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "FMNL1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "PFN2",
+        "RAC1"
+      ],
+      "best_score": 0.847,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RND1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.796,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "ARHGEF1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.795,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RHOBTB1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.758,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "NCF2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.999,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SSH1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.995,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "HCLS1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.995,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "TRIO",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.994,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ARHGDIA",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.994,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "WDR1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.993,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ARFIP2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.993,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PREX1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.993,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CYFIP1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.993,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "NCKAP1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.99,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SSH3",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.989,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "IQGAP1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.988,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SSH2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.987,
+      "druggability": [
+        "phosphatase"
+      ]
+    },
+    {
+      "gene": "NCF1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.976,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "DOCK1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.975,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "VAV1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.972,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ACTA1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.967,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PFN4",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.966,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "TIAM1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.966,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "BRK1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.964,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "BAIAP2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.964,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PFN3",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.959,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "KALRN",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.959,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ARHGEF7",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.957,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SHROOM2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK1"
+      ],
+      "best_score": 0.951,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "DOCK2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.94,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "COLEC12",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "LIMK2"
+      ],
+      "best_score": 0.926,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "NCF4",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.926,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "DSTN",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.921,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "FHOD1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK2"
+      ],
+      "best_score": 0.919,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "IQGAP2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.919,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RAC3",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.918,
+      "druggability": [
+        "GTPase/GPCR"
+      ]
+    },
+    {
+      "gene": "PAK5",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "LIMK2"
+      ],
+      "best_score": 0.912,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "PARD6A",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.91,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CAV1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.908,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "WASF1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.906,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ACTN1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.9,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PDXP",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.899,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "FLNA",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.888,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CYBB",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.888,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ENAH",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "PFN2"
+      ],
+      "best_score": 0.885,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "WASF2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.882,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ARHGDIB",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.878,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MAPK8",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.877,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "CYFIP2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.871,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ARHGEF18",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK2"
+      ],
+      "best_score": 0.87,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ARHGEF18-2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK2"
+      ],
+      "best_score": 0.87,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "HACE1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.866,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CYBA",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.865,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "AKT1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.865,
+      "druggability": [
+        "kinase"
+      ]
+    },
+    {
+      "gene": "GSN",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.864,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ARHGAP1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.855,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SCIN",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.846,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "WIPF1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.842,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CORO1A",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.842,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "EVL",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "PFN2"
+      ],
+      "best_score": 0.842,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "FLNC",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.841,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CORO7-PAM16",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.84,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RAP1GDS1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.84,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SOS1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.84,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ELMO1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.839,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CHN2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.835,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "SH3PXD2A",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.832,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "TWF1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.831,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "VCL",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.83,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "NCK1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.828,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "GIT1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.826,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MCF2L",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.825,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "KBTBD13",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.821,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "FLNB",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.821,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CLCN5",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.809,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "TSG101",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK1"
+      ],
+      "best_score": 0.805,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ARPC1A",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "PFN2"
+      ],
+      "best_score": 0.799,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "HDAC1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "PFN2"
+      ],
+      "best_score": 0.795,
+      "druggability": [
+        "enzyme"
+      ]
+    },
+    {
+      "gene": "NPM1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK2"
+      ],
+      "best_score": 0.79,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PXN",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.788,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYH9",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK1"
+      ],
+      "best_score": 0.784,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "HSP90AA1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK1"
+      ],
+      "best_score": 0.784,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "RNF185",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "LIMK2"
+      ],
+      "best_score": 0.778,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "NAA80",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "PFN2"
+      ],
+      "best_score": 0.763,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "BRCA2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK2"
+      ],
+      "best_score": 0.759,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "FSCN1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.758,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "CAPZA2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.753,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "TWF2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.745,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "IPO9",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.739,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ARHGAP35",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.736,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "KRIT1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK2"
+      ],
+      "best_score": 0.732,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "MYC",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK1"
+      ],
+      "best_score": 0.728,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "DIAPH1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "PFN2"
+      ],
+      "best_score": 0.724,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "ADD2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK1"
+      ],
+      "best_score": 0.712,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "HIF1A",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK1"
+      ],
+      "best_score": 0.711,
+      "druggability": [
+        "unknown"
+      ]
+    },
+    {
+      "gene": "PDCD10",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK2"
+      ],
+      "best_score": 0.709,
+      "druggability": [
+        "unknown"
+      ]
+    }
+  ],
+  "existing_targets_in_network": [
+    {
+      "gene": "LIMK1",
+      "n_query_proteins": 4,
+      "query_proteins": [
+        "CFL2",
+        "LIMK2",
+        "ROCK1",
+        "ROCK2"
+      ],
+      "best_score": 0.998
+    },
+    {
+      "gene": "ACTG1",
+      "n_query_proteins": 2,
+      "query_proteins": [
+        "CFL2",
+        "PFN2"
+      ],
+      "best_score": 0.996
+    },
+    {
+      "gene": "PFN1",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.967
+    },
+    {
+      "gene": "ABI2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "RAC1"
+      ],
+      "best_score": 0.966
+    },
+    {
+      "gene": "CASP3",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "ROCK1"
+      ],
+      "best_score": 0.959
+    },
+    {
+      "gene": "ACTR2",
+      "n_query_proteins": 1,
+      "query_proteins": [
+        "CFL2"
+      ],
+      "best_score": 0.936
+    }
+  ]
+}
