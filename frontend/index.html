@@ -14384,12 +14384,27 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // ── Render a SMILES string into a <canvas> element ───────────────────────
     function renderSmiles(smiles, canvas) {
         var drawer = getSmilesDrawer();
-        if (!drawer || !smiles || !canvas) return;
+        if (!drawer || !smiles || !canvas) {
+            showSmilesFallback(canvas, smiles);
+            return;
+        }
         try {
             SmilesDrawer.parse(smiles, function(tree) {
                 drawer.draw(tree, canvas, 'dark');
-            }, function() { /* parse error — leave blank */ });
-        } catch(e) { /* silently skip invalid SMILES */ }
+            }, function() { showSmilesFallback(canvas, smiles); });
+        } catch(e) { showSmilesFallback(canvas, smiles); }
+    }
+    function showSmilesFallback(canvas, smiles) {
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.fillStyle = '#1a1f2e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        var text = smiles && smiles.length > 30 ? smiles.substring(0, 30) + '...' : (smiles || 'N/A');
+        ctx.fillText(text, canvas.width / 2, canvas.height / 2);
     }
 
     // ── Create a canvas wrapped in the dark container ────────────────────────
