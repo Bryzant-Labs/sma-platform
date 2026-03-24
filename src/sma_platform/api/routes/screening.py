@@ -302,3 +302,60 @@ async def get_top_1000_candidates(
         "by_target": by_target,
         "candidates": candidates,
     }
+
+
+@router.get("/screen/ai-candidates")
+async def get_ai_candidates(
+    limit: int = Query(default=50, ge=1, le=200),
+):
+    """AI-designed drug candidates ranked by dual-target docking potential.
+
+    Joins designed_molecules with diffdock_extended to return candidates
+    that have positive DiffDock confidence scores, ordered by best_confidence.
+    """
+    rows = await fetch(
+        """SELECT dm.smiles, dm.target_symbol, dm.qed, dm.mw AS dm_mw, dm.logp,
+                  dm.bbb_permeable, dm.method, dm.score,
+                  de.best_confidence AS diffdock_confidence,
+                  de.avg_confidence, de.num_poses,
+                  de.drug_name
+           FROM designed_molecules dm
+           INNER JOIN diffdock_extended de
+                ON dm.smiles = de.smiles AND dm.target_symbol = de.target_symbol
+           WHERE de.best_confidence > 0
+           ORDER BY de.best_confidence DESC
+           LIMIT $1""",
+        limit,
+    )
+
+    candidates = []
+    for i, r in enumerate(rows):
+        d = dict(r)
+        name = d.get("drug_name") or d.get("smiles", "")[:40]
+        candidates.append({
+            "rank": i + 1,
+            "compound": name,
+            "target": d.get("target_symbol", ""),
+            "diffdock_confidence": round(float(d["diffdock_confidence"]), 3) if d.get("diffdock_confidence") else None,
+            "avg_confidence": round(float(d["avg_confidence"]), 3) if d.get("avg_confidence") else None,
+            "num_poses": d.get("num_poses"),
+            "qed": round(float(d["qed"]), 3) if d.get("qed") else None,
+            "mw": round(float(d["dm_mw"]), 1) if d.get("dm_mw") else None,
+            "logp": round(float(d["logp"]), 2) if d.get("logp") else None,
+            "bbb_permeable": bool(d.get("bbb_permeable")),
+            "method": d.get("method", ""),
+            "score": round(float(d["score"]), 3) if d.get("score") else None,
+            "smiles": (d.get("smiles") or "")[:100],
+        })
+
+    # Summarize by target
+    by_target: dict[str, int] = {}
+    for c in candidates:
+        t = c["target"]
+        by_target[t] = by_target.get(t, 0) + 1
+
+    return {
+        "total": len(candidates),
+        "by_target": by_target,
+        "candidates": candidates,
+    }
