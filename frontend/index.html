@@ -3004,6 +3004,7 @@
             <option value="">All confidence</option>
             <option value="85">High (&ge;85)</option>
             <option value="70">Moderate (&ge;70)</option>
+            <option value="low">Low (&lt;70)</option>
         </select>
         <span id="structures-filter-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
     </div>
@@ -11666,11 +11667,16 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var q = (document.getElementById('structures-search') || {}).value || '';
                 q = q.toLowerCase();
                 var srcFilter = (document.getElementById('structures-source-filter') || {}).value || '';
-                var plddtMin = parseFloat((document.getElementById('structures-plddt-filter') || {}).value || '0') || 0;
+                var plddtVal = (document.getElementById('structures-plddt-filter') || {}).value || '';
                 var filtered = allRows.filter(function(s) {
                     if (q && (s.symbol || '').toLowerCase().indexOf(q) < 0 && (s.uniprot_id || '').toLowerCase().indexOf(q) < 0) return false;
                     if (srcFilter && (s.source || '').indexOf(srcFilter) < 0) return false;
-                    if (plddtMin > 0 && (s.plddt === null || s.plddt < plddtMin)) return false;
+                    if (plddtVal === 'low') {
+                        if (s.plddt !== null && s.plddt >= 70) return false;
+                    } else if (plddtVal) {
+                        var plddtMin = parseFloat(plddtVal) || 0;
+                        if (plddtMin > 0 && (s.plddt === null || s.plddt < plddtMin)) return false;
+                    }
                     return true;
                 });
                 renderRows(filtered);
