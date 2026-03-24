@@ -280,6 +280,7 @@
     <!-- 2D Molecule Rendering -->
     <!-- 3D Protein Structure Viewer -->
     <script src="https://unpkg.com/ngl@2.3.0/dist/ngl.js"></script>
+    <script src="https://unpkg.com/smiles-drawer@2.0.3/dist/smiles-drawer.min.js"></script>
     <style>
         :root {
             --bg: #fafafa;
@@ -1010,7 +1011,7 @@
 <section class="section active" id="mission">
     <div class="mission-hero">
         <h2>Accelerating SMA Drug Discovery Through Computational Science</h2>
-        <p class="hero-sub" id="hero-sub">We combine molecular screening, evidence analysis, and computational biology to identify and validate new therapeutic candidates for SMA &mdash; from target discovery to drug-likeness prediction</p>
+        <p class="hero-sub" id="hero-sub">We combine molecular screening, evidence analysis, and computational biology to identify and validate new therapeutic candidates for SMA &mdash; featuring our ROCK-LIMK2-CFL2 axis discovery across 5/6 independent research streams</p>
     </div>
     <div class="hero-ask">
         <div class="hero-ask-label">Search the Evidence Graph</div>
@@ -1019,10 +1020,10 @@
             <button id="hero-ask-btn">Search</button>
         </div>
         <div class="hero-ask-examples">
-            <span class="hero-ask-ex" data-q="What is the role of PLS3 in SMA?">PLS3 in SMA</span>
+            <span class="hero-ask-ex" data-q="What is the ROCK-LIMK2-CFL2 actin axis in SMA?">ROCK-LIMK2-CFL2 axis</span>
             <span class="hero-ask-ex" data-q="Compare nusinersen and risdiplam mechanisms">Nusinersen vs Risdiplam</span>
             <span class="hero-ask-ex" data-q="What are promising SMN-independent targets?">SMN-independent targets</span>
-            <span class="hero-ask-ex" data-q="What biomarkers predict SMA treatment response?">SMA biomarkers</span>
+            <span class="hero-ask-ex" data-q="What is the actin rod pathway in SMA motor neurons?">Actin rod pathway</span>
         </div>
         <div id="hero-ask-result" class="hero-ask-result" style="display:none">
             <div id="hero-ask-loading" class="loader" style="display:none">Searching evidence base...</div>
@@ -8867,7 +8868,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     function loadPrime() {
         if (loaded.prime) return; loaded.prime = true;
-        fetch(API + '/prime-edit/feasibility').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/prime-editing/feasibility').then(function(r) { return r.json(); }).then(function(data) {
             var designsDiv = clearEl('prime-designs');
             var designs = data.designs || [];
             var grid = el('div');
@@ -9161,7 +9162,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             for (var i = 0; i < sigs.length; i++) {
                 (function(s) {
                     var row = el('tr', {className: 'adv-row'}, [
-                        td(s.name, null, 'font-weight:600;font-size:11px'),
+                        td(s.signal_name, null, 'font-weight:600;font-size:11px'),
                         tdBadge(s.molecule_type, 'badge-blue'),
                         td(s.source),
                         td(s.target, null, 'font-size:10px'),
@@ -9178,9 +9179,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var detInner = el('div', {className: 'adv-detail-inner'});
 
                     // Full mechanism block
-                    if (s.mechanism) {
+                    if (s.normal_function) {
                         detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'RETROGRADE SIGNALING MECHANISM'}));
-                        detInner.appendChild(el('div', {text: s.mechanism, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
+                        detInner.appendChild(el('div', {text: s.normal_function, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
                     }
 
                     // SMA context with colour
@@ -9243,11 +9244,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             for (var i = 0; i < cargo.length; i++) {
                 (function(c) {
                     var row = el('tr', {className: 'adv-row'}, [
-                        td(c.name, null, 'font-weight:600;font-size:11px'),
+                        td(c.cargo_name, null, 'font-weight:600;font-size:11px'),
                         tdBadge(c.cargo_type, 'badge-blue'),
                         td(c.function, null, 'font-size:10px'),
-                        td(c.sma_relevance, null, 'font-size:10px'),
-                        td(String(c.delivery_feasibility), 'mono', 'font-weight:700')
+                        td(c.sma_context, null, 'font-size:10px'),
+                        td(String(c.feasibility), 'mono', 'font-weight:700')
                     ]);
                     var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
                     row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
@@ -9260,7 +9261,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     // Therapeutic rationale block
                     detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'THERAPEUTIC RATIONALE'}));
                     var rationaleText = document.createElement('div');
-                    rationaleText.textContent = (c.function || 'Unknown function') + (c.sma_relevance ? '. SMA context: ' + c.sma_relevance : '') + '. Extracellular vesicles (EVs) are natural nanocarriers that can be engineered to deliver therapeutic cargo across biological barriers including the BBB.';
+                    rationaleText.textContent = (c.function || 'Unknown function') + (c.sma_context ? '. SMA context: ' + c.sma_context : '') + '. Extracellular vesicles (EVs) are natural nanocarriers that can be engineered to deliver therapeutic cargo across biological barriers including the BBB.';
                     rationaleText.style.cssText = 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6';
                     detInner.appendChild(rationaleText);
 
@@ -9277,12 +9278,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     deliveryText.style.cssText = 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6';
                     detInner.appendChild(deliveryText);
 
-                    var feasVal = parseFloat(c.delivery_feasibility) || 0;
+                    var feasVal = parseFloat(c.feasibility) || 0;
                     var feasColor = feasVal >= 0.7 ? 'var(--green)' : feasVal >= 0.4 ? 'var(--accent)' : 'var(--muted)';
                     var feasRow = el('div', {className: 'adv-detail-row'});
                     feasRow.appendChild(el('span', {className: 'adv-detail-label', text: 'Delivery Feasibility:'}));
                     var feasSpan = document.createElement('span');
-                    feasSpan.textContent = String(c.delivery_feasibility);
+                    feasSpan.textContent = String(c.feasibility);
                     feasSpan.style.cssText = 'font-weight:700;color:' + feasColor;
                     feasRow.appendChild(feasSpan);
                     detInner.appendChild(feasRow);
@@ -9575,7 +9576,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     }
                     var row = el('tr', {className: 'adv-row'}, [
                         td(c.gene, 'mono', 'font-weight:600;font-size:11px'),
-                        td(c.name, null, 'font-size:11px'),
+                        td(c.channel_name, null, 'font-size:11px'),
                         tdBadge(c.channel_type, 'badge-blue'),
                         td(c.vmem_role),
                         tdBadge(c.sma_expression, c.sma_expression === 'downregulated' ? 'badge-red' : c.sma_expression === 'upregulated' ? 'badge-green' : ''),
@@ -9590,14 +9591,14 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var detInner = el('div', {className: 'adv-detail-inner'});
 
                     // Mechanism of action in SMA (highlighted block)
-                    if (c.mechanism) {
+                    if (c.sma_impact) {
                         detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'MECHANISM IN SMA MOTOR NEURONS'}));
-                        detInner.appendChild(el('div', {text: c.mechanism, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
+                        detInner.appendChild(el('div', {text: c.sma_impact, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
                     }
 
                     // Key fields
                     var fields = [
-                        ['Gene', c.gene], ['Channel', c.name || '-'], ['Type', c.channel_type || '-'],
+                        ['Gene', c.gene], ['Channel', c.channel_name || '-'], ['Type', c.channel_type || '-'],
                         ['Vmem Role', c.vmem_role || '-'], ['SMA Expression', c.sma_expression || '-']
                     ];
                     if (c.conductance) { fields.push(['Conductance', c.conductance]); }
@@ -9656,11 +9657,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
                     var h = document.createElement('h4');
                     h.appendChild(toggle);
-                    h.appendChild(document.createTextNode(' ' + v.state));
+                    h.appendChild(document.createTextNode(' ' + v.state_name));
                     h.style.cssText = 'margin:0 0 8px;font-size:12px';
                     card.appendChild(h);
                     var mv = document.createElement('span');
-                    mv.textContent = v.vmem_range_mv;
+                    mv.textContent = v.vmem_range;
                     mv.className = 'badge badge-blue';
                     mv.style.cssText = 'display:inline-block;margin-bottom:8px';
                     card.appendChild(mv);
@@ -9673,7 +9674,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var detInner = el('div', {className: 'adv-detail-inner'});
                     detInner.style.cssText = 'padding:8px;background:var(--bg);border:1px solid var(--line)';
                     var fields = [
-                        ['State', v.state], ['Vmem Range', v.vmem_range_mv],
+                        ['State', v.state_name], ['Vmem Range', v.vmem_range],
                         ['Prevalence in SMA', (v.prevalence_in_sma * 100).toFixed(0) + '%'],
                         ['Phenotype', v.phenotype || '-'],
                         ['SMA Relevance', v.sma_relevance || '-']
@@ -14610,8 +14611,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     // ── Init ─────────────────────────────────────────────────────────────────
     function init() {
-        // observeScreeningBody(); // DISABLED: SmilesDrawer not rendering
-        // observeGpuMolecules(); // DISABLED: SmilesDrawer not rendering, using table view instead
+        observeScreeningBody();
+        observeGpuMolecules();
         observeForStructures('gpu-structures-body');
         // structures-body: 3D buttons now added inline in renderRows
     }
@@ -14627,7 +14628,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     if (typeof origShowSection === 'function') {
         window.showSection = function(section) {
             origShowSection.apply(this, arguments);
-            // if (section === 'screening') { observeScreeningBody(); } // DISABLED: SmilesDrawer not rendering
+            if (section === 'screening') { observeScreeningBody(); }
             if (section === "gpu-results") { observeForStructures("gpu-structures-body"); }
             // structures-body: 3D buttons added inline in renderRows
         };
