@@ -936,6 +936,7 @@
             <a href="/synthesis" class="nav-link" data-section="synthesis">Synthesis</a>
             <a href="/structures" class="nav-link" data-section="structures">Structures</a>
             <a href="/pockets" class="nav-link" data-section="pockets">Pockets</a>
+            <a href="/admet" class="nav-link" data-section="admet">ADMET Properties</a>
             <a href="/comparative" class="nav-link" data-section="comparative">Species</a>
         </div>
     </span>
@@ -3023,6 +3024,25 @@
     </tr></thead>
     <tbody id="pockets-body"><tr><td colspan="6" class="loading">Loading pocket data...</td></tr></tbody></table></div>
     <div id="pockets-detail-panel" style="display:none;margin-top:16px"></div>
+</section>
+
+<section class="section" id="admet">
+    <div class="section-header"><h2 class="section-title">ADMET Properties</h2><span style="font-size:10px;padding:2px 8px;background:#7c3aed1a;color:#7c3aed;font-weight:600;margin-left:8px;vertical-align:middle">PHARMACOLOGY</span><span class="section-count" id="admet-count"></span></div>
+    <p class="section-desc">ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity) predictions for 21,000+ compounds across all SMA targets. Compounds are scored for drug-likeness (QED), blood-brain barrier permeability (BBB), CNS Multi-Parameter Optimization (MPO), Lipinski Rule-of-Five compliance, and physicochemical properties (MW, LogP, TPSA, HBD, HBA). Filter by properties to identify the most promising CNS-penetrant drug candidates for SMA.</p>
+    <div id="admet-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px"></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--fg)"><input type="checkbox" id="admet-bbb-filter"> BBB Permeable Only</label>
+        <label style="font-size:13px;color:var(--fg)">Min QED: <input type="range" id="admet-qed-slider" min="0" max="1" step="0.05" value="0" style="vertical-align:middle;width:100px"><span id="admet-qed-val" style="margin-left:4px;font-size:12px;color:var(--muted)">0</span></label>
+        <label style="font-size:13px;color:var(--fg)">Target: <select id="admet-target-filter" style="padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font-size:12px"><option value="">All Targets</option></select></label>
+        <label style="font-size:13px;color:var(--fg)">Sort by: <select id="admet-sort-select" style="padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font-size:12px"><option value="qed">QED</option><option value="cns_mpo">CNS MPO</option><option value="tpsa">TPSA</option><option value="logp">LogP</option><option value="mw">MW</option></select></label>
+        <label style="font-size:13px;color:var(--fg)">Show: <select id="admet-n-select" style="padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font-size:12px"><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option></select></label>
+        <button id="admet-apply-btn" style="padding:6px 16px;border-radius:4px;border:none;background:var(--accent);color:#fff;font-size:12px;cursor:pointer;font-weight:600">Apply Filters</button>
+    </div>
+    <div class="table-wrap"><table class="data-table" id="admet-table">
+    <thead><tr>
+        <th>Compound</th><th>Target</th><th>QED</th><th>TPSA</th><th>MW</th><th>LogP</th><th>BBB</th><th>CNS MPO</th><th>Lipinski</th>
+    </tr></thead>
+    <tbody id="admet-body"><tr><td colspan="9" class="loading">Loading ADMET data...</td></tr></tbody></table></div>
 </section>
 
 <section class="section" id="synthesis">
@@ -11812,6 +11832,139 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             cell.appendChild(err);
         });
     }
+    function loadAdmet() {
+        if (loaded.admet) return; loaded.admet = true;
+
+        fetch(API + '/admet/summary').then(function(r) { return r.json(); }).then(function(stats) {
+            var summary = clearEl('admet-summary');
+            var cards = [
+                {val: stats.total_molecules.toLocaleString(), label: 'Total Compounds'},
+                {val: stats.bbb_permeable.toLocaleString(), label: 'BBB Permeable'},
+                {val: stats.bbb_percent + '%', label: 'BBB Rate'},
+                {val: stats.lipinski_pass.toLocaleString(), label: 'Lipinski Pass'},
+                {val: stats.lipinski_percent + '%', label: 'Lipinski Rate'},
+                {val: stats.avg_qed, label: 'Avg QED'},
+                {val: stats.cns_mpo_ready.toLocaleString(), label: 'CNS MPO Ready'},
+                {val: stats.avg_cns_mpo, label: 'Avg CNS MPO'},
+            ];
+            cards.forEach(function(c) {
+                var card = el('div', {style: 'background:var(--panel);border:1px solid var(--line);padding:12px;border-radius:6px;text-align:center'});
+                var val = el('div', {style: 'font-size:22px;font-weight:700;color:var(--accent)'});
+                val.textContent = c.val;
+                card.appendChild(val);
+                var lbl = el('div', {style: 'font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px'});
+                lbl.textContent = c.label;
+                card.appendChild(lbl);
+                summary.appendChild(card);
+            });
+
+            setText('admet-count', stats.total_molecules.toLocaleString() + ' compounds');
+
+            // Populate target dropdown
+            var sel = document.getElementById('admet-target-filter');
+            (stats.target_distribution || []).forEach(function(t) {
+                var opt = document.createElement('option');
+                opt.value = t.symbol;
+                opt.textContent = t.symbol + ' (' + t.count + ')';
+                sel.appendChild(opt);
+            });
+        });
+
+        // QED slider display
+        var slider = document.getElementById('admet-qed-slider');
+        var qedVal = document.getElementById('admet-qed-val');
+        slider.addEventListener('input', function() { qedVal.textContent = slider.value; });
+
+        // Apply filters button
+        document.getElementById('admet-apply-btn').addEventListener('click', function() { fetchAdmetTable(); });
+
+        // Initial load
+        fetchAdmetTable();
+    }
+
+    function fetchAdmetTable() {
+        var bbb = document.getElementById('admet-bbb-filter').checked;
+        var qedMin = parseFloat(document.getElementById('admet-qed-slider').value);
+        var sort = document.getElementById('admet-sort-select').value;
+        var n = document.getElementById('admet-n-select').value;
+        var target = document.getElementById('admet-target-filter').value;
+
+        var url = API + '/admet/top?n=' + n + '&sort=' + sort;
+        if (bbb) url += '&bbb=true';
+        if (target) url += '&target=' + encodeURIComponent(target);
+
+        // If QED filter is set, use compounds endpoint instead
+        if (qedMin > 0) {
+            url = API + '/admet/compounds?qed_min=' + qedMin + '&limit=' + n;
+            if (bbb) url += '&bbb=true';
+            if (target) url += '&target=' + encodeURIComponent(target);
+        }
+
+        var body = clearEl('admet-body');
+        var loadRow = el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'Loading...'})]);
+        body.appendChild(loadRow);
+
+        fetch(url).then(function(r) { return r.json(); }).then(function(data) {
+            body = clearEl('admet-body');
+            var items = data.items || [];
+            if (items.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'No compounds match filters'})]));
+                return;
+            }
+            items.forEach(function(mol) {
+                var tr = el('tr');
+
+                var tdName = el('td');
+                tdName.textContent = mol.compound_name || mol.chembl_id || '-';
+                tdName.title = mol.smiles || '';
+                tr.appendChild(tdName);
+
+                var tdTarget = el('td');
+                tdTarget.textContent = mol.target_symbol || '-';
+                tr.appendChild(tdTarget);
+
+                var tdQed = el('td');
+                tdQed.textContent = mol.qed;
+                tdQed.style.fontWeight = mol.qed >= 0.5 ? '700' : '400';
+                tdQed.style.color = mol.qed >= 0.7 ? '#16a34a' : mol.qed >= 0.5 ? '#d97606' : 'var(--muted)';
+                tr.appendChild(tdQed);
+
+                var tdTpsa = el('td');
+                tdTpsa.textContent = mol.tpsa;
+                tr.appendChild(tdTpsa);
+
+                var tdMw = el('td');
+                tdMw.textContent = mol.mw;
+                tr.appendChild(tdMw);
+
+                var tdLogp = el('td');
+                tdLogp.textContent = mol.logp;
+                tr.appendChild(tdLogp);
+
+                var tdBbb = el('td');
+                tdBbb.textContent = mol.bbb_permeable ? 'Yes' : 'No';
+                tdBbb.style.color = mol.bbb_permeable ? '#16a34a' : '#ef4444';
+                tdBbb.style.fontWeight = '600';
+                tr.appendChild(tdBbb);
+
+                var tdMpo = el('td');
+                tdMpo.textContent = mol.cns_mpo;
+                tdMpo.style.fontWeight = mol.cns_mpo >= 4 ? '700' : '400';
+                tdMpo.style.color = mol.cns_mpo >= 4 ? '#16a34a' : mol.cns_mpo >= 3 ? '#d97606' : 'var(--muted)';
+                tr.appendChild(tdMpo);
+
+                var tdLip = el('td');
+                tdLip.textContent = mol.lipinski_pass ? 'Pass' : 'Fail (' + mol.lipinski_violations + ')';
+                tdLip.style.color = mol.lipinski_pass ? '#16a34a' : '#ef4444';
+                tr.appendChild(tdLip);
+
+                body.appendChild(tr);
+            });
+        }).catch(function(e) {
+            clearEl('admet-body').appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'Error loading ADMET data: ' + (e.message || e)})]));
+        });
+    }
+
     function loadSynthesis() {
         if (loaded.synthesis) return; loaded.synthesis = true;
 
@@ -13990,7 +14143,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         dualtarget: loadDualTarget, twin: loadDigitalTwin,
         labos: loadLabOs, federated: loadFederated, translate: loadTranslation,
         'gpu-results': loadGpuResults,
-        structures: loadStructures, pockets: loadPockets, synthesis: loadSynthesis,
+        structures: loadStructures, pockets: loadPockets, admet: loadAdmet, synthesis: loadSynthesis,
         synergy: loadSynergy,
         'nim-results': loadNimResults,
         news: loadNews,
@@ -14043,6 +14196,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         'gpu-results': {title: 'GPU Results — SMA Research Platform', desc: 'GPU-accelerated computation results for molecular docking, CRISPR off-target analysis, and MD simulations.'},
         structures:    {title: 'Protein Structures — SMA Research Platform', desc: '55 predicted 3D structures for SMA research targets via AlphaFold DB v6 and ESMfold NIM. pLDDT confidence scores, druggability assessment, binder design counts, and links to AlphaFold DB and UniProt.'},
         pockets:     {title: 'Druggable Pockets u2014 SMA Research Platform', desc: 'P2Rank-predicted binding pockets across 58 SMA target protein structures. Druggability scoring, pocket residues, and 3D coordinates for structure-based drug design.'},
+        admet:       {title: 'ADMET Properties \u2014 SMA Research Platform', desc: 'ADMET predictions for 21,000+ compounds: BBB permeability, QED drug-likeness, CNS MPO, Lipinski compliance, and physicochemical properties for SMA drug discovery.'},
         synthesis:     {title: 'Cross-Paper Synthesis — SMA Research Platform', desc: 'Non-obvious connections across thousands of curated SMA claims. Co-occurring targets, shared mechanisms, temporal reinforcements, contradictions, and surprise connections from cross-paper analysis.'},
         synergy:       {title: 'Synergy Predictions — SMA Research Platform', desc: 'AI-predicted drug-target synergy scores combining docking affinity, literature evidence, pathway overlap, and claim support for SMA therapeutic combinations.'},
         'nim-results': {title: 'Docking Results — SMA Research Platform', desc: '700 compound-target docking predictions via DiffDock v2.2. Structure-based virtual screening for SMA drug candidates.'},
