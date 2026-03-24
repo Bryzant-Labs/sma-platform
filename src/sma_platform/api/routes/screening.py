@@ -19,6 +19,78 @@ class SmilesInput(BaseModel):
     smiles: str
 
 
+@router.get("/screen/pipeline-stats")
+async def get_pipeline_stats():
+    """Return the drug screening funnel statistics for the homepage visualization.
+
+    Each stage represents a filtering step in the computational pipeline:
+    ChEMBL compounds -> drug-likeness -> AI-designed -> docked -> binders
+    -> dual-target -> selective leads -> BBB-permeable leads.
+
+    Gracefully returns 0 for any table that does not yet exist.
+    """
+
+    async def _safe_count(sql: str) -> int:
+        """Run a count query, returning 0 if the table doesn't exist."""
+        try:
+            return (await fetchval(sql)) or 0
+        except Exception:
+            return 0
+
+    chembl_total = await _safe_count(
+        "SELECT count(*) FROM molecule_screenings"
+    )
+    drug_like = await _safe_count(
+        "SELECT count(*) FROM molecule_screenings WHERE drug_likeness_pass = TRUE"
+    )
+    designed_molecules = await _safe_count(
+        "SELECT count(*) FROM designed_molecules"
+    )
+    docked = await _safe_count(
+        "SELECT count(*) FROM diffdock_extended"
+    )
+    positive_binders = await _safe_count(
+        "SELECT count(*) FROM diffdock_extended WHERE best_confidence > 0"
+    )
+    dual_target = await _safe_count("""
+        SELECT count(*) FROM (
+            SELECT drug_name FROM diffdock_extended
+            WHERE best_confidence > 0
+            GROUP BY drug_name
+            HAVING count(DISTINCT target_symbol) >= 2
+        ) sub
+    """)
+    selective_leads = await _safe_count("""
+        SELECT count(*) FROM (
+            SELECT drug_name FROM diffdock_extended
+            WHERE best_confidence > 0.5
+            GROUP BY drug_name
+            HAVING count(DISTINCT target_symbol) >= 2
+        ) sub
+    """)
+    bbb_permeable = await _safe_count("""
+        SELECT count(*) FROM designed_molecules dm
+        WHERE dm.bbb_permeable = TRUE
+          AND dm.smiles IN (
+              SELECT de.smiles FROM diffdock_extended de
+              WHERE de.best_confidence > 0.5
+              GROUP BY de.smiles
+              HAVING count(DISTINCT de.target_symbol) >= 2
+          )
+    """)
+
+    return {
+        "chembl_total": chembl_total,
+        "drug_like": drug_like,
+        "designed_molecules": designed_molecules,
+        "docked": docked,
+        "positive_binders": positive_binders,
+        "dual_target": dual_target,
+        "selective_leads": selective_leads,
+        "bbb_permeable": bbb_permeable,
+    }
+
+
 @router.get("/screen/compounds/results")
 async def get_screening_results():
     """Return cached screening results from the molecule_screenings table (no auth needed).

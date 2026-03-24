@@ -901,6 +901,55 @@
             .dp-node-count { font-size: 14px; min-width: 64px; }
             .dp-arrow { padding: 2px 14px; transform: rotate(90deg); }
         }
+
+        /* ===== Drug Pipeline Funnel ===== */
+        .drug-pipeline { margin: 28px 0 0; }
+        .drug-pipeline-header {
+            font-size: 10px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--muted); margin-bottom: 10px;
+        }
+        .drug-funnel { display: flex; flex-direction: column; align-items: center; gap: 0; }
+        .funnel-stage {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; padding: 10px 16px; cursor: pointer;
+            border: 1px solid var(--line); border-bottom: none;
+            background: var(--panel); transition: background 0.15s, border-color 0.15s;
+            position: relative; min-height: 38px;
+        }
+        .funnel-stage:first-child { border-radius: 4px 4px 0 0; }
+        .funnel-stage:last-child { border-bottom: 1px solid var(--line); border-radius: 0 0 4px 4px; }
+        .funnel-stage:hover { background: var(--bg); border-color: var(--accent); z-index: 1; }
+        .funnel-stage:hover .funnel-label { color: var(--accent); }
+        .funnel-count {
+            font-size: 16px; font-weight: 700; color: var(--text);
+            min-width: 60px; text-align: right; font-variant-numeric: tabular-nums;
+        }
+        .funnel-label {
+            font-size: 11px; font-weight: 600; color: var(--text);
+            text-transform: uppercase; letter-spacing: 0.3px;
+            transition: color 0.15s; white-space: nowrap;
+        }
+        .funnel-method {
+            font-size: 10px; color: var(--muted); margin-left: auto;
+            white-space: nowrap;
+        }
+        .funnel-bar {
+            position: absolute; left: 0; top: 0; bottom: 0;
+            background: var(--accent); opacity: 0.06;
+            transition: width 0.6s ease-out;
+            pointer-events: none;
+        }
+        .funnel-arrow {
+            display: flex; align-items: center; justify-content: center;
+            color: var(--line); font-size: 9px; height: 0;
+            user-select: none; pointer-events: none;
+        }
+        @media (max-width: 600px) {
+            .funnel-stage { padding: 8px 10px; gap: 6px; }
+            .funnel-count { font-size: 13px; min-width: 44px; }
+            .funnel-label { font-size: 10px; }
+            .funnel-method { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -1076,6 +1125,15 @@
         </div>
     </div>
     <!-- ===== End Discovery Pipeline ===== -->
+
+    <!-- ===== Drug Pipeline Funnel ===== -->
+    <div class="drug-pipeline" id="drug-pipeline">
+        <div class="drug-pipeline-header">Drug Screening Funnel</div>
+        <div class="drug-funnel" id="drug-funnel">
+            <!-- Populated by JS from /screen/pipeline-stats -->
+        </div>
+    </div>
+    <!-- ===== End Drug Pipeline Funnel ===== -->
 
     <div id="home-discoveries" style="margin-top:32px">
         <h3 style="font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:20px;text-align:center">Latest Discoveries</h3>
@@ -3681,6 +3739,69 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         badge.appendChild(dot);
         badge.appendChild(document.createTextNode('Data updated ' + freshText + ' \u00B7 Last: ' + (d.last_ingestion_type || '') + ' (' + (d.last_ingestion_items || 0) + ' items)'));
     }).catch(function() {});
+
+    // ============ Drug Pipeline Funnel ============
+    fetch(API + '/screen/pipeline-stats').then(function(r) { return r.json(); }).then(function(d) {
+        var funnel = document.getElementById('drug-funnel');
+        if (!funnel) return;
+        var stages = [
+            { key: 'chembl_total', label: 'ChEMBL Compounds', method: 'Bioactivity data', section: 'screening' },
+            { key: 'drug_like', label: 'Drug-likeness Filter', method: 'Lipinski + QED', section: 'screening' },
+            { key: 'designed_molecules', label: 'AI-Designed Molecules', method: 'GenMol + RFdiffusion', section: 'gpu-results' },
+            { key: 'docked', label: 'Docked', method: 'DiffDock v2.2', section: 'screening' },
+            { key: 'positive_binders', label: 'Positive Binders', method: 'Confidence > 0', section: 'screening' },
+            { key: 'dual_target', label: 'Dual-Target Candidates', method: 'LIMK2 + ROCK2', section: 'screening' },
+            { key: 'selective_leads', label: 'Selective Leads', method: 'High confidence', section: 'screening' },
+            { key: 'bbb_permeable', label: 'BBB-Permeable Leads', method: 'ADMET profiling', section: 'screening' }
+        ];
+        var maxVal = d[stages[0].key] || 1;
+        // Compute widths: top stage = 100%, rest proportional (min 20%)
+        for (var i = 0; i < stages.length; i++) {
+            var s = stages[i];
+            var count = d[s.key] || 0;
+            var widthPct = Math.max(20, Math.round((count / maxVal) * 100));
+
+            var row = document.createElement('div');
+            row.className = 'funnel-stage';
+            row.style.width = widthPct + '%';
+            row.title = s.label + ': ' + count.toLocaleString();
+            row.setAttribute('data-section', s.section);
+            row.addEventListener('click', (function(sec) {
+                return function() { window.showSection(sec); };
+            })(s.section));
+
+            // Background bar showing relative size
+            var bar = document.createElement('div');
+            bar.className = 'funnel-bar';
+            bar.style.width = '100%';
+            row.appendChild(bar);
+
+            var countEl = document.createElement('span');
+            countEl.className = 'funnel-count';
+            countEl.textContent = count.toLocaleString();
+            row.appendChild(countEl);
+
+            var labelEl = document.createElement('span');
+            labelEl.className = 'funnel-label';
+            labelEl.textContent = s.label;
+            row.appendChild(labelEl);
+
+            var methodEl = document.createElement('span');
+            methodEl.className = 'funnel-method';
+            methodEl.textContent = s.method;
+            row.appendChild(methodEl);
+
+            funnel.appendChild(row);
+        }
+    }).catch(function(e) {
+        var funnel = document.getElementById('drug-funnel');
+        if (funnel) {
+            var msg = document.createElement('div');
+            msg.style.cssText = 'font-size:11px;color:var(--muted);text-align:center;padding:12px';
+            msg.textContent = 'Pipeline stats unavailable';
+            funnel.appendChild(msg);
+        }
+    });
 
     // ============ Homepage News Highlights (always load) ============
     fetch(API + '/news?per_page=12').then(function(r) { return r.json(); }).then(function(data) {
