@@ -350,6 +350,22 @@ SMA_QUERIES = [
     # --- ROCK / Fasudil pathway (2026-03-24) ---
     '"ROCK inhibitor" AND "motor neuron disease"',
     '"Fasudil" AND "neurodegeneration"',
+    '"ROCK inhibitor" AND "motor neuron"',
+    '"fasudil" AND "motor neuron disease"',
+    '"fasudil" AND ("ALS" OR "spinal muscular atrophy")',
+    '"LIMK2" AND ("kinase" OR "neurodegeneration")',
+    '"LIMK2" AND ("motor neuron" OR "spinal muscular atrophy")',
+    '"ROCK-LIMK" AND ("actin" OR "SMA" OR "motor neuron")',
+    '"ROCK" AND "LIMK" AND "actin" AND "spinal muscular atrophy"',
+    '"H-1152" AND ("ROCK" OR "kinase")',
+    '"H-1152" AND ("motor neuron" OR "neurodegeneration")',
+    '"cofilin phosphorylation" AND "neurodegeneration"',
+    '"cofilin phosphorylation" AND ("motor neuron" OR "spinal muscular atrophy")',
+    '"actin dynamics" AND "spinal muscular atrophy"',
+    '"actin dynamics" AND "motor neuron disease"',
+    '"PFN2" AND ("profilin" OR "motor neuron")',
+    '"PFN2" AND ("neurodegeneration" OR "spinal muscular atrophy")',
+    '"profilin-2" AND ("motor neuron" OR "neurodegeneration")',
 
     # --- Underlinked modifier targets (2026-03-24) ---
     '"STMN2" AND "stathmin" AND "motor neuron"',

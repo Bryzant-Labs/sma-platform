@@ -39,8 +39,12 @@ NVIDIA_API_KEY_BACKUP = os.environ.get("NVIDIA_API_KEY_BACKUP", "")
 if not NVIDIA_API_KEY:
     raise RuntimeError("NVIDIA_API_KEY environment variable is required")
 
+# MolMIM endpoint works reliably; GenMol /generate returns 400 on most SMILES
+# due to SAFE tokenizer bugs ("integer division or modulo by zero").
+MOLMIM_URL = "https://health.api.nvidia.com/v1/biology/nvidia/molmim/generate"
 GENMOL_URL = "https://health.api.nvidia.com/v1/biology/nvidia/genmol/generate"
 RATE_LIMIT_DELAY = 2.0  # seconds between requests
+BATCH_SIZE = 10  # MolMIM crashes on num_molecules > ~20; 10 is stable
 
 # Paths
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -151,15 +155,19 @@ def passes_filters(props):
     return True
 
 
-async def call_genmol(
+async def call_molmim(
     seed_smiles,
-    num_molecules=100,
-    temperature=1.5,
-    noise=0.7,
-    scoring="QED",
+    num_molecules=30,
+    min_similarity=0.3,
+    iterations=20,
+    property_name="QED",
     api_key=None,
 ):
-    """Call NVIDIA GenMol NIM API to generate molecules from a seed SMILES."""
+    """Call NVIDIA MolMIM NIM API to generate molecules from a seed SMILES.
+
+    MolMIM uses CMA-ES optimization in latent space. More reliable than
+    GenMol /generate which fails on many SMILES due to SAFE tokenizer bugs.
+    """
     import httpx
 
     key = api_key or NVIDIA_API_KEY
@@ -170,69 +178,99 @@ async def call_genmol(
     }
 
     payload = {
-        "smiles": seed_smiles,
+        "smi": seed_smiles,
         "num_molecules": str(num_molecules),
-        "temperature": str(temperature),
-        "noise": str(noise),
-        "step_size": "1",
-        "scoring": scoring,
-        "unique": True,
+        "algorithm": "CMA-ES",
+        "property_name": property_name,
+        "min_similarity": str(min_similarity),
+        "iterations": str(iterations),
     }
 
     async with httpx.AsyncClient(timeout=180) as client:
-        logger.info(f"GenMol: Requesting {num_molecules} molecules from seed {seed_smiles[:40]}...")
+        logger.info(f"MolMIM: Requesting {num_molecules} molecules from seed {seed_smiles[:40]}...")
         try:
-            resp = await client.post(GENMOL_URL, json=payload, headers=headers)
+            resp = await client.post(MOLMIM_URL, json=payload, headers=headers)
             resp.raise_for_status()
             data = resp.json()
         except httpx.HTTPStatusError as e:
             if e.response.status_code in (401, 403) and key != NVIDIA_API_KEY_BACKUP:
                 logger.warning("Primary API key failed, trying backup key...")
                 headers["Authorization"] = f"Bearer {NVIDIA_API_KEY_BACKUP}"
-                resp = await client.post(GENMOL_URL, json=payload, headers=headers)
+                resp = await client.post(MOLMIM_URL, json=payload, headers=headers)
                 resp.raise_for_status()
                 data = resp.json()
             else:
-                logger.error(f"GenMol API error: {e.response.status_code} -- {e.response.text[:500]}")
+                logger.error(f"MolMIM API error: {e.response.status_code} -- {e.response.text[:500]}")
                 raise
 
-    # Parse response -- GenMol returns various formats
+    # MolMIM returns {"molecules": "[{\"sample\": ..., \"score\": ...}, ...]", "score_type": "QED"}
     molecules = []
-    if isinstance(data, dict):
-        if "molecules" in data:
-            for mol in data["molecules"]:
-                if isinstance(mol, dict):
-                    molecules.append(mol)
-                elif isinstance(mol, str):
-                    molecules.append({"smiles": mol})
-        elif "smiles" in data and isinstance(data["smiles"], list):
-            scores = data.get("scores", [None] * len(data["smiles"]))
-            for s, sc in zip(data["smiles"], scores):
-                entry = {"smiles": s}
-                if sc is not None:
-                    entry["score"] = sc
-                molecules.append(entry)
-        elif "output" in data:
-            out = data["output"]
-            if isinstance(out, list):
-                for item in out:
-                    if isinstance(item, dict) and "smiles" in item:
-                        molecules.append(item)
-                    elif isinstance(item, str):
-                        molecules.append({"smiles": item})
-        else:
-            logger.warning(f"Unexpected GenMol response format. Keys: {list(data.keys())}")
-            raw = json.dumps(data)
-            logger.info(f"Raw response (first 500 chars): {raw[:500]}")
-    elif isinstance(data, list):
-        for item in data:
-            if isinstance(item, dict) and "smiles" in item:
-                molecules.append(item)
-            elif isinstance(item, str):
-                molecules.append({"smiles": item})
+    if isinstance(data, dict) and "molecules" in data:
+        mol_list = data["molecules"]
+        if isinstance(mol_list, str):
+            mol_list = json.loads(mol_list)
+        for mol in mol_list:
+            if isinstance(mol, dict):
+                molecules.append({
+                    "smiles": mol.get("sample", ""),
+                    "score": mol.get("score"),
+                })
+            elif isinstance(mol, str):
+                molecules.append({"smiles": mol})
+    else:
+        logger.warning(f"Unexpected MolMIM response format. Keys: {list(data.keys()) if isinstance(data, dict) else type(data)}")
 
-    logger.info(f"GenMol: Received {len(molecules)} molecules")
+    logger.info(f"MolMIM: Received {len(molecules)} molecules")
     return molecules
+
+
+async def call_genmol_batched(
+    seed_smiles,
+    total_molecules=100,
+    min_similarity=0.3,
+    api_key=None,
+):
+    """Generate molecules in batches using MolMIM, varying parameters for diversity.
+
+    Runs multiple calls with different similarity thresholds and iteration counts
+    to maximize scaffold diversity.
+    """
+    all_molecules = []
+
+    # Diversity strategy: vary min_similarity and iterations across batches
+    batch_configs = [
+        {"min_similarity": 0.4, "iterations": 15, "num": BATCH_SIZE},  # Close analogs
+        {"min_similarity": 0.3, "iterations": 20, "num": BATCH_SIZE},  # Medium diversity
+        {"min_similarity": 0.2, "iterations": 25, "num": BATCH_SIZE},  # High diversity
+        {"min_similarity": 0.3, "iterations": 30, "num": BATCH_SIZE},  # More optimization
+    ]
+
+    # Keep running batches until we hit total_molecules
+    batch_idx = 0
+    while len(all_molecules) < total_molecules:
+        config = batch_configs[batch_idx % len(batch_configs)]
+        try:
+            batch = await call_molmim(
+                seed_smiles=seed_smiles,
+                num_molecules=config["num"],
+                min_similarity=config["min_similarity"],
+                iterations=config["iterations"],
+                property_name="QED",
+                api_key=api_key,
+            )
+            all_molecules.extend(batch)
+            logger.info(f"  Batch {batch_idx + 1}: got {len(batch)} molecules (total: {len(all_molecules)})")
+        except Exception as e:
+            logger.error(f"  Batch {batch_idx + 1} failed: {e}")
+
+        batch_idx += 1
+        await asyncio.sleep(RATE_LIMIT_DELAY)
+
+        # Safety: max 12 batches per seed (12 x 10 = 120 raw molecules)
+        if batch_idx >= 12:
+            break
+
+    return all_molecules
 
 
 async def generate_for_target(target_name, seeds, num_per_seed=100):
@@ -249,27 +287,13 @@ async def generate_for_target(target_name, seeds, num_per_seed=100):
         logger.info(f"{'='*60}")
 
         try:
-            molecules = await call_genmol(
+            molecules = await call_genmol_batched(
                 seed_smiles=seed_info["smiles"],
-                num_molecules=num_per_seed,
-                temperature=1.5,
-                noise=0.7,
-                scoring="QED",
+                total_molecules=num_per_seed,
             )
         except Exception as e:
-            logger.error(f"GenMol failed for {seed_name}: {e}")
-            try:
-                logger.info("Retrying with 50 molecules...")
-                molecules = await call_genmol(
-                    seed_smiles=seed_info["smiles"],
-                    num_molecules=50,
-                    temperature=1.2,
-                    noise=0.5,
-                    scoring="QED",
-                )
-            except Exception as e2:
-                logger.error(f"GenMol retry also failed: {e2}")
-                molecules = []
+            logger.error(f"MolMIM failed for {seed_name}: {e}")
+            molecules = []
 
         for mol_data in molecules:
             smiles = mol_data.get("smiles", "")
@@ -383,7 +407,7 @@ async def main():
     num_per_seed = 100
 
     print("\n" + "=" * 70)
-    print("  NVIDIA GenMol NIM -- De Novo Molecule Generation")
+    print("  NVIDIA MolMIM/GenMol NIM -- De Novo Molecule Generation")
     print("  Targets: LIMK2 + ROCK2 (SMA actin pathway)")
     print("  Date: 2026-03-24")
     print("=" * 70)
