@@ -183,11 +183,41 @@ async def fetch_molecule_details(
         return None
 
 
+async def fetch_molecules_batch(
+    client: httpx.AsyncClient,
+    mol_ids: list[str],
+) -> dict[str, dict]:
+    """Fetch molecule details for multiple IDs using ChEMBL batch endpoint."""
+    result_map: dict[str, dict] = {}
+    # ChEMBL supports querying multiple molecules via semicolon-separated IDs
+    # Process in chunks of 50 to stay within URL length limits
+    for i in range(0, len(mol_ids), 50):
+        chunk = mol_ids[i:i + 50]
+        ids_param = ";".join(chunk)
+        url = f"{BASE_URL}/molecule/set/{ids_param}.json"
+        try:
+            resp = await client.get(url, timeout=60)
+            resp.raise_for_status()
+            data = resp.json()
+            molecules = data.get("molecules", [])
+            for mol in molecules:
+                mid = mol.get("molecule_chembl_id", "")
+                if mid:
+                    result_map[mid] = mol
+        except (httpx.HTTPError, json.JSONDecodeError) as e:
+            logger.warning("Batch molecule fetch failed for chunk %d: %s", i // 50, e)
+        await asyncio.sleep(0.5)
+    return result_map
+
+
+MAX_ENRICH = 500  # Cap enrichment to avoid excessive API calls
+
+
 async def enrich_compounds_batch(
     client: httpx.AsyncClient,
     compounds: list[dict],
 ) -> list[dict]:
-    """Enrich compounds missing MW/LogP by fetching molecule details."""
+    """Enrich compounds missing MW/LogP by fetching molecule details in batch."""
     needs_enrichment = [
         c for c in compounds
         if c.get("molecular_weight") is None or c.get("alogp") is None
@@ -196,38 +226,46 @@ async def enrich_compounds_batch(
     if not needs_enrichment:
         return compounds
 
-    logger.info("Enriching %d compounds missing MW/LogP...", len(needs_enrichment))
+    if len(needs_enrichment) > MAX_ENRICH:
+        logger.info(
+            "Enrichment needed for %d compounds, capping at %d (prioritizing top pChEMBL)",
+            len(needs_enrichment), MAX_ENRICH,
+        )
+        needs_enrichment.sort(
+            key=lambda x: x.get("pchembl_value", 0), reverse=True
+        )
+        needs_enrichment = needs_enrichment[:MAX_ENRICH]
 
-    # Batch in groups of 10 to avoid overwhelming the API
-    for i in range(0, len(needs_enrichment), 10):
-        batch = needs_enrichment[i:i + 10]
-        tasks = [
-            fetch_molecule_details(client, c["molecule_chembl_id"])
-            for c in batch
-        ]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+    logger.info("Enriching %d compounds missing MW/LogP (batch mode)...", len(needs_enrichment))
 
-        for compound, result in zip(batch, results):
-            if isinstance(result, Exception) or result is None:
-                continue
-            props = result.get("molecule_properties", {})
-            if props:
-                if compound.get("molecular_weight") is None:
-                    try:
-                        compound["molecular_weight"] = float(props.get("full_mwt", 0))
-                    except (ValueError, TypeError):
-                        pass
-                if compound.get("alogp") is None:
-                    try:
-                        compound["alogp"] = float(props.get("alogp", 0))
-                    except (ValueError, TypeError):
-                        pass
-                if not compound.get("canonical_smiles"):
-                    structs = result.get("molecule_structures", {})
-                    if structs:
-                        compound["canonical_smiles"] = structs.get("canonical_smiles", "")
+    mol_ids = [c["molecule_chembl_id"] for c in needs_enrichment]
+    mol_data = await fetch_molecules_batch(client, mol_ids)
 
-        await asyncio.sleep(0.3)
+    enriched_count = 0
+    for compound in needs_enrichment:
+        mol_id = compound["molecule_chembl_id"]
+        mol_info = mol_data.get(mol_id)
+        if not mol_info:
+            continue
+        props = mol_info.get("molecule_properties") or {}
+        if props:
+            if compound.get("molecular_weight") is None:
+                try:
+                    compound["molecular_weight"] = float(props.get("full_mwt", 0))
+                    enriched_count += 1
+                except (ValueError, TypeError):
+                    pass
+            if compound.get("alogp") is None:
+                try:
+                    compound["alogp"] = float(props.get("alogp", 0))
+                except (ValueError, TypeError):
+                    pass
+            if not compound.get("canonical_smiles"):
+                structs = mol_info.get("molecule_structures") or {}
+                if structs:
+                    compound["canonical_smiles"] = structs.get("canonical_smiles", "")
+
+    logger.info("Enriched %d compounds with molecular properties", enriched_count)
 
     # Re-filter after enrichment
     final = []
