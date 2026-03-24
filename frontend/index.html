@@ -555,6 +555,42 @@
         .expand-row { display: none; }
         .expand-row.open { display: table-row; }
         .expand-cell { padding: 16px 20px; background: var(--bg); border-bottom: 1px solid var(--line); word-wrap: break-word; overflow-wrap: break-word; }
+        /* Candidate detail card styles */
+        .cand-detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px 24px; font-size: 12px; line-height: 1.7; }
+        .cand-detail-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px; }
+        .cand-detail-val { font-weight: 600; }
+        .cand-svg-wrap { width: 200px; height: 140px; background: #1a1f2e; border-radius: 4px; border: 1px solid #334155; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .cand-smiles-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; font-family: var(--mono); font-size: 11px; word-break: break-all; }
+        .cand-smiles-row .cand-copy-btn { flex-shrink: 0; padding: 3px 10px; font-size: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 3px; cursor: pointer; }
+        .cand-smiles-row .cand-copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .cand-traffic { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+        .cand-traffic-green { background: #16a34a1a; color: #16a34a; border: 1px solid #16a34a33; }
+        .cand-traffic-amber { background: #d976061a; color: #d97606; border: 1px solid #d9760633; }
+        .cand-traffic-red { background: #dc26261a; color: #dc2626; border: 1px solid #dc262633; }
+        .cand-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .cand-links a { font-size: 11px; color: var(--accent); text-decoration: none; padding: 3px 10px; border: 1px solid var(--accent); border-radius: 3px; }
+        .cand-links a:hover { background: var(--accent); color: #fff; }
+        .cand-dock-table { margin-top: 8px; font-size: 11px; border-collapse: collapse; }
+        .cand-dock-table th, .cand-dock-table td { padding: 3px 10px; border: 1px solid var(--line); text-align: left; }
+        .cand-dock-table th { background: var(--panel); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.3px; }
+        .cand-admet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; margin-top: 6px; }
+        .cand-admet-item { padding: 6px 8px; border: 1px solid var(--line); border-radius: 3px; font-size: 11px; text-align: center; }
+        .cand-admet-item .cand-admet-label { font-size: 9px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.3px; display: block; }
+        /* Comparison feature */
+        .cand-compare-cb { width: 14px; height: 14px; cursor: pointer; accent-color: var(--accent); }
+        .cand-compare-bar { display: none; position: sticky; top: 0; z-index: 20; padding: 10px 16px; background: var(--accent); color: #fff; border-radius: 4px; margin-bottom: 12px; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; }
+        .cand-compare-bar.visible { display: flex; }
+        .cand-compare-bar button { padding: 5px 14px; border: 1px solid rgba(255,255,255,0.4); background: transparent; color: #fff; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: 600; }
+        .cand-compare-bar button:hover { background: rgba(255,255,255,0.15); }
+        .cand-compare-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; background: rgba(0,0,0,0.7); justify-content: center; align-items: flex-start; padding: 40px 20px; overflow-y: auto; }
+        .cand-compare-modal.open { display: flex; }
+        .cand-compare-content { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 24px; max-width: 95vw; width: fit-content; min-width: 600px; }
+        .cand-compare-content h3 { margin: 0 0 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .cand-compare-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .cand-compare-table th, .cand-compare-table td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; }
+        .cand-compare-table th { background: var(--bg); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.3px; white-space: nowrap; }
+        .cand-compare-close { float: right; cursor: pointer; font-size: 18px; color: var(--muted); border: none; background: none; }
+        .cand-compare-close:hover { color: var(--text); }
         .expand-abstract { font-size: 13px; line-height: 1.7; color: var(--text-secondary); max-width: 100%; word-wrap: break-word; }
         .expand-abstract strong { color: var(--text); }
         .expand-abstract p { max-width: 100%; }
@@ -2087,13 +2123,15 @@
         </div>
         <p style="font-size:12px;color:var(--muted);margin:0 0 12px 0;line-height:1.5">De novo molecules generated by GenMol/MolMIM and SAR campaigns, validated with DiffDock docking against LIMK2 and ROCK2. Ranked by best DiffDock confidence score. Top hits: (S,S)-H-1152 (best LIMK2 dual-target) and genmol_119 (original hit, stereo-resolved).</p>
         <div id="ai-candidates-summary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px"></div>
+        <div id="ai-compare-bar" class="cand-compare-bar"><span id="ai-compare-count">0 selected</span><button onclick="openAiCompare()">Compare Selected</button><button onclick="clearAiCompare()">Clear</button></div>
         <div class="table-wrap"><table><thead><tr>
-            <th>#</th><th>Compound</th><th>Target</th><th>DiffDock</th><th>QED</th><th>MW</th><th>BBB</th><th>Method</th>
+            <th style="width:30px"></th><th>#</th><th>Compound</th><th>Target</th><th>DiffDock</th><th>QED</th><th>MW</th><th>BBB</th><th>Method</th>
         </tr></thead>
-        <tbody id="ai-candidates-body"><tr><td colspan="8" class="loading">Loading AI candidates...</td></tr></tbody></table></div>
+        <tbody id="ai-candidates-body"><tr><td colspan="9" class="loading">Loading AI candidates...</td></tr></tbody></table></div>
     </div>
 
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Ranked Candidates</h3>
+    <div id="chembl-compare-bar" class="cand-compare-bar"><span id="chembl-compare-count">0 selected</span><button onclick="openChemblCompare()">Compare Selected</button><button onclick="clearChemblCompare()">Clear</button></div>
     <div id="candidates-filter-bar" style="display:none;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
         <div style="flex:1;min-width:180px">
             <input type="text" id="candidates-search" placeholder="Search compound name..."
@@ -2105,10 +2143,11 @@
         <span id="candidates-filter-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
     </div>
     <div class="table-wrap"><table><thead><tr>
-        <th>#</th><th>ChEMBL ID</th><th>Target</th><th>Score</th><th>Tier</th><th>QED</th><th>BBB</th><th>ADMET</th><th>pChEMBL</th><th>Flags</th>
+        <th style="width:30px"></th><th>#</th><th>ChEMBL ID</th><th>Target</th><th>Score</th><th>Tier</th><th>QED</th><th>BBB</th><th>ADMET</th><th>pChEMBL</th><th>Flags</th>
     </tr></thead>
-    <tbody id="candidates-body"><tr><td colspan="10" class="loading">Loading...</td></tr></tbody></table></div>
+    <tbody id="candidates-body"><tr><td colspan="11" class="loading">Loading...</td></tr></tbody></table></div>
     <div id="candidates-pagination"></div>
+    <div id="cand-compare-modal" class="cand-compare-modal"><div class="cand-compare-content"><button class="cand-compare-close" onclick="closeCandCompare()">&times;</button><h3 id="cand-compare-title">Compare Candidates</h3><div id="cand-compare-body"></div></div></div>
 </section>
 
 <section class="section" id="hits">
@@ -6791,6 +6830,19 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var admetClass = (c.admet_score || 0) >= 0.6 ? 'badge-green' : (c.admet_score || 0) >= 0.4 ? 'badge-amber' : 'badge-red';
                 var flagsText = (c.flags || []).join(', ') || 'none';
                 var flagsClass = (c.flags || []).length > 0 ? 'badge-red' : 'badge-green';
+                // Checkbox cell
+                var cbTd = document.createElement('td');
+                cbTd.style.textAlign = 'center';
+                var cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.className = 'cand-compare-cb chembl-cand-cb';
+                cb.checked = !!chemblCompareSet[c.chembl_id];
+                cb.addEventListener('click', function(ev) { ev.stopPropagation(); });
+                cb.addEventListener('change', function() {
+                    if (this.checked) { chemblCompareSet[c.chembl_id] = true; } else { delete chemblCompareSet[c.chembl_id]; }
+                    updateChemblCompareBar();
+                });
+                cbTd.appendChild(cb);
                 var mainRow = el('tr', {className: 'compound-row', style: 'cursor:pointer', title: 'Click to expand details'}, [
                     td(String(c.rank || (idx + 1)), 'mono', 'font-weight:600;text-align:center'),
                     td(c.chembl_id, 'mono', 'font-weight:600'),
@@ -6803,54 +6855,395 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     td(c.pchembl ? String(c.pchembl) : '-', 'mono'),
                     tdBadge(flagsText, flagsClass)
                 ]);
+                mainRow.insertBefore(cbTd, mainRow.firstChild);
                 mainRow.addEventListener('click', function() { toggleExpand(expandId); });
                 body.appendChild(mainRow);
-                // Expandable detail row with full compound info
+                // Expandable detail row - safe DOM only
                 var expandRow = el('tr', {className: 'expand-row', id: expandId});
-                var expandCell = el('td', {colSpan: 10, className: 'expand-cell'});
-                var bbbExplain = c.bbb_permeable
+                var expandCell = document.createElement('td');
+                expandCell.colSpan = 11;
+                expandCell.className = 'expand-cell';
+                // Detail grid
+                var detGrid = document.createElement('div');
+                detGrid.className = 'cand-detail-grid';
+                var detItems = [
+                    {label: 'ChEMBL ID', val: c.chembl_id, link: c.chembl_id ? 'https://www.ebi.ac.uk/chembl/compound_report_card/' + c.chembl_id + '/' : null},
+                    {label: 'Target', val: c.target, action: function() { showSection('targets'); }},
+                    {label: 'Integrated Score', val: c.integrated_score},
+                    {label: 'Tier', val: c.tier},
+                    {label: 'MW / LogP', val: (c.mw || '-') + ' Da / ' + (c.logp || '-')},
+                    {label: 'TPSA / HBD / HBA', val: (c.tpsa || '-') + ' A^2 / ' + (c.hbd != null ? c.hbd : '-') + ' / ' + (c.hba != null ? c.hba : '-')},
+                    {label: 'QED Score', val: c.qed, note: '>= 0.5 = high drug-likeness'},
+                    {label: 'CNS MPO', val: c.cns_mpo},
+                    {label: 'pChEMBL (potency)', val: c.pchembl, note: '>= 6 ~ IC50 <= 1 uM'},
+                    {label: 'ADMET Score', val: c.admet_score},
+                    {label: 'Target Relevance', val: c.target_score}
+                ];
+                for (var di = 0; di < detItems.length; di++) {
+                    var dItem = document.createElement('div');
+                    var dLabel = document.createElement('span');
+                    dLabel.className = 'cand-detail-label';
+                    dLabel.textContent = detItems[di].label;
+                    dItem.appendChild(dLabel);
+                    if (detItems[di].link) {
+                        var aLink = document.createElement('a');
+                        aLink.href = detItems[di].link;
+                        aLink.target = '_blank';
+                        aLink.rel = 'noopener';
+                        aLink.className = 'cand-detail-val mono';
+                        aLink.style.color = 'var(--accent)';
+                        aLink.style.fontWeight = '600';
+                        aLink.textContent = (detItems[di].val || '-') + ' \u2197';
+                        dItem.appendChild(aLink);
+                    } else if (detItems[di].action) {
+                        var aSpan = document.createElement('span');
+                        aSpan.className = 'cand-detail-val mono';
+                        aSpan.style.cssText = 'cursor:pointer;color:var(--accent);font-weight:600';
+                        aSpan.textContent = (detItems[di].val || '-') + ' \u2197';
+                        aSpan.addEventListener('click', detItems[di].action);
+                        dItem.appendChild(aSpan);
+                    } else {
+                        var dVal = document.createElement('span');
+                        dVal.className = 'cand-detail-val mono';
+                        dVal.textContent = detItems[di].val != null ? String(detItems[di].val) : '-';
+                        dItem.appendChild(dVal);
+                        if (detItems[di].note) {
+                            var noteSpan = document.createElement('span');
+                            noteSpan.style.cssText = 'color:var(--muted);font-size:11px;margin-left:6px';
+                            noteSpan.textContent = '(' + detItems[di].note + ')';
+                            dItem.appendChild(noteSpan);
+                        }
+                    }
+                    detGrid.appendChild(dItem);
+                }
+                expandCell.appendChild(detGrid);
+                // Full SMILES with copy
+                var smilesLabel = document.createElement('div');
+                smilesLabel.className = 'cand-detail-label';
+                smilesLabel.textContent = 'Full SMILES';
+                smilesLabel.style.marginTop = '12px';
+                expandCell.appendChild(smilesLabel);
+                expandCell.appendChild(buildSmilesRow(c.full_smiles || c.smiles));
+                // ADMET Traffic Light Grid
+                var admetLabel = document.createElement('div');
+                admetLabel.className = 'cand-detail-label';
+                admetLabel.textContent = 'Drug-Likeness & Safety Profile';
+                admetLabel.style.marginTop = '12px';
+                expandCell.appendChild(admetLabel);
+                expandCell.appendChild(buildAdmetGrid(c));
+                // BBB Assessment
+                var bbbDiv = document.createElement('div');
+                bbbDiv.style.cssText = 'margin-top:10px;font-size:12px;color:var(--text-secondary)';
+                var bbbStrong = document.createElement('strong');
+                bbbStrong.textContent = 'BBB Assessment: ';
+                bbbDiv.appendChild(bbbStrong);
+                var bbbText = document.createTextNode(c.bbb_permeable
                     ? 'Estimated CNS-penetrant \u2014 predicted to cross the blood-brain barrier to reach motor neurons in the spinal cord.'
-                    : 'Estimated poor CNS penetration \u2014 may not reach spinal motor neurons at therapeutic concentrations without formulation optimization.';
-                var tierExplain = c.tier === 'A'
-                    ? 'Tier A (\u2265 0.6 integrated score): strong multi-dimensional evidence across drug-likeness, potency, BBB, and target relevance. Prioritized for experimental follow-up.'
+                    : 'Estimated poor CNS penetration \u2014 may not reach spinal motor neurons at therapeutic concentrations without formulation optimization.');
+                bbbDiv.appendChild(bbbText);
+                expandCell.appendChild(bbbDiv);
+                // Tier explanation
+                var tierDiv = document.createElement('div');
+                tierDiv.style.cssText = 'margin-top:6px;font-size:12px;color:var(--text-secondary)';
+                var tierStrong = document.createElement('strong');
+                tierStrong.textContent = 'Tier: ';
+                tierDiv.appendChild(tierStrong);
+                var tierText = c.tier === 'A'
+                    ? 'Tier A (>= 0.6 integrated score): strong multi-dimensional evidence. Prioritized for experimental follow-up.'
                     : c.tier === 'B'
-                    ? 'Tier B (0.4\u20130.6 integrated score): moderate evidence across dimensions. Worth secondary screening.'
-                    : 'Tier C (< 0.4 integrated score): computational-only signal. Lower priority without additional corroboration.';
-                // Validation stage heuristic
+                    ? 'Tier B (0.4-0.6 integrated score): moderate evidence. Worth secondary screening.'
+                    : 'Tier C (< 0.4 integrated score): computational-only signal. Lower priority.';
+                tierDiv.appendChild(document.createTextNode(tierText));
+                expandCell.appendChild(tierDiv);
+                // Flags
+                if ((c.flags || []).length > 0) {
+                    var flagDiv = document.createElement('div');
+                    flagDiv.style.cssText = 'margin-top:6px;font-size:12px;color:#d97606';
+                    var flagStrong = document.createElement('strong');
+                    flagStrong.textContent = 'Flags: ';
+                    flagDiv.appendChild(flagStrong);
+                    flagDiv.appendChild(document.createTextNode((c.flags || []).join(' \u2022 ')));
+                    expandCell.appendChild(flagDiv);
+                }
+                // Repurposing rationale
+                if (c.repurposing_rationale) {
+                    var repDiv = document.createElement('div');
+                    repDiv.style.cssText = 'margin-top:6px;font-size:12px;color:var(--text-secondary)';
+                    var repStrong = document.createElement('strong');
+                    repStrong.textContent = 'Repurposing: ';
+                    repDiv.appendChild(repStrong);
+                    repDiv.appendChild(document.createTextNode(c.repurposing_rationale));
+                    expandCell.appendChild(repDiv);
+                }
+                // Validation Pipeline Progress (safe DOM)
                 var valStage = 1;
                 if (c.diffdock_score && c.diffdock_score > 0) valStage = 2;
                 if ((c.admet_score || 0) >= 0.4) valStage = 4;
                 if (c.literature_count && c.literature_count > 0) valStage = 5;
                 var stageLabels = ['Computational', 'Structural (DiffDock)', 'Analog Search', 'ADMET Prediction', 'Literature Review', 'Experimental Design'];
-                var stageHtml = stageLabels.map(function(s, si) {
+                var pipeDiv = document.createElement('div');
+                pipeDiv.style.marginTop = '10px';
+                var pipeLabel = document.createElement('span');
+                pipeLabel.className = 'cand-detail-label';
+                pipeLabel.style.display = 'block';
+                pipeLabel.style.marginBottom = '6px';
+                pipeLabel.textContent = 'Validation Pipeline Progress';
+                pipeDiv.appendChild(pipeLabel);
+                for (var si = 0; si < stageLabels.length; si++) {
                     var active = si < valStage;
-                    return '<span style="font-size:11px;padding:2px 8px;border:1px solid ' + (active ? 'var(--green)' : 'var(--line)') + ';color:' + (active ? 'var(--green)' : 'var(--muted)') + ';margin-right:4px;margin-bottom:4px;display:inline-block">' + (si+1) + '. ' + s + '</span>';
-                }).join('');
-                var detailHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px 24px;font-size:12px;line-height:1.7">'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">ChEMBL ID</span><br>'
-                    + '<a href="https://www.ebi.ac.uk/chembl/compound_report_card/' + (c.chembl_id || '') + '/" target="_blank" style="color:var(--accent);font-weight:600">' + (c.chembl_id || '-') + ' &#8599;</a></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">Target</span><br>'
-                    + '<span style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="showSection(\'targets\')">' + (c.target || '-') + ' &#8599;</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">MW / LogP</span><br><span class="mono">' + (c.mw || c.molecular_weight || '-') + ' Da / ' + (c.logp || '-') + '</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">TPSA / HBD / HBA</span><br><span class="mono">' + (c.tpsa || '-') + ' \u00c5\u00b2 / ' + (c.hbd || '-') + ' / ' + (c.hba || '-') + '</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">QED Score</span><br><span class="mono">' + (c.qed || '-') + '</span> <span style="color:var(--muted);font-size:11px">(\u2265 0.5 = high drug-likeness)</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">pChEMBL (potency)</span><br><span class="mono">' + (c.pchembl || '-') + '</span> <span style="color:var(--muted);font-size:11px">(\u2265 6 \u2248 IC\u2085\u2080 \u2264 1 \u03bcM)</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">ADMET Score</span><br><span class="mono">' + (c.admet_score || '-') + '</span></div>'
-                    + (c.diffdock_score ? '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">DiffDock Binding Score</span><br><span class="mono">' + c.diffdock_score + '</span> <span style="color:var(--muted);font-size:11px">(AI pose confidence)</span></div>' : '')
-                    + '</div>'
-                    + '<div style="margin-top:10px;font-size:12px;color:var(--text-secondary)"><strong>BBB Assessment:</strong> ' + bbbExplain + '</div>'
-                    + '<div style="margin-top:6px;font-size:12px;color:var(--text-secondary)"><strong>Tier:</strong> ' + tierExplain + '</div>'
-                    + ((c.flags || []).length > 0 ? '<div style="margin-top:6px;font-size:12px;color:#d97606"><strong>Flags:</strong> ' + (c.flags || []).join(' \u2022 ') + '</div>' : '')
-                    + '<div style="margin-top:10px"><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Validation Pipeline Progress</span>' + stageHtml + '</div>';
-                expandCell.innerHTML = detailHtml;
+                    var stageSpan = document.createElement('span');
+                    stageSpan.style.cssText = 'font-size:11px;padding:2px 8px;border:1px solid ' + (active ? 'var(--green)' : 'var(--line)') + ';color:' + (active ? 'var(--green)' : 'var(--muted)') + ';margin-right:4px;margin-bottom:4px;display:inline-block';
+                    stageSpan.textContent = (si+1) + '. ' + stageLabels[si];
+                    pipeDiv.appendChild(stageSpan);
+                }
+                expandCell.appendChild(pipeDiv);
+                // Links
+                expandCell.appendChild(buildCandLinks(c.chembl_id, c.full_smiles || c.smiles));
                 expandRow.appendChild(expandCell);
                 body.appendChild(expandRow);
             })(filtered[i], i);
         }
         if (filtered.length === 0) {
-            body.appendChild(el('tr', null, [el('td', {colSpan: 10, className: 'loading', text: 'No candidates match this filter.'})]));
+            body.appendChild(el('tr', null, [el('td', {colSpan: 11, className: 'loading', text: 'No candidates match this filter.'})]));
         }
         renderPagination('candidates-pagination', filtered.length, candidatesPage, function(p) { candidatesPage = p; renderCandidatesPage(); });
+    }
+    // ---- AI/ChEMBL candidate comparison state ----
+    var aiCompareSet = {};
+    var aiCandidatesData = [];
+    var chemblCompareSet = {};
+    function updateAiCompareBar() {
+        var keys = Object.keys(aiCompareSet);
+        var bar = document.getElementById('ai-compare-bar');
+        var cnt = document.getElementById('ai-compare-count');
+        if (keys.length >= 2) { bar.classList.add('visible'); } else { bar.classList.remove('visible'); }
+        cnt.textContent = keys.length + ' selected';
+    }
+    function clearAiCompare() {
+        aiCompareSet = {};
+        updateAiCompareBar();
+        var cbs = document.querySelectorAll('.ai-cand-cb');
+        for (var i = 0; i < cbs.length; i++) cbs[i].checked = false;
+    }
+    function updateChemblCompareBar() {
+        var keys = Object.keys(chemblCompareSet);
+        var bar = document.getElementById('chembl-compare-bar');
+        var cnt = document.getElementById('chembl-compare-count');
+        if (keys.length >= 2) { bar.classList.add('visible'); } else { bar.classList.remove('visible'); }
+        cnt.textContent = keys.length + ' selected';
+    }
+    function clearChemblCompare() {
+        chemblCompareSet = {};
+        updateChemblCompareBar();
+        var cbs = document.querySelectorAll('.chembl-cand-cb');
+        for (var i = 0; i < cbs.length; i++) cbs[i].checked = false;
+    }
+    function closeCandCompare() {
+        document.getElementById('cand-compare-modal').classList.remove('open');
+    }
+    function trafficBadge(val, greenThresh, amberThresh, label) {
+        var cls = 'cand-traffic ';
+        if (val == null || val === '-') cls += 'cand-traffic-amber';
+        else if (typeof val === 'number') {
+            cls += val >= greenThresh ? 'cand-traffic-green' : val >= amberThresh ? 'cand-traffic-amber' : 'cand-traffic-red';
+        } else if (typeof val === 'boolean') {
+            cls += val ? 'cand-traffic-green' : 'cand-traffic-red';
+        } else if (typeof val === 'string') {
+            var vl = val.toLowerCase();
+            cls += vl === 'low' || vl === 'yes' || vl === 'pass' ? 'cand-traffic-green' : vl === 'medium' || vl === 'moderate' ? 'cand-traffic-amber' : 'cand-traffic-red';
+        }
+        var span = document.createElement('span');
+        span.className = cls;
+        span.textContent = label || String(val != null ? val : '-');
+        return span;
+    }
+    function riskBadge(risk) {
+        if (!risk) return trafficBadge(null, 0, 0, '-');
+        return trafficBadge(risk, 0, 0, risk);
+    }
+    function buildCandSvg(svgStr, container) {
+        if (!svgStr) { container.textContent = 'No structure'; return; }
+        try {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(svgStr, 'image/svg+xml');
+            var svgNode = doc.documentElement;
+            if (svgNode && svgNode.tagName === 'svg') {
+                svgNode.style.maxWidth = '100%';
+                svgNode.style.maxHeight = '100%';
+                container.appendChild(document.importNode(svgNode, true));
+            } else { container.textContent = 'Invalid SVG'; }
+        } catch(e) { container.textContent = 'SVG error'; }
+    }
+    function buildSmilesRow(smiles) {
+        var row = document.createElement('div');
+        row.className = 'cand-smiles-row';
+        var smilesSpan = document.createElement('span');
+        smilesSpan.textContent = smiles || '-';
+        smilesSpan.style.flex = '1';
+        smilesSpan.style.overflow = 'hidden';
+        row.appendChild(smilesSpan);
+        var btn = document.createElement('button');
+        btn.className = 'cand-copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            if (navigator.clipboard && smiles) {
+                navigator.clipboard.writeText(smiles).then(function() { btn.textContent = 'Copied!'; setTimeout(function() { btn.textContent = 'Copy'; }, 1500); });
+            }
+        });
+        row.appendChild(btn);
+        return row;
+    }
+    function buildDockingTable(dockResults) {
+        if (!dockResults || dockResults.length === 0) return null;
+        var tbl = document.createElement('table');
+        tbl.className = 'cand-dock-table';
+        var thead = document.createElement('thead');
+        var hrow = document.createElement('tr');
+        ['Target', 'Confidence', 'Avg Conf'].forEach(function(h) { var th = document.createElement('th'); th.textContent = h; hrow.appendChild(th); });
+        thead.appendChild(hrow);
+        tbl.appendChild(thead);
+        var tbody = document.createElement('tbody');
+        for (var d = 0; d < dockResults.length; d++) {
+            var dr = dockResults[d];
+            var drow = document.createElement('tr');
+            var td1 = document.createElement('td'); td1.textContent = dr.target || '-'; td1.style.fontWeight = '600';
+            var td2 = document.createElement('td');
+            td2.appendChild(trafficBadge(dr.confidence, 0.8, 0.4, dr.confidence != null ? String(dr.confidence) : '-'));
+            var td3 = document.createElement('td'); td3.textContent = dr.avg_confidence != null ? String(dr.avg_confidence) : '-';
+            td3.className = 'mono';
+            drow.appendChild(td1); drow.appendChild(td2); drow.appendChild(td3);
+            tbody.appendChild(drow);
+        }
+        tbl.appendChild(tbody);
+        return tbl;
+    }
+    function buildCandLinks(chemblId, smiles) {
+        var div = document.createElement('div');
+        div.className = 'cand-links';
+        if (chemblId) {
+            var a1 = document.createElement('a');
+            a1.href = 'https://www.ebi.ac.uk/chembl/compound_report_card/' + chemblId + '/';
+            a1.target = '_blank'; a1.rel = 'noopener'; a1.textContent = 'ChEMBL'; div.appendChild(a1);
+        }
+        if (smiles) {
+            var encoded = encodeURIComponent(smiles);
+            var a2 = document.createElement('a');
+            a2.href = 'https://molview.org/?smiles=' + encoded;
+            a2.target = '_blank'; a2.rel = 'noopener'; a2.textContent = 'MolView 3D'; div.appendChild(a2);
+            var a3 = document.createElement('a');
+            a3.href = 'https://pubchem.ncbi.nlm.nih.gov/#query=' + encoded;
+            a3.target = '_blank'; a3.rel = 'noopener'; a3.textContent = 'PubChem'; div.appendChild(a3);
+        }
+        return div;
+    }
+    function buildAdmetGrid(c) {
+        var grid = document.createElement('div');
+        grid.className = 'cand-admet-grid';
+        var items = [
+            {label: 'QED', val: c.qed, green: 0.5, amber: 0.3},
+            {label: 'MW', val: c.mw, green: 0, amber: 0, custom: function(v) { return v != null && v <= 500 ? 'green' : v != null && v <= 600 ? 'amber' : 'red'; }},
+            {label: 'LogP', val: c.logp, green: 0, amber: 0, custom: function(v) { return v != null && v >= 0 && v <= 5 ? 'green' : v != null && (v < -1 || v > 6) ? 'red' : 'amber'; }},
+            {label: 'TPSA', val: c.tpsa, green: 0, amber: 0, custom: function(v) { return v != null && v >= 40 && v <= 90 ? 'green' : v != null && v <= 140 ? 'amber' : 'red'; }},
+            {label: 'BBB', val: c.bbb_permeable, green: 0, amber: 0, custom: function(v) { return v ? 'green' : 'red'; }},
+            {label: 'Lipinski', val: c.lipinski_pass, green: 0, amber: 0, custom: function(v) { return v ? 'green' : 'red'; }},
+            {label: 'hERG', val: c.herg_risk, green: 0, amber: 0, custom: function(v) { return !v ? 'amber' : v === 'low' ? 'green' : v === 'medium' ? 'amber' : 'red'; }},
+            {label: 'Ames', val: c.ames_risk, green: 0, amber: 0, custom: function(v) { return !v ? 'amber' : v === 'low' ? 'green' : v === 'medium' ? 'amber' : 'red'; }},
+            {label: 'Hepatotox', val: c.hepatotox_risk, green: 0, amber: 0, custom: function(v) { return !v ? 'amber' : v === 'low' ? 'green' : v === 'medium' ? 'amber' : 'red'; }}
+        ];
+        for (var ai = 0; ai < items.length; ai++) {
+            var it = items[ai];
+            var item = document.createElement('div');
+            item.className = 'cand-admet-item';
+            var lbl = document.createElement('span');
+            lbl.className = 'cand-admet-label';
+            lbl.textContent = it.label;
+            item.appendChild(lbl);
+            var color = 'amber';
+            if (it.custom) { color = it.custom(it.val); }
+            else if (it.val != null && typeof it.val === 'number') { color = it.val >= it.green ? 'green' : it.val >= it.amber ? 'amber' : 'red'; }
+            var badge = document.createElement('span');
+            badge.className = 'cand-traffic cand-traffic-' + color;
+            var dispVal = it.val;
+            if (typeof it.val === 'boolean') dispVal = it.val ? 'PASS' : 'FAIL';
+            else if (it.val == null) dispVal = '-';
+            badge.textContent = String(dispVal);
+            item.appendChild(badge);
+            grid.appendChild(item);
+        }
+        return grid;
+    }
+    function buildCompareTable(candidates, props) {
+        var tbl = document.createElement('table');
+        tbl.className = 'cand-compare-table';
+        var thead = document.createElement('thead');
+        var hrow = document.createElement('tr');
+        var propTh = document.createElement('th'); propTh.textContent = 'Property'; hrow.appendChild(propTh);
+        for (var ci = 0; ci < candidates.length; ci++) {
+            var th = document.createElement('th');
+            th.textContent = candidates[ci].compound || candidates[ci].chembl_id || ('Candidate ' + (ci+1));
+            hrow.appendChild(th);
+        }
+        thead.appendChild(hrow); tbl.appendChild(thead);
+        var tbody = document.createElement('tbody');
+        for (var pi = 0; pi < props.length; pi++) {
+            var pr = props[pi];
+            var row = document.createElement('tr');
+            var ptd = document.createElement('td'); ptd.textContent = pr.label; ptd.style.fontWeight = '600'; row.appendChild(ptd);
+            for (var cj = 0; cj < candidates.length; cj++) {
+                var vtd = document.createElement('td');
+                var val = candidates[cj][pr.key];
+                if (typeof val === 'boolean') vtd.textContent = val ? 'Yes' : 'No';
+                else vtd.textContent = val != null ? String(val) : '-';
+                vtd.className = 'mono';
+                row.appendChild(vtd);
+            }
+            tbody.appendChild(row);
+        }
+        tbl.appendChild(tbody);
+        return tbl;
+    }
+    function openAiCompare() {
+        var sel = [];
+        for (var i = 0; i < aiCandidatesData.length; i++) {
+            if (aiCompareSet[i]) sel.push(aiCandidatesData[i]);
+        }
+        if (sel.length < 2) return;
+        var modal = document.getElementById('cand-compare-modal');
+        var body = document.getElementById('cand-compare-body');
+        var title = document.getElementById('cand-compare-title');
+        title.textContent = 'Compare AI Candidates (' + sel.length + ')';
+        while (body.firstChild) body.removeChild(body.firstChild);
+        body.appendChild(buildCompareTable(sel, [
+            {label: 'Target', key: 'target'}, {label: 'DiffDock Confidence', key: 'diffdock_confidence'},
+            {label: 'QED', key: 'qed'}, {label: 'MW', key: 'mw'}, {label: 'LogP', key: 'logp'},
+            {label: 'TPSA', key: 'tpsa'}, {label: 'BBB Permeable', key: 'bbb_permeable'},
+            {label: 'Method', key: 'method'}, {label: 'Score', key: 'score'}
+        ]));
+        modal.classList.add('open');
+    }
+    function openChemblCompare() {
+        var sel = [];
+        for (var i = 0; i < candidatesAllData.length; i++) {
+            var cid = candidatesAllData[i].chembl_id;
+            if (chemblCompareSet[cid]) sel.push(candidatesAllData[i]);
+        }
+        if (sel.length < 2) return;
+        var modal = document.getElementById('cand-compare-modal');
+        var body = document.getElementById('cand-compare-body');
+        var title = document.getElementById('cand-compare-title');
+        title.textContent = 'Compare ChEMBL Candidates (' + sel.length + ')';
+        while (body.firstChild) body.removeChild(body.firstChild);
+        body.appendChild(buildCompareTable(sel, [
+            {label: 'ChEMBL ID', key: 'chembl_id'}, {label: 'Target', key: 'target'},
+            {label: 'Integrated Score', key: 'integrated_score'}, {label: 'Tier', key: 'tier'},
+            {label: 'QED', key: 'qed'}, {label: 'MW', key: 'mw'}, {label: 'LogP', key: 'logp'},
+            {label: 'TPSA', key: 'tpsa'}, {label: 'BBB Permeable', key: 'bbb_permeable'},
+            {label: 'pChEMBL', key: 'pchembl'}, {label: 'ADMET Score', key: 'admet_score'},
+            {label: 'hERG Risk', key: 'herg_risk'}, {label: 'Ames Risk', key: 'ames_risk'},
+            {label: 'Hepatotox Risk', key: 'hepatotox_risk'}
+        ]));
+        modal.classList.add('open');
     }
     function loadAiCandidates() {
         fetch(API + '/screen/ai-candidates?limit=50')
@@ -6859,9 +7252,10 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             var body = clearEl('ai-candidates-body');
             var summaryEl = document.getElementById('ai-candidates-summary');
             if (!data.candidates || data.candidates.length === 0) {
-                body.appendChild(el('tr', null, [el('td', {colSpan: 8, className: 'loading', text: 'No AI-designed candidates with positive docking scores yet.'})]));
+                body.appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'No AI-designed candidates with positive docking scores yet.'})]));
                 return;
             }
+            aiCandidatesData = data.candidates;
             // Summary stats
             var total = data.total || 0;
             var bbbCount = 0;
@@ -6878,31 +7272,120 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 card.appendChild(el('div', {className: 'screen-stat-label', text: statItems[si].label}));
                 summaryEl.appendChild(card);
             }
-            // Render table rows
+            // Render table rows with expandable details
             var topHits = ['genmol_119', '(S,S)-H-1152', 'h-1152'];
             for (var i = 0; i < data.candidates.length; i++) {
-                var c = data.candidates[i];
-                var isTopHit = false;
-                var nameLower = (c.compound || '').toLowerCase();
-                for (var th = 0; th < topHits.length; th++) {
-                    if (nameLower.indexOf(topHits[th].toLowerCase()) !== -1) { isTopHit = true; break; }
-                }
-                var confClass = (c.diffdock_confidence || 0) >= 0.8 ? 'badge-green' : (c.diffdock_confidence || 0) >= 0.4 ? 'badge-amber' : 'badge-gray';
-                var rowStyle = isTopHit ? 'background:rgba(124,58,237,0.06);font-weight:600' : '';
-                var row = el('tr', {style: rowStyle}, [
-                    td(String(c.rank), 'mono', 'text-align:center'),
-                    td(c.compound + (isTopHit ? ' *' : ''), 'mono', 'font-weight:600'),
-                    td(c.target || '-'),
-                    tdBadge(c.diffdock_confidence != null ? String(c.diffdock_confidence) : '-', confClass),
-                    td(c.qed != null ? String(c.qed) : '-', 'mono'),
-                    td(c.mw != null ? String(c.mw) : '-', 'mono'),
-                    tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
-                    td(c.method || '-')
-                ]);
-                body.appendChild(row);
+                (function(c, idx) {
+                    var expandId = 'ai-cand-expand-' + idx;
+                    var isTopHit = false;
+                    var nameLower = (c.compound || '').toLowerCase();
+                    for (var th = 0; th < topHits.length; th++) {
+                        if (nameLower.indexOf(topHits[th].toLowerCase()) !== -1) { isTopHit = true; break; }
+                    }
+                    var confClass = (c.diffdock_confidence || 0) >= 0.8 ? 'badge-green' : (c.diffdock_confidence || 0) >= 0.4 ? 'badge-amber' : 'badge-gray';
+                    var rowStyle = isTopHit ? 'background:rgba(124,58,237,0.06);font-weight:600' : '';
+                    // Checkbox cell
+                    var cbTd = document.createElement('td');
+                    cbTd.style.textAlign = 'center';
+                    var cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.className = 'cand-compare-cb ai-cand-cb';
+                    cb.addEventListener('click', function(ev) { ev.stopPropagation(); });
+                    cb.addEventListener('change', function() {
+                        if (this.checked) { aiCompareSet[idx] = true; } else { delete aiCompareSet[idx]; }
+                        updateAiCompareBar();
+                    });
+                    cbTd.appendChild(cb);
+                    var row = el('tr', {className: 'compound-row', style: rowStyle + ';cursor:pointer', title: 'Click to expand details'}, [
+                        td(String(c.rank), 'mono', 'text-align:center'),
+                        td(c.compound + (isTopHit ? ' *' : ''), 'mono', 'font-weight:600'),
+                        td(c.target || '-'),
+                        tdBadge(c.diffdock_confidence != null ? String(c.diffdock_confidence) : '-', confClass),
+                        td(c.qed != null ? String(c.qed) : '-', 'mono'),
+                        td(c.mw != null ? String(c.mw) : '-', 'mono'),
+                        tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
+                        td(c.method || '-')
+                    ]);
+                    row.insertBefore(cbTd, row.firstChild);
+                    row.addEventListener('click', function() { toggleExpand(expandId); });
+                    body.appendChild(row);
+                    // Expandable detail row
+                    var expandRow = el('tr', {className: 'expand-row', id: expandId});
+                    var expandCell = document.createElement('td');
+                    expandCell.colSpan = 9;
+                    expandCell.className = 'expand-cell';
+                    // Layout: SVG + details side by side
+                    var topRow = document.createElement('div');
+                    topRow.style.cssText = 'display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap';
+                    // 2D Structure
+                    var svgWrap = document.createElement('div');
+                    svgWrap.className = 'cand-svg-wrap';
+                    buildCandSvg(c.svg_2d, svgWrap);
+                    topRow.appendChild(svgWrap);
+                    // Details grid
+                    var detGrid = document.createElement('div');
+                    detGrid.className = 'cand-detail-grid';
+                    detGrid.style.flex = '1';
+                    var detItems = [
+                        {label: 'Compound', val: c.compound},
+                        {label: 'Target', val: c.target},
+                        {label: 'DiffDock Confidence', val: c.diffdock_confidence},
+                        {label: 'Avg Confidence', val: c.avg_confidence},
+                        {label: 'Num Poses', val: c.num_poses},
+                        {label: 'QED', val: c.qed},
+                        {label: 'MW', val: c.mw != null ? c.mw + ' Da' : '-'},
+                        {label: 'LogP', val: c.logp},
+                        {label: 'TPSA', val: c.tpsa != null ? c.tpsa + ' A^2' : '-'},
+                        {label: 'HBD / HBA', val: (c.hbd != null ? c.hbd : '-') + ' / ' + (c.hba != null ? c.hba : '-')},
+                        {label: 'BBB Permeable', val: c.bbb_permeable ? 'Yes' : 'No'},
+                        {label: 'Design Method', val: c.method},
+                        {label: 'Design Score', val: c.score}
+                    ];
+                    for (var di = 0; di < detItems.length; di++) {
+                        var dItem = document.createElement('div');
+                        var dLabel = document.createElement('span');
+                        dLabel.className = 'cand-detail-label';
+                        dLabel.textContent = detItems[di].label;
+                        dItem.appendChild(dLabel);
+                        var dVal = document.createElement('span');
+                        dVal.className = 'cand-detail-val mono';
+                        dVal.textContent = detItems[di].val != null ? String(detItems[di].val) : '-';
+                        dItem.appendChild(dVal);
+                        detGrid.appendChild(dItem);
+                    }
+                    topRow.appendChild(detGrid);
+                    expandCell.appendChild(topRow);
+                    // Full SMILES with copy
+                    var smilesLabel = document.createElement('div');
+                    smilesLabel.className = 'cand-detail-label';
+                    smilesLabel.textContent = 'Full SMILES';
+                    smilesLabel.style.marginTop = '12px';
+                    expandCell.appendChild(smilesLabel);
+                    expandCell.appendChild(buildSmilesRow(c.full_smiles || c.smiles));
+                    // ADMET Traffic Light Grid
+                    var admetLabel = document.createElement('div');
+                    admetLabel.className = 'cand-detail-label';
+                    admetLabel.textContent = 'Drug-Likeness Profile';
+                    admetLabel.style.marginTop = '12px';
+                    expandCell.appendChild(admetLabel);
+                    expandCell.appendChild(buildAdmetGrid(c));
+                    // Docking Results per target
+                    if (c.docking_results && c.docking_results.length > 0) {
+                        var dockLabel = document.createElement('div');
+                        dockLabel.className = 'cand-detail-label';
+                        dockLabel.textContent = 'Docking Results by Target';
+                        dockLabel.style.marginTop = '12px';
+                        expandCell.appendChild(dockLabel);
+                        expandCell.appendChild(buildDockingTable(c.docking_results));
+                    }
+                    // Links
+                    expandCell.appendChild(buildCandLinks(null, c.full_smiles || c.smiles));
+                    expandRow.appendChild(expandCell);
+                    body.appendChild(expandRow);
+                })(data.candidates[i], i);
             }
         }).catch(function(e) {
-            clearEl('ai-candidates-body').appendChild(el('tr', null, [el('td', {colSpan: 8, className: 'loading', text: 'AI candidates not available: ' + e.message})]));
+            clearEl('ai-candidates-body').appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'AI candidates not available: ' + e.message})]));
         });
     }
     function loadCandidates() {
@@ -14827,6 +15310,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // Expose showSection globally for onclick handlers and other scripts
     window.showSection = showSection;
     window.pathwayNodeClick = typeof pathwayNodeClick !== "undefined" ? pathwayNodeClick : function(){};
+    window.openAiCompare = openAiCompare;
+    window.openChemblCompare = openChemblCompare;
+    window.clearAiCompare = clearAiCompare;
+    window.clearChemblCompare = clearChemblCompare;
+    window.closeCandCompare = closeCandCompare;
 })();
 </script>
 
@@ -15101,6 +15589,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     // ── Init ─────────────────────────────────────────────────────────────────
     function init() {
+        // Close compare modal on backdrop click
+        var compareModal = document.getElementById("cand-compare-modal");
+        if (compareModal) { compareModal.addEventListener("click", function(ev) { if (ev.target === compareModal) closeCandCompare(); }); }
         observeScreeningBody();
         observeGpuMolecules();
         observeForStructures('gpu-structures-body');

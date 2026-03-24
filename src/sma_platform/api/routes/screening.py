@@ -387,7 +387,8 @@ async def get_ai_candidates(
     """
     rows = await fetch(
         """SELECT dm.smiles, dm.target_symbol, dm.qed, dm.mw AS dm_mw, dm.logp,
-                  dm.bbb_permeable, dm.method, dm.score,
+                  dm.tpsa, dm.hbd, dm.hba,
+                  dm.bbb_permeable, dm.method, dm.score, dm.svg_2d,
                   de.best_confidence AS diffdock_confidence,
                   de.avg_confidence, de.num_poses,
                   de.drug_name
@@ -400,10 +401,33 @@ async def get_ai_candidates(
         limit,
     )
 
+    # Collect all unique SMILES to fetch docking results per target
+    all_smiles = list({dict(r).get("smiles", "") for r in rows if dict(r).get("smiles")})
+    docking_by_smiles: dict[str, list[dict]] = {}
+    if all_smiles:
+        dock_rows = await fetch(
+            """SELECT smiles, target_symbol, best_confidence, avg_confidence
+               FROM diffdock_extended
+               WHERE smiles = ANY($1) AND best_confidence > 0
+               ORDER BY smiles, best_confidence DESC""",
+            all_smiles,
+        )
+        for dr in dock_rows:
+            dd = dict(dr)
+            s = dd.get("smiles", "")
+            if s not in docking_by_smiles:
+                docking_by_smiles[s] = []
+            docking_by_smiles[s].append({
+                "target": dd.get("target_symbol", ""),
+                "confidence": round(float(dd["best_confidence"]), 3) if dd.get("best_confidence") else None,
+                "avg_confidence": round(float(dd["avg_confidence"]), 3) if dd.get("avg_confidence") else None,
+            })
+
     candidates = []
     for i, r in enumerate(rows):
         d = dict(r)
         name = d.get("drug_name") or d.get("smiles", "")[:40]
+        full_smiles = d.get("smiles") or ""
         candidates.append({
             "rank": i + 1,
             "compound": name,
@@ -414,10 +438,16 @@ async def get_ai_candidates(
             "qed": round(float(d["qed"]), 3) if d.get("qed") else None,
             "mw": round(float(d["dm_mw"]), 1) if d.get("dm_mw") else None,
             "logp": round(float(d["logp"]), 2) if d.get("logp") else None,
+            "tpsa": round(float(d["tpsa"]), 1) if d.get("tpsa") else None,
+            "hbd": d.get("hbd"),
+            "hba": d.get("hba"),
             "bbb_permeable": bool(d.get("bbb_permeable")),
             "method": d.get("method", ""),
             "score": round(float(d["score"]), 3) if d.get("score") else None,
-            "smiles": (d.get("smiles") or "")[:100],
+            "smiles": full_smiles[:100],
+            "full_smiles": full_smiles,
+            "svg_2d": d.get("svg_2d") or "",
+            "docking_results": docking_by_smiles.get(full_smiles, []),
         })
 
     # Summarize by target
