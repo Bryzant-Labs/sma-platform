@@ -1,0 +1,880 @@
+{
+  "generated": "auto",
+  "total_tables": 65,
+  "table_to_modules": {
+    "a": [
+      "api/routes/news.py",
+      "api/routes/personal_twin.py",
+      "reasoning/personal_twin.py"
+    ],
+    "against": [
+      "reasoning/scorer.py"
+    ],
+    "agent_messages": [
+      "api/routes/blackboard.py",
+      "reasoning/blackboard.py"
+    ],
+    "aggregated": [
+      "core/llm_router.py"
+    ],
+    "alpha": [
+      "reasoning/bayesian_convergence.py"
+    ],
+    "an": [
+      "api/routes/bioelectric.py"
+    ],
+    "await": [
+      "reasoning/personal_twin.py"
+    ],
+    "baseline": [
+      "reasoning/discovery_agent.py"
+    ],
+    "benchmark_evaluations": [
+      "reasoning/extraction_benchmark.py"
+    ],
+    "bioelectric_channels": [
+      "api/routes/bioelectric.py"
+    ],
+    "bioelectric_interventions": [
+      "api/routes/bioelectric.py"
+    ],
+    "bioelectric_vmem_states": [
+      "api/routes/bioelectric.py"
+    ],
+    "breakthrough_signals": [
+      "reasoning/discovery_agent.py"
+    ],
+    "claims": [
+      "api/routes/advisory_pack.py",
+      "api/routes/analytics.py",
+      "api/routes/collaboration.py",
+      "api/routes/evidence.py",
+      "api/routes/stats.py",
+      "api/routes/target_compare.py",
+      "reasoning/assay_ready.py",
+      "reasoning/claim_enricher.py",
+      "reasoning/claim_extractor.py",
+      "reasoning/confidence_calibrator.py",
+      "reasoning/embeddings.py",
+      "reasoning/experiment_designer.py",
+      "reasoning/experiment_proposer.py",
+      "reasoning/experiment_value.py",
+      "reasoning/extraction_benchmark.py",
+      "reasoning/hypothesis_generator.py",
+      "reasoning/hypothesis_prioritizer.py",
+      "reasoning/literature_reviewer.py",
+      "reasoning/modifier_predictor.py",
+      "reasoning/prioritizer.py",
+      "reasoning/prospective_backtest.py",
+      "reasoning/reproducibility.py",
+      "reasoning/scorer.py",
+      "reasoning/synergy_predictor.py",
+      "reasoning/target_prioritizer.py",
+      "reasoning/target_prioritizer_v2.py",
+      "reasoning/uncertainty.py",
+      "reasoning/uncertainty_engine.py"
+    ],
+    "contact_messages": [
+      "api/routes/contact.py"
+    ],
+    "convergence_scores": [
+      "api/routes/analytics.py",
+      "api/routes/collaboration.py",
+      "api/routes/convergence.py",
+      "api/routes/predictions.py",
+      "api/routes/target_report.py",
+      "reasoning/convergence_engine.py",
+      "reasoning/experiment_value.py",
+      "reasoning/literature_reviewer.py",
+      "reasoning/prediction_generator.py",
+      "reasoning/translation.py"
+    ],
+    "crispr_guides": [
+      "api/routes/crispr.py"
+    ],
+    "crispr_offtargets": [
+      "api/routes/gpu.py"
+    ],
+    "crispr_strategies": [
+      "api/routes/crispr.py"
+    ],
+    "cross_species_targets": [
+      "api/routes/collaboration.py",
+      "api/routes/comparative.py",
+      "api/routes/stats.py",
+      "api/routes/target_compare.py",
+      "reasoning/graph_expander.py",
+      "reasoning/target_prioritizer_v2.py"
+    ],
+    "datasets": [
+      "api/routes/analytics.py",
+      "api/routes/datasets.py",
+      "api/routes/stats.py"
+    ],
+    "db": [
+      "reasoning/claim_enricher.py"
+    ],
+    "designed_binders": [
+      "api/routes/nvidia_nims.py",
+      "api/routes/structures.py"
+    ],
+    "designed_molecules": [
+      "api/routes/molecule_browser.py",
+      "api/routes/nvidia_nims.py",
+      "api/routes/screening.py",
+      "api/routes/structures.py"
+    ],
+    "diffdock_extended": [
+      "api/routes/nvidia_nims.py",
+      "api/routes/screening.py"
+    ],
+    "drug_outcomes": [
+      "api/routes/ingestion.py",
+      "api/routes/stats.py",
+      "reasoning/failure_extractor.py",
+      "reasoning/graph_expander.py",
+      "reasoning/prospective_backtest.py"
+    ],
+    "drugs": [
+      "api/routes/drugs.py",
+      "api/routes/interaction_network.py",
+      "api/routes/stats.py",
+      "reasoning/claim_enricher.py",
+      "reasoning/convergence_hypothesis.py",
+      "reasoning/synergy_predictor.py",
+      "reasoning/target_prioritizer.py"
+    ],
+    "evidence": [
+      "api/routes/collaboration.py",
+      "api/routes/evidence.py",
+      "api/routes/export.py",
+      "api/routes/search.py",
+      "api/routes/stats.py",
+      "api/routes/target_report.py",
+      "api/routes/targets.py",
+      "api/routes/timeline.py",
+      "reasoning/bayesian_convergence.py",
+      "reasoning/biomarker_atlas.py",
+      "reasoning/claim_extractor.py",
+      "reasoning/claim_quality.py",
+      "reasoning/confidence_calibrator.py",
+      "reasoning/convergence_engine.py",
+      "reasoning/convergence_hypothesis.py",
+      "reasoning/cross_paper_synthesis.py",
+      "reasoning/discovery_agent.py",
+      "reasoning/evidence_writer.py",
+      "reasoning/experiment_proposer.py",
+      "reasoning/extraction_benchmark.py",
+      "reasoning/hypothesis_generator.py",
+      "reasoning/hypothesis_prioritizer.py",
+      "reasoning/literature_reviewer.py",
+      "reasoning/modifier_predictor.py",
+      "reasoning/prediction_generator.py",
+      "reasoning/prioritizer.py",
+      "reasoning/prospective_backtest.py",
+      "reasoning/research_assistant.py",
+      "reasoning/source_quality.py",
+      "reasoning/synergy_predictor.py",
+      "reasoning/target_prioritizer.py",
+      "reasoning/target_prioritizer_v2.py",
+      "reasoning/translation.py",
+      "reasoning/uncertainty.py",
+      "reasoning/uncertainty_engine.py"
+    ],
+    "exportable_tables": [
+      "api/routes/export.py"
+    ],
+    "gpu_jobs": [
+      "api/routes/gpu.py",
+      "reasoning/synergy_predictor.py"
+    ],
+    "graph_edges": [
+      "api/routes/graph.py",
+      "api/routes/ingestion.py",
+      "api/routes/research.py",
+      "api/routes/stats.py",
+      "reasoning/admet_predictor.py",
+      "reasoning/candidate_ranker.py",
+      "reasoning/drug_screener.py",
+      "reasoning/graph_expander.py",
+      "reasoning/prioritizer.py",
+      "reasoning/synergy_predictor.py",
+      "reasoning/target_prioritizer.py",
+      "reasoning/target_prioritizer_v2.py"
+    ],
+    "hypotheses": [
+      "api/routes/advisory_pack.py",
+      "api/routes/analytics.py",
+      "api/routes/collaboration.py",
+      "api/routes/evidence.py",
+      "api/routes/hypothesis_gen.py",
+      "api/routes/stats.py",
+      "api/routes/target_compare.py",
+      "reasoning/assay_ready.py",
+      "reasoning/convergence_hypothesis.py",
+      "reasoning/discovery_agent.py",
+      "reasoning/experiment_proposer.py",
+      "reasoning/experiment_value.py",
+      "reasoning/hypothesis_generator.py",
+      "reasoning/hypothesis_prioritizer.py"
+    ],
+    "if": [
+      "reasoning/claim_extractor.py"
+    ],
+    "information_schema": [
+      "reasoning/fair_compliance.py"
+    ],
+    "ingestion_log": [
+      "api/routes/ingestion.py",
+      "api/routes/preprints.py",
+      "api/routes/stats.py"
+    ],
+    "molecule_screenings": [
+      "api/routes/screening.py",
+      "reasoning/molecule_screener.py"
+    ],
+    "news_comments": [
+      "api/routes/news.py"
+    ],
+    "news_posts": [
+      "api/routes/news.py"
+    ],
+    "nmj_chip_models": [
+      "api/routes/advanced_analytics.py"
+    ],
+    "nmj_ev_cargo": [
+      "api/routes/advanced_analytics.py"
+    ],
+    "nmj_signals": [
+      "api/routes/advanced_analytics.py"
+    ],
+    "patient": [
+      "api/routes/personal_twin.py"
+    ],
+    "patient_profiles": [
+      "reasoning/personal_twin.py"
+    ],
+    "posterior": [
+      "reasoning/bayesian_convergence.py"
+    ],
+    "prediction": [
+      "api/routes/predictions.py"
+    ],
+    "prediction_cards": [
+      "api/routes/predictions.py",
+      "reasoning/prediction_generator.py"
+    ],
+    "preprints": [
+      "api/routes/preprints.py"
+    ],
+    "protein_structures": [
+      "api/routes/nvidia_nims.py"
+    ],
+    "returns": [
+      "reasoning/graph_expander.py"
+    ],
+    "s": [
+      "api/routes/timeline.py"
+    ],
+    "screening_funnels": [
+      "reasoning/screening_funnel.py"
+    ],
+    "screening_milestones": [
+      "api/routes/target_compare.py",
+      "reasoning/milestone_tracker.py"
+    ],
+    "sources": [
+      "api/routes/advisory_pack.py",
+      "api/routes/analytics.py",
+      "api/routes/collaboration.py",
+      "api/routes/evidence.py",
+      "api/routes/export.py",
+      "api/routes/ingestion.py",
+      "api/routes/search.py",
+      "api/routes/stats.py",
+      "api/routes/target_report.py",
+      "api/routes/targets.py",
+      "api/routes/timeline.py",
+      "ingestion/adapters/pmc.py",
+      "reasoning/biomarker_atlas.py",
+      "reasoning/claim_extractor.py",
+      "reasoning/claim_quality.py",
+      "reasoning/convergence_engine.py",
+      "reasoning/convergence_hypothesis.py",
+      "reasoning/cross_paper_synthesis.py",
+      "reasoning/discovery_agent.py",
+      "reasoning/embeddings.py",
+      "reasoning/evidence_writer.py",
+      "reasoning/extraction_benchmark.py",
+      "reasoning/failure_extractor.py",
+      "reasoning/hypothesis_generator.py",
+      "reasoning/literature_reviewer.py",
+      "reasoning/modifier_predictor.py",
+      "reasoning/patent_fto.py",
+      "reasoning/prediction_generator.py",
+      "reasoning/prioritizer.py",
+      "reasoning/prospective_backtest.py",
+      "reasoning/research_assistant.py",
+      "reasoning/scorer.py",
+      "reasoning/source_weigher.py",
+      "reasoning/target_prioritizer.py",
+      "reasoning/target_prioritizer_v2.py",
+      "reasoning/translation.py",
+      "reasoning/uncertainty.py",
+      "reasoning/uncertainty_engine.py"
+    ],
+    "spatial_drug_penetration": [
+      "api/routes/spatial_omics.py",
+      "reasoning/spatial_omics.py"
+    ],
+    "spatial_zones": [
+      "api/routes/spatial_omics.py",
+      "reasoning/spatial_omics.py"
+    ],
+    "splice_scores": [
+      "api/routes/gpu.py"
+    ],
+    "splice_variants": [
+      "api/routes/splice.py"
+    ],
+    "synthesis_cards": [
+      "reasoning/cross_paper_synthesis.py"
+    ],
+    "target": [
+      "api/routes/gpu.py"
+    ],
+    "target_scores": [
+      "api/routes/screening.py",
+      "api/routes/stats.py",
+      "reasoning/candidate_ranker.py",
+      "reasoning/prioritizer.py",
+      "reasoning/repurposing.py"
+    ],
+    "targets": [
+      "api/routes/advisory_pack.py",
+      "api/routes/analytics.py",
+      "api/routes/collaboration.py",
+      "api/routes/comparative.py",
+      "api/routes/convergence.py",
+      "api/routes/export.py",
+      "api/routes/gpu.py",
+      "api/routes/graph.py",
+      "api/routes/ingestion.py",
+      "api/routes/interaction_network.py",
+      "api/routes/research.py",
+      "api/routes/stats.py",
+      "api/routes/target_compare.py",
+      "api/routes/target_report.py",
+      "api/routes/targets.py",
+      "api/routes/timeline.py",
+      "reasoning/assay_ready.py",
+      "reasoning/bayesian_convergence.py",
+      "reasoning/biomarker_atlas.py",
+      "reasoning/candidate_ranker.py",
+      "reasoning/claim_enricher.py",
+      "reasoning/claim_extractor.py",
+      "reasoning/convergence_engine.py",
+      "reasoning/convergence_hypothesis.py",
+      "reasoning/cross_paper_synthesis.py",
+      "reasoning/discovery_agent.py",
+      "reasoning/experiment_designer.py",
+      "reasoning/experiment_proposer.py",
+      "reasoning/experiment_value.py",
+      "reasoning/graph_expander.py",
+      "reasoning/hypothesis_generator.py",
+      "reasoning/literature_reviewer.py",
+      "reasoning/modifier_predictor.py",
+      "reasoning/molecule_screener.py",
+      "reasoning/patent_landscape.py",
+      "reasoning/prioritizer.py",
+      "reasoning/repurposing.py",
+      "reasoning/synergy_predictor.py",
+      "reasoning/target_prioritizer_v2.py",
+      "reasoning/translation.py",
+      "reasoning/uncertainty.py",
+      "reasoning/uncertainty_engine.py"
+    ],
+    "the": [
+      "api/routes/ingestion.py",
+      "reasoning/claim_enricher.py"
+    ],
+    "to": [
+      "reasoning/uncertainty_engine.py"
+    ],
+    "trials": [
+      "api/routes/advisory_pack.py",
+      "api/routes/analytics.py",
+      "api/routes/drugs.py",
+      "api/routes/ingestion.py",
+      "api/routes/stats.py",
+      "api/routes/trials.py",
+      "reasoning/experiment_value.py",
+      "reasoning/prioritizer.py"
+    ],
+    "weight": [
+      "reasoning/bayesian_convergence.py"
+    ]
+  },
+  "module_to_tables": {
+    "api/routes/advanced_analytics.py": [
+      "nmj_chip_models",
+      "nmj_ev_cargo",
+      "nmj_signals"
+    ],
+    "api/routes/advisory_pack.py": [
+      "claims",
+      "hypotheses",
+      "sources",
+      "targets",
+      "trials"
+    ],
+    "api/routes/analytics.py": [
+      "claims",
+      "convergence_scores",
+      "datasets",
+      "hypotheses",
+      "sources",
+      "targets",
+      "trials"
+    ],
+    "api/routes/bioelectric.py": [
+      "an",
+      "bioelectric_channels",
+      "bioelectric_interventions",
+      "bioelectric_vmem_states"
+    ],
+    "api/routes/blackboard.py": [
+      "agent_messages"
+    ],
+    "api/routes/collaboration.py": [
+      "claims",
+      "convergence_scores",
+      "cross_species_targets",
+      "evidence",
+      "hypotheses",
+      "sources",
+      "targets"
+    ],
+    "api/routes/comparative.py": [
+      "cross_species_targets",
+      "targets"
+    ],
+    "api/routes/contact.py": [
+      "contact_messages"
+    ],
+    "api/routes/convergence.py": [
+      "convergence_scores",
+      "targets"
+    ],
+    "api/routes/crispr.py": [
+      "crispr_guides",
+      "crispr_strategies"
+    ],
+    "api/routes/datasets.py": [
+      "datasets"
+    ],
+    "api/routes/drugs.py": [
+      "drugs",
+      "trials"
+    ],
+    "api/routes/evidence.py": [
+      "claims",
+      "evidence",
+      "hypotheses",
+      "sources"
+    ],
+    "api/routes/export.py": [
+      "evidence",
+      "exportable_tables",
+      "sources",
+      "targets"
+    ],
+    "api/routes/gpu.py": [
+      "crispr_offtargets",
+      "gpu_jobs",
+      "splice_scores",
+      "target",
+      "targets"
+    ],
+    "api/routes/graph.py": [
+      "graph_edges",
+      "targets"
+    ],
+    "api/routes/hypothesis_gen.py": [
+      "hypotheses"
+    ],
+    "api/routes/ingestion.py": [
+      "drug_outcomes",
+      "graph_edges",
+      "ingestion_log",
+      "sources",
+      "targets",
+      "the",
+      "trials"
+    ],
+    "api/routes/interaction_network.py": [
+      "drugs",
+      "targets"
+    ],
+    "api/routes/molecule_browser.py": [
+      "designed_molecules"
+    ],
+    "api/routes/news.py": [
+      "a",
+      "news_comments",
+      "news_posts"
+    ],
+    "api/routes/nvidia_nims.py": [
+      "designed_binders",
+      "designed_molecules",
+      "diffdock_extended",
+      "protein_structures"
+    ],
+    "api/routes/personal_twin.py": [
+      "a",
+      "patient"
+    ],
+    "api/routes/predictions.py": [
+      "convergence_scores",
+      "prediction",
+      "prediction_cards"
+    ],
+    "api/routes/preprints.py": [
+      "ingestion_log",
+      "preprints"
+    ],
+    "api/routes/research.py": [
+      "graph_edges",
+      "targets"
+    ],
+    "api/routes/screening.py": [
+      "designed_molecules",
+      "diffdock_extended",
+      "molecule_screenings",
+      "target_scores"
+    ],
+    "api/routes/search.py": [
+      "evidence",
+      "sources"
+    ],
+    "api/routes/spatial_omics.py": [
+      "spatial_drug_penetration",
+      "spatial_zones"
+    ],
+    "api/routes/splice.py": [
+      "splice_variants"
+    ],
+    "api/routes/stats.py": [
+      "claims",
+      "cross_species_targets",
+      "datasets",
+      "drug_outcomes",
+      "drugs",
+      "evidence",
+      "graph_edges",
+      "hypotheses",
+      "ingestion_log",
+      "sources",
+      "target_scores",
+      "targets",
+      "trials"
+    ],
+    "api/routes/structures.py": [
+      "designed_binders",
+      "designed_molecules"
+    ],
+    "api/routes/target_compare.py": [
+      "claims",
+      "cross_species_targets",
+      "hypotheses",
+      "screening_milestones",
+      "targets"
+    ],
+    "api/routes/target_report.py": [
+      "convergence_scores",
+      "evidence",
+      "sources",
+      "targets"
+    ],
+    "api/routes/targets.py": [
+      "evidence",
+      "sources",
+      "targets"
+    ],
+    "api/routes/timeline.py": [
+      "evidence",
+      "s",
+      "sources",
+      "targets"
+    ],
+    "api/routes/trials.py": [
+      "trials"
+    ],
+    "core/llm_router.py": [
+      "aggregated"
+    ],
+    "ingestion/adapters/pmc.py": [
+      "sources"
+    ],
+    "reasoning/admet_predictor.py": [
+      "graph_edges"
+    ],
+    "reasoning/assay_ready.py": [
+      "claims",
+      "hypotheses",
+      "targets"
+    ],
+    "reasoning/bayesian_convergence.py": [
+      "alpha",
+      "evidence",
+      "posterior",
+      "targets",
+      "weight"
+    ],
+    "reasoning/biomarker_atlas.py": [
+      "evidence",
+      "sources",
+      "targets"
+    ],
+    "reasoning/blackboard.py": [
+      "agent_messages"
+    ],
+    "reasoning/candidate_ranker.py": [
+      "graph_edges",
+      "target_scores",
+      "targets"
+    ],
+    "reasoning/claim_enricher.py": [
+      "claims",
+      "db",
+      "drugs",
+      "targets",
+      "the"
+    ],
+    "reasoning/claim_extractor.py": [
+      "claims",
+      "evidence",
+      "if",
+      "sources",
+      "targets"
+    ],
+    "reasoning/claim_quality.py": [
+      "evidence",
+      "sources"
+    ],
+    "reasoning/confidence_calibrator.py": [
+      "claims",
+      "evidence"
+    ],
+    "reasoning/convergence_engine.py": [
+      "convergence_scores",
+      "evidence",
+      "sources",
+      "targets"
+    ],
+    "reasoning/convergence_hypothesis.py": [
+      "drugs",
+      "evidence",
+      "hypotheses",
+      "sources",
+      "targets"
+    ],
+    "reasoning/cross_paper_synthesis.py": [
+      "evidence",
+      "sources",
+      "synthesis_cards",
+      "targets"
+    ],
+    "reasoning/discovery_agent.py": [
+      "baseline",
+      "breakthrough_signals",
+      "evidence",
+      "hypotheses",
+      "sources",
+      "targets"
+    ],
+    "reasoning/drug_screener.py": [
+      "graph_edges"
+    ],
+    "reasoning/embeddings.py": [
+      "claims",
+      "sources"
+    ],
+    "reasoning/evidence_writer.py": [
+      "evidence",
+      "sources"
+    ],
+    "reasoning/experiment_designer.py": [
+      "claims",
+      "targets"
+    ],
+    "reasoning/experiment_proposer.py": [
+      "claims",
+      "evidence",
+      "hypotheses",
+      "targets"
+    ],
+    "reasoning/experiment_value.py": [
+      "claims",
+      "convergence_scores",
+      "hypotheses",
+      "targets",
+      "trials"
+    ],
+    "reasoning/extraction_benchmark.py": [
+      "benchmark_evaluations",
+      "claims",
+      "evidence",
+      "sources"
+    ],
+    "reasoning/failure_extractor.py": [
+      "drug_outcomes",
+      "sources"
+    ],
+    "reasoning/fair_compliance.py": [
+      "information_schema"
+    ],
+    "reasoning/graph_expander.py": [
+      "cross_species_targets",
+      "drug_outcomes",
+      "graph_edges",
+      "returns",
+      "targets"
+    ],
+    "reasoning/hypothesis_generator.py": [
+      "claims",
+      "evidence",
+      "hypotheses",
+      "sources",
+      "targets"
+    ],
+    "reasoning/hypothesis_prioritizer.py": [
+      "claims",
+      "evidence",
+      "hypotheses"
+    ],
+    "reasoning/literature_reviewer.py": [
+      "claims",
+      "convergence_scores",
+      "evidence",
+      "sources",
+      "targets"
+    ],
+    "reasoning/milestone_tracker.py": [
+      "screening_milestones"
+    ],
+    "reasoning/modifier_predictor.py": [
+      "claims",
+      "evidence",
+      "sources",
+      "targets"
+    ],
+    "reasoning/molecule_screener.py": [
+      "molecule_screenings",
+      "targets"
+    ],
+    "reasoning/patent_fto.py": [
+      "sources"
+    ],
+    "reasoning/patent_landscape.py": [
+      "targets"
+    ],
+    "reasoning/personal_twin.py": [
+      "a",
+      "await",
+      "patient_profiles"
+    ],
+    "reasoning/prediction_generator.py": [
+      "convergence_scores",
+      "evidence",
+      "prediction_cards",
+      "sources"
+    ],
+    "reasoning/prioritizer.py": [
+      "claims",
+      "evidence",
+      "graph_edges",
+      "sources",
+      "target_scores",
+      "targets",
+      "trials"
+    ],
+    "reasoning/prospective_backtest.py": [
+      "claims",
+      "drug_outcomes",
+      "evidence",
+      "sources"
+    ],
+    "reasoning/reproducibility.py": [
+      "claims"
+    ],
+    "reasoning/repurposing.py": [
+      "target_scores",
+      "targets"
+    ],
+    "reasoning/research_assistant.py": [
+      "evidence",
+      "sources"
+    ],
+    "reasoning/scorer.py": [
+      "against",
+      "claims",
+      "sources"
+    ],
+    "reasoning/screening_funnel.py": [
+      "screening_funnels"
+    ],
+    "reasoning/source_quality.py": [
+      "evidence"
+    ],
+    "reasoning/source_weigher.py": [
+      "sources"
+    ],
+    "reasoning/spatial_omics.py": [
+      "spatial_drug_penetration",
+      "spatial_zones"
+    ],
+    "reasoning/synergy_predictor.py": [
+      "claims",
+      "drugs",
+      "evidence",
+      "gpu_jobs",
+      "graph_edges",
+      "targets"
+    ],
+    "reasoning/target_prioritizer.py": [
+      "claims",
+      "drugs",
+      "evidence",
+      "graph_edges",
+      "sources"
+    ],
+    "reasoning/target_prioritizer_v2.py": [
+      "claims",
+      "cross_species_targets",
+      "evidence",
+      "graph_edges",
+      "sources",
+      "targets"
+    ],
+    "reasoning/translation.py": [
+      "convergence_scores",
+      "evidence",
+      "sources",
+      "targets"
+    ],
+    "reasoning/uncertainty.py": [
+      "claims",
+      "evidence",
+      "sources",
+      "targets"
+    ],
+    "reasoning/uncertainty_engine.py": [
+      "claims",
+      "evidence",
+      "sources",
+      "targets",
+      "to"
+    ]
+  }
+}
