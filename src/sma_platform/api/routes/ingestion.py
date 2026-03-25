@@ -15,13 +15,21 @@ from datetime import date as _date_type
 
 
 def _parse_date_str(s: str | None) -> _date_type | None:
-    """Parse a YYYY-MM-DD string into a date object for asyncpg."""
+    """Parse a date string into a date object for asyncpg.
+
+    Handles YYYY-MM-DD, YYYY-MM (defaults day to 1), and YYYY (defaults to Jan 1).
+    ClinicalTrials.gov v2 API often returns YYYY-MM without a day component.
+    """
     if not s:
         return None
     try:
         parts = s.split("-")
         if len(parts) == 3:
             return _date_type(int(parts[0]), int(parts[1]), int(parts[2]))
+        if len(parts) == 2:
+            return _date_type(int(parts[0]), int(parts[1]), 1)
+        if len(parts) == 1 and len(parts[0]) == 4:
+            return _date_type(int(parts[0]), 1, 1)
     except (ValueError, IndexError):
         pass
     return None
@@ -167,8 +175,8 @@ async def trigger_trials_ingestion():
                 trial["conditions"],
                 json.dumps(trial["interventions"]),
                 trial["sponsor"],
-                trial.get("start_date"),
-                trial.get("completion_date"),
+                _parse_date_str(trial.get("start_date")),
+                _parse_date_str(trial.get("completion_date")),
                 trial.get("enrollment"),
                 trial.get("brief_summary"),
                 trial["url"],
