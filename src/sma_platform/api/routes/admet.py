@@ -3,6 +3,8 @@
 GET /api/v2/admet/summary             — overall statistics (BBB count, Lipinski pass, avg QED)
 GET /api/v2/admet/compounds            — filter compounds by ADMET properties
 GET /api/v2/admet/top                  — top N compounds by QED, CNS MPO, or TPSA
+POST /api/v2/admet/predict            — ML-based ADMET prediction (single SMILES)
+POST /api/v2/admet/predict/batch      — ML-based ADMET prediction (batch, up to 100 SMILES)
 """
 
 from __future__ import annotations
@@ -12,6 +14,7 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -183,4 +186,92 @@ async def admet_top(
         "total_pool": len(filtered),
         "returned": len(top),
         "items": top,
+    }
+
+
+# --- ML-based ADMET prediction endpoints (ADMET-AI) ---
+
+
+class _SmilesInput(BaseModel):
+    smiles: str
+
+
+class _SmilesBatchInput(BaseModel):
+    smiles: list[str]
+
+
+@router.post("/admet/predict")
+async def admet_predict_ml(body: _SmilesInput):
+    """Predict ADMET properties for a single compound using ML models (ADMET-AI).
+
+    Returns 41 ADMET endpoints from Therapeutics Data Commons benchmarks,
+    organized by category (absorption, distribution, metabolism, excretion, toxicity).
+
+    This complements the rule-based predictions in /admet/summary with
+    deep learning models trained on experimental data.
+    """
+    from ...reasoning.admet_ml import (
+        predict_admet_ml,
+        categorize_predictions,
+        compute_druglikeness_summary,
+    )
+
+    preds = predict_admet_ml(body.smiles)
+    if preds is None:
+        raise HTTPException(
+            status_code=422,
+            detail="ADMET-AI not available or invalid SMILES. Install: pip install admet-ai",
+        )
+
+    categorized = categorize_predictions(preds)
+    summary = compute_druglikeness_summary(preds)
+
+    return {
+        "smiles": body.smiles,
+        "method": "ADMET-AI (Chemprop-RDKit, TDC benchmarks)",
+        "num_properties": len(preds),
+        "overall": summary,
+        "categories": categorized,
+        "raw_predictions": preds,
+    }
+
+
+@router.post("/admet/predict/batch")
+async def admet_predict_ml_batch(body: _SmilesBatchInput):
+    """Predict ADMET properties for up to 100 compounds using ML models.
+
+    Returns a list of ADMET predictions, one per input SMILES.
+    """
+    if len(body.smiles) > 100:
+        raise HTTPException(
+            status_code=400,
+            detail="Maximum 100 SMILES per batch request",
+        )
+
+    from ...reasoning.admet_ml import (
+        predict_admet_ml_batch,
+        compute_druglikeness_summary,
+    )
+
+    results = predict_admet_ml_batch(body.smiles)
+    if not results:
+        raise HTTPException(
+            status_code=422,
+            detail="ADMET-AI not available or all SMILES invalid. Install: pip install admet-ai",
+        )
+
+    # Add summary for each compound
+    enriched = []
+    for entry in results:
+        summary = compute_druglikeness_summary(entry)
+        enriched.append({
+            "smiles": entry.get("smiles", ""),
+            "overall": summary,
+            "predictions": {k: v for k, v in entry.items() if k != "smiles"},
+        })
+
+    return {
+        "method": "ADMET-AI (Chemprop-RDKit, TDC benchmarks)",
+        "total": len(enriched),
+        "results": enriched,
     }

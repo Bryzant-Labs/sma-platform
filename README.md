@@ -8,11 +8,26 @@
 
 ## What This Does
 
-The platform systematically aggregates SMA research from public biomedical databases, extracts structured claims from the literature using NLP, builds a molecular knowledge graph, and prioritizes drug targets through multi-dimensional scoring.
+The platform systematically aggregates SMA research from public biomedical databases, extracts structured claims from the literature using NLP, builds a molecular knowledge graph, and prioritizes drug targets through multi-dimensional scoring. It integrates NVIDIA BioNeMo NIMs for structural biology, runs an 8-stage virtual screening pipeline, and validates findings through cross-species and cross-disease transcriptomics.
 
 Every assertion traces back to its source. No marketing — only evidence.
 
 **Current stats**: https://sma-research.info/api/v2/stats
+
+| Metric | Count |
+|--------|-------|
+| Literature sources (PubMed + bioRxiv + patents) | 9,070+ |
+| Evidence claims (recalibrated, avg confidence 0.458) | 15,946 |
+| Molecular targets | 79 |
+| Hypotheses (3 tiers) | 1,535 |
+| Molecules screened/designed | 1,226+ |
+| Clinical trials | 451 |
+| SMA patents | 578 |
+| API endpoints | 438 |
+| NVIDIA NIMs cataloged | 15 |
+| Protein structures (ESMfold + AlphaFold) | 70+ |
+
+Daily automated pipeline runs at 06:00 UTC.
 
 ## Key Findings & Honest Assessment
 
@@ -20,6 +35,7 @@ Every assertion traces back to its source. No marketing — only evidence.
 |---------|--------|--------|
 | Riluzole binding to SMN2 | VALIDATED | DiffDock 20-pose docking confirmed; only computational hit with structural evidence |
 | CORO1C as modifier target | HYPOTHESIS | Needs expression enhancement, not direct binding (see Wirth Lab, PMID 27499521) |
+| ROCK-LIMK2-CFL2 axis | COMPUTATIONAL | Identified through single-cell analysis; CFL2 UP in SMA, DOWN in ALS — disease-specific signature |
 | Platform calibration | Grade A (89.8%) | Back-tested against 227 known drug outcomes via Bayesian convergence |
 | Claim extraction accuracy | 98.3% lenient | Target linking accuracy still needs improvement (~40%) |
 
@@ -44,10 +60,11 @@ The pipeline follows a six-stage process:
 
 ```
 1. COLLECT    PubMed, ClinicalTrials.gov, STRING-DB, ChEMBL, UniProt, KEGG,
-              Google Patents, bioRxiv/medRxiv, AlphaFold, NCBI Orthologs
-              107+ curated queries across SMA biology and discovery targets
+              Google Patents, bioRxiv/medRxiv, AlphaFold, NCBI Orthologs, GEO
+              9,070+ sources across SMA biology and discovery targets
                   |
 2. EXTRACT    NLP-based claim extraction from thousands of paper abstracts
+              PMC full-text extraction for open-access papers
               12 typed claim categories (gene_expression, drug_efficacy, etc.)
               Each claim traces back to its source paper
                   |
@@ -73,16 +90,17 @@ The pipeline follows a six-stage process:
 
 | Source | Type | What We Extract |
 |--------|------|-----------------|
-| [PubMed](https://pubmed.ncbi.nlm.nih.gov/) | Literature | Abstracts, metadata from 107+ queries |
-| [ClinicalTrials.gov](https://clinicaltrials.gov/) | Clinical | Trial status, phase, interventions, enrollment, results |
+| [PubMed](https://pubmed.ncbi.nlm.nih.gov/) | Literature | Abstracts + PMC full-text (open access) from 9,070+ sources |
+| [ClinicalTrials.gov](https://clinicaltrials.gov/) | Clinical | Trial status, phase, interventions, enrollment, results (451 trials) |
 | [STRING-DB](https://string-db.org/) | Protein interactions | PPI scores (experimental, co-expression, text-mining) |
 | [ChEMBL](https://www.ebi.ac.uk/chembl/) | Bioactivity | Compound-target IC50/EC50/Ki, pChEMBL values |
 | [UniProt](https://www.uniprot.org/) | Protein annotations | GO terms, Reactome/KEGG pathways, function |
 | [KEGG](https://www.kegg.jp/) | Pathways | SMA pathway (hsa05033) gene membership |
 | [NCBI Gene](https://www.ncbi.nlm.nih.gov/gene/) | Orthologs | Cross-species ortholog mapping |
-| [Google Patents](https://patents.google.com/) | Patent literature | SMA-related patent claims and abstracts |
+| [Google Patents](https://patents.google.com/) | Patent literature | SMA-related patent claims and abstracts (578 patents) |
 | [AlphaFold DB](https://alphafold.ebi.ac.uk/) | Structures | Predicted protein structures, pLDDT confidence |
 | [bioRxiv/medRxiv](https://www.biorxiv.org/) | Preprints | Recent SMA preprints for early signal detection |
+| [GEO](https://www.ncbi.nlm.nih.gov/geo/) | Transcriptomics | Bulk and single-cell RNA-seq datasets (6 datasets analyzed) |
 
 All data is derived from public, freely accessible databases.
 
@@ -104,6 +122,13 @@ All data is derived from public, freely accessible databases.
 
 | Symbol | Mechanism |
 |--------|-----------|
+| CORO1C | Actin dynamics regulator, SMA modifier (Wirth Lab); depleted in motor neurons |
+| CFL2 | Cofilin-2, actin depolymerization; UP in SMA, DOWN in ALS (disease-specific) |
+| LIMK2 | LIM kinase 2, CFL2 phosphorylation; SMA-specific kinase (not LIMK1) |
+| ROCK1 | Rho kinase 1, LIMK2 upstream activator; UP in ALS motor neurons |
+| ROCK2 | Rho kinase 2, druggable with fasudil/ripasudil |
+| PFN2 | Profilin-2, motor neuron-enriched (7.6x); actin polymerization |
+| PFN1 | Profilin-1, known ALS gene; cross-disease convergence with SMA |
 | LY96 | TLR4 coreceptor, neuroinflammation |
 | DNMT3B | Epigenetic regulation, SMN2 exon 7 modifier |
 | NEDD4L | Ubiquitin pathway, related to UBA1 |
@@ -127,47 +152,105 @@ A module analyzing how regenerative organisms solve motor neuron problems that S
 | C. elegans | Conserved smn-1 ortholog | Genetic models of motor neuron function |
 | Drosophila | SMN loss-of-function models | Well-characterized SMA phenotypes |
 
-## API
+## Transcriptomic Validation
 
-All data is freely accessible via REST API:
+Cross-disease transcriptomic analysis across 6 GEO datasets to validate computational targets:
 
-```
-GET /api/v2/stats                    Platform statistics (live counts)
-GET /api/v2/targets                  Molecular targets
-GET /api/v2/scores                   7-dimension composite scores
-GET /api/v2/hypotheses/prioritized   Ranked hypotheses (A/B/C tiers)
-GET /api/v2/trials                   Clinical trials
-GET /api/v2/drugs                    Drugs/therapies
-GET /api/v2/sources                  PubMed literature
-GET /api/v2/claims                   Evidence claims
-GET /api/v2/datasets                 Curated omics datasets
-GET /api/v2/comparative/species      Model organisms for cross-species analysis
-```
+| Dataset | Disease | Type | Samples |
+|---------|---------|------|---------|
+| GSE87281 | SMA | Bulk RNA-seq | n=101 |
+| GSE69175 | SMA | Bulk RNA-seq | n=4 |
+| GSE290979 | SMA | Bulk RNA-seq | n=31 |
+| GSE113924 | ALS | Bulk RNA-seq | n=16 |
+| GSE287257 | ALS | snRNA-seq | n=8 |
+| GSE208629 | SMA | scRNA-seq | n=2 |
 
-Interactive documentation: https://sma-research.info/api/v2/docs
+**Key findings from single-cell analysis:**
+
+- ROCK-LIMK2-CFL2 therapeutic axis identified as convergence point across datasets
+- CFL2 is UP in SMA motor neurons (+1.83x) but DOWN in ALS motor neurons — a disease-specific signature
+- LIMK2 (not LIMK1) is the SMA-relevant kinase in this pathway
+- PFN2 is motor neuron-enriched (7.6x vs other cell types), while CORO1C is not motor neuron-specific (highest in microglia/endothelial cells)
+- 10 of 14 actin pathway genes are upregulated in SMA motor neurons
+
+**Caveats**: Single-cell datasets are small (17-240 motor neurons per dataset). These findings require replication in larger cohorts and independent experimental validation.
 
 ## NVIDIA BioNeMo Integration
 
-Built with NVIDIA BioNeMo NIMs for structural biology and drug discovery:
+Built with NVIDIA BioNeMo NIMs for structural biology and drug discovery (15 NIMs cataloged):
 
-| Tool | Purpose | Status |
-|------|---------|--------|
-| DiffDock v2.2 NIM | Molecular docking | Live |
-| GenMol NIM | De novo molecule generation | Live |
-| AlphaFold DB | Protein complex structures | Live |
-| RNAPro | RNA 3D structure prediction | Planned (self-hosted) |
-| Virtual Screening Pipeline | Generate, filter, dock, rank | Live |
+| Tool | Purpose | Status | Output |
+|------|---------|--------|--------|
+| DiffDock v2.2 | Molecular docking | Live | Pose prediction + confidence scores |
+| MolMIM | De novo molecule generation | Live | 361 molecules generated for SMA targets |
+| ESMfold | Protein structure prediction | Live | 70+ structures predicted |
+| ESM-2 | Protein embeddings | Live | 72 targets embedded for similarity analysis |
+| Evo2 | DNA sequence analysis | Live | SMN2 exon 7 splice site analysis |
+| OpenFold3 | Protein-ligand co-folding | Live | SMN2 pre-mRNA structure prediction |
+| GenMol | Generative chemistry | Live | De novo drug-like molecule design |
+
+## ADMET & Drug-Likeness
+
+RDKit-based ADMET prediction pipeline integrated as a post-docking filter:
+
+**Properties computed**: QED (quantitative estimate of drug-likeness), Lipinski rule-of-five, blood-brain barrier permeability, CNS MPO score, PAINS alerts, TPSA (topological polar surface area).
+
+**8-stage screening funnel**:
+
+```
+1. ChEMBL compounds with SMA-target bioactivity
+2. Drug-like filter (Lipinski, QED > 0.3)
+3. AI-designed molecules (MolMIM, GenMol)
+4. Molecular docking (DiffDock v2.2)
+5. Positive binders (confidence threshold)
+6. Dual-target candidates (multi-target activity)
+7. Selective leads (off-target filtering)
+8. BBB-permeable (CNS MPO >= 4.0)
+```
+
+1,226+ molecules have been processed through this funnel. Results available via `GET /api/v2/screen/pipeline-stats`.
+
+## Drug Discovery Pipeline Position
+
+This platform covers **Stage 1 (Target Identification)** and early **Stage 2 (Computational Target Validation)** of the drug discovery pipeline. The computational predictions — docking scores, ADMET properties, transcriptomic signatures — narrow the search space but do not replace experimental confirmation.
+
+Moving from computational hits to validated leads requires wet-lab collaboration: binding assays, cell-based functional screens, and animal model testing. The platform is designed to make that handoff as efficient as possible by providing ranked, evidence-backed starting points with full provenance.
+
+## API
+
+All data is freely accessible via 438 REST API endpoints:
+
+```
+GET /api/v2/stats                      Platform statistics (live counts)
+GET /api/v2/targets                    Molecular targets
+GET /api/v2/scores                     7-dimension composite scores
+GET /api/v2/hypotheses/prioritized     Ranked hypotheses (A/B/C tiers)
+GET /api/v2/trials                     Clinical trials
+GET /api/v2/drugs                      Drugs/therapies
+GET /api/v2/sources                    PubMed literature
+GET /api/v2/claims                     Evidence claims
+GET /api/v2/datasets                   Curated omics datasets
+GET /api/v2/comparative/species        Model organisms for cross-species analysis
+GET /api/v2/screen/pipeline-stats      Virtual screening funnel statistics
+GET /api/v2/admet/summary              ADMET predictions for screened molecules
+GET /api/v2/evo2/smn2-analysis         DNA sequence analysis (Evo2 NIM)
+GET /api/v2/openfold3/predict-rna      RNA structure prediction (OpenFold3)
+GET /api/v2/discovery/signals          Breakthrough signal detection
+```
+
+Interactive documentation: https://sma-research.info/api/v2/docs
 
 ## Limitations & Transparency
 
 Known limitations:
 
-1. **Abstract-only analysis** — Full-text papers are not yet processed. Context from methods/results sections may be missed.
+1. **Literature coverage** — PMC full-text extraction exists for open-access papers, but most SMA papers are behind paywalls. For paywalled articles, analysis relies on abstracts only, which means context from methods/results sections may be missed.
 2. **LLM extraction errors** — Automated claim extraction achieves 98.3% lenient accuracy, but target linking is ~40%. All claims should be verified against the source paper.
 3. **Publication bias** — PubMed queries favor published, English-language research.
 4. **No experimental validation** — This is a computational platform. All hypotheses require independent experimental validation.
 5. **Scoring weights are expert-assigned** — Not statistically optimized. The expanding corpus changes scores over time.
 6. **Target linking** — Fuzzy symbol matching links claims to targets with moderate accuracy. Enrichment is ongoing.
+7. **Single-cell dataset sizes** — Single-cell datasets are small (17-240 motor neurons per dataset). Transcriptomic findings require replication in larger, independent cohorts.
 
 See [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) for full details on methods, validation, and known weaknesses.
 
@@ -185,7 +268,9 @@ This script verifies claim counts, calibration scores, target rankings, and evid
 
 - **Backend**: Python / FastAPI / PostgreSQL (asyncpg)
 - **NLP**: Claude Haiku (structured claim extraction)
-- **Data**: httpx (REST APIs), Biopython (NCBI)
+- **Structural Biology**: NVIDIA BioNeMo NIMs (DiffDock, MolMIM, ESMfold, ESM-2, Evo2, OpenFold3, GenMol)
+- **Cheminformatics**: RDKit (ADMET, molecular properties, fingerprints)
+- **Data**: httpx (REST APIs), Biopython (NCBI), scanpy (single-cell)
 - **Frontend**: Vanilla JS (no framework dependencies)
 - **Updates**: Daily automated ingestion (06:00 UTC)
 
