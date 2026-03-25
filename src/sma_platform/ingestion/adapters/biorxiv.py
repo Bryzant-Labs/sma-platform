@@ -27,9 +27,13 @@ _BIORXIV_HTML_BASE = "https://www.biorxiv.org/content"
 _MEDRXIV_HTML_BASE = "https://www.medrxiv.org/content"
 _EUROPEPMC_SEARCH = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
 _EUROPEPMC_FULLTEXT = "https://www.ebi.ac.uk/europepmc/webservices/rest"
+_SEMANTIC_SCHOLAR_API = "https://api.semanticscholar.org/graph/v1/paper"
+_NCBI_EFETCH = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
 # Rate-limit delay between full-text requests (seconds)
 _FULLTEXT_DELAY = 1.0
+# Semantic Scholar allows 100 requests per 5 minutes without API key
+_SEMANTIC_SCHOLAR_DELAY = 0.5
 
 # Keywords to match in title or abstract (lowercased for comparison)
 SMA_KEYWORDS = [
@@ -136,6 +140,48 @@ def _extract_sections_from_html(html: str) -> str:
         for p in paragraphs:
             p_text = _strip_html_tags(p).strip()
             p_text = re.sub(r"\s+", " ", p_text)
+            if p_text and len(p_text) > 30:
+                sections.append(p_text)
+
+    return "\n\n".join(sections)
+
+
+def _parse_jats_xml_sections(xml_text: str) -> str:
+    """Parse JATS XML into structured markdown with section headers.
+
+    Shared parser for both Europe PMC and NCBI PMC JATS XML responses.
+
+    Args:
+        xml_text: Raw JATS XML string.
+
+    Returns:
+        Structured markdown text, or empty string if parsing fails.
+    """
+    try:
+        root = ElementTree.fromstring(xml_text)
+    except ElementTree.ParseError:
+        return ""
+
+    sections: list[str] = []
+    for body in root.iter("body"):
+        for sec in body.iter("sec"):
+            title_el = sec.find("title")
+            title = title_el.text if title_el is not None and title_el.text else ""
+            paragraphs: list[str] = []
+            for p in sec.iter("p"):
+                p_text = " ".join(p.itertext()).strip()
+                if p_text:
+                    paragraphs.append(p_text)
+            if paragraphs:
+                if title:
+                    sections.append(f"## {title}\n\n" + "\n\n".join(paragraphs))
+                else:
+                    sections.append("\n\n".join(paragraphs))
+
+    if not sections:
+        # Fallback: extract all paragraph text from body
+        for p in root.iter("p"):
+            p_text = " ".join(p.itertext()).strip()
             if p_text and len(p_text) > 30:
                 sections.append(p_text)
 
@@ -253,6 +299,88 @@ def _parse_paper(raw: dict[str, Any], server: str) -> dict[str, Any]:
 # Full-text extraction
 # ---------------------------------------------------------------------------
 
+async def _fetch_fulltext_via_semantic_scholar(
+    doi: str,
+    client: httpx.AsyncClient,
+) -> str | None:
+    """Fetch full text via Semantic Scholar PMCID lookup + NCBI PMC JATS XML.
+
+    Many bioRxiv preprints get published in PMC-indexed journals. This approach
+    bypasses Cloudflare blocking by going through Semantic Scholar (for PMCID
+    discovery) and then NCBI's E-utilities (for the actual XML content).
+
+    Flow:
+    1. Semantic Scholar API: GET /paper/DOI:{doi}?fields=externalIds
+    2. Extract externalIds.PubMedCentral (PMCID)
+    3. NCBI efetch: GET efetch.fcgi?db=pmc&id={pmcid}&rettype=xml
+    4. Parse JATS XML sections
+
+    Args:
+        doi: The bioRxiv/medRxiv DOI (e.g. "10.1101/2024.01.15.575123")
+        client: Shared httpx async client
+
+    Returns:
+        Structured markdown text with section headers, or None if unavailable.
+    """
+    # Step 1: Look up PMCID via Semantic Scholar
+    s2_url = f"{_SEMANTIC_SCHOLAR_API}/DOI:{doi}"
+    try:
+        await asyncio.sleep(_SEMANTIC_SCHOLAR_DELAY)
+        resp = await client.get(s2_url, params={"fields": "externalIds"})
+        if resp.status_code == 404:
+            logger.debug("Semantic Scholar: DOI %s not found", doi)
+            return None
+        if resp.status_code == 429:
+            logger.warning("Semantic Scholar rate limit hit for DOI %s", doi)
+            return None
+        resp.raise_for_status()
+    except httpx.HTTPError as exc:
+        logger.debug("Semantic Scholar lookup failed for DOI %s: %s", doi, exc)
+        return None
+
+    try:
+        data = resp.json()
+    except (ValueError, KeyError):
+        logger.debug("Semantic Scholar returned invalid JSON for DOI %s", doi)
+        return None
+
+    external_ids = data.get("externalIds") or {}
+    pmcid = external_ids.get("PubMedCentral")
+
+    if not pmcid:
+        logger.debug(
+            "Semantic Scholar: no PMCID for DOI %s (available IDs: %s)",
+            doi, list(external_ids.keys()),
+        )
+        return None
+
+    logger.debug("Semantic Scholar: DOI %s -> PMCID %s", doi, pmcid)
+
+    # Step 2: Fetch JATS XML from NCBI PMC
+    try:
+        ncbi_resp = await client.get(
+            _NCBI_EFETCH,
+            params={"db": "pmc", "id": pmcid, "rettype": "xml"},
+        )
+        if ncbi_resp.status_code != 200 or len(ncbi_resp.text) < 200:
+            logger.debug("NCBI efetch returned status %d for PMCID %s", ncbi_resp.status_code, pmcid)
+            return None
+    except httpx.HTTPError as exc:
+        logger.debug("NCBI efetch failed for PMCID %s: %s", pmcid, exc)
+        return None
+
+    # Step 3: Parse JATS XML
+    full_text = _parse_jats_xml_sections(ncbi_resp.text)
+    cleaned = _clean_fulltext(full_text)
+
+    if cleaned:
+        logger.debug(
+            "Fetched full text via Semantic Scholar + NCBI PMC for DOI %s / PMCID %s (%d chars)",
+            doi, pmcid, len(cleaned),
+        )
+    return cleaned or None
+
+
 async def _fetch_fulltext_biorxiv_html(
     doi: str,
     client: httpx.AsyncClient,
@@ -261,6 +389,10 @@ async def _fetch_fulltext_biorxiv_html(
 
     Tries the bioRxiv HTML endpoint first, then medRxiv. bioRxiv serves
     full-text at: https://www.biorxiv.org/content/{doi}v{version}.full
+
+    Note: bioRxiv pages are served behind Cloudflare, which often blocks
+    server-side requests with 403. The Semantic Scholar + NCBI approach
+    (tried first in fetch_fulltext_biorxiv) is more reliable.
 
     Args:
         doi: The bioRxiv/medRxiv DOI (e.g. "10.1101/2024.01.15.575123")
@@ -343,36 +475,8 @@ async def _fetch_fulltext_europepmc_by_doi(
         if ft_resp.status_code != 200 or len(ft_resp.text) < 200:
             return None
 
-        # Step 3: Parse XML sections (same pattern as pmc.py)
-        try:
-            root = ElementTree.fromstring(ft_resp.text)
-        except ElementTree.ParseError:
-            return None
-
-        sections: list[str] = []
-        for body in root.iter("body"):
-            for sec in body.iter("sec"):
-                title_el = sec.find("title")
-                title = title_el.text if title_el is not None and title_el.text else ""
-                paragraphs: list[str] = []
-                for p in sec.iter("p"):
-                    p_text = " ".join(p.itertext()).strip()
-                    if p_text:
-                        paragraphs.append(p_text)
-                if paragraphs:
-                    if title:
-                        sections.append(f"## {title}\n\n" + "\n\n".join(paragraphs))
-                    else:
-                        sections.append("\n\n".join(paragraphs))
-
-        if not sections:
-            # Fallback: extract all paragraph text from body
-            for p in root.iter("p"):
-                p_text = " ".join(p.itertext()).strip()
-                if p_text and len(p_text) > 30:
-                    sections.append(p_text)
-
-        full_text = "\n\n".join(sections)
+        # Step 3: Parse XML sections using shared JATS parser
+        full_text = _parse_jats_xml_sections(ft_resp.text)
         cleaned = _clean_fulltext(full_text)
         if cleaned:
             logger.debug(
@@ -392,9 +496,10 @@ async def _fetch_fulltext_europepmc_by_doi(
 async def fetch_fulltext_biorxiv(doi: str) -> str | None:
     """Fetch full text for a bioRxiv/medRxiv preprint by DOI.
 
-    Tries two sources in order:
-    1. bioRxiv/medRxiv HTML page (direct scrape)
-    2. Europe PMC XML (structured, if indexed)
+    Tries three sources in order:
+    1. Semantic Scholar PMCID lookup + NCBI PMC JATS XML (most reliable)
+    2. bioRxiv/medRxiv HTML page (often blocked by Cloudflare)
+    3. Europe PMC XML (structured, if indexed)
 
     Args:
         doi: The bioRxiv/medRxiv DOI (e.g. "10.1101/2024.01.15.575123")
@@ -406,7 +511,13 @@ async def fetch_fulltext_biorxiv(doi: str) -> str | None:
         return None
 
     async with httpx.AsyncClient(timeout=_TIMEOUT, follow_redirects=True) as client:
-        # Try bioRxiv HTML first (always available for bioRxiv preprints)
+        # Try Semantic Scholar + NCBI PMC first (bypasses Cloudflare)
+        text = await _fetch_fulltext_via_semantic_scholar(doi, client)
+        if text:
+            logger.info("Full text from Semantic Scholar + NCBI PMC for DOI %s (%d chars)", doi, len(text))
+            return text
+
+        # Try bioRxiv HTML (often blocked by Cloudflare, but worth trying)
         text = await _fetch_fulltext_biorxiv_html(doi, client)
         if text:
             logger.info("Full text from bioRxiv HTML for DOI %s (%d chars)", doi, len(text))
@@ -450,8 +561,12 @@ async def fetch_biorxiv_fulltext_batch(
                 continue
 
             try:
-                # Try bioRxiv HTML first
-                text = await _fetch_fulltext_biorxiv_html(doi, client)
+                # Try Semantic Scholar + NCBI PMC first (most reliable)
+                text = await _fetch_fulltext_via_semantic_scholar(doi, client)
+
+                # Fall back to bioRxiv HTML
+                if not text:
+                    text = await _fetch_fulltext_biorxiv_html(doi, client)
 
                 # Fall back to Europe PMC
                 if not text:
