@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date as date_type
 
 from fastapi import APIRouter, Depends, Query
 
@@ -32,6 +32,19 @@ from ...reasoning.hypothesis_generator import generate_all_hypotheses, generate_
 from ..auth import require_admin_key
 
 logger = logging.getLogger(__name__)
+
+def _parse_pub_date(val):
+    """Convert date string to date object for asyncpg."""
+    if val is None:
+        return None
+    if isinstance(val, date_type):
+        return val
+    try:
+        return date_type.fromisoformat(str(val)[:10])
+    except (ValueError, TypeError):
+        return None
+
+
 router = APIRouter()
 
 
@@ -55,9 +68,9 @@ async def trigger_pubmed_ingestion(days_back: int = Query(default=7, ge=1, le=36
                 "pubmed",
                 paper["pmid"],
                 paper["title"],
-                json.dumps(paper["authors"]),
+                paper.get("authors", []),
                 paper["journal"],
-                paper["pub_date"],
+                _parse_pub_date(paper.get("pub_date")),
                 paper["doi"],
                 paper["url"],
                 paper["abstract"],
@@ -108,9 +121,9 @@ async def trigger_biorxiv_ingestion(days_back: int = Query(default=7, ge=1, le=9
                 "biorxiv",
                 p["doi"],
                 p["title"],
-                json.dumps(p["authors"]),
+                p.get("authors", []),
                 p.get("server", "biorxiv"),
-                p.get("posted_date"),
+                _parse_date_str(p.get("posted_date")),
                 p["doi"],
                 p["url"],
                 p["abstract"],
@@ -142,10 +155,16 @@ async def trigger_biorxiv_ingestion(days_back: int = Query(default=7, ge=1, le=9
 
 
 @router.post("/ingest/trials", dependencies=[Depends(require_admin_key)])
-async def trigger_trials_ingestion():
+async def trigger_trials_ingestion(
+    query: str | None = Query(default=None, description="Custom search query"),
+    max_results: int = Query(default=100, ge=1, le=500),
+):
     """Pull all SMA clinical trials from ClinicalTrials.gov."""
     start = datetime.now(timezone.utc)
-    trials = await clinicaltrials.fetch_all_sma_trials()
+    if query:
+        trials = await clinicaltrials.search_trials(query=query, max_results=max_results)
+    else:
+        trials = await clinicaltrials.fetch_all_sma_trials()
 
     new_count = 0
     updated_count = 0
@@ -164,12 +183,12 @@ async def trigger_trials_ingestion():
                 trial["title"],
                 trial["status"],
                 trial["phase"],
-                json.dumps(trial["conditions"]),
-                json.dumps(trial["interventions"]),
+                trial["conditions"] if isinstance(trial["conditions"], list) else [],
+                json.dumps(trial["interventions"]) if not isinstance(trial["interventions"], str) else trial["interventions"],
                 trial["sponsor"],
-                trial.get("start_date"),
-                trial.get("completion_date"),
-                trial.get("enrollment"),
+                _parse_date_str(trial.get("start_date")),
+                _parse_date_str(trial.get("completion_date")),
+                int(trial["enrollment"]) if trial.get("enrollment") is not None else None,
                 trial.get("brief_summary"),
                 trial["url"],
             )
@@ -185,7 +204,7 @@ async def trigger_trials_ingestion():
     await execute(
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
-        "clinicaltrials", "all_sma_trials", len(trials), new_count, updated_count,
+        "clinicaltrials", query or "all_sma_trials", len(trials), new_count, updated_count,
         errors[:10] if errors else None, duration,
     )
 

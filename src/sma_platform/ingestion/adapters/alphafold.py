@@ -1,7 +1,7 @@
 """Protein structure adapter — AlphaFold DB + variant effect prediction.
 
 Fetches pre-computed 3D structures and per-residue confidence (pLDDT) from
-the AlphaFold Protein Structure Database for core SMA-related proteins.
+the AlphaFold Protein Structure Database for core disease-related proteins.
 Integrates AlphaFold Missense pathogenicity predictions for variant analysis.
 
 No API key required. Rate limits: AlphaFold DB — reasonable use policy.
@@ -15,21 +15,31 @@ from typing import Any
 
 import httpx
 
+from ...core.disease_config import get_disease_targets, get_disease_short_name
+
 logger = logging.getLogger(__name__)
 
 ALPHAFOLD_API = "https://alphafold.ebi.ac.uk/api"
 UNIPROT_API = "https://rest.uniprot.org/uniprotkb"
 
-# Core SMA proteins with UniProt accessions
-SMA_PROTEINS: dict[str, dict[str, str]] = {
-    "SMN1": {"uniprot": "P62316", "name": "Survival Motor Neuron 1"},
-    "SMN2": {"uniprot": "Q16637", "name": "Survival Motor Neuron 2"},
-    "PLS3": {"uniprot": "P13797", "name": "Plastin-3"},
-    "STMN2": {"uniprot": "Q93045", "name": "Stathmin-2"},
-    "NCALD": {"uniprot": "P61601", "name": "Neurocalcin-delta"},
-    "UBA1": {"uniprot": "P22314", "name": "Ubiquitin-activating enzyme E1"},
-    "CORO1C": {"uniprot": "Q9ULV4", "name": "Coronin-1C"},
-}
+# Core disease proteins — loaded dynamically from disease_config
+def _build_protein_map() -> dict[str, dict[str, str]]:
+    """Build protein map from disease config targets that have UniProt IDs."""
+    proteins: dict[str, dict[str, str]] = {}
+    for t in get_disease_targets():
+        uniprot = t.get("identifiers", {}).get("uniprot")
+        if uniprot:
+            proteins[t["symbol"]] = {"uniprot": uniprot, "name": t["name"]}
+    return proteins
+
+
+_SMA_PROTEINS: dict[str, dict[str, str]] | None = None
+
+def _get_proteins() -> dict[str, dict[str, str]]:
+    global _SMA_PROTEINS
+    if _SMA_PROTEINS is None:
+        _SMA_PROTEINS = _build_protein_map()
+    return _SMA_PROTEINS
 
 
 async def fetch_alphafold_prediction(uniprot_id: str) -> dict[str, Any] | None:
@@ -217,14 +227,15 @@ async def predict_variant_effect(
 
 
 async def fetch_sma_protein_structures() -> list[dict[str, Any]]:
-    """Fetch AlphaFold predictions for all core SMA proteins.
+    """Fetch AlphaFold predictions for all core disease proteins.
 
     Returns:
         List of structure prediction dicts, one per successfully fetched protein.
     """
     results: list[dict[str, Any]] = []
 
-    for symbol, info in SMA_PROTEINS.items():
+    proteins = _get_proteins()
+    for symbol, info in proteins.items():
         uniprot_id = info["uniprot"]
         logger.debug("Fetching AlphaFold structure for %s (%s)", symbol, uniprot_id)
 
@@ -239,7 +250,7 @@ async def fetch_sma_protein_structures() -> list[dict[str, Any]]:
     logger.info(
         "fetch_sma_protein_structures: %d/%d proteins have AlphaFold structures",
         len(results),
-        len(SMA_PROTEINS),
+        len(proteins),
     )
     return results
 
@@ -303,7 +314,7 @@ def build_structure_summary(
 # AlphaFold Protein Complex Predictions (GTC 2026 — 1.7M new complexes)
 # =============================================================================
 
-# SMA-relevant protein complexes to check
+# Disease-specific protein complexes to check (SMA-specific, skipped for other diseases)
 SMA_COMPLEX_QUERIES = [
     # SMN complexes
     {"name": "SMN-Gemin2", "uniprot_ids": ["Q16637", "O14893"], "desc": "Core SMN complex — essential for snRNP assembly"},

@@ -1,6 +1,6 @@
 """bioRxiv/medRxiv adapter — Agent A of the Agentic Research Swarm.
 
-Scans both preprint servers for SMA-relevant papers using the bioRxiv REST API.
+Scans both preprint servers for disease-relevant papers using the bioRxiv REST API.
 API docs: https://api.biorxiv.org/
 """
 
@@ -12,22 +12,34 @@ from typing import Any
 
 import httpx
 
+from ...core.disease_config import get_disease_config
+
 logger = logging.getLogger(__name__)
 
 # bioRxiv/medRxiv API base URL
 _API_BASE = "https://api.biorxiv.org/details"
 
-# Keywords to match in title or abstract (lowercased for comparison)
-SMA_KEYWORDS = [
-    "spinal muscular atrophy",
-    "smn1",
-    "smn2",
-    "motor neuron",
-    "nusinersen",
-    "risdiplam",
-    "onasemnogene",
-    "gene therapy sma",
-]
+# Keywords derived from active disease configuration (lowercased for comparison)
+def _build_keywords() -> list[str]:
+    """Build keyword list from disease config: name, short_name, target symbols, drug names."""
+    cfg = get_disease_config()
+    kws: list[str] = []
+    kws.append(cfg["name"].lower())
+    kws.append(cfg["short_name"].lower())
+    for t in cfg.get("targets", [])[:10]:
+        kws.append(t["symbol"].lower())
+    for d in cfg.get("drugs", [])[:10]:
+        kws.append(d["name"].lower())
+    return kws
+
+
+_SMA_KEYWORDS: list[str] | None = None
+
+def _get_keywords() -> list[str]:
+    global _SMA_KEYWORDS
+    if _SMA_KEYWORDS is None:
+        _SMA_KEYWORDS = _build_keywords()
+    return _SMA_KEYWORDS
 
 # Maximum results to fetch per server per cursor page
 _PAGE_SIZE = 100
@@ -49,7 +61,8 @@ def _is_relevant(title: str, abstract: str) -> tuple[bool, float]:
 
     hits = 0
     title_hits = 0
-    for kw in SMA_KEYWORDS:
+    keywords = _get_keywords()
+    for kw in keywords:
         in_title = kw in title_lower
         in_abstract = kw in abstract_lower
         if in_title:
@@ -61,7 +74,7 @@ def _is_relevant(title: str, abstract: str) -> tuple[bool, float]:
     if hits == 0:
         return False, 0.0
 
-    max_possible = len(SMA_KEYWORDS) * 2
+    max_possible = len(keywords) * 2
     score = round(min(1.0, hits / max_possible), 4)
     return True, score
 

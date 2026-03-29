@@ -13,6 +13,7 @@ from fastapi.responses import FileResponse, PlainTextResponse, Response as RawRe
 
 from ..core.config import settings
 from ..core.database import close_pool, init_pool
+from ..core.disease_config import get_disease_name, get_disease_short_name, get_disease_config, get_disease_id
 from .routes import aav, advanced_analytics, advisory_pack, bioelectric, agent, analytics, aso, assistant, bayesian, benchmark, binder_design, biomarker, blackboard, calibration, cascade, chat, collaboration, combinations, comparative, contact, convergence, crispr, cross_disease, datasets, diffdock_local, digital_twin, discovery, docking, docking_proxy, drugs, dual_target, enrichment, evidence, evidence_writer, experiment_design, experiment_value, export, fair, federated, funnel, gene_versioning, gpu, graph, hit_validation, hypothesis_gen, ingestion, interaction_network, lab_os, literature_review, md_simulation, ml_proxy, modality_comparison, modifier, molecule_browser, molecule_screen, mouse_models, news, nvidia_nims, omics, organoid_scorecard, patent_landscape, personal_twin, predictions, preprints, prime_edit, prioritization, prioritization_v2, proprioception, reproducibility, research, rna_binding, scoring, screening, search, smn_locus, source_quality, spatial_omics, splice, splice_offtarget, splice_predictor, splicing_map, stats, synergy, synthesis, target_compare, target_report, targets, timeline, translation, trials, uncertainty, admet, pockets, structures, virtual_screening
 
 
@@ -31,8 +32,8 @@ def create_app() -> FastAPI:
     openapi_url = "/api/v2/openapi.json" if settings.enable_docs else None
 
     app = FastAPI(
-        title="SMA Research Platform",
-        description="Open-source biology-first target discovery for Spinal Muscular Atrophy",
+        title=f"{get_disease_short_name()} Research Platform",
+        description=get_disease_config().get("description", "Open research platform"),
         version="0.1.0",
         lifespan=lifespan,
         docs_url=docs_url,
@@ -43,7 +44,7 @@ def create_app() -> FastAPI:
     # CORS — restrict to own domain only
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["https://sma-research.info"],
+        allow_origins=["https://sma-research.info", "https://idh1-research.info"],
         allow_methods=["GET", "POST", "PATCH", "PUT"],
         allow_headers=["Content-Type", "X-Admin-Key"],
     )
@@ -184,7 +185,7 @@ def create_app() -> FastAPI:
         return {"status": "ok", "version": "0.1.0"}
 
     # SEO/AEO static files — served via FastAPI since Nginx proxies everything
-    _static_dir = Path("/var/www/sma-research.info")
+    _static_dir = Path(f"/var/www/{get_disease_id()}-research")
 
     @app.get("/robots.txt", response_class=PlainTextResponse)
     async def robots_txt():

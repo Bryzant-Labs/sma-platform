@@ -29,7 +29,9 @@ class Settings(BaseSettings):
     slack_channel_id: str = ""
 
     # Admin
+    disease: str = "sma"
     sma_admin_key: str = ""
+    admin_key: str = ""  # alias — prefer this over sma_admin_key
     enable_docs: bool = True
 
     # NVIDIA NIMs (DiffDock v2.2, OpenFold3, GenMol)

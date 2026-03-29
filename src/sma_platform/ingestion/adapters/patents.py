@@ -1,6 +1,6 @@
-"""Patent literature adapter for SMA-related inventions.
+"""Patent literature adapter for disease-related inventions.
 
-Searches Google Patents (via the internal XHR API) for SMA-relevant patents
+Searches Google Patents (via the internal XHR API) for disease-relevant patents
 including gene therapy, antisense oligonucleotides, splicing modifiers,
 and small molecule interventions.
 
@@ -17,21 +17,36 @@ from typing import Any
 
 import httpx
 
+from ...core.disease_config import get_disease_config
+
 logger = logging.getLogger(__name__)
 
 # Google Patents XHR endpoint — public, returns JSON
 GOOGLE_PATENTS_XHR = "https://patents.google.com/xhr/query"
 
-# SMA-relevant search queries
-SMA_SEARCH_QUERIES: list[str] = [
-    "spinal muscular atrophy",
-    "SMN1 SMN2 survival motor neuron",
-    "nusinersen antisense oligonucleotide",
-    "risdiplam splicing modifier",
-    "onasemnogene abeparvovec gene therapy",
-    "antisense oligonucleotide exon 7 SMN2",
-    "gene therapy motor neuron AAV9",
-]
+# Disease-specific patent search queries (derived from disease_config)
+def _build_patent_queries() -> list[str]:
+    """Build patent queries from disease config: name, targets, drugs."""
+    cfg = get_disease_config()
+    queries: list[str] = []
+    queries.append(cfg["name"])
+    # Top target symbols joined
+    symbols = [t["symbol"] for t in cfg.get("targets", [])[:5]]
+    if symbols:
+        queries.append(" ".join(symbols) + " " + cfg["short_name"])
+    # Drug names
+    for d in cfg.get("drugs", [])[:5]:
+        queries.append(d["name"] + " " + cfg["short_name"])
+    return queries
+
+
+_SMA_SEARCH_QUERIES: list[str] | None = None
+
+def _get_patent_queries() -> list[str]:
+    global _SMA_SEARCH_QUERIES
+    if _SMA_SEARCH_QUERIES is None:
+        _SMA_SEARCH_QUERIES = _build_patent_queries()
+    return _SMA_SEARCH_QUERIES
 
 
 def _strip_html(text: str) -> str:
@@ -130,7 +145,7 @@ async def search_patents(
 
 
 async def fetch_all_sma_patents() -> list[dict[str, Any]]:
-    """Fetch all SMA-related patents across multiple search strategies.
+    """Fetch all disease-related patents across multiple search strategies.
 
     Deduplicates by patent_id across all queries.
 
@@ -140,7 +155,8 @@ async def fetch_all_sma_patents() -> list[dict[str, Any]]:
     seen: set[str] = set()
     all_patents: list[dict[str, Any]] = []
 
-    for i, query in enumerate(SMA_SEARCH_QUERIES):
+    queries = _get_patent_queries()
+    for i, query in enumerate(queries):
         results = await search_patents(query, num_results=100)
         for patent in results:
             pid = patent.get("patent_id", "")
@@ -151,7 +167,7 @@ async def fetch_all_sma_patents() -> list[dict[str, Any]]:
         logger.debug(
             "Patent query %d/%d ('%s'): %d results, %d unique total",
             i + 1,
-            len(SMA_SEARCH_QUERIES),
+            len(queries),
             query[:40],
             len(results),
             len(all_patents),
@@ -165,7 +181,7 @@ async def fetch_all_sma_patents() -> list[dict[str, Any]]:
     logger.info(
         "fetch_all_sma_patents: %d unique patents from %d queries",
         len(all_patents),
-        len(SMA_SEARCH_QUERIES),
+        len(queries),
     )
     return all_patents
 

@@ -139,6 +139,10 @@ async def dock_compound(req: DockRequest):
                 "CORO1C": "Q9ULV4", "ROCK2": "O75116",
                 "MAPK14": "Q16539", "LIMK1": "P53667",
                 "CFL2": "Q9Y281", "PFN1": "P07737",
+                "IDH1": "O75874", "IDH2": "P48735",
+                "FGFR2": "P21802", "BRAF": "P15056",
+                "TP53": "P04637", "KRAS": "P01116",
+                "ARID1A": "O14497", "BAP1": "Q92560",
             }
             uniprot_id = target_uniprot.get(req.target)
             if not uniprot_id:
