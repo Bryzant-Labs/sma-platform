@@ -1,0 +1,4282 @@
+{
+  "metadata": {
+    "source": "STRING-DB v12.0",
+    "species": 9606,
+    "species_name": "Homo sapiens",
+    "query_proteins": [
+      "CFL2",
+      "LIMK2",
+      "PFN2",
+      "RAC1",
+      "ROCK1",
+      "ROCK2"
+    ],
+    "min_score": 700,
+    "max_partners_per_query": 50,
+    "generated": "2026-03-24",
+    "description": "ROCK-LIMK2-CFL2 pathway protein interaction network for SMA research"
+  },
+  "stats": {
+    "total_nodes": 154,
+    "total_edges": 216,
+    "query_nodes": 6,
+    "hub_nodes_3plus": 6,
+    "hub_nodes_2plus": 52,
+    "existing_targets_found": 6,
+    "new_partners": 142
+  },
+  "nodes": [
+    {
+      "id": "ROCK1",
+      "label": "ROCK1",
+      "type": "query_protein",
+      "in_existing_targets": false,
+      "group": "core_pathway"
+    },
+    {
+      "id": "RAC1",
+      "label": "RAC1",
+      "type": "query_protein",
+      "in_existing_targets": false,
+      "group": "core_pathway"
+    },
+    {
+      "id": "LIMK2",
+      "label": "LIMK2",
+      "type": "query_protein",
+      "in_existing_targets": false,
+      "group": "core_pathway"
+    },
+    {
+      "id": "ROCK2",
+      "label": "ROCK2",
+      "type": "query_protein",
+      "in_existing_targets": true,
+      "group": "core_pathway"
+    },
+    {
+      "id": "CFL2",
+      "label": "CFL2",
+      "type": "query_protein",
+      "in_existing_targets": true,
+      "group": "core_pathway"
+    },
+    {
+      "id": "PFN2",
+      "label": "PFN2",
+      "type": "query_protein",
+      "in_existing_targets": false,
+      "group": "core_pathway"
+    },
+    {
+      "id": "CFL1",
+      "label": "CFL1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "major_hub",
+      "n_connections": 4
+    },
+    {
+      "id": "LIMK1",
+      "label": "LIMK1",
+      "type": "interaction_partner",
+      "in_existing_targets": true,
+      "group": "major_hub",
+      "n_connections": 4
+    },
+    {
+      "id": "PAK4",
+      "label": "PAK4",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "COLEC12",
+      "label": "COLEC12",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "PAK1",
+      "label": "PAK1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PAK5",
+      "label": "PAK5",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "PAK6",
+      "label": "PAK6",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PAK2",
+      "label": "PAK2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PAK3",
+      "label": "PAK3",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "RHOA",
+      "label": "RHOA",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "major_hub",
+      "n_connections": 4
+    },
+    {
+      "id": "RNF185",
+      "label": "RNF185",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "RHOC",
+      "label": "RHOC",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "major_hub",
+      "n_connections": 4
+    },
+    {
+      "id": "MYL2",
+      "label": "MYL2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PPP1R12A",
+      "label": "PPP1R12A",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "MYL12B",
+      "label": "MYL12B",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "MYL9",
+      "label": "MYL9",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "CTNNB1",
+      "label": "CTNNB1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PTEN",
+      "label": "PTEN",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "MYL12A",
+      "label": "MYL12A",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "MAPK3",
+      "label": "MAPK3",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "NFKB1",
+      "label": "NFKB1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PPP1CB",
+      "label": "PPP1CB",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "RELA",
+      "label": "RELA",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PPP1CC",
+      "label": "PPP1CC",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PPP1R12C",
+      "label": "PPP1R12C",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "MAPK1",
+      "label": "MAPK1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "FHOD1",
+      "label": "FHOD1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "MYLPF",
+      "label": "MYLPF",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PPP1CA",
+      "label": "PPP1CA",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "SLC9A1",
+      "label": "SLC9A1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PIKFYVE",
+      "label": "PIKFYVE",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "MYL7",
+      "label": "MYL7",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "MYL10",
+      "label": "MYL10",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PIP4K2B",
+      "label": "PIP4K2B",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "MYL5",
+      "label": "MYL5",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "GAB1",
+      "label": "GAB1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PIP5K1A",
+      "label": "PIP5K1A",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PIP4K2C",
+      "label": "PIP4K2C",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PIP4K2A",
+      "label": "PIP4K2A",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PIP5K1B",
+      "label": "PIP5K1B",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PIP5K1C",
+      "label": "PIP5K1C",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "ARHGEF18",
+      "label": "ARHGEF18",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ARHGEF18-2",
+      "label": "ARHGEF18-2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "RHOB",
+      "label": "RHOB",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "ARHGEF1",
+      "label": "ARHGEF1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "NPM1",
+      "label": "NPM1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "RND3",
+      "label": "RND3",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "major_hub",
+      "n_connections": 3
+    },
+    {
+      "id": "BRCA2",
+      "label": "BRCA2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "RND1",
+      "label": "RND1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "KRIT1",
+      "label": "KRIT1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "RHOBTB1",
+      "label": "RHOBTB1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "PDCD10",
+      "label": "PDCD10",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "WASL",
+      "label": "WASL",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "ACTB",
+      "label": "ACTB",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "ACTG1",
+      "label": "ACTG1",
+      "type": "interaction_partner",
+      "in_existing_targets": true,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "CTTN",
+      "label": "CTTN",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "SSH1",
+      "label": "SSH1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "HCLS1",
+      "label": "HCLS1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "WDR1",
+      "label": "WDR1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "SSH3",
+      "label": "SSH3",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "SSH2",
+      "label": "SSH2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "PFN1",
+      "label": "PFN1",
+      "type": "interaction_partner",
+      "in_existing_targets": true,
+      "group": "existing_target",
+      "n_connections": 1
+    },
+    {
+      "id": "ACTA1",
+      "label": "ACTA1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "PFN4",
+      "label": "PFN4",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "PFN3",
+      "label": "PFN3",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ACTR2",
+      "label": "ACTR2",
+      "type": "interaction_partner",
+      "in_existing_targets": true,
+      "group": "existing_target",
+      "n_connections": 1
+    },
+    {
+      "id": "CDC42",
+      "label": "CDC42",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "major_hub",
+      "n_connections": 3
+    },
+    {
+      "id": "DSTN",
+      "label": "DSTN",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ACTN1",
+      "label": "ACTN1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "PDXP",
+      "label": "PDXP",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "FLNA",
+      "label": "FLNA",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "WAS",
+      "label": "WAS",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "VASP",
+      "label": "VASP",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "GSN",
+      "label": "GSN",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "SCIN",
+      "label": "SCIN",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "WIPF1",
+      "label": "WIPF1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CORO1A",
+      "label": "CORO1A",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "FLNC",
+      "label": "FLNC",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CORO7-PAM16",
+      "label": "CORO7-PAM16",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "SH3PXD2A",
+      "label": "SH3PXD2A",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "TWF1",
+      "label": "TWF1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "VCL",
+      "label": "VCL",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "NCK1",
+      "label": "NCK1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "KBTBD13",
+      "label": "KBTBD13",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "FLNB",
+      "label": "FLNB",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CLCN5",
+      "label": "CLCN5",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "PXN",
+      "label": "PXN",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "SRC",
+      "label": "SRC",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "FSCN1",
+      "label": "FSCN1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CAPZA2",
+      "label": "CAPZA2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "TWF2",
+      "label": "TWF2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "IPO9",
+      "label": "IPO9",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ARHGAP35",
+      "label": "ARHGAP35",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CASP3",
+      "label": "CASP3",
+      "type": "interaction_partner",
+      "in_existing_targets": true,
+      "group": "existing_target",
+      "n_connections": 1
+    },
+    {
+      "id": "SHROOM2",
+      "label": "SHROOM2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "TSG101",
+      "label": "TSG101",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "MYH9",
+      "label": "MYH9",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "HSP90AA1",
+      "label": "HSP90AA1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "MYC",
+      "label": "MYC",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "VAV2",
+      "label": "VAV2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "ADD2",
+      "label": "ADD2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "HIF1A",
+      "label": "HIF1A",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ENAH",
+      "label": "ENAH",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "EVL",
+      "label": "EVL",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ARPC1A",
+      "label": "ARPC1A",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "HDAC1",
+      "label": "HDAC1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "NAA80",
+      "label": "NAA80",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "DIAPH1",
+      "label": "DIAPH1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "FMNL1",
+      "label": "FMNL1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "hub",
+      "n_connections": 2
+    },
+    {
+      "id": "NCF2",
+      "label": "NCF2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "TRIO",
+      "label": "TRIO",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ARHGDIA",
+      "label": "ARHGDIA",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ARFIP2",
+      "label": "ARFIP2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "PREX1",
+      "label": "PREX1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CYFIP1",
+      "label": "CYFIP1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "NCKAP1",
+      "label": "NCKAP1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "IQGAP1",
+      "label": "IQGAP1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "NCF1",
+      "label": "NCF1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "DOCK1",
+      "label": "DOCK1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "VAV1",
+      "label": "VAV1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ABI2",
+      "label": "ABI2",
+      "type": "interaction_partner",
+      "in_existing_targets": true,
+      "group": "existing_target",
+      "n_connections": 1
+    },
+    {
+      "id": "TIAM1",
+      "label": "TIAM1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "BRK1",
+      "label": "BRK1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "BAIAP2",
+      "label": "BAIAP2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "KALRN",
+      "label": "KALRN",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ARHGEF7",
+      "label": "ARHGEF7",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "DOCK2",
+      "label": "DOCK2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "NCF4",
+      "label": "NCF4",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "IQGAP2",
+      "label": "IQGAP2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "RAC3",
+      "label": "RAC3",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "PARD6A",
+      "label": "PARD6A",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CAV1",
+      "label": "CAV1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "WASF1",
+      "label": "WASF1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CYBB",
+      "label": "CYBB",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "WASF2",
+      "label": "WASF2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ARHGDIB",
+      "label": "ARHGDIB",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "MAPK8",
+      "label": "MAPK8",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CYFIP2",
+      "label": "CYFIP2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "HACE1",
+      "label": "HACE1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CYBA",
+      "label": "CYBA",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "AKT1",
+      "label": "AKT1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ARHGAP1",
+      "label": "ARHGAP1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "RAP1GDS1",
+      "label": "RAP1GDS1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "SOS1",
+      "label": "SOS1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "ELMO1",
+      "label": "ELMO1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "CHN2",
+      "label": "CHN2",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "GIT1",
+      "label": "GIT1",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    },
+    {
+      "id": "MCF2L",
+      "label": "MCF2L",
+      "type": "interaction_partner",
+      "in_existing_targets": false,
+      "group": "peripheral",
+      "n_connections": 1
+    }
+  ],
+  "edges": [
+    {
+      "source": "LIMK2",
+      "target": "CFL1",
+      "score": 0.995,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.066,
+        "experimental": 0.555,
+        "database": 0.9,
+        "textmining": 0.899
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "CFL2",
+      "score": 0.99,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.066,
+        "experimental": 0.13,
+        "database": 0.9,
+        "textmining": 0.9
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "ROCK1",
+      "score": 0.967,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.555,
+        "database": 0.9,
+        "textmining": 0.322
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "LIMK1",
+      "score": 0.962,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0.069,
+        "coexpression": 0,
+        "experimental": 0.611,
+        "database": 0.9,
+        "textmining": 0.098
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "PAK4",
+      "score": 0.943,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.076,
+        "database": 0.9,
+        "textmining": 0.436
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "ROCK2",
+      "score": 0.932,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.131,
+        "database": 0.9,
+        "textmining": 0.28
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "COLEC12",
+      "score": 0.926,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.098,
+        "database": 0,
+        "textmining": 0.922
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "PAK1",
+      "score": 0.916,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.049,
+        "experimental": 0.071,
+        "database": 0.9,
+        "textmining": 0.168
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "PAK5",
+      "score": 0.912,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.076,
+        "database": 0.9,
+        "textmining": 0.134
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "PAK6",
+      "score": 0.912,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.049,
+        "experimental": 0.076,
+        "database": 0.9,
+        "textmining": 0.12
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "PAK2",
+      "score": 0.91,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.06,
+        "experimental": 0.071,
+        "database": 0.9,
+        "textmining": 0.093
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "PAK3",
+      "score": 0.907,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.071,
+        "database": 0.9,
+        "textmining": 0.084
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "RHOA",
+      "score": 0.779,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0.11,
+        "database": 0.5,
+        "textmining": 0.528
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "RNF185",
+      "score": 0.778,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0.729,
+        "cooccurrence": 0,
+        "coexpression": 0.098,
+        "experimental": 0.091,
+        "database": 0,
+        "textmining": 0.122
+      }
+    },
+    {
+      "source": "LIMK2",
+      "target": "RHOC",
+      "score": 0.718,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0.11,
+        "database": 0.5,
+        "textmining": 0.396
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "RHOA",
+      "score": 0.998,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.088,
+        "experimental": 0.541,
+        "database": 0.9,
+        "textmining": 0.974
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "ROCK1",
+      "score": 0.988,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0.056,
+        "coexpression": 0.195,
+        "experimental": 0.781,
+        "database": 0.9,
+        "textmining": 0.409
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MYL2",
+      "score": 0.984,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.334,
+        "database": 0.9,
+        "textmining": 0.791
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PPP1R12A",
+      "score": 0.975,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.192,
+        "experimental": 0.095,
+        "database": 0.9,
+        "textmining": 0.7
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MYL12B",
+      "score": 0.954,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.106,
+        "database": 0.9,
+        "textmining": 0.53
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MYL9",
+      "score": 0.951,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.044,
+        "experimental": 0.106,
+        "database": 0.9,
+        "textmining": 0.502
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "CTNNB1",
+      "score": 0.945,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.044,
+        "experimental": 0.098,
+        "database": 0.9,
+        "textmining": 0.438
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PTEN",
+      "score": 0.937,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.065,
+        "experimental": 0.092,
+        "database": 0.9,
+        "textmining": 0.351
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "LIMK1",
+      "score": 0.937,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.131,
+        "database": 0.9,
+        "textmining": 0.334
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MYL12A",
+      "score": 0.93,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.106,
+        "database": 0.9,
+        "textmining": 0.285
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MAPK3",
+      "score": 0.924,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.083,
+        "experimental": 0.11,
+        "database": 0.9,
+        "textmining": 0.179
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "NFKB1",
+      "score": 0.924,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.068,
+        "experimental": 0.095,
+        "database": 0.9,
+        "textmining": 0.212
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PPP1CB",
+      "score": 0.924,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.096,
+        "experimental": 0.091,
+        "database": 0.9,
+        "textmining": 0.187
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "RELA",
+      "score": 0.923,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.092,
+        "experimental": 0.106,
+        "database": 0.9,
+        "textmining": 0.164
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PPP1CC",
+      "score": 0.921,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.059,
+        "experimental": 0.091,
+        "database": 0.9,
+        "textmining": 0.192
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PPP1R12C",
+      "score": 0.921,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.11,
+        "experimental": 0.095,
+        "database": 0.9,
+        "textmining": 0.145
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MAPK1",
+      "score": 0.919,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.069,
+        "experimental": 0.11,
+        "database": 0.9,
+        "textmining": 0.138
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "FHOD1",
+      "score": 0.919,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0,
+        "database": 0.9,
+        "textmining": 0.229
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MYLPF",
+      "score": 0.919,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.099,
+        "database": 0.9,
+        "textmining": 0.179
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PPP1CA",
+      "score": 0.917,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.052,
+        "experimental": 0.091,
+        "database": 0.9,
+        "textmining": 0.155
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "SLC9A1",
+      "score": 0.916,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.087,
+        "experimental": 0,
+        "database": 0.9,
+        "textmining": 0.161
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PIKFYVE",
+      "score": 0.914,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0,
+        "database": 0.9,
+        "textmining": 0.146
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MYL7",
+      "score": 0.913,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.103,
+        "database": 0.9,
+        "textmining": 0.116
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MYL10",
+      "score": 0.913,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.099,
+        "database": 0.9,
+        "textmining": 0.114
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PIP4K2B",
+      "score": 0.913,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.139,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.052
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "MYL5",
+      "score": 0.911,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.099,
+        "database": 0.9,
+        "textmining": 0.092
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "GAB1",
+      "score": 0.909,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.092,
+        "database": 0.9,
+        "textmining": 0.077
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PIP5K1A",
+      "score": 0.905,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.044,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.074
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PIP4K2C",
+      "score": 0.903,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.052
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PIP4K2A",
+      "score": 0.903,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.052
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PIP5K1B",
+      "score": 0.902,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.047
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PIP5K1C",
+      "score": 0.902,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.047
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "RHOC",
+      "score": 0.883,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.085,
+        "experimental": 0.388,
+        "database": 0.5,
+        "textmining": 0.632
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "CFL1",
+      "score": 0.876,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.052,
+        "experimental": 0.071,
+        "database": 0.5,
+        "textmining": 0.752
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "ARHGEF18",
+      "score": 0.87,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.055,
+        "experimental": 0.063,
+        "database": 0,
+        "textmining": 0.865
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "ARHGEF18-2",
+      "score": 0.87,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.055,
+        "experimental": 0.063,
+        "database": 0,
+        "textmining": 0.865
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "RHOB",
+      "score": 0.847,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.085,
+        "experimental": 0.388,
+        "database": 0.5,
+        "textmining": 0.519
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "ARHGEF1",
+      "score": 0.791,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.065,
+        "experimental": 0.068,
+        "database": 0.5,
+        "textmining": 0.578
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "NPM1",
+      "score": 0.79,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.072,
+        "database": 0,
+        "textmining": 0.783
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "CFL2",
+      "score": 0.775,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.098,
+        "experimental": 0.071,
+        "database": 0,
+        "textmining": 0.753
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "RND3",
+      "score": 0.774,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.08,
+        "experimental": 0.299,
+        "database": 0,
+        "textmining": 0.678
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "BRCA2",
+      "score": 0.759,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.292,
+        "database": 0,
+        "textmining": 0.673
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "RND1",
+      "score": 0.735,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0.299,
+        "database": 0.5,
+        "textmining": 0.28
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "KRIT1",
+      "score": 0.732,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.178,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.688
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "RHOBTB1",
+      "score": 0.732,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.08,
+        "experimental": 0.342,
+        "database": 0.5,
+        "textmining": 0.217
+      }
+    },
+    {
+      "source": "ROCK2",
+      "target": "PDCD10",
+      "score": 0.709,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.049,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.707
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "LIMK1",
+      "score": 0.998,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.068,
+        "experimental": 0.13,
+        "database": 0.9,
+        "textmining": 0.982
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "WASL",
+      "score": 0.997,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.06,
+        "experimental": 0.091,
+        "database": 0,
+        "textmining": 0.996
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "ACTB",
+      "score": 0.996,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.087,
+        "experimental": 0.876,
+        "database": 0.9,
+        "textmining": 0.716
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "ACTG1",
+      "score": 0.996,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.089,
+        "experimental": 0.854,
+        "database": 0.9,
+        "textmining": 0.779
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "CTTN",
+      "score": 0.996,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.059,
+        "experimental": 0.221,
+        "database": 0,
+        "textmining": 0.995
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "SSH1",
+      "score": 0.995,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.128,
+        "database": 0.9,
+        "textmining": 0.948
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "HCLS1",
+      "score": 0.995,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.071,
+        "experimental": 0.071,
+        "database": 0,
+        "textmining": 0.995
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "WDR1",
+      "score": 0.993,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.576,
+        "database": 0,
+        "textmining": 0.984
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "SSH3",
+      "score": 0.989,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.056,
+        "experimental": 0.128,
+        "database": 0.9,
+        "textmining": 0.887
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "SSH2",
+      "score": 0.987,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.128,
+        "database": 0.9,
+        "textmining": 0.865
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "CFL1",
+      "score": 0.972,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0.051,
+        "coexpression": 0.056,
+        "experimental": 0.731,
+        "database": 0.9,
+        "textmining": 0.05
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "PFN1",
+      "score": 0.967,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.196,
+        "experimental": 0.1,
+        "database": 0,
+        "textmining": 0.958
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "ACTA1",
+      "score": 0.967,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.089,
+        "experimental": 0.926,
+        "database": 0,
+        "textmining": 0.548
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "PFN4",
+      "score": 0.966,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.19,
+        "experimental": 0.1,
+        "database": 0,
+        "textmining": 0.957
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "PFN3",
+      "score": 0.959,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.19,
+        "experimental": 0.1,
+        "database": 0,
+        "textmining": 0.948
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "ACTR2",
+      "score": 0.936,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.076,
+        "experimental": 0.24,
+        "database": 0,
+        "textmining": 0.916
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "CDC42",
+      "score": 0.935,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.113,
+        "experimental": 0.165,
+        "database": 0,
+        "textmining": 0.919
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "DSTN",
+      "score": 0.921,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0.055,
+        "coexpression": 0.101,
+        "experimental": 0.767,
+        "database": 0,
+        "textmining": 0.65
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "RHOA",
+      "score": 0.907,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.065,
+        "experimental": 0.068,
+        "database": 0,
+        "textmining": 0.902
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "ACTN1",
+      "score": 0.9,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.071,
+        "database": 0,
+        "textmining": 0.897
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "PDXP",
+      "score": 0.899,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.049,
+        "experimental": 0.091,
+        "database": 0,
+        "textmining": 0.893
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "FLNA",
+      "score": 0.888,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.061,
+        "experimental": 0.211,
+        "database": 0,
+        "textmining": 0.861
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "WAS",
+      "score": 0.883,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.065,
+        "experimental": 0.091,
+        "database": 0,
+        "textmining": 0.873
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "VASP",
+      "score": 0.873,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.052,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.871
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "GSN",
+      "score": 0.864,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.055,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.862
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "SCIN",
+      "score": 0.846,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.055,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.843
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "WIPF1",
+      "score": 0.842,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.842
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "CORO1A",
+      "score": 0.842,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.087,
+        "experimental": 0.163,
+        "database": 0,
+        "textmining": 0.81
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "FLNC",
+      "score": 0.841,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.114,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.827
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "CORO7-PAM16",
+      "score": 0.84,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.84
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "SH3PXD2A",
+      "score": 0.832,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.074,
+        "database": 0,
+        "textmining": 0.826
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "TWF1",
+      "score": 0.831,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.072,
+        "experimental": 0.105,
+        "database": 0,
+        "textmining": 0.812
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "VCL",
+      "score": 0.83,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.085,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.822
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "NCK1",
+      "score": 0.828,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.054,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.826
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "KBTBD13",
+      "score": 0.821,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.821
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "FLNB",
+      "score": 0.821,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.061,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.817
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "CLCN5",
+      "score": 0.809,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.809
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "ROCK1",
+      "score": 0.802,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.063,
+        "experimental": 0.071,
+        "database": 0,
+        "textmining": 0.79
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "RHOC",
+      "score": 0.788,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.067,
+        "experimental": 0.068,
+        "database": 0,
+        "textmining": 0.775
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "PXN",
+      "score": 0.788,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0.066,
+        "database": 0,
+        "textmining": 0.774
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "SRC",
+      "score": 0.787,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.052,
+        "experimental": 0.071,
+        "database": 0,
+        "textmining": 0.777
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "RND3",
+      "score": 0.765,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.079,
+        "experimental": 0.068,
+        "database": 0,
+        "textmining": 0.748
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "FSCN1",
+      "score": 0.758,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.758
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "PAK4",
+      "score": 0.755,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.07,
+        "database": 0,
+        "textmining": 0.747
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "CAPZA2",
+      "score": 0.753,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.049,
+        "experimental": 0.351,
+        "database": 0,
+        "textmining": 0.632
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "TWF2",
+      "score": 0.745,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.105,
+        "database": 0,
+        "textmining": 0.727
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "IPO9",
+      "score": 0.739,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.086,
+        "database": 0,
+        "textmining": 0.725
+      }
+    },
+    {
+      "source": "CFL2",
+      "target": "ARHGAP35",
+      "score": 0.736,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0,
+        "database": 0,
+        "textmining": 0.735
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "RND3",
+      "score": 0.999,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0.945,
+        "database": 0.5,
+        "textmining": 0.977
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "RHOA",
+      "score": 0.999,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.088,
+        "experimental": 0.878,
+        "database": 0.9,
+        "textmining": 0.997
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PPP1R12A",
+      "score": 0.996,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.786,
+        "experimental": 0.095,
+        "database": 0.9,
+        "textmining": 0.839
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "SLC9A1",
+      "score": 0.966,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.087,
+        "experimental": 0.292,
+        "database": 0.9,
+        "textmining": 0.548
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "CASP3",
+      "score": 0.959,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.108,
+        "experimental": 0.436,
+        "database": 0.75,
+        "textmining": 0.714
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYL12B",
+      "score": 0.958,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.049,
+        "experimental": 0.106,
+        "database": 0.9,
+        "textmining": 0.567
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYL2",
+      "score": 0.958,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.099,
+        "database": 0.9,
+        "textmining": 0.573
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "RHOC",
+      "score": 0.954,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.081,
+        "experimental": 0.51,
+        "database": 0.5,
+        "textmining": 0.821
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PTEN",
+      "score": 0.954,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.123,
+        "experimental": 0.092,
+        "database": 0.9,
+        "textmining": 0.499
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYL9",
+      "score": 0.953,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.106,
+        "database": 0.9,
+        "textmining": 0.522
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "CTNNB1",
+      "score": 0.953,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.044,
+        "experimental": 0.098,
+        "database": 0.9,
+        "textmining": 0.52
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "SHROOM2",
+      "score": 0.951,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.059,
+        "experimental": 0.903,
+        "database": 0,
+        "textmining": 0.508
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "GAB1",
+      "score": 0.95,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.515,
+        "database": 0.9,
+        "textmining": 0.051
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "RHOB",
+      "score": 0.946,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.088,
+        "experimental": 0.534,
+        "database": 0.5,
+        "textmining": 0.779
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "LIMK1",
+      "score": 0.94,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.131,
+        "database": 0.9,
+        "textmining": 0.369
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "NFKB1",
+      "score": 0.936,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.08,
+        "experimental": 0.095,
+        "database": 0.9,
+        "textmining": 0.324
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PPP1CB",
+      "score": 0.928,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.088,
+        "experimental": 0.091,
+        "database": 0.9,
+        "textmining": 0.24
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYL12A",
+      "score": 0.928,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.049,
+        "experimental": 0.106,
+        "database": 0.9,
+        "textmining": 0.254
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MAPK3",
+      "score": 0.927,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.064,
+        "experimental": 0.11,
+        "database": 0.9,
+        "textmining": 0.231
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PPP1CC",
+      "score": 0.926,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.07,
+        "experimental": 0.091,
+        "database": 0.9,
+        "textmining": 0.237
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "RELA",
+      "score": 0.925,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.069,
+        "experimental": 0.106,
+        "database": 0.9,
+        "textmining": 0.214
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "CFL1",
+      "score": 0.924,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.059,
+        "experimental": 0.314,
+        "database": 0.5,
+        "textmining": 0.793
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PPP1CA",
+      "score": 0.923,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.054,
+        "experimental": 0.091,
+        "database": 0.9,
+        "textmining": 0.213
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MAPK1",
+      "score": 0.922,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.073,
+        "experimental": 0.11,
+        "database": 0.9,
+        "textmining": 0.176
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PPP1R12C",
+      "score": 0.919,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.061,
+        "experimental": 0.095,
+        "database": 0.9,
+        "textmining": 0.165
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYLPF",
+      "score": 0.919,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.099,
+        "database": 0.9,
+        "textmining": 0.179
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PIP5K1A",
+      "score": 0.916,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.179
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PIKFYVE",
+      "score": 0.915,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.111,
+        "experimental": 0,
+        "database": 0.9,
+        "textmining": 0.12
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYL7",
+      "score": 0.915,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.103,
+        "database": 0.9,
+        "textmining": 0.131
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYL10",
+      "score": 0.911,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.099,
+        "database": 0.9,
+        "textmining": 0.092
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PIP5K1C",
+      "score": 0.907,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.09
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYL5",
+      "score": 0.906,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.099,
+        "database": 0.9,
+        "textmining": 0.046
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PIP4K2B",
+      "score": 0.903,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.043,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.052
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PIP4K2A",
+      "score": 0.903,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.052
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PIP4K2C",
+      "score": 0.903,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.052
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "PIP5K1B",
+      "score": 0.902,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.062,
+        "database": 0.9,
+        "textmining": 0.047
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "CDC42",
+      "score": 0.822,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.092,
+        "experimental": 0.259,
+        "database": 0,
+        "textmining": 0.756
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "TSG101",
+      "score": 0.805,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.098,
+        "experimental": 0.292,
+        "database": 0,
+        "textmining": 0.719
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "RND1",
+      "score": 0.796,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0.299,
+        "database": 0.5,
+        "textmining": 0.448
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "ARHGEF1",
+      "score": 0.795,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0.068,
+        "database": 0.5,
+        "textmining": 0.581
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYH9",
+      "score": 0.784,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.085,
+        "experimental": 0.334,
+        "database": 0.5,
+        "textmining": 0.375
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "HSP90AA1",
+      "score": 0.784,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.061,
+        "experimental": 0.136,
+        "database": 0.5,
+        "textmining": 0.53
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "RHOBTB1",
+      "score": 0.758,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0.342,
+        "database": 0.5,
+        "textmining": 0.3
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "MYC",
+      "score": 0.728,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.055,
+        "experimental": 0.045,
+        "database": 0,
+        "textmining": 0.723
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "VAV2",
+      "score": 0.72,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.054,
+        "experimental": 0,
+        "database": 0.5,
+        "textmining": 0.455
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "ADD2",
+      "score": 0.712,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.562,
+        "database": 0,
+        "textmining": 0.369
+      }
+    },
+    {
+      "source": "ROCK1",
+      "target": "HIF1A",
+      "score": 0.711,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.201,
+        "experimental": 0.071,
+        "database": 0,
+        "textmining": 0.642
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "VASP",
+      "score": 0.969,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.114,
+        "experimental": 0.778,
+        "database": 0.5,
+        "textmining": 0.723
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "ENAH",
+      "score": 0.885,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.186,
+        "experimental": 0.656,
+        "database": 0.5,
+        "textmining": 0.279
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "EVL",
+      "score": 0.842,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.068,
+        "experimental": 0.635,
+        "database": 0.5,
+        "textmining": 0.179
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "ARPC1A",
+      "score": 0.799,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.076,
+        "experimental": 0.071,
+        "database": 0,
+        "textmining": 0.785
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "HDAC1",
+      "score": 0.795,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.064,
+        "experimental": 0.06,
+        "database": 0,
+        "textmining": 0.786
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "ACTB",
+      "score": 0.783,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.054,
+        "experimental": 0.453,
+        "database": 0.5,
+        "textmining": 0.262
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "NAA80",
+      "score": 0.763,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.682,
+        "database": 0,
+        "textmining": 0.287
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "ACTG1",
+      "score": 0.753,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.054,
+        "experimental": 0.316,
+        "database": 0.5,
+        "textmining": 0.327
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "DIAPH1",
+      "score": 0.724,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.366,
+        "database": 0.5,
+        "textmining": 0.198
+      }
+    },
+    {
+      "source": "PFN2",
+      "target": "FMNL1",
+      "score": 0.719,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.329,
+        "database": 0.5,
+        "textmining": 0.228
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "PAK1",
+      "score": 0.999,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.063,
+        "experimental": 0.995,
+        "database": 0.7,
+        "textmining": 0.58
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "NCF2",
+      "score": 0.999,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.103,
+        "experimental": 0.982,
+        "database": 0.54,
+        "textmining": 0.972
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "TRIO",
+      "score": 0.994,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.067,
+        "experimental": 0.98,
+        "database": 0.5,
+        "textmining": 0.41
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "ARHGDIA",
+      "score": 0.994,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.093,
+        "experimental": 0.926,
+        "database": 0.7,
+        "textmining": 0.773
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "ARFIP2",
+      "score": 0.993,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.088,
+        "experimental": 0.987,
+        "database": 0,
+        "textmining": 0.427
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "PREX1",
+      "score": 0.993,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.971,
+        "database": 0.4,
+        "textmining": 0.634
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "CYFIP1",
+      "score": 0.993,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.182,
+        "experimental": 0.957,
+        "database": 0.5,
+        "textmining": 0.675
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "NCKAP1",
+      "score": 0.99,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.126,
+        "experimental": 0.935,
+        "database": 0.5,
+        "textmining": 0.69
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "IQGAP1",
+      "score": 0.988,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.093,
+        "experimental": 0.901,
+        "database": 0.7,
+        "textmining": 0.616
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "PAK2",
+      "score": 0.983,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.077,
+        "experimental": 0.84,
+        "database": 0.7,
+        "textmining": 0.666
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "NCF1",
+      "score": 0.976,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.109,
+        "experimental": 0.183,
+        "database": 0.54,
+        "textmining": 0.939
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "DOCK1",
+      "score": 0.975,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.122,
+        "experimental": 0.868,
+        "database": 0.5,
+        "textmining": 0.629
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "VAV1",
+      "score": 0.972,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.166,
+        "experimental": 0.773,
+        "database": 0.8,
+        "textmining": 0.352
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "ABI2",
+      "score": 0.966,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.044,
+        "experimental": 0.873,
+        "database": 0.5,
+        "textmining": 0.503
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "TIAM1",
+      "score": 0.966,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.786,
+        "database": 0.5,
+        "textmining": 0.707
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "BRK1",
+      "score": 0.964,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.069,
+        "experimental": 0.87,
+        "database": 0.5,
+        "textmining": 0.484
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "BAIAP2",
+      "score": 0.964,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.087,
+        "experimental": 0.849,
+        "database": 0.5,
+        "textmining": 0.549
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "KALRN",
+      "score": 0.959,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.642,
+        "database": 0.75,
+        "textmining": 0.582
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "ARHGEF7",
+      "score": 0.957,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.11,
+        "experimental": 0.803,
+        "database": 0.7,
+        "textmining": 0.281
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "DOCK2",
+      "score": 0.94,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.124,
+        "experimental": 0.721,
+        "database": 0.5,
+        "textmining": 0.569
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "PAK6",
+      "score": 0.934,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.063,
+        "experimental": 0.755,
+        "database": 0.5,
+        "textmining": 0.493
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "PAK3",
+      "score": 0.931,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.056,
+        "experimental": 0.729,
+        "database": 0.7,
+        "textmining": 0.208
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "VAV2",
+      "score": 0.926,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.117,
+        "experimental": 0.257,
+        "database": 0.7,
+        "textmining": 0.668
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "NCF4",
+      "score": 0.926,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.12,
+        "experimental": 0.183,
+        "database": 0.54,
+        "textmining": 0.803
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "IQGAP2",
+      "score": 0.919,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.06,
+        "experimental": 0.8,
+        "database": 0.5,
+        "textmining": 0.24
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "RAC3",
+      "score": 0.918,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0.049,
+        "coexpression": 0,
+        "experimental": 0.828,
+        "database": 0.54,
+        "textmining": 0.046
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "PARD6A",
+      "score": 0.91,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.638,
+        "database": 0.5,
+        "textmining": 0.544
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "CAV1",
+      "score": 0.908,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.059,
+        "experimental": 0.756,
+        "database": 0.5,
+        "textmining": 0.291
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "WASF1",
+      "score": 0.906,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.042,
+        "experimental": 0.603,
+        "database": 0.5,
+        "textmining": 0.566
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "WAS",
+      "score": 0.898,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.138,
+        "experimental": 0.449,
+        "database": 0.5,
+        "textmining": 0.621
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "CYBB",
+      "score": 0.888,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.135,
+        "experimental": 0.076,
+        "database": 0.54,
+        "textmining": 0.733
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "WASF2",
+      "score": 0.882,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.058,
+        "experimental": 0.384,
+        "database": 0.5,
+        "textmining": 0.641
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "ARHGDIB",
+      "score": 0.878,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.088,
+        "experimental": 0.419,
+        "database": 0.7,
+        "textmining": 0.325
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "MAPK8",
+      "score": 0.877,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.055,
+        "experimental": 0.368,
+        "database": 0.75,
+        "textmining": 0.277
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "CDC42",
+      "score": 0.872,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0.055,
+        "coexpression": 0.108,
+        "experimental": 0.207,
+        "database": 0.7,
+        "textmining": 0.462
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "CYFIP2",
+      "score": 0.871,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.056,
+        "experimental": 0.207,
+        "database": 0.5,
+        "textmining": 0.696
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "HACE1",
+      "score": 0.866,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.045,
+        "experimental": 0.833,
+        "database": 0,
+        "textmining": 0.23
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "CYBA",
+      "score": 0.865,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.109,
+        "experimental": 0,
+        "database": 0.54,
+        "textmining": 0.697
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "AKT1",
+      "score": 0.865,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.114,
+        "experimental": 0.342,
+        "database": 0.5,
+        "textmining": 0.591
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "SRC",
+      "score": 0.856,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.137,
+        "experimental": 0.342,
+        "database": 0.4,
+        "textmining": 0.628
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "ARHGAP1",
+      "score": 0.855,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.056,
+        "experimental": 0.593,
+        "database": 0.4,
+        "textmining": 0.447
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "WASL",
+      "score": 0.848,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.1,
+        "experimental": 0.254,
+        "database": 0.5,
+        "textmining": 0.602
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "FMNL1",
+      "score": 0.847,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.074,
+        "experimental": 0.48,
+        "database": 0.7,
+        "textmining": 0.064
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "RAP1GDS1",
+      "score": 0.84,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.044,
+        "experimental": 0.833,
+        "database": 0,
+        "textmining": 0.076
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "SOS1",
+      "score": 0.84,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.05,
+        "experimental": 0.36,
+        "database": 0.5,
+        "textmining": 0.537
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "ELMO1",
+      "score": 0.839,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.537,
+        "database": 0.5,
+        "textmining": 0.357
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "CHN2",
+      "score": 0.835,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.047,
+        "experimental": 0.681,
+        "database": 0.4,
+        "textmining": 0.203
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "GIT1",
+      "score": 0.826,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.044,
+        "experimental": 0.33,
+        "database": 0.7,
+        "textmining": 0.204
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "MCF2L",
+      "score": 0.825,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0,
+        "experimental": 0.706,
+        "database": 0.4,
+        "textmining": 0.09
+      }
+    },
+    {
+      "source": "RAC1",
+      "target": "CTTN",
+      "score": 0.824,
+      "evidence_types": {
+        "neighborhood": 0,
+        "fusion": 0,
+        "cooccurrence": 0,
+        "coexpression": 0.123,
+        "experimental": 0.102,
+        "database": 0.5,
+        "textmining": 0.606
+      }
+    }
+  ]
+}

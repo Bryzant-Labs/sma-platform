@@ -233,6 +233,7 @@ def create_app() -> FastAPI:
         "labos", "federated", "translate", "gpu-results",
         "research", "write", "repurposing", "versions", "news",
         "advisory", "analytics", "structures", "pockets", "admet",
+        "api-guide",
     }
 
     @app.get("/{section}")

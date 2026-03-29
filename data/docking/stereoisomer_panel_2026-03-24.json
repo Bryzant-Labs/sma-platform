@@ -1,0 +1,420 @@
+{
+  "campaign": "Stereoisomer Panel: H-1152 enantiomers vs LIMK2 + ROCK2",
+  "date": "2026-03-24",
+  "rationale": "H-1152 has 2 stereocenters. genmol_119 is the (R,S) enantiomer that scored +1.058 on LIMK2. This panel docks all 4 stereoisomers to determine if stereochemistry drives binding affinity.",
+  "diffdock_version": "v2.2 (NVIDIA NIM)",
+  "num_poses_per_docking": 20,
+  "total_dockings": 8,
+  "elapsed_seconds": 59.8,
+  "stereoisomers": [
+    {
+      "name": "H1152_SR",
+      "smiles": "CC(C)C(=O)N1CC[C@H](C(F)(F)F)C[C@@H]1c1ccncc1",
+      "config": "(S,R)",
+      "note": "Enantiomer of genmol_119"
+    },
+    {
+      "name": "H1152_RR",
+      "smiles": "CC(C)C(=O)N1CC[C@@H](C(F)(F)F)C[C@@H]1c1ccncc1",
+      "config": "(R,R)",
+      "note": "Diastereomer \u2014 trans configuration"
+    },
+    {
+      "name": "H1152_SS",
+      "smiles": "CC(C)C(=O)N1CC[C@H](C(F)(F)F)C[C@H]1c1ccncc1",
+      "config": "(S,S)",
+      "note": "Diastereomer \u2014 trans configuration"
+    },
+    {
+      "name": "genmol_119",
+      "smiles": "CC(C)C(=O)N1CC[C@@H](C(F)(F)F)C[C@H]1c1ccncc1",
+      "config": "(R,S)",
+      "note": "Original hit \u2014 cis configuration"
+    }
+  ],
+  "limk2_results": [
+    {
+      "name": "H1152_SR",
+      "smiles": "CC(C)C(=O)N1CC[C@H](C(F)(F)F)C[C@@H]1c1ccncc1",
+      "config": "(S,R)",
+      "note": "Enantiomer of genmol_119",
+      "target": "LIMK2",
+      "num_poses": 20,
+      "top_confidence": 0.48849621415138245,
+      "mean_confidence": -0.40090606920421124,
+      "all_confidences": [
+        0.48849621415138245,
+        0.43346282839775085,
+        0.3778629004955292,
+        0.3258485496044159,
+        0.3059445917606354,
+        0.28635236620903015,
+        0.2637753188610077,
+        0.21045181155204773,
+        0.1965685486793518,
+        0.13020849227905273,
+        0.08777382224798203,
+        0.05486678332090378,
+        -0.01524142175912857,
+        -0.11012231558561325,
+        -0.11297581344842911,
+        -0.25155219435691833,
+        -0.6543296575546265,
+        -2.1127917766571045,
+        -3.406154155731201,
+        -4.516566276550293
+      ],
+      "positive_poses": 12
+    },
+    {
+      "name": "H1152_RR",
+      "smiles": "CC(C)C(=O)N1CC[C@@H](C(F)(F)F)C[C@@H]1c1ccncc1",
+      "config": "(R,R)",
+      "note": "Diastereomer \u2014 trans configuration",
+      "target": "LIMK2",
+      "num_poses": 20,
+      "top_confidence": 0.35905495285987854,
+      "mean_confidence": -1.236885678768158,
+      "all_confidences": [
+        0.35905495285987854,
+        0.2846590280532837,
+        0.24604684114456177,
+        0.22384920716285706,
+        0.22344264388084412,
+        0.1253678798675537,
+        0.08140132576227188,
+        0.0813843384385109,
+        0.05560625344514847,
+        0.027071602642536163,
+        -0.4319164752960205,
+        -1.8005307912826538,
+        -1.834093689918518,
+        -2.3059189319610596,
+        -2.335563898086548,
+        -2.353621244430542,
+        -2.4960460662841797,
+        -4.033501148223877,
+        -4.210586071014404,
+        -4.643819332122803
+      ],
+      "positive_poses": 10
+    },
+    {
+      "name": "H1152_SS",
+      "smiles": "CC(C)C(=O)N1CC[C@H](C(F)(F)F)C[C@H]1c1ccncc1",
+      "config": "(S,S)",
+      "note": "Diastereomer \u2014 trans configuration",
+      "target": "LIMK2",
+      "num_poses": 20,
+      "top_confidence": 0.9567620158195496,
+      "mean_confidence": -0.15524992197752,
+      "all_confidences": [
+        0.9567620158195496,
+        0.9107673764228821,
+        0.8473761677742004,
+        0.7124133110046387,
+        0.7003445029258728,
+        0.6986754536628723,
+        0.5940219759941101,
+        0.5936517119407654,
+        0.5216999053955078,
+        0.516941249370575,
+        0.5072473883628845,
+        0.448689728975296,
+        0.4019068777561188,
+        0.344722718000412,
+        0.3053997755050659,
+        0.12774422764778137,
+        -0.3935506045818329,
+        -3.877883195877075,
+        -3.8802168369293213,
+        -4.141712188720703
+      ],
+      "positive_poses": 16
+    },
+    {
+      "name": "genmol_119",
+      "smiles": "CC(C)C(=O)N1CC[C@@H](C(F)(F)F)C[C@H]1c1ccncc1",
+      "config": "(R,S)",
+      "note": "Original hit \u2014 cis configuration",
+      "target": "LIMK2",
+      "num_poses": 20,
+      "top_confidence": 0.7044128775596619,
+      "mean_confidence": -0.2978152547031641,
+      "all_confidences": [
+        0.7044128775596619,
+        0.6887081265449524,
+        0.5371511578559875,
+        0.5095570683479309,
+        0.41825583577156067,
+        0.404997855424881,
+        0.395378977060318,
+        0.37561580538749695,
+        0.28772589564323425,
+        0.25625231862068176,
+        0.20363342761993408,
+        0.12399602681398392,
+        0.03456193953752518,
+        -0.11425035446882248,
+        -0.20649519562721252,
+        -0.28249987959861755,
+        -0.48338761925697327,
+        -2.2606308460235596,
+        -3.1035420894622803,
+        -4.445746421813965
+      ],
+      "positive_poses": 13
+    }
+  ],
+  "rock2_results": [
+    {
+      "name": "H1152_SR",
+      "smiles": "CC(C)C(=O)N1CC[C@H](C(F)(F)F)C[C@@H]1c1ccncc1",
+      "config": "(S,R)",
+      "note": "Enantiomer of genmol_119",
+      "target": "ROCK2",
+      "num_poses": 20,
+      "top_confidence": -0.6964730620384216,
+      "mean_confidence": -2.003244224190712,
+      "all_confidences": [
+        -0.6964730620384216,
+        -0.7020514607429504,
+        -0.7609878182411194,
+        -0.7677634358406067,
+        -0.7806156277656555,
+        -0.9648920893669128,
+        -0.9668818116188049,
+        -1.4107086658477783,
+        -1.4482275247573853,
+        -2.0477302074432373,
+        -2.2487804889678955,
+        -2.5390045642852783,
+        -2.658231019973755,
+        -2.785550832748413,
+        -2.866914987564087,
+        -2.9191102981567383,
+        -2.9486801624298096,
+        -2.9827628135681152,
+        -3.77455735206604,
+        -3.7949602603912354
+      ],
+      "positive_poses": 0
+    },
+    {
+      "name": "H1152_RR",
+      "smiles": "CC(C)C(=O)N1CC[C@@H](C(F)(F)F)C[C@@H]1c1ccncc1",
+      "config": "(R,R)",
+      "note": "Diastereomer \u2014 trans configuration",
+      "target": "ROCK2",
+      "num_poses": 20,
+      "top_confidence": 0.009028233587741852,
+      "mean_confidence": -1.1396121125668288,
+      "all_confidences": [
+        0.009028233587741852,
+        -0.10057983547449112,
+        -0.11532571166753769,
+        -0.16769692301750183,
+        -0.18229806423187256,
+        -0.41439321637153625,
+        -0.42880091071128845,
+        -0.4957753121852875,
+        -0.6893837451934814,
+        -0.689746081829071,
+        -0.7155501246452332,
+        -0.7261232137680054,
+        -0.7949163317680359,
+        -1.0631921291351318,
+        -1.5454777479171753,
+        -2.0968222618103027,
+        -2.8087830543518066,
+        -2.915139675140381,
+        -3.1658406257629395,
+        -3.6854255199432373
+      ],
+      "positive_poses": 1
+    },
+    {
+      "name": "H1152_SS",
+      "smiles": "CC(C)C(=O)N1CC[C@H](C(F)(F)F)C[C@H]1c1ccncc1",
+      "config": "(S,S)",
+      "note": "Diastereomer \u2014 trans configuration",
+      "target": "ROCK2",
+      "num_poses": 20,
+      "top_confidence": 0.48363134264945984,
+      "mean_confidence": -1.1341286446899175,
+      "all_confidences": [
+        0.48363134264945984,
+        0.3946743309497833,
+        0.356648713350296,
+        -0.056364260613918304,
+        -0.7391839027404785,
+        -0.7465261816978455,
+        -0.7491880655288696,
+        -0.7660297155380249,
+        -0.7875087857246399,
+        -0.7949318289756775,
+        -0.8318837285041809,
+        -0.8612367510795593,
+        -0.9626008868217468,
+        -1.0973198413848877,
+        -1.8766530752182007,
+        -1.9367729425430298,
+        -2.372246742248535,
+        -2.8937509059906006,
+        -2.954472780227661,
+        -3.490856885910034
+      ],
+      "positive_poses": 3
+    },
+    {
+      "name": "genmol_119",
+      "smiles": "CC(C)C(=O)N1CC[C@@H](C(F)(F)F)C[C@H]1c1ccncc1",
+      "config": "(R,S)",
+      "note": "Original hit \u2014 cis configuration",
+      "target": "ROCK2",
+      "num_poses": 20,
+      "top_confidence": 0.39986947178840637,
+      "mean_confidence": -1.0387156918644904,
+      "all_confidences": [
+        0.39986947178840637,
+        0.3346468508243561,
+        -0.2882939279079437,
+        -0.33675500750541687,
+        -0.35897794365882874,
+        -0.4304792284965515,
+        -0.4756243824958801,
+        -0.5301369428634644,
+        -0.6373561024665833,
+        -0.6934612393379211,
+        -0.807706356048584,
+        -0.9594736099243164,
+        -1.173774003982544,
+        -1.1839336156845093,
+        -1.1892987489700317,
+        -1.8755067586898804,
+        -1.8878703117370605,
+        -2.3642632961273193,
+        -2.8259880542755127,
+        -3.4899306297302246
+      ],
+      "positive_poses": 2
+    }
+  ],
+  "analysis": {
+    "LIMK2": {
+      "ranking": [
+        {
+          "rank": 1,
+          "name": "H1152_SS",
+          "config": "(S,S)",
+          "top_confidence": 0.9568,
+          "mean_confidence": -0.1552,
+          "positive_poses": 16
+        },
+        {
+          "rank": 2,
+          "name": "genmol_119",
+          "config": "(R,S)",
+          "top_confidence": 0.7044,
+          "mean_confidence": -0.2978,
+          "positive_poses": 13
+        },
+        {
+          "rank": 3,
+          "name": "H1152_SR",
+          "config": "(S,R)",
+          "top_confidence": 0.4885,
+          "mean_confidence": -0.4009,
+          "positive_poses": 12
+        },
+        {
+          "rank": 4,
+          "name": "H1152_RR",
+          "config": "(R,R)",
+          "top_confidence": 0.3591,
+          "mean_confidence": -1.2369,
+          "positive_poses": 10
+        }
+      ],
+      "best_stereoisomer": {
+        "name": "H1152_SS",
+        "config": "(S,S)",
+        "top_confidence": 0.9568
+      },
+      "worst_stereoisomer": {
+        "name": "H1152_RR",
+        "config": "(R,R)",
+        "top_confidence": 0.3591
+      },
+      "confidence_range": 0.5977,
+      "mean_confidence_range": 1.0816,
+      "genmol_119_rank": 2,
+      "genmol_119_is_best": false,
+      "stereo_matters": true,
+      "stereo_significance": "STRONG"
+    },
+    "ROCK2": {
+      "ranking": [
+        {
+          "rank": 1,
+          "name": "H1152_SS",
+          "config": "(S,S)",
+          "top_confidence": 0.4836,
+          "mean_confidence": -1.1341,
+          "positive_poses": 3
+        },
+        {
+          "rank": 2,
+          "name": "genmol_119",
+          "config": "(R,S)",
+          "top_confidence": 0.3999,
+          "mean_confidence": -1.0387,
+          "positive_poses": 2
+        },
+        {
+          "rank": 3,
+          "name": "H1152_RR",
+          "config": "(R,R)",
+          "top_confidence": 0.009,
+          "mean_confidence": -1.1396,
+          "positive_poses": 1
+        },
+        {
+          "rank": 4,
+          "name": "H1152_SR",
+          "config": "(S,R)",
+          "top_confidence": -0.6965,
+          "mean_confidence": -2.0032,
+          "positive_poses": 0
+        }
+      ],
+      "best_stereoisomer": {
+        "name": "H1152_SS",
+        "config": "(S,S)",
+        "top_confidence": 0.4836
+      },
+      "worst_stereoisomer": {
+        "name": "H1152_SR",
+        "config": "(S,R)",
+        "top_confidence": -0.6965
+      },
+      "confidence_range": 1.1801,
+      "mean_confidence_range": 0.8691,
+      "genmol_119_rank": 2,
+      "genmol_119_is_best": false,
+      "stereo_matters": true,
+      "stereo_significance": "STRONG"
+    },
+    "cross_target": {
+      "same_best_for_both": true,
+      "limk2_best": "H1152_SS",
+      "rock2_best": "H1152_SS",
+      "genmol_119_optimal_for_limk2": false,
+      "genmol_119_optimal_for_rock2": false
+    },
+    "ip_implications": {
+      "note": "SIGNIFICANT stereopreference detected. Pure enantiomer would be superior to racemic H-1152. Eutomer/distomer separation provides IP differentiation (similar to omeprazole \u2192 esomeprazole strategy).",
+      "racemic_prediction": "Racemic would show ~50% of optimal enantiomer activity if stereopreference is strong (eutomer diluted by distomer)"
+    }
+  }
+}

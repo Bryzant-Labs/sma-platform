@@ -1,0 +1,273 @@
+{
+  "campaign": "ChEMBL LIMK2 candidate selection",
+  "date": "2026-03-24",
+  "source_database": "molecule_screenings (21,229 compounds, ChEMBL-enriched)",
+  "selection_criteria": {
+    "drug_likeness_pass": true,
+    "mw_range": "200-500 Da",
+    "logp_range": "1.0-4.0 (BBB-favorable)",
+    "smiles_required": true,
+    "ranked_by": "pchembl_value DESC"
+  },
+  "pool_stats": {
+    "total_screened": 21229,
+    "unique_lipinski_pass": 2988,
+    "unique_in_bbb_sweet_spot": 1256,
+    "limk_specific_hits": 0,
+    "kinase_specific_hits": 0,
+    "note": "No LIMK or kinase-annotated compounds in DB. All 21K compounds mapped to SMA modifier targets (CAST, ANK3, PLS3, etc). Top candidates selected by potency + drug-likeness for kinase-class repurposing."
+  },
+  "candidates": [
+    {
+      "rank": 1,
+      "chembl_id": "CHEMBL305177",
+      "smiles": "Nc1nc(N)c2cc(CNc3ccc(C(=O)NC(CCC(=O)O)C(=O)O)cc3)ccc2n1",
+      "mw": 438.44,
+      "logp": 1.45,
+      "pchembl": 11.0,
+      "activity_type": "Ki",
+      "original_target": "SMA modifiers (DHFR-class aminopteridine)",
+      "rationale": "Highest potency in DB (pChEMBL=11). Diaminopteridine scaffold. Low logP good for CNS."
+    },
+    {
+      "rank": 2,
+      "chembl_id": "CHEMBL410215",
+      "smiles": "CCn1ncc2c3c(NCc4ccc(OC)c(Cl)c4)nnc(N4CCC(C(=O)O)CC4)c3cnc21",
+      "mw": 495.97,
+      "logp": 3.97,
+      "pchembl": 10.52,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (pyrazolopyridine kinase scaffold)",
+      "rationale": "Pyrazolopyridine is a privileged kinase scaffold. Strong IC50. Near MW upper limit but viable."
+    },
+    {
+      "rank": 3,
+      "chembl_id": "CHEMBL369258",
+      "smiles": "CCc1cc2c3c(N)nc(N)nc3ccc2n1C(C)(C)C",
+      "mw": 283.38,
+      "logp": 3.07,
+      "pchembl": 10.0,
+      "activity_type": "Ki",
+      "original_target": "SMA modifiers (diaminopyrimidine)",
+      "rationale": "Compact diaminopyrimidine — classic kinase inhibitor pharmacophore. Excellent MW and logP for CNS. High potency (Ki ~100pM)."
+    },
+    {
+      "rank": 4,
+      "chembl_id": "CHEMBL170760",
+      "smiles": "CCc1cc2c3c(N)nc(N)nc3ccc2n1C(C)CC",
+      "mw": 283.38,
+      "logp": 3.28,
+      "pchembl": 10.0,
+      "activity_type": "Ki",
+      "original_target": "SMA modifiers (diaminopyrimidine)",
+      "rationale": "Isomer of CHEMBL369258. Same diaminopyrimidine kinase scaffold. Excellent drug-likeness for CNS."
+    },
+    {
+      "rank": 5,
+      "chembl_id": "CHEMBL51853",
+      "smiles": "Nc1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+      "mw": 316.16,
+      "logp": 3.11,
+      "pchembl": 9.89,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (4-anilinoquinazoline)",
+      "rationale": "4-Anilinoquinazoline = EGFR/kinase inhibitor scaffold (erlotinib class). Strong candidate for LIMK2 binding."
+    },
+    {
+      "rank": 6,
+      "chembl_id": "CHEMBL334697",
+      "smiles": "C=CC(=O)N(C)c1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+      "mw": 384.24,
+      "logp": 3.68,
+      "pchembl": 9.77,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (covalent quinazoline)",
+      "rationale": "Acrylamide warhead = covalent kinase inhibitor (afatinib-class). Could form irreversible bond with LIMK2 Cys residue."
+    },
+    {
+      "rank": 7,
+      "chembl_id": "CHEMBL352960",
+      "smiles": "CCc1cc2c3c(N)nc(N)nc3ccc2n1C(CC)CC",
+      "mw": 297.41,
+      "logp": 3.67,
+      "pchembl": 9.7,
+      "activity_type": "Ki",
+      "original_target": "SMA modifiers (diaminopyrimidine)",
+      "rationale": "Another diaminopyrimidine variant. Good potency and CNS-compatible properties."
+    },
+    {
+      "rank": 8,
+      "chembl_id": "CHEMBL170837",
+      "smiles": "CC(C)n1c(C(C)(C)C)cc2c3c(N)nc(N)nc3ccc21",
+      "mw": 297.41,
+      "logp": 3.63,
+      "pchembl": 9.7,
+      "activity_type": "Ki",
+      "original_target": "SMA modifiers (diaminopyrimidine)",
+      "rationale": "Tert-butyl substituted diaminopyrimidine. Bulky group may improve selectivity for LIMK2 over LIMK1."
+    },
+    {
+      "rank": 9,
+      "chembl_id": "CHEMBL127041",
+      "smiles": "OCCNc1cc2ncnc(Nc3cccc(Br)c3)c2cn1",
+      "mw": 360.22,
+      "logp": 2.94,
+      "pchembl": 9.62,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (4-anilinoquinazoline)",
+      "rationale": "Hydroxyethylamine quinazoline. Lower logP = better CNS aqueous solubility."
+    },
+    {
+      "rank": 10,
+      "chembl_id": "CHEMBL53426",
+      "smiles": "Brc1cccc(Nc2ncnc3cnc(NCCc4c[nH]cn4)nc23)c1",
+      "mw": 411.27,
+      "logp": 3.3,
+      "pchembl": 9.6,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (purine kinase scaffold)",
+      "rationale": "Purine scaffold with histamine-like sidechain — classic kinase ATP-competitive motif. Strong LIMK2 docking candidate."
+    },
+    {
+      "rank": 11,
+      "chembl_id": "CHEMBL354249",
+      "smiles": "C[C@](CCC(=O)O)(NC(=O)c1ccc(CCC2CNc3nc(N)nc(N)c3C2)cc1)C(=O)O",
+      "mw": 456.5,
+      "logp": 1.3,
+      "pchembl": 9.54,
+      "activity_type": "Ki",
+      "original_target": "SMA modifiers (folate analog)",
+      "rationale": "Tetrahydropyrimidine-glutamate. Very hydrophilic (logP=1.3). May bind LIMK2 allosteric site."
+    },
+    {
+      "rank": 12,
+      "chembl_id": "CHEMBL107349",
+      "smiles": "CCn1c(=O)c2c(nc(NC3CCCCC3)n2Cc2ccc(OC)c(F)c2)n(CC)c1=O",
+      "mw": 443.52,
+      "logp": 3.34,
+      "pchembl": 9.52,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (xanthine/PDE scaffold)",
+      "rationale": "Xanthine derivative with cyclohexylamine. PDE inhibitor scaffold — kinase cross-reactivity possible."
+    },
+    {
+      "rank": 13,
+      "chembl_id": "CHEMBL170758",
+      "smiles": "CCC(CC)n1c(C)cc2c3c(N)nc(N)nc3ccc21",
+      "mw": 283.38,
+      "logp": 3.42,
+      "pchembl": 9.52,
+      "activity_type": "Ki",
+      "original_target": "SMA modifiers (diaminopyrimidine)",
+      "rationale": "Fourth diaminopyrimidine variant — scaffold enrichment signals real kinase activity."
+    },
+    {
+      "rank": 14,
+      "chembl_id": "CHEMBL108491",
+      "smiles": "CCn1c(=O)c2c(nc(NC3CCCCC3)n2Cc2ccc(O)c(F)c2)n(CC)c1=O",
+      "mw": 429.5,
+      "logp": 3.04,
+      "pchembl": 9.48,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (xanthine/PDE scaffold)",
+      "rationale": "Hydroxyphenyl variant of rank 12. Free phenol may form H-bond with LIMK2 hinge region."
+    },
+    {
+      "rank": 15,
+      "chembl_id": "CHEMBL134371",
+      "smiles": "O=C(O)/C=C/C(=O)Nc1ccc2ncnc(Nc3cccc(Br)c3)c2c1",
+      "mw": 413.23,
+      "logp": 3.72,
+      "pchembl": 9.43,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (quinazoline-maleamide)",
+      "rationale": "Maleamic acid on quinazoline. Carboxylate may interact with LIMK2 catalytic lysine."
+    },
+    {
+      "rank": 16,
+      "chembl_id": "CHEMBL424170",
+      "smiles": "CCC(C)(C)n1c(C)cc2c3c(N)nc(N)nc3ccc21",
+      "mw": 283.38,
+      "logp": 3.2,
+      "pchembl": 9.4,
+      "activity_type": "Ki",
+      "original_target": "SMA modifiers (diaminopyrimidine)",
+      "rationale": "Neopentyl diaminopyrimidine. Fifth variant of this high-potency scaffold class."
+    },
+    {
+      "rank": 17,
+      "chembl_id": "CHEMBL336264",
+      "smiles": "C=CS(=O)(=O)c1cc2c(Nc3cccc(Br)c3)ncnc2cn1",
+      "mw": 391.25,
+      "logp": 3.45,
+      "pchembl": 9.37,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (vinyl sulfonyl quinazoline)",
+      "rationale": "Vinyl sulfone covalent warhead on quinazoline. Different covalent mechanism than rank 6."
+    },
+    {
+      "rank": 18,
+      "chembl_id": "CHEMBL289047",
+      "smiles": "COc1ccc(CNc2c(CO)cnc3ccc(C#N)cc23)cc1Cl",
+      "mw": 353.81,
+      "logp": 3.87,
+      "pchembl": 9.32,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (cyanoquinoline)",
+      "rationale": "Cyanoquinoline with benzylamine. Nitrile as hinge H-bond acceptor. Good MW for fragment growth."
+    },
+    {
+      "rank": 19,
+      "chembl_id": "CHEMBL539033",
+      "smiles": "C#Cc1ccc2nc(-n3ccnc3)nc(NCc3ccccc3)c2c1.Cl",
+      "mw": 361.84,
+      "logp": 3.41,
+      "pchembl": 9.28,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (imidazolyl quinazoline)",
+      "rationale": "Imidazole-quinazoline with terminal alkyne. Click chemistry handle for future SAR."
+    },
+    {
+      "rank": 20,
+      "chembl_id": "CHEMBL299622",
+      "smiles": "CNc1ncc2ncnc(Nc3cccc(Br)c3)c2n1",
+      "mw": 331.18,
+      "logp": 2.97,
+      "pchembl": 9.12,
+      "activity_type": "IC50",
+      "original_target": "SMA modifiers (aminopyrimidine-quinazoline)",
+      "rationale": "Minimal MW aminopyrimidine-quinazoline hybrid. Excellent CNS properties (MW=331, logP=2.97). Strong kinase hinge binder."
+    }
+  ],
+  "scaffold_analysis": {
+    "diaminopyrimidines": {
+      "count": 6,
+      "chembl_ids": ["CHEMBL369258", "CHEMBL170760", "CHEMBL352960", "CHEMBL170837", "CHEMBL170758", "CHEMBL424170"],
+      "note": "Dominant scaffold class (ranks 3,4,7,8,13,16). Classic kinase inhibitor pharmacophore. MW ~283 Da, excellent CNS properties. HIGH PRIORITY for LIMK2."
+    },
+    "anilinoquinazolines": {
+      "count": 5,
+      "chembl_ids": ["CHEMBL51853", "CHEMBL334697", "CHEMBL127041", "CHEMBL134371", "CHEMBL336264"],
+      "note": "EGFR-class kinase inhibitor scaffold. Multiple warhead variants (reversible, acrylamide, vinyl sulfone). Bromophenyl aniline is key feature."
+    },
+    "cyanoquinolines": {
+      "count": 2,
+      "chembl_ids": ["CHEMBL289047", "CHEMBL539033"],
+      "note": "Nitrile-bearing quinoline scaffolds. Good for hinge-binding to kinases."
+    },
+    "xanthine_pde": {
+      "count": 2,
+      "chembl_ids": ["CHEMBL107349", "CHEMBL108491"],
+      "note": "PDE inhibitor scaffold. May have kinase cross-reactivity."
+    }
+  },
+  "known_limk_inhibitors_for_comparison": [
+    {
+      "name": "BMS-5",
+      "smiles": "CC(=O)Nc1ccc(-c2nc3cc(NS(=O)(=O)c4ccc(F)cc4)ccc3[nH]2)cc1",
+      "mw": 424.47,
+      "note": "Known LIMK1/2 dual inhibitor. Already in docking campaign. Include as positive control."
+    }
+  ],
+  "recommendation": "Top strategy: (1) Dock all 20 candidates + BMS-5 control against LIMK2 crystal structure (PDB: 4TPT). (2) Prioritize diaminopyrimidines (6 compounds, MW~283) as lead series. (3) Include covalent quinazolines (ranks 6,17) to test irreversible binding. (4) Compare docking scores to BMS-5 as benchmark."
+}

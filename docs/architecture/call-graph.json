@@ -1,0 +1,597 @@
+{
+  "generated": "auto",
+  "description": "Internal cross-module import graph (source -> [targets])",
+  "total_edges": 272,
+  "graph": {
+    "agents/drug_discovery_agent.py": [
+      "core/database.py",
+      "ingestion/adapters/nvidia_nims.py",
+      "reasoning/blackboard.py",
+      "reasoning/milestone_tracker.py"
+    ],
+    "api/app.py": [
+      "api/routes/__init__.py",
+      "core/config.py",
+      "core/database.py"
+    ],
+    "api/auth.py": [
+      "core/config.py"
+    ],
+    "api/routes/aav.py": [
+      "reasoning/aav_evaluator.py"
+    ],
+    "api/routes/advanced_analytics.py": [
+      "core/database.py",
+      "reasoning/multisystem_sma.py",
+      "reasoning/regeneration_signatures.py"
+    ],
+    "api/routes/advisory_pack.py": [
+      "core/database.py"
+    ],
+    "api/routes/agent.py": [
+      "agents/drug_discovery_agent.py",
+      "api/auth.py"
+    ],
+    "api/routes/analytics.py": [
+      "core/database.py"
+    ],
+    "api/routes/aso.py": [
+      "reasoning/aso_generator.py"
+    ],
+    "api/routes/assistant.py": [
+      "reasoning/research_assistant.py"
+    ],
+    "api/routes/bayesian.py": [
+      "reasoning/bayesian_convergence.py"
+    ],
+    "api/routes/benchmark.py": [
+      "api/auth.py",
+      "reasoning/claim_quality.py",
+      "reasoning/extraction_benchmark.py"
+    ],
+    "api/routes/binder_design.py": [
+      "api/auth.py",
+      "reasoning/protein_binder_design.py"
+    ],
+    "api/routes/bioelectric.py": [
+      "api/auth.py",
+      "core/database.py"
+    ],
+    "api/routes/biomarker.py": [
+      "reasoning/biomarker_atlas.py"
+    ],
+    "api/routes/blackboard.py": [
+      "api/auth.py",
+      "core/database.py",
+      "reasoning/blackboard.py"
+    ],
+    "api/routes/calibration.py": [
+      "reasoning/bayesian_calibration.py",
+      "reasoning/confidence_calibrator.py",
+      "reasoning/prospective_backtest.py",
+      "reasoning/uncertainty_engine.py"
+    ],
+    "api/routes/cascade.py": [
+      "reasoning/mutation_cascade.py"
+    ],
+    "api/routes/chat.py": [
+      "reasoning/research_assistant.py"
+    ],
+    "api/routes/collaboration.py": [
+      "core/database.py"
+    ],
+    "api/routes/combinations.py": [
+      "reasoning/combination_ranker.py"
+    ],
+    "api/routes/comparative.py": [
+      "api/auth.py",
+      "core/database.py",
+      "ingestion/adapters/orthologs.py"
+    ],
+    "api/routes/contact.py": [
+      "api/auth.py",
+      "core/config.py",
+      "core/database.py"
+    ],
+    "api/routes/convergence.py": [
+      "api/auth.py",
+      "core/database.py",
+      "reasoning/convergence_engine.py"
+    ],
+    "api/routes/crispr.py": [
+      "core/database.py",
+      "reasoning/crispr_designer.py"
+    ],
+    "api/routes/cross_disease.py": [
+      "reasoning/cross_disease_repurposing.py"
+    ],
+    "api/routes/datasets.py": [
+      "core/database.py",
+      "ingestion/adapters/nanopore_rnaseq.py"
+    ],
+    "api/routes/diffdock_local.py": [
+      "api/auth.py",
+      "ingestion/adapters/diffdock_local.py"
+    ],
+    "api/routes/digital_twin.py": [
+      "reasoning/digital_twin.py"
+    ],
+    "api/routes/discovery.py": [
+      "api/auth.py",
+      "core/database.py",
+      "reasoning/discovery_agent.py"
+    ],
+    "api/routes/docking.py": [
+      "reasoning/docking_scorer.py"
+    ],
+    "api/routes/docking_proxy.py": [
+      "api/auth.py",
+      "reasoning/docking_proxy.py"
+    ],
+    "api/routes/drugs.py": [
+      "api/auth.py",
+      "core/database.py"
+    ],
+    "api/routes/dual_target.py": [
+      "reasoning/dual_target.py"
+    ],
+    "api/routes/enrichment.py": [
+      "api/auth.py",
+      "reasoning/claim_enricher.py"
+    ],
+    "api/routes/evidence.py": [
+      "core/database.py"
+    ],
+    "api/routes/evidence_writer.py": [
+      "reasoning/evidence_writer.py"
+    ],
+    "api/routes/experiment_design.py": [
+      "reasoning/dead_end_predictor.py",
+      "reasoning/experiment_designer.py",
+      "reasoning/experiment_proposer.py"
+    ],
+    "api/routes/experiment_value.py": [
+      "reasoning/assay_ready.py",
+      "reasoning/experiment_value.py"
+    ],
+    "api/routes/export.py": [
+      "core/database.py"
+    ],
+    "api/routes/fair.py": [
+      "reasoning/fair_compliance.py"
+    ],
+    "api/routes/federated.py": [
+      "reasoning/federated.py"
+    ],
+    "api/routes/funnel.py": [
+      "api/auth.py",
+      "reasoning/screening_funnel.py"
+    ],
+    "api/routes/gene_versioning.py": [
+      "reasoning/gene_versioning.py"
+    ],
+    "api/routes/gpu.py": [
+      "api/auth.py",
+      "core/database.py"
+    ],
+    "api/routes/graph.py": [
+      "core/database.py"
+    ],
+    "api/routes/hit_validation.py": [
+      "api/auth.py",
+      "reasoning/assay_ready.py",
+      "reasoning/hit_validator.py",
+      "reasoning/milestone_tracker.py"
+    ],
+    "api/routes/hypothesis_gen.py": [
+      "api/auth.py",
+      "core/database.py",
+      "reasoning/convergence_hypothesis.py"
+    ],
+    "api/routes/ingestion.py": [
+      "api/auth.py",
+      "core/database.py",
+      "ingestion/adapters/__init__.py",
+      "reasoning/claim_extractor.py",
+      "reasoning/failure_extractor.py",
+      "reasoning/graph_expander.py",
+      "reasoning/hypothesis_generator.py"
+    ],
+    "api/routes/interaction_network.py": [
+      "core/database.py"
+    ],
+    "api/routes/lab_os.py": [
+      "reasoning/lab_os.py"
+    ],
+    "api/routes/literature_review.py": [
+      "reasoning/literature_reviewer.py"
+    ],
+    "api/routes/md_simulation.py": [
+      "reasoning/md_generator.py"
+    ],
+    "api/routes/ml_proxy.py": [
+      "api/auth.py",
+      "reasoning/ml_docking_proxy.py"
+    ],
+    "api/routes/modality_comparison.py": [
+      "reasoning/modality_comparison.py"
+    ],
+    "api/routes/modifier.py": [
+      "reasoning/modifier_predictor.py"
+    ],
+    "api/routes/molecule_browser.py": [
+      "core/database.py"
+    ],
+    "api/routes/molecule_screen.py": [
+      "api/auth.py",
+      "reasoning/molecule_screener.py"
+    ],
+    "api/routes/mouse_models.py": [
+      "reasoning/mouse_models.py"
+    ],
+    "api/routes/news.py": [
+      "api/auth.py",
+      "core/config.py",
+      "core/database.py"
+    ],
+    "api/routes/nvidia_nims.py": [
+      "api/auth.py",
+      "core/database.py",
+      "ingestion/adapters/alphafold.py",
+      "ingestion/adapters/nvidia_nims.py"
+    ],
+    "api/routes/omics.py": [
+      "ingestion/adapters/nanopore_rnaseq.py"
+    ],
+    "api/routes/organoid_scorecard.py": [
+      "reasoning/organoid_scorecard.py"
+    ],
+    "api/routes/patent_landscape.py": [
+      "reasoning/patent_fto.py",
+      "reasoning/patent_landscape.py"
+    ],
+    "api/routes/personal_twin.py": [
+      "api/auth.py",
+      "reasoning/personal_twin.py"
+    ],
+    "api/routes/predictions.py": [
+      "api/auth.py",
+      "core/database.py",
+      "reasoning/convergence_engine.py",
+      "reasoning/prediction_generator.py"
+    ],
+    "api/routes/preprints.py": [
+      "api/auth.py",
+      "core/database.py",
+      "ingestion/adapters/__init__.py"
+    ],
+    "api/routes/prime_edit.py": [
+      "reasoning/prime_editor.py"
+    ],
+    "api/routes/prioritization.py": [
+      "reasoning/target_prioritizer.py"
+    ],
+    "api/routes/prioritization_v2.py": [
+      "reasoning/target_prioritizer_v2.py"
+    ],
+    "api/routes/proprioception.py": [
+      "reasoning/proprioception.py",
+      "reasoning/segment_mapping.py"
+    ],
+    "api/routes/reproducibility.py": [
+      "api/auth.py",
+      "reasoning/reproducibility.py"
+    ],
+    "api/routes/research.py": [
+      "core/database.py",
+      "reasoning/spinal_stimulation.py"
+    ],
+    "api/routes/rna_binding.py": [
+      "reasoning/rna_binding.py"
+    ],
+    "api/routes/scoring.py": [
+      "api/auth.py",
+      "reasoning/hypothesis_prioritizer.py",
+      "reasoning/prioritizer.py"
+    ],
+    "api/routes/screening.py": [
+      "api/auth.py",
+      "core/database.py",
+      "reasoning/admet_predictor.py",
+      "reasoning/candidate_ranker.py",
+      "reasoning/drug_screener.py",
+      "reasoning/repurposing.py"
+    ],
+    "api/routes/search.py": [
+      "api/auth.py",
+      "core/database.py",
+      "reasoning/embeddings.py"
+    ],
+    "api/routes/smn_locus.py": [
+      "reasoning/smn_locus.py"
+    ],
+    "api/routes/source_quality.py": [
+      "reasoning/source_quality.py",
+      "reasoning/source_weigher.py"
+    ],
+    "api/routes/spatial_omics.py": [
+      "core/database.py",
+      "reasoning/spatial_omics.py"
+    ],
+    "api/routes/splice.py": [
+      "api/auth.py",
+      "core/database.py",
+      "reasoning/splice_benchmark.py"
+    ],
+    "api/routes/splice_offtarget.py": [
+      "reasoning/splice_offtarget.py"
+    ],
+    "api/routes/splice_predictor.py": [
+      "reasoning/splice_predictor.py"
+    ],
+    "api/routes/splicing_map.py": [
+      "reasoning/splicing_map.py"
+    ],
+    "api/routes/stats.py": [
+      "core/database.py"
+    ],
+    "api/routes/structures.py": [
+      "core/database.py"
+    ],
+    "api/routes/synergy.py": [
+      "reasoning/synergy_predictor.py"
+    ],
+    "api/routes/synthesis.py": [
+      "api/auth.py",
+      "reasoning/cross_paper_synthesis.py"
+    ],
+    "api/routes/target_compare.py": [
+      "core/database.py"
+    ],
+    "api/routes/target_report.py": [
+      "core/database.py",
+      "reasoning/assay_ready.py"
+    ],
+    "api/routes/targets.py": [
+      "api/auth.py",
+      "core/database.py"
+    ],
+    "api/routes/timeline.py": [
+      "core/database.py"
+    ],
+    "api/routes/translation.py": [
+      "reasoning/translation.py"
+    ],
+    "api/routes/trials.py": [
+      "core/database.py"
+    ],
+    "api/routes/uncertainty.py": [
+      "reasoning/uncertainty.py"
+    ],
+    "api/routes/virtual_screening.py": [
+      "api/auth.py",
+      "reasoning/virtual_screening.py"
+    ],
+    "core/llm_client.py": [
+      "core/config.py"
+    ],
+    "core/llm_router.py": [
+      "core/config.py"
+    ],
+    "ingestion/adapters/geo.py": [
+      "core/config.py"
+    ],
+    "ingestion/adapters/nanopore_rnaseq.py": [
+      "core/config.py"
+    ],
+    "ingestion/adapters/pmc.py": [
+      "core/config.py",
+      "core/database.py"
+    ],
+    "ingestion/adapters/pubmed.py": [
+      "core/config.py"
+    ],
+    "reasoning/admet_predictor.py": [
+      "core/database.py"
+    ],
+    "reasoning/assay_ready.py": [
+      "core/database.py",
+      "reasoning/experiment_value.py"
+    ],
+    "reasoning/bayesian_calibration.py": [
+      "core/database.py"
+    ],
+    "reasoning/bayesian_convergence.py": [
+      "core/database.py"
+    ],
+    "reasoning/biomarker_atlas.py": [
+      "core/database.py"
+    ],
+    "reasoning/blackboard.py": [
+      "core/database.py"
+    ],
+    "reasoning/candidate_ranker.py": [
+      "core/database.py",
+      "reasoning/admet_predictor.py",
+      "reasoning/drug_screener.py",
+      "reasoning/repurposing.py"
+    ],
+    "reasoning/claim_enricher.py": [
+      "core/database.py"
+    ],
+    "reasoning/claim_extractor.py": [
+      "core/config.py",
+      "core/database.py",
+      "core/llm_client.py"
+    ],
+    "reasoning/claim_quality.py": [
+      "core/database.py"
+    ],
+    "reasoning/confidence_calibrator.py": [
+      "core/database.py",
+      "reasoning/synergy_predictor.py"
+    ],
+    "reasoning/convergence_engine.py": [
+      "core/database.py"
+    ],
+    "reasoning/convergence_hypothesis.py": [
+      "core/config.py",
+      "core/database.py",
+      "reasoning/blackboard.py"
+    ],
+    "reasoning/cross_paper_synthesis.py": [
+      "core/database.py"
+    ],
+    "reasoning/dead_end_predictor.py": [
+      "core/database.py"
+    ],
+    "reasoning/discovery_agent.py": [
+      "core/database.py"
+    ],
+    "reasoning/docking_scorer.py": [
+      "core/database.py"
+    ],
+    "reasoning/drug_screener.py": [
+      "core/database.py"
+    ],
+    "reasoning/embeddings.py": [
+      "core/database.py"
+    ],
+    "reasoning/evidence_writer.py": [
+      "core/config.py",
+      "core/database.py"
+    ],
+    "reasoning/experiment_designer.py": [
+      "core/database.py"
+    ],
+    "reasoning/experiment_proposer.py": [
+      "core/database.py",
+      "reasoning/hypothesis_prioritizer.py"
+    ],
+    "reasoning/experiment_value.py": [
+      "core/database.py"
+    ],
+    "reasoning/extraction_benchmark.py": [
+      "core/database.py",
+      "reasoning/claim_extractor.py"
+    ],
+    "reasoning/failure_extractor.py": [
+      "core/config.py",
+      "core/database.py"
+    ],
+    "reasoning/fair_compliance.py": [
+      "core/database.py"
+    ],
+    "reasoning/graph_expander.py": [
+      "core/database.py"
+    ],
+    "reasoning/hit_validator.py": [
+      "reasoning/embeddings.py"
+    ],
+    "reasoning/hypothesis_generator.py": [
+      "core/config.py",
+      "core/database.py"
+    ],
+    "reasoning/hypothesis_prioritizer.py": [
+      "core/database.py",
+      "reasoning/prioritizer.py"
+    ],
+    "reasoning/literature_reviewer.py": [
+      "core/config.py",
+      "core/database.py"
+    ],
+    "reasoning/milestone_tracker.py": [
+      "core/database.py"
+    ],
+    "reasoning/ml_docking_proxy.py": [
+      "core/database.py"
+    ],
+    "reasoning/modifier_predictor.py": [
+      "core/database.py"
+    ],
+    "reasoning/molecule_screener.py": [
+      "core/database.py",
+      "reasoning/blackboard.py"
+    ],
+    "reasoning/patent_fto.py": [
+      "core/database.py"
+    ],
+    "reasoning/patent_landscape.py": [
+      "core/database.py"
+    ],
+    "reasoning/personal_twin.py": [
+      "core/database.py",
+      "reasoning/bayesian_convergence.py",
+      "reasoning/digital_twin.py",
+      "reasoning/experiment_value.py",
+      "reasoning/modifier_predictor.py",
+      "reasoning/synergy_predictor.py"
+    ],
+    "reasoning/prediction_generator.py": [
+      "core/config.py",
+      "core/database.py"
+    ],
+    "reasoning/prioritizer.py": [
+      "core/database.py"
+    ],
+    "reasoning/prospective_backtest.py": [
+      "core/database.py",
+      "reasoning/convergence_engine.py"
+    ],
+    "reasoning/reproducibility.py": [
+      "core/database.py",
+      "reasoning/convergence_engine.py"
+    ],
+    "reasoning/repurposing.py": [
+      "core/database.py"
+    ],
+    "reasoning/research_assistant.py": [
+      "core/config.py",
+      "core/database.py",
+      "reasoning/embeddings.py"
+    ],
+    "reasoning/scorer.py": [
+      "core/database.py"
+    ],
+    "reasoning/screening_funnel.py": [
+      "core/database.py",
+      "ingestion/adapters/nvidia_nims.py",
+      "reasoning/docking_scorer.py"
+    ],
+    "reasoning/source_quality.py": [
+      "core/database.py"
+    ],
+    "reasoning/source_weigher.py": [
+      "core/database.py"
+    ],
+    "reasoning/spatial_omics.py": [
+      "core/database.py"
+    ],
+    "reasoning/synergy_predictor.py": [
+      "core/database.py"
+    ],
+    "reasoning/target_prioritizer.py": [
+      "core/database.py"
+    ],
+    "reasoning/target_prioritizer_v2.py": [
+      "core/database.py"
+    ],
+    "reasoning/translation.py": [
+      "core/database.py",
+      "reasoning/assay_ready.py",
+      "reasoning/experiment_designer.py"
+    ],
+    "reasoning/uncertainty.py": [
+      "core/database.py"
+    ],
+    "reasoning/uncertainty_engine.py": [
+      "core/database.py"
+    ],
+    "reasoning/virtual_screening.py": [
+      "ingestion/adapters/nvidia_nims.py"
+    ],
+    "ucm/builder.py": [
+      "ucm/utils.py"
+    ]
+  }
+}

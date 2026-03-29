@@ -280,6 +280,7 @@
     <!-- 2D Molecule Rendering -->
     <!-- 3D Protein Structure Viewer -->
     <script src="https://unpkg.com/ngl@2.3.0/dist/ngl.js"></script>
+    <script src="https://unpkg.com/smiles-drawer@2.0.3/dist/smiles-drawer.min.js"></script>
     <style>
         :root {
             --bg: #fafafa;
@@ -554,6 +555,42 @@
         .expand-row { display: none; }
         .expand-row.open { display: table-row; }
         .expand-cell { padding: 16px 20px; background: var(--bg); border-bottom: 1px solid var(--line); word-wrap: break-word; overflow-wrap: break-word; }
+        /* Candidate detail card styles */
+        .cand-detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px 24px; font-size: 12px; line-height: 1.7; }
+        .cand-detail-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px; }
+        .cand-detail-val { font-weight: 600; }
+        .cand-svg-wrap { width: 200px; height: 140px; background: #1a1f2e; border-radius: 4px; border: 1px solid #334155; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .cand-smiles-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; font-family: var(--mono); font-size: 11px; word-break: break-all; }
+        .cand-smiles-row .cand-copy-btn { flex-shrink: 0; padding: 3px 10px; font-size: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 3px; cursor: pointer; }
+        .cand-smiles-row .cand-copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .cand-traffic { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+        .cand-traffic-green { background: #16a34a1a; color: #16a34a; border: 1px solid #16a34a33; }
+        .cand-traffic-amber { background: #d976061a; color: #d97606; border: 1px solid #d9760633; }
+        .cand-traffic-red { background: #dc26261a; color: #dc2626; border: 1px solid #dc262633; }
+        .cand-links { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .cand-links a { font-size: 11px; color: var(--accent); text-decoration: none; padding: 3px 10px; border: 1px solid var(--accent); border-radius: 3px; }
+        .cand-links a:hover { background: var(--accent); color: #fff; }
+        .cand-dock-table { margin-top: 8px; font-size: 11px; border-collapse: collapse; }
+        .cand-dock-table th, .cand-dock-table td { padding: 3px 10px; border: 1px solid var(--line); text-align: left; }
+        .cand-dock-table th { background: var(--panel); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.3px; }
+        .cand-admet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; margin-top: 6px; }
+        .cand-admet-item { padding: 6px 8px; border: 1px solid var(--line); border-radius: 3px; font-size: 11px; text-align: center; }
+        .cand-admet-item .cand-admet-label { font-size: 9px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.3px; display: block; }
+        /* Comparison feature */
+        .cand-compare-cb { width: 14px; height: 14px; cursor: pointer; accent-color: var(--accent); }
+        .cand-compare-bar { display: none; position: sticky; top: 0; z-index: 20; padding: 10px 16px; background: var(--accent); color: #fff; border-radius: 4px; margin-bottom: 12px; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; }
+        .cand-compare-bar.visible { display: flex; }
+        .cand-compare-bar button { padding: 5px 14px; border: 1px solid rgba(255,255,255,0.4); background: transparent; color: #fff; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: 600; }
+        .cand-compare-bar button:hover { background: rgba(255,255,255,0.15); }
+        .cand-compare-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; background: rgba(0,0,0,0.7); justify-content: center; align-items: flex-start; padding: 40px 20px; overflow-y: auto; }
+        .cand-compare-modal.open { display: flex; }
+        .cand-compare-content { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 24px; max-width: 95vw; width: fit-content; min-width: 600px; }
+        .cand-compare-content h3 { margin: 0 0 16px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .cand-compare-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .cand-compare-table th, .cand-compare-table td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; }
+        .cand-compare-table th { background: var(--bg); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.3px; white-space: nowrap; }
+        .cand-compare-close { float: right; cursor: pointer; font-size: 18px; color: var(--muted); border: none; background: none; }
+        .cand-compare-close:hover { color: var(--text); }
         .expand-abstract { font-size: 13px; line-height: 1.7; color: var(--text-secondary); max-width: 100%; word-wrap: break-word; }
         .expand-abstract strong { color: var(--text); }
         .expand-abstract p { max-width: 100%; }
@@ -900,6 +937,55 @@
             .dp-node-count { font-size: 14px; min-width: 64px; }
             .dp-arrow { padding: 2px 14px; transform: rotate(90deg); }
         }
+
+        /* ===== Drug Pipeline Funnel ===== */
+        .drug-pipeline { margin: 28px 0 0; }
+        .drug-pipeline-header {
+            font-size: 10px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--muted); margin-bottom: 10px;
+        }
+        .drug-funnel { display: flex; flex-direction: column; align-items: center; gap: 0; }
+        .funnel-stage {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; padding: 10px 16px; cursor: pointer;
+            border: 1px solid var(--line); border-bottom: none;
+            background: var(--panel); transition: background 0.15s, border-color 0.15s;
+            position: relative; min-height: 38px;
+        }
+        .funnel-stage:first-child { border-radius: 4px 4px 0 0; }
+        .funnel-stage:last-child { border-bottom: 1px solid var(--line); border-radius: 0 0 4px 4px; }
+        .funnel-stage:hover { background: var(--bg); border-color: var(--accent); z-index: 1; }
+        .funnel-stage:hover .funnel-label { color: var(--accent); }
+        .funnel-count {
+            font-size: 16px; font-weight: 700; color: var(--text);
+            min-width: 60px; text-align: right; font-variant-numeric: tabular-nums;
+        }
+        .funnel-label {
+            font-size: 11px; font-weight: 600; color: var(--text);
+            text-transform: uppercase; letter-spacing: 0.3px;
+            transition: color 0.15s; white-space: nowrap;
+        }
+        .funnel-method {
+            font-size: 10px; color: var(--muted); margin-left: auto;
+            white-space: nowrap;
+        }
+        .funnel-bar {
+            position: absolute; left: 0; top: 0; bottom: 0;
+            background: var(--accent); opacity: 0.06;
+            transition: width 0.6s ease-out;
+            pointer-events: none;
+        }
+        .funnel-arrow {
+            display: flex; align-items: center; justify-content: center;
+            color: var(--line); font-size: 9px; height: 0;
+            user-select: none; pointer-events: none;
+        }
+        @media (max-width: 600px) {
+            .funnel-stage { padding: 8px 10px; gap: 6px; }
+            .funnel-count { font-size: 13px; min-width: 44px; }
+            .funnel-label { font-size: 10px; }
+            .funnel-method { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -997,6 +1083,7 @@
             <a href="/advisory" class="nav-link" data-section="advisory">Advisory Pack</a>
             <a href="/analytics" class="nav-link" data-section="analytics">Analytics</a>
             <a href="/links" class="nav-link" data-section="links">Links</a>
+            <a href="/api-guide" class="nav-link" data-section="api-guide">API Guide</a>
             <a href="/write" class="nav-link" data-section="write">Write</a>
             <a href="/versions" class="nav-link" data-section="versions">Versions</a>
             <a href="/directions" class="nav-link" data-section="directions">Directions</a>
@@ -1010,7 +1097,7 @@
 <section class="section active" id="mission">
     <div class="mission-hero">
         <h2>Accelerating SMA Drug Discovery Through Computational Science</h2>
-        <p class="hero-sub" id="hero-sub">We combine molecular screening, evidence analysis, and computational biology to identify and validate new therapeutic candidates for SMA &mdash; from target discovery to drug-likeness prediction</p>
+        <p class="hero-sub" id="hero-sub">We combine molecular screening, evidence analysis, and computational biology to identify and validate new therapeutic candidates for SMA &mdash; featuring our ROCK-LIMK2-CFL2 axis discovery across 5/6 independent research streams</p>
     </div>
     <div class="hero-ask">
         <div class="hero-ask-label">Search the Evidence Graph</div>
@@ -1019,10 +1106,10 @@
             <button id="hero-ask-btn">Search</button>
         </div>
         <div class="hero-ask-examples">
-            <span class="hero-ask-ex" data-q="What is the role of PLS3 in SMA?">PLS3 in SMA</span>
+            <span class="hero-ask-ex" data-q="What is the ROCK-LIMK2-CFL2 actin axis in SMA?">ROCK-LIMK2-CFL2 axis</span>
             <span class="hero-ask-ex" data-q="Compare nusinersen and risdiplam mechanisms">Nusinersen vs Risdiplam</span>
             <span class="hero-ask-ex" data-q="What are promising SMN-independent targets?">SMN-independent targets</span>
-            <span class="hero-ask-ex" data-q="What biomarkers predict SMA treatment response?">SMA biomarkers</span>
+            <span class="hero-ask-ex" data-q="What is the actin rod pathway in SMA motor neurons?">Actin rod pathway</span>
         </div>
         <div id="hero-ask-result" class="hero-ask-result" style="display:none">
             <div id="hero-ask-loading" class="loader" style="display:none">Searching evidence base...</div>
@@ -1075,6 +1162,15 @@
         </div>
     </div>
     <!-- ===== End Discovery Pipeline ===== -->
+
+    <!-- ===== Drug Pipeline Funnel ===== -->
+    <div class="drug-pipeline" id="drug-pipeline">
+        <div class="drug-pipeline-header">Drug Screening Funnel</div>
+        <div class="drug-funnel" id="drug-funnel">
+            <!-- Populated by JS from /screen/pipeline-stats -->
+        </div>
+    </div>
+    <!-- ===== End Drug Pipeline Funnel ===== -->
 
     <div id="home-discoveries" style="margin-top:32px">
         <h3 style="font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:20px;text-align:center">Latest Discoveries</h3>
@@ -2018,7 +2114,24 @@
     </p>
     <p style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5"><em>Note: ADMET predictions use rule-based heuristics (Lipinski Rule of 5, TPSA-based BBB estimate, QED score, PAINS substructure filters). These are computational filtering tools, not validated pharmacokinetic or toxicology models.</em></p>
     <div id="candidates-summary" class="screen-summary"><div class="loading">Loading integrated candidates...</div></div>
+
+    <!-- AI-Designed Drug Candidates -->
+    <div style="margin:24px 0 20px 0;padding:16px 20px;border:1px solid var(--accent);border-radius:6px;background:var(--accent-bg, rgba(26,86,219,0.04))">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0">AI-Designed Drug Candidates</h3>
+            <span style="font-size:10px;padding:2px 8px;background:#7c3aed1a;color:#7c3aed;font-weight:600;border-radius:3px">COMPUTATIONAL</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin:0 0 12px 0;line-height:1.5">De novo molecules generated by GenMol/MolMIM and SAR campaigns, validated with DiffDock docking against LIMK2 and ROCK2. Ranked by best DiffDock confidence score. Top hits: (S,S)-H-1152 (best LIMK2 dual-target) and genmol_119 (original hit, stereo-resolved).</p>
+        <div id="ai-candidates-summary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px"></div>
+        <div id="ai-compare-bar" class="cand-compare-bar"><span id="ai-compare-count">0 selected</span><button onclick="openAiCompare()">Compare Selected</button><button onclick="clearAiCompare()">Clear</button></div>
+        <div class="table-wrap"><table><thead><tr>
+            <th style="width:30px"></th><th>#</th><th>Compound</th><th>Target</th><th>DiffDock</th><th>QED</th><th>MW</th><th>BBB</th><th>Method</th>
+        </tr></thead>
+        <tbody id="ai-candidates-body"><tr><td colspan="9" class="loading">Loading AI candidates...</td></tr></tbody></table></div>
+    </div>
+
     <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Ranked Candidates</h3>
+    <div id="chembl-compare-bar" class="cand-compare-bar"><span id="chembl-compare-count">0 selected</span><button onclick="openChemblCompare()">Compare Selected</button><button onclick="clearChemblCompare()">Clear</button></div>
     <div id="candidates-filter-bar" style="display:none;gap:10px;align-items:center;margin:0 0 12px 0;flex-wrap:wrap">
         <div style="flex:1;min-width:180px">
             <input type="text" id="candidates-search" placeholder="Search compound name..."
@@ -2030,10 +2143,11 @@
         <span id="candidates-filter-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
     </div>
     <div class="table-wrap"><table><thead><tr>
-        <th>#</th><th>ChEMBL ID</th><th>Target</th><th>Score</th><th>Tier</th><th>QED</th><th>BBB</th><th>ADMET</th><th>pChEMBL</th><th>Flags</th>
+        <th style="width:30px"></th><th>#</th><th>ChEMBL ID</th><th>Target</th><th>Score</th><th>Tier</th><th>QED</th><th>BBB</th><th>ADMET</th><th>pChEMBL</th><th>Flags</th>
     </tr></thead>
-    <tbody id="candidates-body"><tr><td colspan="10" class="loading">Loading...</td></tr></tbody></table></div>
+    <tbody id="candidates-body"><tr><td colspan="11" class="loading">Loading...</td></tr></tbody></table></div>
     <div id="candidates-pagination"></div>
+    <div id="cand-compare-modal" class="cand-compare-modal"><div class="cand-compare-content"><button class="cand-compare-close" onclick="closeCandCompare()">&times;</button><h3 id="cand-compare-title">Compare Candidates</h3><div id="cand-compare-body"></div></div></div>
 </section>
 
 <section class="section" id="hits">
@@ -3003,6 +3117,7 @@
             <option value="">All confidence</option>
             <option value="85">High (&ge;85)</option>
             <option value="70">Moderate (&ge;70)</option>
+            <option value="low">Low (&lt;70)</option>
         </select>
         <span id="structures-filter-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
     </div>
@@ -3158,12 +3273,276 @@
     <div id="growth-compute" style="margin-bottom:32px"></div>
 </section>
 
+<section class="section" id="api-guide">
+    <div class="section-header"><h2 class="section-title">API Guide for Researchers</h2></div>
+    <p class="section-desc">Query our evidence graph programmatically. No authentication required for read access. All endpoints return JSON under <code>/api/v2</code>.</p>
+
+    <!-- Quick Start -->
+    <div style="background:var(--blue-bg);border:1px solid #bfdbfe;padding:20px 24px;margin:20px 0">
+        <h3 style="font-size:14px;font-weight:700;margin:0 0 12px;color:var(--blue)">Quick Start &mdash; 3 Commands</h3>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;background:var(--panel);padding:16px;border:1px solid var(--line);overflow-x:auto">
+            <div style="color:var(--muted)"># 1. Platform overview</div>
+            <div>curl -s https://sma-research.info/api/v2/stats | python3 -m json.tool</div>
+            <br>
+            <div style="color:var(--muted)"># 2. Ranked molecular targets</div>
+            <div>curl -s "https://sma-research.info/api/v2/scores?mode=discovery" | python3 -m json.tool</div>
+            <br>
+            <div style="color:var(--muted)"># 3. Search drug efficacy claims</div>
+            <div>curl -s "https://sma-research.info/api/v2/claims?claim_type=drug_efficacy&amp;limit=10" | python3 -m json.tool</div>
+        </div>
+    </div>
+
+    <!-- Interactive links -->
+    <div style="display:flex;gap:12px;margin:16px 0;flex-wrap:wrap">
+        <a href="/api/v2/docs" target="_blank" style="display:inline-block;padding:8px 16px;background:var(--accent);color:#fff;text-decoration:none;font-size:12px;font-weight:600">Swagger UI (Interactive)</a>
+        <a href="/api/v2/redoc" target="_blank" style="display:inline-block;padding:8px 16px;background:var(--panel);color:var(--text);border:1px solid var(--line);text-decoration:none;font-size:12px;font-weight:600">ReDoc Reference</a>
+        <a href="/api/v2/openapi.json" target="_blank" style="display:inline-block;padding:8px 16px;background:var(--panel);color:var(--text);border:1px solid var(--line);text-decoration:none;font-size:12px;font-weight:600">OpenAPI JSON</a>
+    </div>
+
+    <!-- Endpoint categories -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Core Data Endpoints</h3>
+    <div id="api-core-endpoints" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /stats</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Platform overview counts for all major tables</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s <span id="api-base-url">https://sma-research.info/api/v2</span>/stats</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /targets</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">All molecular targets. Params: <code>target_type</code>, <code>limit</code> (1-2000), <code>offset</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../targets?target_type=gene&amp;limit=200"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /targets/symbol/{symbol}</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Single target by gene symbol (e.g., ROCK2, LIMK1, SMN2)</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../targets/symbol/ROCK2"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /targets/{id}/deep-dive</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Full target view: claims, hypotheses, drugs, trials, network edges</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /claims</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Search claims. Params: <code>claim_type</code>, <code>confidence_min</code>, <code>target</code>, <code>q</code>, <code>enriched</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../claims?claim_type=drug_efficacy&amp;confidence_min=0.8&amp;enriched=true"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /hypotheses</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Ranked hypotheses. Params: <code>status</code>, <code>limit</code>, <code>offset</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../hypotheses?limit=20"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /scores</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">7-dimension target prioritization. Params: <code>mode</code> (discovery|clinical), <code>min_score</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../scores?mode=discovery"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /drugs</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Drugs and therapies. Params: <code>approval_status</code>, <code>drug_type</code></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../drugs?approval_status=approved"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /trials</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Clinical trials from ClinicalTrials.gov</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /sources</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">PubMed literature sources. Params: <code>source_type</code>, <code>limit</code>, <code>offset</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /news</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Research highlights and discoveries. Also: <code>/news/rss</code> for RSS feed</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /search</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Semantic + keyword hybrid search. Params: <code>q</code>, <code>mode</code> (semantic|keyword|hybrid)</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../search?q=ROCK+inhibitor&amp;mode=hybrid"</div>
+        </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Computational Biology</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /structures</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Predicted protein structures with pLDDT scores. Params: <code>symbol</code>, <code>min_plddt</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /pockets, /pockets/druggable</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Binding pockets from fpocket analysis. Filter by <code>symbol</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /splice/predict?variant=c.6T&gt;C</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">SMN2 splice variant effect prediction. Also: <code>/splice/known-variants</code>, <code>/splice/elements</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /molecules/browser</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">AI-designed molecules (GenMol). Params: <code>target</code>, <code>bbb_only</code>, <code>min_qed</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /dock/score</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Pharmacophore scoring against 7 binding pockets. Params: <code>pocket</code>, <code>limit</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /interactions/target/{symbol}</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Protein-protein and drug-target interaction network for a gene</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /cascade/predict</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Predict downstream signaling cascade effects. Params: <code>gene</code>, <code>perturbation</code></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /screen/dual-target</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Dual-target screening candidates and synergy predictions</div>
+        </div>
+    </div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Data Export</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px">
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /export/{table}?fmt=csv</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Bulk download as CSV or JSON. Tables: targets, drugs, trials, claims, hypotheses, graph_edges, drug_outcomes, cross_species_targets, target_scores, molecule_screenings</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../export/claims?fmt=csv&amp;limit=5000" -o sma_claims.csv</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /export/target/{symbol}?fmt=bibtex</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Export all evidence for a target as JSON, CSV, or BibTeX citations</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px">curl -s ".../export/target/ROCK2?fmt=bibtex"</div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--line);padding:14px 18px">
+            <div style="font-size:13px;font-weight:600">GET /molecules/browser/export?fmt=sdf</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Download AI-designed molecules as SDF (for cheminformatics tools) or CSV</div>
+        </div>
+    </div>
+
+    <!-- Claim types reference -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Claim Type Reference</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px">
+        <code style="background:var(--green-bg);color:var(--green);padding:4px 10px;font-size:11px;border:1px solid #bbf7d0">gene_expression</code>
+        <code style="background:var(--blue-bg);color:var(--blue);padding:4px 10px;font-size:11px;border:1px solid #bfdbfe">protein_interaction</code>
+        <code style="background:var(--blue-bg);color:var(--blue);padding:4px 10px;font-size:11px;border:1px solid #bfdbfe">pathway_membership</code>
+        <code style="background:var(--purple-bg);color:var(--purple);padding:4px 10px;font-size:11px;border:1px solid #e9d5ff">drug_target</code>
+        <code style="background:var(--purple-bg);color:var(--purple);padding:4px 10px;font-size:11px;border:1px solid #e9d5ff">drug_efficacy</code>
+        <code style="background:var(--amber-bg);color:var(--amber);padding:4px 10px;font-size:11px;border:1px solid #fde68a">biomarker</code>
+        <code style="background:var(--teal-bg);color:var(--teal);padding:4px 10px;font-size:11px;border:1px solid #99f6e4">splicing_event</code>
+        <code style="background:var(--green-bg);color:var(--green);padding:4px 10px;font-size:11px;border:1px solid #bbf7d0">neuroprotection</code>
+        <code style="background:var(--green-bg);color:var(--green);padding:4px 10px;font-size:11px;border:1px solid #bbf7d0">motor_function</code>
+        <code style="background:var(--red-bg);color:var(--red);padding:4px 10px;font-size:11px;border:1px solid #fecaca">survival</code>
+        <code style="background:var(--red-bg);color:var(--red);padding:4px 10px;font-size:11px;border:1px solid #fecaca">safety</code>
+        <code style="background:var(--blue-bg);color:var(--blue);padding:4px 10px;font-size:11px;border:1px solid #bfdbfe">functional_interaction</code>
+        <code style="background:var(--gray-bg);color:var(--gray);padding:4px 10px;font-size:11px;border:1px solid #d1d5db">other</code>
+    </div>
+
+    <!-- Python example -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Python Example</h3>
+    <pre style="background:var(--panel);border:1px solid var(--line);padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;overflow-x:auto"><span style="color:var(--blue)">import</span> requests
+
+BASE = <span style="color:var(--green)">"https://sma-research.info/api/v2"</span>
+
+<span style="color:var(--muted)"># Get scored and ranked targets</span>
+scores = requests.get(f<span style="color:var(--green)">"{BASE}/scores"</span>, params={<span style="color:var(--green)">"mode"</span>: <span style="color:var(--green)">"discovery"</span>}).json()
+
+<span style="color:var(--blue)">for</span> t <span style="color:var(--blue)">in</span> scores[:10]:
+    print(f<span style="color:var(--green)">"{t['symbol']:10s} score={t['composite_score']:.3f}"</span>)
+
+<span style="color:var(--muted)"># Search high-confidence drug efficacy claims</span>
+claims = requests.get(f<span style="color:var(--green)">"{BASE}/claims"</span>, params={
+    <span style="color:var(--green)">"claim_type"</span>: <span style="color:var(--green)">"drug_efficacy"</span>,
+    <span style="color:var(--green)">"confidence_min"</span>: 0.8,
+    <span style="color:var(--green)">"enriched"</span>: True,
+    <span style="color:var(--green)">"limit"</span>: 100
+}).json()
+
+<span style="color:var(--blue)">for</span> c <span style="color:var(--blue)">in</span> claims:
+    print(f<span style="color:var(--green)">"[{c['confidence']:.2f}] {c['predicate'][:80]}"</span>)
+
+<span style="color:var(--muted)"># Deep-dive: full evidence for a target</span>
+target = requests.get(f<span style="color:var(--green)">"{BASE}/targets/symbol/ROCK2"</span>).json()
+dive = requests.get(f<span style="color:var(--green)">"{BASE}/targets/{target['id']}/deep-dive"</span>).json()
+print(f<span style="color:var(--green)">"Claims: {len(dive['claims'])}, Hypotheses: {len(dive['hypotheses'])}"</span>)</pre>
+
+    <!-- R example -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">R Example</h3>
+    <pre style="background:var(--panel);border:1px solid var(--line);padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;overflow-x:auto"><span style="color:var(--blue)">library</span>(httr)
+<span style="color:var(--blue)">library</span>(jsonlite)
+
+base_url &lt;- <span style="color:var(--green)">"https://sma-research.info/api/v2"</span>
+
+<span style="color:var(--muted)"># All targets with discovery-mode scores</span>
+scores &lt;- fromJSON(content(
+  GET(paste0(base_url, <span style="color:var(--green)">"/scores"</span>), query = list(mode = <span style="color:var(--green)">"discovery"</span>)),
+  <span style="color:var(--green)">"text"</span>
+))
+
+<span style="color:var(--muted)"># Top 10 by composite score</span>
+top10 &lt;- head(scores[order(-scores$composite_score), ], 10)
+print(top10[, c(<span style="color:var(--green)">"symbol"</span>, <span style="color:var(--green)">"composite_score"</span>)])
+
+<span style="color:var(--muted)"># Export as CSV</span>
+resp &lt;- GET(paste0(base_url, <span style="color:var(--green)">"/export/targets"</span>), query = list(fmt = <span style="color:var(--green)">"csv"</span>, limit = 5000))
+writeLines(content(resp, <span style="color:var(--green)">"text"</span>), <span style="color:var(--green)">"sma_targets.csv"</span>)</pre>
+
+    <!-- Rate limits & citation -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Rate Limits & Access</h3>
+    <div style="background:var(--panel);border:1px solid var(--line);padding:16px 20px;font-size:13px;line-height:1.8">
+        <strong>No authentication</strong> required for all GET endpoints.<br>
+        <strong>No formal rate limiting</strong> &mdash; but please stay under ~10 req/sec sustained.<br>
+        <strong>CORS</strong> is restricted to sma-research.info. Use server-side calls or curl from other domains.<br>
+        <strong>Bulk downloads:</strong> Use <code>/export</code> endpoints instead of paginating through <code>/claims</code>.<br>
+        <strong>Write access</strong> (POST/PUT) requires an admin API key. Contact christian@bryzant.com if needed.
+    </div>
+
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Citation</h3>
+    <div style="background:var(--panel);border:1px solid var(--line);padding:16px 20px">
+        <p style="font-size:13px;margin:0 0 12px">If you use data from this platform, please cite:</p>
+        <pre style="font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6;margin:0;overflow-x:auto">Fischer, C. (2026). SMA Research Platform &mdash; Open Evidence Graph
+for Spinal Muscular Atrophy. https://sma-research.info
+Bryzant Labs. Accessed [date].</pre>
+        <details style="margin-top:12px">
+            <summary style="font-size:12px;font-weight:600;cursor:pointer;color:var(--accent)">BibTeX</summary>
+            <pre style="font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;margin-top:8px;overflow-x:auto">@misc{fischer2026sma,
+  author = {Fischer, Christian},
+  title = {{SMA Research Platform --- Open Evidence Graph for SMA}},
+  year = {2026},
+  url = {https://sma-research.info},
+  note = {Accessed: 2026-03-25}
+}</pre>
+        </details>
+    </div>
+
+    <!-- Live API test -->
+    <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;border-bottom:2px solid var(--text);padding-bottom:6px">Try It Live</h3>
+    <div style="background:var(--panel);border:1px solid var(--line);padding:16px 20px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <span style="font-size:12px;font-weight:600;color:var(--green)">GET</span>
+            <span style="font-size:12px;color:var(--muted)">/api/v2/</span>
+            <select id="api-try-endpoint" style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:4px 8px;border:1px solid var(--line)">
+                <option value="stats">stats</option>
+                <option value="targets?limit=5">targets?limit=5</option>
+                <option value="targets/symbol/ROCK2">targets/symbol/ROCK2</option>
+                <option value="claims?claim_type=drug_efficacy&limit=3">claims?claim_type=drug_efficacy&limit=3</option>
+                <option value="hypotheses?limit=3">hypotheses?limit=3</option>
+                <option value="scores?mode=discovery">scores?mode=discovery</option>
+                <option value="drugs?approval_status=approved">drugs?approval_status=approved</option>
+                <option value="structures?min_plddt=80&limit=5">structures?min_plddt=80&limit=5</option>
+                <option value="splice/predict?variant=c.6T>C">splice/predict?variant=c.6T>C</option>
+                <option value="screen/pipeline-stats">screen/pipeline-stats</option>
+                <option value="molecules/browser/stats">molecules/browser/stats</option>
+                <option value="news?limit=3">news?limit=3</option>
+            </select>
+            <button onclick="(function(){var ep=document.getElementById('api-try-endpoint').value;var out=document.getElementById('api-try-output');out.textContent='Loading...';fetch('/api/v2/'+ep).then(function(r){return r.json()}).then(function(d){out.textContent=JSON.stringify(d,null,2)}).catch(function(e){out.textContent='Error: '+e.message})})()" style="padding:6px 14px;background:var(--accent);color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer">Send</button>
+        </div>
+        <pre id="api-try-output" style="font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;margin-top:12px;max-height:400px;overflow:auto;background:var(--bg);padding:12px;border:1px solid var(--line-light);white-space:pre-wrap;word-break:break-word">Select an endpoint and click Send to try the API.</pre>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);margin-top:24px">Full documentation: <a href="/api/v2/docs" style="color:var(--accent)">Swagger UI</a> | <a href="/api/v2/redoc" style="color:var(--accent)">ReDoc</a> | Last updated: 2026-03-25</p>
+</section>
+
 </main>
 
 <footer class="site-footer"><div class="container">
     <div class="footer-row">
         <div class="footer-text">SMA Research Platform &mdash; Evidence-first. No marketing.</div>
-        <div class="footer-text"><a href="/api/v2/stats">API</a> &middot; <a href="/api/v2/docs">Docs</a> &middot; <a href="/links/">Links</a> &middot; <a href="https://github.com/Bryzant-Labs/sma-platform" target="_blank" rel="noopener">Data & API</a> &middot; Data updated via automated daily pipeline</div>
+        <div class="footer-text"><a href="/api/v2/stats">API</a> &middot; <a href="/api/v2/docs">Docs</a> &middot; <a href="/api-guide">API Guide</a> &middot; <a href="/links/">Links</a> &middot; <a href="https://github.com/Bryzant-Labs/sma-platform" target="_blank" rel="noopener">Data & API</a> &middot; Data updated via automated daily pipeline</div>
     </div>
     <div class="footer-row" style="margin-top:12px;gap:24px">
         <a href="#" class="footer-text" onclick="document.getElementById('legal-overlay').style.display='flex';document.getElementById('legal-tab-impressum').click();return false;">Impressum</a>
@@ -3664,6 +4043,69 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         badge.appendChild(dot);
         badge.appendChild(document.createTextNode('Data updated ' + freshText + ' \u00B7 Last: ' + (d.last_ingestion_type || '') + ' (' + (d.last_ingestion_items || 0) + ' items)'));
     }).catch(function() {});
+
+    // ============ Drug Pipeline Funnel ============
+    fetch(API + '/screen/pipeline-stats').then(function(r) { return r.json(); }).then(function(d) {
+        var funnel = document.getElementById('drug-funnel');
+        if (!funnel) return;
+        var stages = [
+            { key: 'chembl_total', label: 'ChEMBL Compounds', method: 'Bioactivity data', section: 'screening' },
+            { key: 'drug_like', label: 'Drug-likeness Filter', method: 'Lipinski + QED', section: 'screening' },
+            { key: 'designed_molecules', label: 'AI-Designed Molecules', method: 'GenMol + RFdiffusion', section: 'gpu-results' },
+            { key: 'docked', label: 'Docked', method: 'DiffDock v2.2', section: 'screening' },
+            { key: 'positive_binders', label: 'Positive Binders', method: 'Confidence > 0', section: 'screening' },
+            { key: 'dual_target', label: 'Dual-Target Candidates', method: 'LIMK2 + ROCK2', section: 'screening' },
+            { key: 'selective_leads', label: 'Selective Leads', method: 'High confidence', section: 'screening' },
+            { key: 'bbb_permeable', label: 'BBB-Permeable Leads', method: 'ADMET profiling', section: 'screening' }
+        ];
+        var maxVal = d[stages[0].key] || 1;
+        // Compute widths: top stage = 100%, rest proportional (min 20%)
+        for (var i = 0; i < stages.length; i++) {
+            var s = stages[i];
+            var count = d[s.key] || 0;
+            var widthPct = Math.max(20, Math.round((count / maxVal) * 100));
+
+            var row = document.createElement('div');
+            row.className = 'funnel-stage';
+            row.style.width = widthPct + '%';
+            row.title = s.label + ': ' + count.toLocaleString();
+            row.setAttribute('data-section', s.section);
+            row.addEventListener('click', (function(sec) {
+                return function() { window.showSection(sec); };
+            })(s.section));
+
+            // Background bar showing relative size
+            var bar = document.createElement('div');
+            bar.className = 'funnel-bar';
+            bar.style.width = '100%';
+            row.appendChild(bar);
+
+            var countEl = document.createElement('span');
+            countEl.className = 'funnel-count';
+            countEl.textContent = count.toLocaleString();
+            row.appendChild(countEl);
+
+            var labelEl = document.createElement('span');
+            labelEl.className = 'funnel-label';
+            labelEl.textContent = s.label;
+            row.appendChild(labelEl);
+
+            var methodEl = document.createElement('span');
+            methodEl.className = 'funnel-method';
+            methodEl.textContent = s.method;
+            row.appendChild(methodEl);
+
+            funnel.appendChild(row);
+        }
+    }).catch(function(e) {
+        var funnel = document.getElementById('drug-funnel');
+        if (funnel) {
+            var msg = document.createElement('div');
+            msg.style.cssText = 'font-size:11px;color:var(--muted);text-align:center;padding:12px';
+            msg.textContent = 'Pipeline stats unavailable';
+            funnel.appendChild(msg);
+        }
+    });
 
     // ============ Homepage News Highlights (always load) ============
     fetch(API + '/news?per_page=12').then(function(r) { return r.json(); }).then(function(data) {
@@ -6388,6 +6830,19 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var admetClass = (c.admet_score || 0) >= 0.6 ? 'badge-green' : (c.admet_score || 0) >= 0.4 ? 'badge-amber' : 'badge-red';
                 var flagsText = (c.flags || []).join(', ') || 'none';
                 var flagsClass = (c.flags || []).length > 0 ? 'badge-red' : 'badge-green';
+                // Checkbox cell
+                var cbTd = document.createElement('td');
+                cbTd.style.textAlign = 'center';
+                var cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.className = 'cand-compare-cb chembl-cand-cb';
+                cb.checked = !!chemblCompareSet[c.chembl_id];
+                cb.addEventListener('click', function(ev) { ev.stopPropagation(); });
+                cb.addEventListener('change', function() {
+                    if (this.checked) { chemblCompareSet[c.chembl_id] = true; } else { delete chemblCompareSet[c.chembl_id]; }
+                    updateChemblCompareBar();
+                });
+                cbTd.appendChild(cb);
                 var mainRow = el('tr', {className: 'compound-row', style: 'cursor:pointer', title: 'Click to expand details'}, [
                     td(String(c.rank || (idx + 1)), 'mono', 'font-weight:600;text-align:center'),
                     td(c.chembl_id, 'mono', 'font-weight:600'),
@@ -6400,57 +6855,542 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     td(c.pchembl ? String(c.pchembl) : '-', 'mono'),
                     tdBadge(flagsText, flagsClass)
                 ]);
+                mainRow.insertBefore(cbTd, mainRow.firstChild);
                 mainRow.addEventListener('click', function() { toggleExpand(expandId); });
                 body.appendChild(mainRow);
-                // Expandable detail row with full compound info
+                // Expandable detail row - safe DOM only
                 var expandRow = el('tr', {className: 'expand-row', id: expandId});
-                var expandCell = el('td', {colSpan: 10, className: 'expand-cell'});
-                var bbbExplain = c.bbb_permeable
+                var expandCell = document.createElement('td');
+                expandCell.colSpan = 11;
+                expandCell.className = 'expand-cell';
+                // Detail grid
+                var detGrid = document.createElement('div');
+                detGrid.className = 'cand-detail-grid';
+                var detItems = [
+                    {label: 'ChEMBL ID', val: c.chembl_id, link: c.chembl_id ? 'https://www.ebi.ac.uk/chembl/compound_report_card/' + c.chembl_id + '/' : null},
+                    {label: 'Target', val: c.target, action: function() { showSection('targets'); }},
+                    {label: 'Integrated Score', val: c.integrated_score},
+                    {label: 'Tier', val: c.tier},
+                    {label: 'MW / LogP', val: (c.mw || '-') + ' Da / ' + (c.logp || '-')},
+                    {label: 'TPSA / HBD / HBA', val: (c.tpsa || '-') + ' A^2 / ' + (c.hbd != null ? c.hbd : '-') + ' / ' + (c.hba != null ? c.hba : '-')},
+                    {label: 'QED Score', val: c.qed, note: '>= 0.5 = high drug-likeness'},
+                    {label: 'CNS MPO', val: c.cns_mpo},
+                    {label: 'pChEMBL (potency)', val: c.pchembl, note: '>= 6 ~ IC50 <= 1 uM'},
+                    {label: 'ADMET Score', val: c.admet_score},
+                    {label: 'Target Relevance', val: c.target_score}
+                ];
+                for (var di = 0; di < detItems.length; di++) {
+                    var dItem = document.createElement('div');
+                    var dLabel = document.createElement('span');
+                    dLabel.className = 'cand-detail-label';
+                    dLabel.textContent = detItems[di].label;
+                    dItem.appendChild(dLabel);
+                    if (detItems[di].link) {
+                        var aLink = document.createElement('a');
+                        aLink.href = detItems[di].link;
+                        aLink.target = '_blank';
+                        aLink.rel = 'noopener';
+                        aLink.className = 'cand-detail-val mono';
+                        aLink.style.color = 'var(--accent)';
+                        aLink.style.fontWeight = '600';
+                        aLink.textContent = (detItems[di].val || '-') + ' \u2197';
+                        dItem.appendChild(aLink);
+                    } else if (detItems[di].action) {
+                        var aSpan = document.createElement('span');
+                        aSpan.className = 'cand-detail-val mono';
+                        aSpan.style.cssText = 'cursor:pointer;color:var(--accent);font-weight:600';
+                        aSpan.textContent = (detItems[di].val || '-') + ' \u2197';
+                        aSpan.addEventListener('click', detItems[di].action);
+                        dItem.appendChild(aSpan);
+                    } else {
+                        var dVal = document.createElement('span');
+                        dVal.className = 'cand-detail-val mono';
+                        dVal.textContent = detItems[di].val != null ? String(detItems[di].val) : '-';
+                        dItem.appendChild(dVal);
+                        if (detItems[di].note) {
+                            var noteSpan = document.createElement('span');
+                            noteSpan.style.cssText = 'color:var(--muted);font-size:11px;margin-left:6px';
+                            noteSpan.textContent = '(' + detItems[di].note + ')';
+                            dItem.appendChild(noteSpan);
+                        }
+                    }
+                    detGrid.appendChild(dItem);
+                }
+                expandCell.appendChild(detGrid);
+                // Full SMILES with copy
+                var smilesLabel = document.createElement('div');
+                smilesLabel.className = 'cand-detail-label';
+                smilesLabel.textContent = 'Full SMILES';
+                smilesLabel.style.marginTop = '12px';
+                expandCell.appendChild(smilesLabel);
+                expandCell.appendChild(buildSmilesRow(c.full_smiles || c.smiles));
+                // ADMET Traffic Light Grid
+                var admetLabel = document.createElement('div');
+                admetLabel.className = 'cand-detail-label';
+                admetLabel.textContent = 'Drug-Likeness & Safety Profile';
+                admetLabel.style.marginTop = '12px';
+                expandCell.appendChild(admetLabel);
+                expandCell.appendChild(buildAdmetGrid(c));
+                // BBB Assessment
+                var bbbDiv = document.createElement('div');
+                bbbDiv.style.cssText = 'margin-top:10px;font-size:12px;color:var(--text-secondary)';
+                var bbbStrong = document.createElement('strong');
+                bbbStrong.textContent = 'BBB Assessment: ';
+                bbbDiv.appendChild(bbbStrong);
+                var bbbText = document.createTextNode(c.bbb_permeable
                     ? 'Estimated CNS-penetrant \u2014 predicted to cross the blood-brain barrier to reach motor neurons in the spinal cord.'
-                    : 'Estimated poor CNS penetration \u2014 may not reach spinal motor neurons at therapeutic concentrations without formulation optimization.';
-                var tierExplain = c.tier === 'A'
-                    ? 'Tier A (\u2265 0.6 integrated score): strong multi-dimensional evidence across drug-likeness, potency, BBB, and target relevance. Prioritized for experimental follow-up.'
+                    : 'Estimated poor CNS penetration \u2014 may not reach spinal motor neurons at therapeutic concentrations without formulation optimization.');
+                bbbDiv.appendChild(bbbText);
+                expandCell.appendChild(bbbDiv);
+                // Tier explanation
+                var tierDiv = document.createElement('div');
+                tierDiv.style.cssText = 'margin-top:6px;font-size:12px;color:var(--text-secondary)';
+                var tierStrong = document.createElement('strong');
+                tierStrong.textContent = 'Tier: ';
+                tierDiv.appendChild(tierStrong);
+                var tierText = c.tier === 'A'
+                    ? 'Tier A (>= 0.6 integrated score): strong multi-dimensional evidence. Prioritized for experimental follow-up.'
                     : c.tier === 'B'
-                    ? 'Tier B (0.4\u20130.6 integrated score): moderate evidence across dimensions. Worth secondary screening.'
-                    : 'Tier C (< 0.4 integrated score): computational-only signal. Lower priority without additional corroboration.';
-                // Validation stage heuristic
+                    ? 'Tier B (0.4-0.6 integrated score): moderate evidence. Worth secondary screening.'
+                    : 'Tier C (< 0.4 integrated score): computational-only signal. Lower priority.';
+                tierDiv.appendChild(document.createTextNode(tierText));
+                expandCell.appendChild(tierDiv);
+                // Flags
+                if ((c.flags || []).length > 0) {
+                    var flagDiv = document.createElement('div');
+                    flagDiv.style.cssText = 'margin-top:6px;font-size:12px;color:#d97606';
+                    var flagStrong = document.createElement('strong');
+                    flagStrong.textContent = 'Flags: ';
+                    flagDiv.appendChild(flagStrong);
+                    flagDiv.appendChild(document.createTextNode((c.flags || []).join(' \u2022 ')));
+                    expandCell.appendChild(flagDiv);
+                }
+                // Repurposing rationale
+                if (c.repurposing_rationale) {
+                    var repDiv = document.createElement('div');
+                    repDiv.style.cssText = 'margin-top:6px;font-size:12px;color:var(--text-secondary)';
+                    var repStrong = document.createElement('strong');
+                    repStrong.textContent = 'Repurposing: ';
+                    repDiv.appendChild(repStrong);
+                    repDiv.appendChild(document.createTextNode(c.repurposing_rationale));
+                    expandCell.appendChild(repDiv);
+                }
+                // Validation Pipeline Progress (safe DOM)
                 var valStage = 1;
                 if (c.diffdock_score && c.diffdock_score > 0) valStage = 2;
                 if ((c.admet_score || 0) >= 0.4) valStage = 4;
                 if (c.literature_count && c.literature_count > 0) valStage = 5;
                 var stageLabels = ['Computational', 'Structural (DiffDock)', 'Analog Search', 'ADMET Prediction', 'Literature Review', 'Experimental Design'];
-                var stageHtml = stageLabels.map(function(s, si) {
+                var pipeDiv = document.createElement('div');
+                pipeDiv.style.marginTop = '10px';
+                var pipeLabel = document.createElement('span');
+                pipeLabel.className = 'cand-detail-label';
+                pipeLabel.style.display = 'block';
+                pipeLabel.style.marginBottom = '6px';
+                pipeLabel.textContent = 'Validation Pipeline Progress';
+                pipeDiv.appendChild(pipeLabel);
+                for (var si = 0; si < stageLabels.length; si++) {
                     var active = si < valStage;
-                    return '<span style="font-size:11px;padding:2px 8px;border:1px solid ' + (active ? 'var(--green)' : 'var(--line)') + ';color:' + (active ? 'var(--green)' : 'var(--muted)') + ';margin-right:4px;margin-bottom:4px;display:inline-block">' + (si+1) + '. ' + s + '</span>';
-                }).join('');
-                var detailHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px 24px;font-size:12px;line-height:1.7">'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">ChEMBL ID</span><br>'
-                    + '<a href="https://www.ebi.ac.uk/chembl/compound_report_card/' + (c.chembl_id || '') + '/" target="_blank" style="color:var(--accent);font-weight:600">' + (c.chembl_id || '-') + ' &#8599;</a></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">Target</span><br>'
-                    + '<span style="font-weight:600;cursor:pointer;color:var(--accent)" onclick="showSection(\'targets\')">' + (c.target || '-') + ' &#8599;</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">MW / LogP</span><br><span class="mono">' + (c.mw || c.molecular_weight || '-') + ' Da / ' + (c.logp || '-') + '</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">TPSA / HBD / HBA</span><br><span class="mono">' + (c.tpsa || '-') + ' \u00c5\u00b2 / ' + (c.hbd || '-') + ' / ' + (c.hba || '-') + '</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">QED Score</span><br><span class="mono">' + (c.qed || '-') + '</span> <span style="color:var(--muted);font-size:11px">(\u2265 0.5 = high drug-likeness)</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">pChEMBL (potency)</span><br><span class="mono">' + (c.pchembl || '-') + '</span> <span style="color:var(--muted);font-size:11px">(\u2265 6 \u2248 IC\u2085\u2080 \u2264 1 \u03bcM)</span></div>'
-                    + '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">ADMET Score</span><br><span class="mono">' + (c.admet_score || '-') + '</span></div>'
-                    + (c.diffdock_score ? '<div><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px">DiffDock Binding Score</span><br><span class="mono">' + c.diffdock_score + '</span> <span style="color:var(--muted);font-size:11px">(AI pose confidence)</span></div>' : '')
-                    + '</div>'
-                    + '<div style="margin-top:10px;font-size:12px;color:var(--text-secondary)"><strong>BBB Assessment:</strong> ' + bbbExplain + '</div>'
-                    + '<div style="margin-top:6px;font-size:12px;color:var(--text-secondary)"><strong>Tier:</strong> ' + tierExplain + '</div>'
-                    + ((c.flags || []).length > 0 ? '<div style="margin-top:6px;font-size:12px;color:#d97606"><strong>Flags:</strong> ' + (c.flags || []).join(' \u2022 ') + '</div>' : '')
-                    + '<div style="margin-top:10px"><span style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">Validation Pipeline Progress</span>' + stageHtml + '</div>';
-                expandCell.innerHTML = detailHtml;
+                    var stageSpan = document.createElement('span');
+                    stageSpan.style.cssText = 'font-size:11px;padding:2px 8px;border:1px solid ' + (active ? 'var(--green)' : 'var(--line)') + ';color:' + (active ? 'var(--green)' : 'var(--muted)') + ';margin-right:4px;margin-bottom:4px;display:inline-block';
+                    stageSpan.textContent = (si+1) + '. ' + stageLabels[si];
+                    pipeDiv.appendChild(stageSpan);
+                }
+                expandCell.appendChild(pipeDiv);
+                // Links
+                expandCell.appendChild(buildCandLinks(c.chembl_id, c.full_smiles || c.smiles));
                 expandRow.appendChild(expandCell);
                 body.appendChild(expandRow);
             })(filtered[i], i);
         }
         if (filtered.length === 0) {
-            body.appendChild(el('tr', null, [el('td', {colSpan: 10, className: 'loading', text: 'No candidates match this filter.'})]));
+            body.appendChild(el('tr', null, [el('td', {colSpan: 11, className: 'loading', text: 'No candidates match this filter.'})]));
         }
         renderPagination('candidates-pagination', filtered.length, candidatesPage, function(p) { candidatesPage = p; renderCandidatesPage(); });
     }
+    // ---- AI/ChEMBL candidate comparison state ----
+    var aiCompareSet = {};
+    var aiCandidatesData = [];
+    var chemblCompareSet = {};
+    function updateAiCompareBar() {
+        var keys = Object.keys(aiCompareSet);
+        var bar = document.getElementById('ai-compare-bar');
+        var cnt = document.getElementById('ai-compare-count');
+        if (keys.length >= 2) { bar.classList.add('visible'); } else { bar.classList.remove('visible'); }
+        cnt.textContent = keys.length + ' selected';
+    }
+    function clearAiCompare() {
+        aiCompareSet = {};
+        updateAiCompareBar();
+        var cbs = document.querySelectorAll('.ai-cand-cb');
+        for (var i = 0; i < cbs.length; i++) cbs[i].checked = false;
+    }
+    function updateChemblCompareBar() {
+        var keys = Object.keys(chemblCompareSet);
+        var bar = document.getElementById('chembl-compare-bar');
+        var cnt = document.getElementById('chembl-compare-count');
+        if (keys.length >= 2) { bar.classList.add('visible'); } else { bar.classList.remove('visible'); }
+        cnt.textContent = keys.length + ' selected';
+    }
+    function clearChemblCompare() {
+        chemblCompareSet = {};
+        updateChemblCompareBar();
+        var cbs = document.querySelectorAll('.chembl-cand-cb');
+        for (var i = 0; i < cbs.length; i++) cbs[i].checked = false;
+    }
+    function closeCandCompare() {
+        document.getElementById('cand-compare-modal').classList.remove('open');
+    }
+    function trafficBadge(val, greenThresh, amberThresh, label) {
+        var cls = 'cand-traffic ';
+        if (val == null || val === '-') cls += 'cand-traffic-amber';
+        else if (typeof val === 'number') {
+            cls += val >= greenThresh ? 'cand-traffic-green' : val >= amberThresh ? 'cand-traffic-amber' : 'cand-traffic-red';
+        } else if (typeof val === 'boolean') {
+            cls += val ? 'cand-traffic-green' : 'cand-traffic-red';
+        } else if (typeof val === 'string') {
+            var vl = val.toLowerCase();
+            cls += vl === 'low' || vl === 'yes' || vl === 'pass' ? 'cand-traffic-green' : vl === 'medium' || vl === 'moderate' ? 'cand-traffic-amber' : 'cand-traffic-red';
+        }
+        var span = document.createElement('span');
+        span.className = cls;
+        span.textContent = label || String(val != null ? val : '-');
+        return span;
+    }
+    function riskBadge(risk) {
+        if (!risk) return trafficBadge(null, 0, 0, '-');
+        return trafficBadge(risk, 0, 0, risk);
+    }
+    function buildCandSvg(svgStr, container) {
+        if (!svgStr) { container.textContent = 'No structure'; return; }
+        try {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(svgStr, 'image/svg+xml');
+            var svgNode = doc.documentElement;
+            if (svgNode && svgNode.tagName === 'svg') {
+                svgNode.style.maxWidth = '100%';
+                svgNode.style.maxHeight = '100%';
+                container.appendChild(document.importNode(svgNode, true));
+            } else { container.textContent = 'Invalid SVG'; }
+        } catch(e) { container.textContent = 'SVG error'; }
+    }
+    function buildSmilesRow(smiles) {
+        var row = document.createElement('div');
+        row.className = 'cand-smiles-row';
+        var smilesSpan = document.createElement('span');
+        smilesSpan.textContent = smiles || '-';
+        smilesSpan.style.flex = '1';
+        smilesSpan.style.overflow = 'hidden';
+        row.appendChild(smilesSpan);
+        var btn = document.createElement('button');
+        btn.className = 'cand-copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            if (navigator.clipboard && smiles) {
+                navigator.clipboard.writeText(smiles).then(function() { btn.textContent = 'Copied!'; setTimeout(function() { btn.textContent = 'Copy'; }, 1500); });
+            }
+        });
+        row.appendChild(btn);
+        return row;
+    }
+    function buildDockingTable(dockResults) {
+        if (!dockResults || dockResults.length === 0) return null;
+        var tbl = document.createElement('table');
+        tbl.className = 'cand-dock-table';
+        var thead = document.createElement('thead');
+        var hrow = document.createElement('tr');
+        ['Target', 'Confidence', 'Avg Conf'].forEach(function(h) { var th = document.createElement('th'); th.textContent = h; hrow.appendChild(th); });
+        thead.appendChild(hrow);
+        tbl.appendChild(thead);
+        var tbody = document.createElement('tbody');
+        for (var d = 0; d < dockResults.length; d++) {
+            var dr = dockResults[d];
+            var drow = document.createElement('tr');
+            var td1 = document.createElement('td'); td1.textContent = dr.target || '-'; td1.style.fontWeight = '600';
+            var td2 = document.createElement('td');
+            td2.appendChild(trafficBadge(dr.confidence, 0.8, 0.4, dr.confidence != null ? String(dr.confidence) : '-'));
+            var td3 = document.createElement('td'); td3.textContent = dr.avg_confidence != null ? String(dr.avg_confidence) : '-';
+            td3.className = 'mono';
+            drow.appendChild(td1); drow.appendChild(td2); drow.appendChild(td3);
+            tbody.appendChild(drow);
+        }
+        tbl.appendChild(tbody);
+        return tbl;
+    }
+    function buildCandLinks(chemblId, smiles) {
+        var div = document.createElement('div');
+        div.className = 'cand-links';
+        if (chemblId) {
+            var a1 = document.createElement('a');
+            a1.href = 'https://www.ebi.ac.uk/chembl/compound_report_card/' + chemblId + '/';
+            a1.target = '_blank'; a1.rel = 'noopener'; a1.textContent = 'ChEMBL'; div.appendChild(a1);
+        }
+        if (smiles) {
+            var encoded = encodeURIComponent(smiles);
+            var a2 = document.createElement('a');
+            a2.href = 'https://molview.org/?smiles=' + encoded;
+            a2.target = '_blank'; a2.rel = 'noopener'; a2.textContent = 'MolView 3D'; div.appendChild(a2);
+            var a3 = document.createElement('a');
+            a3.href = 'https://pubchem.ncbi.nlm.nih.gov/#query=' + encoded;
+            a3.target = '_blank'; a3.rel = 'noopener'; a3.textContent = 'PubChem'; div.appendChild(a3);
+        }
+        return div;
+    }
+    function buildAdmetGrid(c) {
+        var grid = document.createElement('div');
+        grid.className = 'cand-admet-grid';
+        var items = [
+            {label: 'QED', val: c.qed, green: 0.5, amber: 0.3},
+            {label: 'MW', val: c.mw, green: 0, amber: 0, custom: function(v) { return v != null && v <= 500 ? 'green' : v != null && v <= 600 ? 'amber' : 'red'; }},
+            {label: 'LogP', val: c.logp, green: 0, amber: 0, custom: function(v) { return v != null && v >= 0 && v <= 5 ? 'green' : v != null && (v < -1 || v > 6) ? 'red' : 'amber'; }},
+            {label: 'TPSA', val: c.tpsa, green: 0, amber: 0, custom: function(v) { return v != null && v >= 40 && v <= 90 ? 'green' : v != null && v <= 140 ? 'amber' : 'red'; }},
+            {label: 'BBB', val: c.bbb_permeable, green: 0, amber: 0, custom: function(v) { return v ? 'green' : 'red'; }},
+            {label: 'Lipinski', val: c.lipinski_pass, green: 0, amber: 0, custom: function(v) { return v ? 'green' : 'red'; }},
+            {label: 'hERG', val: c.herg_risk, green: 0, amber: 0, custom: function(v) { return !v ? 'amber' : v === 'low' ? 'green' : v === 'medium' ? 'amber' : 'red'; }},
+            {label: 'Ames', val: c.ames_risk, green: 0, amber: 0, custom: function(v) { return !v ? 'amber' : v === 'low' ? 'green' : v === 'medium' ? 'amber' : 'red'; }},
+            {label: 'Hepatotox', val: c.hepatotox_risk, green: 0, amber: 0, custom: function(v) { return !v ? 'amber' : v === 'low' ? 'green' : v === 'medium' ? 'amber' : 'red'; }}
+        ];
+        for (var ai = 0; ai < items.length; ai++) {
+            var it = items[ai];
+            var item = document.createElement('div');
+            item.className = 'cand-admet-item';
+            var lbl = document.createElement('span');
+            lbl.className = 'cand-admet-label';
+            lbl.textContent = it.label;
+            item.appendChild(lbl);
+            var color = 'amber';
+            if (it.custom) { color = it.custom(it.val); }
+            else if (it.val != null && typeof it.val === 'number') { color = it.val >= it.green ? 'green' : it.val >= it.amber ? 'amber' : 'red'; }
+            var badge = document.createElement('span');
+            badge.className = 'cand-traffic cand-traffic-' + color;
+            var dispVal = it.val;
+            if (typeof it.val === 'boolean') dispVal = it.val ? 'PASS' : 'FAIL';
+            else if (it.val == null) dispVal = '-';
+            badge.textContent = String(dispVal);
+            item.appendChild(badge);
+            grid.appendChild(item);
+        }
+        return grid;
+    }
+    function buildCompareTable(candidates, props) {
+        var tbl = document.createElement('table');
+        tbl.className = 'cand-compare-table';
+        var thead = document.createElement('thead');
+        var hrow = document.createElement('tr');
+        var propTh = document.createElement('th'); propTh.textContent = 'Property'; hrow.appendChild(propTh);
+        for (var ci = 0; ci < candidates.length; ci++) {
+            var th = document.createElement('th');
+            th.textContent = candidates[ci].compound || candidates[ci].chembl_id || ('Candidate ' + (ci+1));
+            hrow.appendChild(th);
+        }
+        thead.appendChild(hrow); tbl.appendChild(thead);
+        var tbody = document.createElement('tbody');
+        for (var pi = 0; pi < props.length; pi++) {
+            var pr = props[pi];
+            var row = document.createElement('tr');
+            var ptd = document.createElement('td'); ptd.textContent = pr.label; ptd.style.fontWeight = '600'; row.appendChild(ptd);
+            for (var cj = 0; cj < candidates.length; cj++) {
+                var vtd = document.createElement('td');
+                var val = candidates[cj][pr.key];
+                if (typeof val === 'boolean') vtd.textContent = val ? 'Yes' : 'No';
+                else vtd.textContent = val != null ? String(val) : '-';
+                vtd.className = 'mono';
+                row.appendChild(vtd);
+            }
+            tbody.appendChild(row);
+        }
+        tbl.appendChild(tbody);
+        return tbl;
+    }
+    function openAiCompare() {
+        var sel = [];
+        for (var i = 0; i < aiCandidatesData.length; i++) {
+            if (aiCompareSet[i]) sel.push(aiCandidatesData[i]);
+        }
+        if (sel.length < 2) return;
+        var modal = document.getElementById('cand-compare-modal');
+        var body = document.getElementById('cand-compare-body');
+        var title = document.getElementById('cand-compare-title');
+        title.textContent = 'Compare AI Candidates (' + sel.length + ')';
+        while (body.firstChild) body.removeChild(body.firstChild);
+        body.appendChild(buildCompareTable(sel, [
+            {label: 'Target', key: 'target'}, {label: 'DiffDock Confidence', key: 'diffdock_confidence'},
+            {label: 'QED', key: 'qed'}, {label: 'MW', key: 'mw'}, {label: 'LogP', key: 'logp'},
+            {label: 'TPSA', key: 'tpsa'}, {label: 'BBB Permeable', key: 'bbb_permeable'},
+            {label: 'Method', key: 'method'}, {label: 'Score', key: 'score'}
+        ]));
+        modal.classList.add('open');
+    }
+    function openChemblCompare() {
+        var sel = [];
+        for (var i = 0; i < candidatesAllData.length; i++) {
+            var cid = candidatesAllData[i].chembl_id;
+            if (chemblCompareSet[cid]) sel.push(candidatesAllData[i]);
+        }
+        if (sel.length < 2) return;
+        var modal = document.getElementById('cand-compare-modal');
+        var body = document.getElementById('cand-compare-body');
+        var title = document.getElementById('cand-compare-title');
+        title.textContent = 'Compare ChEMBL Candidates (' + sel.length + ')';
+        while (body.firstChild) body.removeChild(body.firstChild);
+        body.appendChild(buildCompareTable(sel, [
+            {label: 'ChEMBL ID', key: 'chembl_id'}, {label: 'Target', key: 'target'},
+            {label: 'Integrated Score', key: 'integrated_score'}, {label: 'Tier', key: 'tier'},
+            {label: 'QED', key: 'qed'}, {label: 'MW', key: 'mw'}, {label: 'LogP', key: 'logp'},
+            {label: 'TPSA', key: 'tpsa'}, {label: 'BBB Permeable', key: 'bbb_permeable'},
+            {label: 'pChEMBL', key: 'pchembl'}, {label: 'ADMET Score', key: 'admet_score'},
+            {label: 'hERG Risk', key: 'herg_risk'}, {label: 'Ames Risk', key: 'ames_risk'},
+            {label: 'Hepatotox Risk', key: 'hepatotox_risk'}
+        ]));
+        modal.classList.add('open');
+    }
+    function loadAiCandidates() {
+        fetch(API + '/screen/ai-candidates?limit=50')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var body = clearEl('ai-candidates-body');
+            var summaryEl = document.getElementById('ai-candidates-summary');
+            if (!data.candidates || data.candidates.length === 0) {
+                body.appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'No AI-designed candidates with positive docking scores yet.'})]));
+                return;
+            }
+            aiCandidatesData = data.candidates;
+            // Summary stats
+            var total = data.total || 0;
+            var bbbCount = 0;
+            for (var b = 0; b < data.candidates.length; b++) { if (data.candidates[b].bbb_permeable) bbbCount++; }
+            var targetKeys = Object.keys(data.by_target || {});
+            var statItems = [
+                {val: total, label: 'AI Candidates'},
+                {val: bbbCount, label: 'BBB Permeable'},
+                {val: targetKeys.length, label: 'Targets'}
+            ];
+            for (var si = 0; si < statItems.length; si++) {
+                var card = el('div', {className: 'screen-stat'});
+                card.appendChild(el('div', {className: 'screen-stat-val', text: String(statItems[si].val)}));
+                card.appendChild(el('div', {className: 'screen-stat-label', text: statItems[si].label}));
+                summaryEl.appendChild(card);
+            }
+            // Render table rows with expandable details
+            var topHits = ['genmol_119', '(S,S)-H-1152', 'h-1152'];
+            for (var i = 0; i < data.candidates.length; i++) {
+                (function(c, idx) {
+                    var expandId = 'ai-cand-expand-' + idx;
+                    var isTopHit = false;
+                    var nameLower = (c.compound || '').toLowerCase();
+                    for (var th = 0; th < topHits.length; th++) {
+                        if (nameLower.indexOf(topHits[th].toLowerCase()) !== -1) { isTopHit = true; break; }
+                    }
+                    var confClass = (c.diffdock_confidence || 0) >= 0.8 ? 'badge-green' : (c.diffdock_confidence || 0) >= 0.4 ? 'badge-amber' : 'badge-gray';
+                    var rowStyle = isTopHit ? 'background:rgba(124,58,237,0.06);font-weight:600' : '';
+                    // Checkbox cell
+                    var cbTd = document.createElement('td');
+                    cbTd.style.textAlign = 'center';
+                    var cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.className = 'cand-compare-cb ai-cand-cb';
+                    cb.addEventListener('click', function(ev) { ev.stopPropagation(); });
+                    cb.addEventListener('change', function() {
+                        if (this.checked) { aiCompareSet[idx] = true; } else { delete aiCompareSet[idx]; }
+                        updateAiCompareBar();
+                    });
+                    cbTd.appendChild(cb);
+                    var row = el('tr', {className: 'compound-row', style: rowStyle + ';cursor:pointer', title: 'Click to expand details'}, [
+                        td(String(c.rank), 'mono', 'text-align:center'),
+                        td(c.compound + (isTopHit ? ' *' : ''), 'mono', 'font-weight:600'),
+                        td(c.target || '-'),
+                        tdBadge(c.diffdock_confidence != null ? String(c.diffdock_confidence) : '-', confClass),
+                        td(c.qed != null ? String(c.qed) : '-', 'mono'),
+                        td(c.mw != null ? String(c.mw) : '-', 'mono'),
+                        tdBadge(c.bbb_permeable ? 'YES' : 'no', c.bbb_permeable ? 'badge-green' : 'badge-gray'),
+                        td(c.method || '-')
+                    ]);
+                    row.insertBefore(cbTd, row.firstChild);
+                    row.addEventListener('click', function() { toggleExpand(expandId); });
+                    body.appendChild(row);
+                    // Expandable detail row
+                    var expandRow = el('tr', {className: 'expand-row', id: expandId});
+                    var expandCell = document.createElement('td');
+                    expandCell.colSpan = 9;
+                    expandCell.className = 'expand-cell';
+                    // Layout: SVG + details side by side
+                    var topRow = document.createElement('div');
+                    topRow.style.cssText = 'display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap';
+                    // 2D Structure
+                    var svgWrap = document.createElement('div');
+                    svgWrap.className = 'cand-svg-wrap';
+                    buildCandSvg(c.svg_2d, svgWrap);
+                    topRow.appendChild(svgWrap);
+                    // Details grid
+                    var detGrid = document.createElement('div');
+                    detGrid.className = 'cand-detail-grid';
+                    detGrid.style.flex = '1';
+                    var detItems = [
+                        {label: 'Compound', val: c.compound},
+                        {label: 'Target', val: c.target},
+                        {label: 'DiffDock Confidence', val: c.diffdock_confidence},
+                        {label: 'Avg Confidence', val: c.avg_confidence},
+                        {label: 'Num Poses', val: c.num_poses},
+                        {label: 'QED', val: c.qed},
+                        {label: 'MW', val: c.mw != null ? c.mw + ' Da' : '-'},
+                        {label: 'LogP', val: c.logp},
+                        {label: 'TPSA', val: c.tpsa != null ? c.tpsa + ' A^2' : '-'},
+                        {label: 'HBD / HBA', val: (c.hbd != null ? c.hbd : '-') + ' / ' + (c.hba != null ? c.hba : '-')},
+                        {label: 'BBB Permeable', val: c.bbb_permeable ? 'Yes' : 'No'},
+                        {label: 'Design Method', val: c.method},
+                        {label: 'Design Score', val: c.score}
+                    ];
+                    for (var di = 0; di < detItems.length; di++) {
+                        var dItem = document.createElement('div');
+                        var dLabel = document.createElement('span');
+                        dLabel.className = 'cand-detail-label';
+                        dLabel.textContent = detItems[di].label;
+                        dItem.appendChild(dLabel);
+                        var dVal = document.createElement('span');
+                        dVal.className = 'cand-detail-val mono';
+                        dVal.textContent = detItems[di].val != null ? String(detItems[di].val) : '-';
+                        dItem.appendChild(dVal);
+                        detGrid.appendChild(dItem);
+                    }
+                    topRow.appendChild(detGrid);
+                    expandCell.appendChild(topRow);
+                    // Full SMILES with copy
+                    var smilesLabel = document.createElement('div');
+                    smilesLabel.className = 'cand-detail-label';
+                    smilesLabel.textContent = 'Full SMILES';
+                    smilesLabel.style.marginTop = '12px';
+                    expandCell.appendChild(smilesLabel);
+                    expandCell.appendChild(buildSmilesRow(c.full_smiles || c.smiles));
+                    // ADMET Traffic Light Grid
+                    var admetLabel = document.createElement('div');
+                    admetLabel.className = 'cand-detail-label';
+                    admetLabel.textContent = 'Drug-Likeness Profile';
+                    admetLabel.style.marginTop = '12px';
+                    expandCell.appendChild(admetLabel);
+                    expandCell.appendChild(buildAdmetGrid(c));
+                    // Docking Results per target
+                    if (c.docking_results && c.docking_results.length > 0) {
+                        var dockLabel = document.createElement('div');
+                        dockLabel.className = 'cand-detail-label';
+                        dockLabel.textContent = 'Docking Results by Target';
+                        dockLabel.style.marginTop = '12px';
+                        expandCell.appendChild(dockLabel);
+                        expandCell.appendChild(buildDockingTable(c.docking_results));
+                    }
+                    // Links
+                    expandCell.appendChild(buildCandLinks(null, c.full_smiles || c.smiles));
+                    expandRow.appendChild(expandCell);
+                    body.appendChild(expandRow);
+                })(data.candidates[i], i);
+            }
+        }).catch(function(e) {
+            clearEl('ai-candidates-body').appendChild(el('tr', null, [el('td', {colSpan: 9, className: 'loading', text: 'AI candidates not available: ' + e.message})]));
+        });
+    }
     function loadCandidates() {
         if (loaded.candidates) return; loaded.candidates = true;
+        loadAiCandidates();
         fetch(API + '/screen/candidates?top_n=50')
         .then(function(r) { return r.json(); })
         .then(function(data) {
@@ -8867,7 +9807,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
 
     function loadPrime() {
         if (loaded.prime) return; loaded.prime = true;
-        fetch(API + '/prime-edit/feasibility').then(function(r) { return r.json(); }).then(function(data) {
+        fetch(API + '/prime-editing/feasibility').then(function(r) { return r.json(); }).then(function(data) {
             var designsDiv = clearEl('prime-designs');
             var designs = data.designs || [];
             var grid = el('div');
@@ -9161,7 +10101,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             for (var i = 0; i < sigs.length; i++) {
                 (function(s) {
                     var row = el('tr', {className: 'adv-row'}, [
-                        td(s.name, null, 'font-weight:600;font-size:11px'),
+                        td(s.signal_name, null, 'font-weight:600;font-size:11px'),
                         tdBadge(s.molecule_type, 'badge-blue'),
                         td(s.source),
                         td(s.target, null, 'font-size:10px'),
@@ -9178,9 +10118,9 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var detInner = el('div', {className: 'adv-detail-inner'});
 
                     // Full mechanism block
-                    if (s.mechanism) {
+                    if (s.normal_function) {
                         detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'RETROGRADE SIGNALING MECHANISM'}));
-                        detInner.appendChild(el('div', {text: s.mechanism, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
+                        detInner.appendChild(el('div', {text: s.normal_function, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
                     }
 
                     // SMA context with colour
@@ -9243,11 +10183,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             for (var i = 0; i < cargo.length; i++) {
                 (function(c) {
                     var row = el('tr', {className: 'adv-row'}, [
-                        td(c.name, null, 'font-weight:600;font-size:11px'),
+                        td(c.cargo_name, null, 'font-weight:600;font-size:11px'),
                         tdBadge(c.cargo_type, 'badge-blue'),
                         td(c.function, null, 'font-size:10px'),
-                        td(c.sma_relevance, null, 'font-size:10px'),
-                        td(String(c.delivery_feasibility), 'mono', 'font-weight:700')
+                        td(c.sma_context, null, 'font-size:10px'),
+                        td(String(c.feasibility), 'mono', 'font-weight:700')
                     ]);
                     var toggleSpan = el('span', {className: 'adv-row-toggle', text: '\u25B6'});
                     row.firstChild.insertBefore(toggleSpan, row.firstChild.firstChild);
@@ -9260,7 +10200,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     // Therapeutic rationale block
                     detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'THERAPEUTIC RATIONALE'}));
                     var rationaleText = document.createElement('div');
-                    rationaleText.textContent = (c.function || 'Unknown function') + (c.sma_relevance ? '. SMA context: ' + c.sma_relevance : '') + '. Extracellular vesicles (EVs) are natural nanocarriers that can be engineered to deliver therapeutic cargo across biological barriers including the BBB.';
+                    rationaleText.textContent = (c.function || 'Unknown function') + (c.sma_context ? '. SMA context: ' + c.sma_context : '') + '. Extracellular vesicles (EVs) are natural nanocarriers that can be engineered to deliver therapeutic cargo across biological barriers including the BBB.';
                     rationaleText.style.cssText = 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6';
                     detInner.appendChild(rationaleText);
 
@@ -9277,12 +10217,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     deliveryText.style.cssText = 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6';
                     detInner.appendChild(deliveryText);
 
-                    var feasVal = parseFloat(c.delivery_feasibility) || 0;
+                    var feasVal = parseFloat(c.feasibility) || 0;
                     var feasColor = feasVal >= 0.7 ? 'var(--green)' : feasVal >= 0.4 ? 'var(--accent)' : 'var(--muted)';
                     var feasRow = el('div', {className: 'adv-detail-row'});
                     feasRow.appendChild(el('span', {className: 'adv-detail-label', text: 'Delivery Feasibility:'}));
                     var feasSpan = document.createElement('span');
-                    feasSpan.textContent = String(c.delivery_feasibility);
+                    feasSpan.textContent = String(c.feasibility);
                     feasSpan.style.cssText = 'font-weight:700;color:' + feasColor;
                     feasRow.appendChild(feasSpan);
                     detInner.appendChild(feasRow);
@@ -9575,7 +10515,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     }
                     var row = el('tr', {className: 'adv-row'}, [
                         td(c.gene, 'mono', 'font-weight:600;font-size:11px'),
-                        td(c.name, null, 'font-size:11px'),
+                        td(c.channel_name, null, 'font-size:11px'),
                         tdBadge(c.channel_type, 'badge-blue'),
                         td(c.vmem_role),
                         tdBadge(c.sma_expression, c.sma_expression === 'downregulated' ? 'badge-red' : c.sma_expression === 'upregulated' ? 'badge-green' : ''),
@@ -9590,14 +10530,14 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var detInner = el('div', {className: 'adv-detail-inner'});
 
                     // Mechanism of action in SMA (highlighted block)
-                    if (c.mechanism) {
+                    if (c.sma_impact) {
                         detInner.appendChild(el('div', {style: 'font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px', text: 'MECHANISM IN SMA MOTOR NEURONS'}));
-                        detInner.appendChild(el('div', {text: c.mechanism, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
+                        detInner.appendChild(el('div', {text: c.sma_impact, style: 'font-size:12px;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;line-height:1.6'}));
                     }
 
                     // Key fields
                     var fields = [
-                        ['Gene', c.gene], ['Channel', c.name || '-'], ['Type', c.channel_type || '-'],
+                        ['Gene', c.gene], ['Channel', c.channel_name || '-'], ['Type', c.channel_type || '-'],
                         ['Vmem Role', c.vmem_role || '-'], ['SMA Expression', c.sma_expression || '-']
                     ];
                     if (c.conductance) { fields.push(['Conductance', c.conductance]); }
@@ -9656,11 +10596,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var toggle = el('span', {className: 'adv-toggle', text: '\u25B6'});
                     var h = document.createElement('h4');
                     h.appendChild(toggle);
-                    h.appendChild(document.createTextNode(' ' + v.state));
+                    h.appendChild(document.createTextNode(' ' + v.state_name));
                     h.style.cssText = 'margin:0 0 8px;font-size:12px';
                     card.appendChild(h);
                     var mv = document.createElement('span');
-                    mv.textContent = v.vmem_range_mv;
+                    mv.textContent = v.vmem_range;
                     mv.className = 'badge badge-blue';
                     mv.style.cssText = 'display:inline-block;margin-bottom:8px';
                     card.appendChild(mv);
@@ -9673,7 +10613,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     var detInner = el('div', {className: 'adv-detail-inner'});
                     detInner.style.cssText = 'padding:8px;background:var(--bg);border:1px solid var(--line)';
                     var fields = [
-                        ['State', v.state], ['Vmem Range', v.vmem_range_mv],
+                        ['State', v.state_name], ['Vmem Range', v.vmem_range],
                         ['Prevalence in SMA', (v.prevalence_in_sma * 100).toFixed(0) + '%'],
                         ['Phenotype', v.phenotype || '-'],
                         ['SMA Relevance', v.sma_relevance || '-']
@@ -11028,8 +11968,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 })(bdata[bi], bi);
             }
         }
-        fetch(API + '/nims/binders?limit=100').then(function(r) { return r.json(); }).then(function(data) {
-            bindersAllData = data.binders || [];
+        fetch(API + '/nims/binders').then(function(r) { return r.json(); }).then(function(data) {
+            bindersAllData = Array.isArray(data) ? data : (data.binders || []);
             renderBindersTable(bindersAllData);
         }).catch(function(e) {
             clearEl('gpu-binders-body').appendChild(el('tr', null, [el('td', {colSpan: 9, text: 'Error: ' + e.message})]));
@@ -11090,7 +12030,29 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                     row.style.cursor = 'pointer';
                     row.appendChild(td(String(idx+1), 'mono'));
                     row.appendChild(tdBadge(m.target || 'SMN2', 'badge-blue'));
-                    row.appendChild(td(msmiles, 'mono', 'font-size:10px;max-width:200px'));
+                    var smilesCell = document.createElement('td');
+                    smilesCell.style.cssText = 'max-width:210px;vertical-align:middle';
+                    smilesCell.title = m.smiles || '';
+                    if (m.svg_2d) {
+                        var svgWrap = document.createElement('div');
+                        svgWrap.style.cssText = 'width:200px;height:120px;background:#1a1f2e;border-radius:4px;border:1px solid #334155;overflow:hidden;display:flex;align-items:center;justify-content:center';
+                        try {
+                            var parser = new DOMParser();
+                            var svgDoc = parser.parseFromString(m.svg_2d, 'image/svg+xml');
+                            var svgNode = svgDoc.documentElement;
+                            if (svgNode && svgNode.tagName === 'svg') {
+                                svgNode.style.maxWidth = '100%';
+                                svgNode.style.maxHeight = '100%';
+                                svgWrap.appendChild(document.importNode(svgNode, true));
+                            }
+                        } catch(e) { svgWrap.textContent = msmiles; }
+                        smilesCell.appendChild(svgWrap);
+                    } else {
+                        smilesCell.textContent = msmiles;
+                        smilesCell.className = 'mono';
+                        smilesCell.style.fontSize = '10px';
+                    }
+                    row.appendChild(smilesCell);
                     row.appendChild(tdBadge(qed, qedCls));
                     row.appendChild(td(mw !== '-' ? mw + ' Da' : '-', 'mono', 'font-size:10px'));
                     row.appendChild(tdBadge(bbb, bbbCls));
@@ -11151,8 +12113,8 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
             else if (sortBy === 'score') filtered.sort(function(a, b) { return (b.score || 0) - (a.score || 0); });
             renderMolsTable(filtered);
         }
-        fetch(API + '/nims/designed-molecules?limit=200').then(function(r) { return r.json(); }).then(function(data) {
-            molsAllData = data.molecules || [];
+        fetch(API + '/nims/molecules').then(function(r) { return r.json(); }).then(function(data) {
+            molsAllData = Array.isArray(data) ? data : (data.molecules || []);
             // Populate filter dropdowns
             var tgtSet = {}, methSet = {};
             for (var mi = 0; mi < molsAllData.length; mi++) {
@@ -11643,11 +12605,16 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
                 var q = (document.getElementById('structures-search') || {}).value || '';
                 q = q.toLowerCase();
                 var srcFilter = (document.getElementById('structures-source-filter') || {}).value || '';
-                var plddtMin = parseFloat((document.getElementById('structures-plddt-filter') || {}).value || '0') || 0;
+                var plddtVal = (document.getElementById('structures-plddt-filter') || {}).value || '';
                 var filtered = allRows.filter(function(s) {
                     if (q && (s.symbol || '').toLowerCase().indexOf(q) < 0 && (s.uniprot_id || '').toLowerCase().indexOf(q) < 0) return false;
                     if (srcFilter && (s.source || '').indexOf(srcFilter) < 0) return false;
-                    if (plddtMin > 0 && (s.plddt === null || s.plddt < plddtMin)) return false;
+                    if (plddtVal === 'low') {
+                        if (s.plddt !== null && s.plddt >= 70) return false;
+                    } else if (plddtVal) {
+                        var plddtMin = parseFloat(plddtVal) || 0;
+                        if (plddtMin > 0 && (s.plddt === null || s.plddt < plddtMin)) return false;
+                    }
                     return true;
                 });
                 renderRows(filtered);
@@ -14343,6 +15310,11 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // Expose showSection globally for onclick handlers and other scripts
     window.showSection = showSection;
     window.pathwayNodeClick = typeof pathwayNodeClick !== "undefined" ? pathwayNodeClick : function(){};
+    window.openAiCompare = openAiCompare;
+    window.openChemblCompare = openChemblCompare;
+    window.clearAiCompare = clearAiCompare;
+    window.clearChemblCompare = clearChemblCompare;
+    window.closeCandCompare = closeCandCompare;
 })();
 </script>
 
@@ -14383,12 +15355,27 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     // ── Render a SMILES string into a <canvas> element ───────────────────────
     function renderSmiles(smiles, canvas) {
         var drawer = getSmilesDrawer();
-        if (!drawer || !smiles || !canvas) return;
+        if (!drawer || !smiles || !canvas) {
+            showSmilesFallback(canvas, smiles);
+            return;
+        }
         try {
             SmilesDrawer.parse(smiles, function(tree) {
                 drawer.draw(tree, canvas, 'dark');
-            }, function() { /* parse error — leave blank */ });
-        } catch(e) { /* silently skip invalid SMILES */ }
+            }, function() { showSmilesFallback(canvas, smiles); });
+        } catch(e) { showSmilesFallback(canvas, smiles); }
+    }
+    function showSmilesFallback(canvas, smiles) {
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.fillStyle = '#1a1f2e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        var text = smiles && smiles.length > 30 ? smiles.substring(0, 30) + '...' : (smiles || 'N/A');
+        ctx.fillText(text, canvas.width / 2, canvas.height / 2);
     }
 
     // ── Create a canvas wrapped in the dark container ────────────────────────
@@ -14581,14 +15568,12 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
         if (row.dataset.sdDone) return;
         row.dataset.sdDone = '1';
         var tds = row.querySelectorAll('td');
-        // #, Target, SMILES, Score, Scaffold, Method
         if (tds.length < 3) return;
         var smilesTd = tds[2];
+        // Skip if cell already has an SVG (rendered server-side)
+        if (smilesTd.querySelector('svg') || smilesTd.querySelector('div[style*="1a1f2e"]')) return;
         var smiles = (smilesTd.getAttribute('title') || smilesTd.textContent || '').trim();
-        // The full smiles is stored as title on the td (set truncated as text)
-        // Let's try both
         if (!smiles || smiles === '-') return;
-        // If it looks truncated (ends with ...) skip (not reliable)
         smilesTd.textContent = '';
         smilesTd.style.maxWidth = '210px';
         smilesTd.style.verticalAlign = 'middle';
@@ -14598,20 +15583,17 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     }
 
     function observeGpuMolecules() {
-        var tbody = document.getElementById('gpu-molecules-body');
-        if (!tbody) return;
-        tbody.querySelectorAll('tr').forEach(patchGpuMolRow);
-        new MutationObserver(function(muts) {
-            muts.forEach(function(m) {
-                m.addedNodes.forEach(function(n) { if (n.nodeType === 1 && n.tagName === 'TR') patchGpuMolRow(n); });
-            });
-        }).observe(tbody, { childList: true });
+        // Disabled: GPU molecules now render SVGs server-side via DOMParser in renderMolsTable.
+        // patchGpuMolRow was overwriting SVG cells with SmilesDrawer canvases.
     }
 
     // ── Init ─────────────────────────────────────────────────────────────────
     function init() {
-        // observeScreeningBody(); // DISABLED: SmilesDrawer not rendering
-        // observeGpuMolecules(); // DISABLED: SmilesDrawer not rendering, using table view instead
+        // Close compare modal on backdrop click
+        var compareModal = document.getElementById("cand-compare-modal");
+        if (compareModal) { compareModal.addEventListener("click", function(ev) { if (ev.target === compareModal) closeCandCompare(); }); }
+        observeScreeningBody();
+        observeGpuMolecules();
         observeForStructures('gpu-structures-body');
         // structures-body: 3D buttons now added inline in renderRows
     }
@@ -14627,7 +15609,7 @@ document.getElementById('legal-overlay').addEventListener('click', function(e) {
     if (typeof origShowSection === 'function') {
         window.showSection = function(section) {
             origShowSection.apply(this, arguments);
-            // if (section === 'screening') { observeScreeningBody(); } // DISABLED: SmilesDrawer not rendering
+            if (section === 'screening') { observeScreeningBody(); }
             if (section === "gpu-results") { observeForStructures("gpu-structures-body"); }
             // structures-body: 3D buttons added inline in renderRows
         };

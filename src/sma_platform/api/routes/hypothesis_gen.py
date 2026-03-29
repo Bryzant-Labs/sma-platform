@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+import json
 import logging
+from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
+from pydantic import BaseModel, Field
 
+from ...core.database import execute
 from ...reasoning.convergence_hypothesis import (
     find_convergence_signals,
     run_hypothesis_generation,
@@ -14,6 +18,75 @@ from ..auth import require_admin_key
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+
+# ---------------------------------------------------------------------------
+# Pydantic model for direct hypothesis creation
+# ---------------------------------------------------------------------------
+
+
+class HypothesisCreate(BaseModel):
+    """Schema for creating a hypothesis directly (admin only)."""
+
+    hypothesis_type: str = Field(
+        default="mechanism",
+        description="Type: mechanism, biomarker, therapeutic, target",
+    )
+    title: str = Field(..., max_length=500, description="Hypothesis statement")
+    description: str = Field(..., description="Evidence summary")
+    rationale: str = Field(..., description="Mechanistic rationale")
+    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    status: str = Field(default="proposed")
+    generated_by: str = Field(default="manual")
+    metadata: Optional[dict] = Field(default=None)
+
+
+# ---------------------------------------------------------------------------
+# Direct hypothesis creation endpoint
+# ---------------------------------------------------------------------------
+
+
+@router.post(
+    "/hypotheses",
+    dependencies=[Depends(require_admin_key)],
+)
+async def create_hypothesis(body: HypothesisCreate):
+    """Create a hypothesis card directly (admin).
+
+    Unlike /hypotheses/generate which uses LLM synthesis from claims,
+    this endpoint allows direct insertion of curated hypotheses
+    (e.g., from convergence synthesis documents or expert review).
+    """
+    metadata_json = json.dumps(body.metadata) if body.metadata else "{}"
+
+    try:
+        await execute(
+            """INSERT INTO hypotheses
+                   (hypothesis_type, title, description, rationale,
+                    supporting_evidence, confidence, status,
+                    generated_by, metadata)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)""",
+            body.hypothesis_type,
+            body.title[:500],
+            body.description,
+            body.rationale,
+            [],  # supporting_evidence UUID[] -- empty for manual entries
+            body.confidence,
+            body.status,
+            body.generated_by,
+            metadata_json,
+        )
+    except Exception as e:
+        logger.error("Failed to create hypothesis: %s", e, exc_info=True)
+        raise HTTPException(500, f"Failed to create hypothesis: {e}")
+
+    logger.info("Created hypothesis: %s (confidence: %.2f)", body.title[:80], body.confidence)
+    return {
+        "status": "created",
+        "title": body.title,
+        "hypothesis_type": body.hypothesis_type,
+        "confidence": body.confidence,
+    }
 
 
 @router.get("/hypotheses/convergence")

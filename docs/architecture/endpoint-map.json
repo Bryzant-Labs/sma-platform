@@ -1,0 +1,3510 @@
+{
+  "generated": "auto",
+  "total_endpoints": 438,
+  "endpoints": [
+    {
+      "full_path": "/api/v2/aav/capsid/{serotype}",
+      "method": "GET",
+      "handler": "get_capsid",
+      "file": "api/routes/aav.py",
+      "line": 43,
+      "docstring": "Get detailed evaluation for a specific AAV serotype.\n\nReturns tropism, immunogenicity, clinical precedent, and\npackaging feasibility for all cargo types."
+    },
+    {
+      "full_path": "/api/v2/aav/cargos",
+      "method": "GET",
+      "handler": "list_cargo_types",
+      "file": "api/routes/aav.py",
+      "line": 56,
+      "docstring": "List all therapeutic cargo types with sizes and genome configurations."
+    },
+    {
+      "full_path": "/api/v2/aav/evaluate",
+      "method": "GET",
+      "handler": "evaluate_aav_capsids",
+      "file": "api/routes/aav.py",
+      "line": 20,
+      "docstring": "Evaluate AAV capsids for SMA gene therapy delivery.\n\nRanks 9 AAV serotypes by composite suitability score considering:\nmotor neuron tropism, BBB crossing, immunogenicity, manufacturing, and packaging."
+    },
+    {
+      "full_path": "/api/v2/admet/compounds",
+      "method": "GET",
+      "handler": "admet_compounds",
+      "file": "api/routes/admet.py",
+      "line": 101,
+      "docstring": "Filter compounds by ADMET properties."
+    },
+    {
+      "full_path": "/api/v2/admet/summary",
+      "method": "GET",
+      "handler": "admet_summary",
+      "file": "api/routes/admet.py",
+      "line": 69,
+      "docstring": "Overall ADMET statistics for the full compound library."
+    },
+    {
+      "full_path": "/api/v2/admet/top",
+      "method": "GET",
+      "handler": "admet_top",
+      "file": "api/routes/admet.py",
+      "line": 150,
+      "docstring": "Top N compounds sorted by a chosen ADMET property."
+    },
+    {
+      "full_path": "/api/v2/admin/bioelectric/channels",
+      "method": "POST",
+      "handler": "add_channel",
+      "file": "api/routes/bioelectric.py",
+      "line": 230,
+      "docstring": "Add a new ion channel entry."
+    },
+    {
+      "full_path": "/api/v2/admin/bioelectric/channels/{gene}",
+      "method": "PUT",
+      "handler": "update_channel",
+      "file": "api/routes/bioelectric.py",
+      "line": 247,
+      "docstring": "Update an existing ion channel by gene symbol."
+    },
+    {
+      "full_path": "/api/v2/admin/bioelectric/interventions",
+      "method": "POST",
+      "handler": "add_intervention",
+      "file": "api/routes/bioelectric.py",
+      "line": 266,
+      "docstring": "Add a new bioelectric intervention."
+    },
+    {
+      "full_path": "/api/v2/admin/messages",
+      "method": "GET",
+      "handler": "list_messages",
+      "file": "api/routes/contact.py",
+      "line": 145,
+      "docstring": "List all contact form messages (admin only)."
+    },
+    {
+      "full_path": "/api/v2/advisory/pack",
+      "method": "GET",
+      "handler": "generate_advisory_pack",
+      "file": "api/routes/advisory_pack.py",
+      "line": 13,
+      "docstring": "Generate a comprehensive Scientific Advisory Pack.\n\n5-section research summary suitable for sharing with\nexternal collaborators, professors, and grant reviewers."
+    },
+    {
+      "full_path": "/api/v2/agent/campaigns",
+      "method": "GET",
+      "handler": "list_campaigns",
+      "file": "api/routes/agent.py",
+      "line": 120,
+      "docstring": "List past discovery campaigns (most recent first) and current status."
+    },
+    {
+      "full_path": "/api/v2/agent/discover/{target}",
+      "method": "POST",
+      "handler": "launch_discovery_campaign",
+      "file": "api/routes/agent.py",
+      "line": 74,
+      "docstring": "Launch an autonomous drug discovery campaign for the given target.\n\nOrchestrates the full pipeline:\n  1. Check baseline convergence score\n  2. Get candidate compounds from screening library\n  3. Filte"
+    },
+    {
+      "full_path": "/api/v2/agent/tools",
+      "method": "GET",
+      "handler": "list_tools",
+      "file": "api/routes/agent.py",
+      "line": 135,
+      "docstring": "List available tools for the drug discovery agent.\n\nShows which NVIDIA NIMs are configured and ready, based on\nenvironment variables (NVIDIA_API_KEY, etc.)."
+    },
+    {
+      "full_path": "/api/v2/analytics/summary",
+      "method": "GET",
+      "handler": "platform_summary",
+      "file": "api/routes/analytics.py",
+      "line": 16,
+      "docstring": "Comprehensive platform analytics summary."
+    },
+    {
+      "full_path": "/api/v2/ask",
+      "method": "GET",
+      "handler": "ask_question",
+      "file": "api/routes/assistant.py",
+      "line": 16,
+      "docstring": "Ask a research question about SMA \u2014 answered via RAG over the evidence base.\n\nUses hybrid search (semantic + keyword) to find relevant claims and papers,\nthen synthesizes an answer using Claude Sonnet"
+    },
+    {
+      "full_path": "/api/v2/aso/compare",
+      "method": "GET",
+      "handler": "compare_aso",
+      "file": "api/routes/aso.py",
+      "line": 165,
+      "docstring": "Compare a candidate ASO sequence to nusinersen (Spinraza).\n\nProvides side-by-side comparison on length, GC content, melting\ntemperature, predicted binding energy, self-complementarity, BBB\npenetration"
+    },
+    {
+      "full_path": "/api/v2/aso/generate",
+      "method": "GET",
+      "handler": "generate_aso",
+      "file": "api/routes/aso.py",
+      "line": 87,
+      "docstring": "Generate novel ASO candidates targeting a SMN2 regulatory region.\n\nDesigns antisense oligonucleotides scored by target complementarity,\nGC content, melting temperature, predicted binding energy (delta"
+    },
+    {
+      "full_path": "/api/v2/aso/generate/{region}",
+      "method": "GET",
+      "handler": "generate_asos",
+      "file": "api/routes/aso.py",
+      "line": 49,
+      "docstring": "Generate candidate ASO sequences for a target region.\n\nDesigns antisense oligonucleotides targeting the specified SMN2 regulatory\nelement, scored by target complementarity, GC content, melting tempera"
+    },
+    {
+      "full_path": "/api/v2/aso/regions",
+      "method": "GET",
+      "handler": "list_target_regions",
+      "file": "api/routes/aso.py",
+      "line": 130,
+      "docstring": "List available ASO target regions on SMN2.\n\nReturns sequence, location, mechanism, antisense complement, and GC\ncontent for each targetable regulatory element. Includes ISS-N1\n(nusinersen target), ISS"
+    },
+    {
+      "full_path": "/api/v2/aso/score",
+      "method": "GET",
+      "handler": "score_aso_quick",
+      "file": "api/routes/aso.py",
+      "line": 192,
+      "docstring": "Quick intrinsic score of an ASO sequence (no target required).\n\nEvaluates GC content, melting temperature, binding energy, length,\nself-complementarity, and BBB penetration potential. Returns pass/fai"
+    },
+    {
+      "full_path": "/api/v2/aso/score",
+      "method": "POST",
+      "handler": "score_aso_full",
+      "file": "api/routes/aso.py",
+      "line": 218,
+      "docstring": "Score a custom ASO sequence against a SMN2 target region.\n\nEvaluates the ASO on all design criteria: target complementarity,\nGC content (40-60% ideal), melting temperature (nearest-neighbor method),\np"
+    },
+    {
+      "full_path": "/api/v2/aso/targets",
+      "method": "GET",
+      "handler": "list_aso_targets",
+      "file": "api/routes/aso.py",
+      "line": 146,
+      "docstring": "List all known SMN2 regulatory regions targetable by ASOs.\n\nAlias for /aso/regions. Returns sequence, location, mechanism, and\nantisense complement for each region."
+    },
+    {
+      "full_path": "/api/v2/assay-ready/hypothesis/{hypothesis_id}",
+      "method": "GET",
+      "handler": "assay_ready_single",
+      "file": "api/routes/experiment_value.py",
+      "line": 154,
+      "docstring": "Get a single hypothesis in full assay-ready format.\n\nReturns a complete experiment specification that a CRO or wet-lab\nteam can execute directly."
+    },
+    {
+      "full_path": "/api/v2/assay-ready/top3",
+      "method": "GET",
+      "handler": "assay_ready_top3",
+      "file": "api/routes/experiment_value.py",
+      "line": 132,
+      "docstring": "Get the top 3 EVE-scored hypotheses in full assay-ready format.\n\nReturns complete experiment specifications: biological rationale,\nrecommended assay, model system, readouts, Go/No-Go criteria,\nestimat"
+    },
+    {
+      "full_path": "/api/v2/bayesian/all",
+      "method": "GET",
+      "handler": "get_bayesian_all",
+      "file": "api/routes/bayesian.py",
+      "line": 34,
+      "docstring": "Bayesian posteriors for all targets, sorted by posterior mean.\n\nOptionally filter by minimum claim count or evidence sufficiency."
+    },
+    {
+      "full_path": "/api/v2/bayesian/compare",
+      "method": "GET",
+      "handler": "get_bayesian_compare",
+      "file": "api/routes/bayesian.py",
+      "line": 56,
+      "docstring": "Compare Bayesian evidence between two targets.\n\nReturns P(A > B) via Monte Carlo sampling, posterior summaries,\nand a human-readable verdict."
+    },
+    {
+      "full_path": "/api/v2/bayesian/target/{symbol}",
+      "method": "GET",
+      "handler": "get_bayesian_score",
+      "file": "api/routes/bayesian.py",
+      "line": 21,
+      "docstring": "Bayesian posterior for a single target's therapeutic validity.\n\nUses Beta(1,1) prior updated with claim evidence. Returns posterior\nmean, mode, 95% credible interval, Bayes factor, and evidence suffic"
+    },
+    {
+      "full_path": "/api/v2/benchmark/claim-quality",
+      "method": "GET",
+      "handler": "benchmark_claim_quality",
+      "file": "api/routes/benchmark.py",
+      "line": 116,
+      "docstring": "Auto-evaluate claim extraction quality using multiple signals.\n\nScores claims on 6 dimensions without manual labeling:\n- **specificity**: predicate length vs ideal range\n- **entities**: presence of ge"
+    },
+    {
+      "full_path": "/api/v2/benchmark/claim-quality/by-type",
+      "method": "GET",
+      "handler": "benchmark_claim_quality_by_type",
+      "file": "api/routes/benchmark.py",
+      "line": 141,
+      "docstring": "Break down automated claim quality scores by claim_type.\n\nReturns per-type average quality, count, min/max scores, and\ntop issues for each claim type in the database."
+    },
+    {
+      "full_path": "/api/v2/benchmark/evaluate",
+      "method": "POST",
+      "handler": "benchmark_submit_evaluation",
+      "file": "api/routes/benchmark.py",
+      "line": 72,
+      "docstring": "Submit a gold-standard evaluation for a single claim.\n\nRequires admin authentication via X-Admin-Key header.\n\nLabels:\n- **correct**: Claim accurately represents what the abstract states\n- **incorrect*"
+    },
+    {
+      "full_path": "/api/v2/benchmark/extraction",
+      "method": "GET",
+      "handler": "benchmark_extraction_stats",
+      "file": "api/routes/benchmark.py",
+      "line": 45,
+      "docstring": "Get extraction quality metrics from existing gold-standard evaluations.\n\nReturns precision, recall estimate, F1 score, and per-claim-type breakdown.\nRequires evaluations to have been submitted via POS"
+    },
+    {
+      "full_path": "/api/v2/benchmark/gold-standard",
+      "method": "GET",
+      "handler": "benchmark_gold_standard",
+      "file": "api/routes/benchmark.py",
+      "line": 55,
+      "docstring": "Sample claims with their source abstracts for manual gold-standard review.\n\nReturns claims paired with the abstract they were extracted from,\nexcluding claims that have already been evaluated."
+    },
+    {
+      "full_path": "/api/v2/benchmark/reproducibility",
+      "method": "GET",
+      "handler": "benchmark_reproducibility",
+      "file": "api/routes/benchmark.py",
+      "line": 95,
+      "docstring": "Test extraction reproducibility by re-extracting claims from source abstracts.\n\nRe-runs the claim extraction pipeline on a random sample of sources\nthat already have claims, then measures how many of "
+    },
+    {
+      "full_path": "/api/v2/binder/design",
+      "method": "POST",
+      "handler": "design_protein_binder",
+      "file": "api/routes/binder_design.py",
+      "line": 32,
+      "docstring": "Design protein binders for an SMA target using Proteina-Complexa (GTC 2026).\n\nThis is a new therapeutic modality \u2014 designed protein binders that can\ntarget SMA-relevant proteins with high specificity."
+    },
+    {
+      "full_path": "/api/v2/binder/targets",
+      "method": "GET",
+      "handler": "list_binder_targets",
+      "file": "api/routes/binder_design.py",
+      "line": 24,
+      "docstring": "List SMA targets available for protein binder design."
+    },
+    {
+      "full_path": "/api/v2/bioelectric/channels",
+      "method": "GET",
+      "handler": "ion_channels",
+      "file": "api/routes/bioelectric.py",
+      "line": 27,
+      "docstring": "Get ion channel expression profile in SMA motor neurons."
+    },
+    {
+      "full_path": "/api/v2/bioelectric/electroceuticals",
+      "method": "GET",
+      "handler": "electroceuticals",
+      "file": "api/routes/bioelectric.py",
+      "line": 124,
+      "docstring": "Get electroceutical interventions for SMA."
+    },
+    {
+      "full_path": "/api/v2/bioelectric/profile",
+      "method": "GET",
+      "handler": "bioelectric_profile",
+      "file": "api/routes/bioelectric.py",
+      "line": 172,
+      "docstring": "Full bioelectric analysis of SMA motor neurons."
+    },
+    {
+      "full_path": "/api/v2/bioelectric/vmem",
+      "method": "GET",
+      "handler": "vmem_states",
+      "file": "api/routes/bioelectric.py",
+      "line": 88,
+      "docstring": "Get Vmem state classification for SMA motor neurons."
+    },
+    {
+      "full_path": "/api/v2/biomarker/atlas",
+      "method": "GET",
+      "handler": "get_atlas",
+      "file": "api/routes/biomarker.py",
+      "line": 37,
+      "docstring": "Full biomarker atlas: curated reference catalog combined with\ndynamically aggregated claims from the evidence database.\n\nReturns:\n- curated_catalog: expert-curated biomarkers with PMID references\n- ca"
+    },
+    {
+      "full_path": "/api/v2/biomarker/atlas/{category}",
+      "method": "GET",
+      "handler": "get_atlas_by_category",
+      "file": "api/routes/biomarker.py",
+      "line": 64,
+      "docstring": "Filter the curated biomarker catalog by category.\n\nValid categories: molecular, functional, imaging, electrophysiology.\nOptionally filter to only validated biomarkers.\n\nAlso returns matching DB claims"
+    },
+    {
+      "full_path": "/api/v2/biomarker/catalog",
+      "method": "GET",
+      "handler": "get_catalog",
+      "file": "api/routes/biomarker.py",
+      "line": 193,
+      "docstring": "Query the curated SMA biomarker reference catalog.\n\nSupports filtering by category, type, and validation status.\nNo database required \u2014 returns instantly from the in-memory catalog."
+    },
+    {
+      "full_path": "/api/v2/biomarker/catalog/summary",
+      "method": "GET",
+      "handler": "get_catalog_stats",
+      "file": "api/routes/biomarker.py",
+      "line": 253,
+      "docstring": "Summary statistics for the curated biomarker catalog.\n\nReturns counts by category, type, and validation status."
+    },
+    {
+      "full_path": "/api/v2/biomarker/layers",
+      "method": "GET",
+      "handler": "get_layer_definitions",
+      "file": "api/routes/biomarker.py",
+      "line": 174,
+      "docstring": "Return the biomarker layer definitions (markers and keywords per layer).\n\nUseful for frontend to display layer metadata without querying claims."
+    },
+    {
+      "full_path": "/api/v2/biomarker/target/{symbol}",
+      "method": "GET",
+      "handler": "get_biomarkers_for_target",
+      "file": "api/routes/biomarker.py",
+      "line": 148,
+      "docstring": "Biomarker claims linked to a specific target.\n\nReturns claims grouped by layer (molecular, imaging, functional,\nelectrophysiology, fluid), with a separate treatment-response subset."
+    },
+    {
+      "full_path": "/api/v2/biomarker/treatment-response",
+      "method": "GET",
+      "handler": "get_treatment_response",
+      "file": "api/routes/biomarker.py",
+      "line": 119,
+      "docstring": "Biomarkers relevant to monitoring treatment response.\n\nReturns both:\n1. Curated pharmacodynamic/efficacy biomarkers from the reference catalog\n2. DB claims mentioning treatment-response keywords (nusi"
+    },
+    {
+      "full_path": "/api/v2/blackboard",
+      "method": "GET",
+      "handler": "list_messages",
+      "file": "api/routes/blackboard.py",
+      "line": 54,
+      "docstring": "List blackboard messages with optional filters."
+    },
+    {
+      "full_path": "/api/v2/blackboard",
+      "method": "POST",
+      "handler": "create_message",
+      "file": "api/routes/blackboard.py",
+      "line": 116,
+      "docstring": "Post a new message to the blackboard. Requires x-admin-key header."
+    },
+    {
+      "full_path": "/api/v2/blackboard/cleanup",
+      "method": "POST",
+      "handler": "trigger_cleanup",
+      "file": "api/routes/blackboard.py",
+      "line": 151,
+      "docstring": "Delete expired blackboard messages. Requires x-admin-key header."
+    },
+    {
+      "full_path": "/api/v2/blackboard/stats",
+      "method": "GET",
+      "handler": "blackboard_stats",
+      "file": "api/routes/blackboard.py",
+      "line": 85,
+      "docstring": "Aggregate statistics: counts by type, by agent, total, and recent activity."
+    },
+    {
+      "full_path": "/api/v2/blackboard/{message_id}/read",
+      "method": "POST",
+      "handler": "mark_message_read",
+      "file": "api/routes/blackboard.py",
+      "line": 136,
+      "docstring": "Mark a message as read by the given agent. Requires x-admin-key header."
+    },
+    {
+      "full_path": "/api/v2/calibration/backtest",
+      "method": "GET",
+      "handler": "backtest_lookback",
+      "file": "api/routes/calibration.py",
+      "line": 234,
+      "docstring": "Run a prospective backtest with the given lookback period.\n\nSimulates running the convergence engine at (now - months) and compares\nwhat it would have predicted against outcomes discovered since then."
+    },
+    {
+      "full_path": "/api/v2/calibration/backtest/at/{cutoff_date}",
+      "method": "GET",
+      "handler": "backtest_at_date",
+      "file": "api/routes/calibration.py",
+      "line": 306,
+      "docstring": "Run convergence scoring at a specific historical cutoff date.\n\nSimulates what the convergence engine would have produced if run\nat the given date, using only claims created before that date.\n\nPath par"
+    },
+    {
+      "full_path": "/api/v2/calibration/backtest/report",
+      "method": "GET",
+      "handler": "backtest_full_report",
+      "file": "api/routes/calibration.py",
+      "line": 291,
+      "docstring": "Full prospective backtest report (alias for /backtest/temporal).\n\nComprehensive assessment including: temporal accuracy curve, midpoint\ncomparison, recent predictions, rank stability, and overall grad"
+    },
+    {
+      "full_path": "/api/v2/calibration/backtest/temporal",
+      "method": "GET",
+      "handler": "backtest_temporal",
+      "file": "api/routes/calibration.py",
+      "line": 265,
+      "docstring": "Full temporal backtest curve.\n\nAutomatically determines the data range and runs backtests at multiple\ntimepoints (every step_months months). Shows how predictive accuracy\nevolves over time as more evi"
+    },
+    {
+      "full_path": "/api/v2/calibration/bayesian/curve",
+      "method": "GET",
+      "handler": "bayesian_curve",
+      "file": "api/routes/calibration.py",
+      "line": 148,
+      "docstring": "Calibration curve: convergence score bins vs actual drug success rates.\n\nBins drug outcomes by their target's convergence score (0-0.2, 0.2-0.4, etc.)\nand computes the actual success rate in each bin."
+    },
+    {
+      "full_path": "/api/v2/calibration/bayesian/outcomes",
+      "method": "GET",
+      "handler": "bayesian_outcomes",
+      "file": "api/routes/calibration.py",
+      "line": 133,
+      "docstring": "Compare convergence scores of approved vs failed drugs.\n\nGroups drug outcomes by type (success, failure, ongoing) and computes\nmean/median convergence scores per group. Measures separation between\napp"
+    },
+    {
+      "full_path": "/api/v2/calibration/bayesian/report",
+      "method": "GET",
+      "handler": "bayesian_report",
+      "file": "api/routes/calibration.py",
+      "line": 114,
+      "docstring": "Full Bayesian evidence calibration report.\n\nBack-tests convergence scores against known drug outcomes (approved,\nfailed, ongoing) from the drug_outcomes table. Returns calibration\npercentage, grade, s"
+    },
+    {
+      "full_path": "/api/v2/calibration/bayesian/validate/{target_symbol}",
+      "method": "GET",
+      "handler": "bayesian_validate_target",
+      "file": "api/routes/calibration.py",
+      "line": 164,
+      "docstring": "Validate a specific target's convergence score against its drug outcomes.\n\nFor the given target, compares the convergence score with the actual\nsuccess/failure rate of drugs targeting it. Returns cali"
+    },
+    {
+      "full_path": "/api/v2/calibration/curves",
+      "method": "GET",
+      "handler": "calibration_curves",
+      "file": "api/routes/calibration.py",
+      "line": 91,
+      "docstring": "Generate calibration curve data -- predicted confidence vs actual replication rate.\n\nBins all claims by confidence (0-0.2, 0.2-0.4, 0.4-0.6, 0.6-0.8, 0.8-1.0)\nand for each bin computes:\n- mean_confide"
+    },
+    {
+      "full_path": "/api/v2/calibration/hypotheses",
+      "method": "GET",
+      "handler": "calibration_hypotheses",
+      "file": "api/routes/calibration.py",
+      "line": 80,
+      "docstring": "Calibrate hypothesis confidence for SMN1/SMN2 targets.\n\nChecks whether hypotheses about the validated SMA targets (SMN1, SMN2)\nhave the highest confidence scores. Returns rank distribution and\nconfide"
+    },
+    {
+      "full_path": "/api/v2/calibration/predictions",
+      "method": "GET",
+      "handler": "calibration_predictions",
+      "file": "api/routes/calibration.py",
+      "line": 69,
+      "docstring": "Calibrate synergy predictions against approved drug-target pairs.\n\nChecks if the 3 approved SMA drugs rank in the top positions when\npredictions are sorted by synergy score. Returns precision@k,\nmean "
+    },
+    {
+      "full_path": "/api/v2/calibration/report",
+      "method": "GET",
+      "handler": "calibration_report",
+      "file": "api/routes/calibration.py",
+      "line": 55,
+      "docstring": "Full confidence calibration report.\n\nEvaluates synergy predictions, hypothesis confidence scores, and claim\ncalibration curves against the 3 approved SMA drugs (nusinersen, risdiplam,\nonasemnogene) an"
+    },
+    {
+      "full_path": "/api/v2/calibration/uncertainty",
+      "method": "GET",
+      "handler": "uncertainty_report",
+      "file": "api/routes/calibration.py",
+      "line": 188,
+      "docstring": "Full uncertainty quantification report for all targets.\n\nComputes Wilson score confidence intervals on the support ratio\n(fraction of high-confidence claims) for every target with >= 3 claims.\nCombine"
+    },
+    {
+      "full_path": "/api/v2/calibration/uncertainty/{target_symbol}",
+      "method": "GET",
+      "handler": "uncertainty_target",
+      "file": "api/routes/calibration.py",
+      "line": 207,
+      "docstring": "Uncertainty quantification for a single target.\n\nReturns:\n- Support ratio with 95% Wilson CI (lower, upper)\n- Claim counts: support / oppose / neutral\n- Source diversity (unique labs)\n- Temporal stabi"
+    },
+    {
+      "full_path": "/api/v2/cascade/batch",
+      "method": "POST",
+      "handler": "cascade_batch",
+      "file": "api/routes/cascade.py",
+      "line": 52,
+      "docstring": "Run the cascade for multiple variants in one call.\n\nBody: {\"variants\": [\"c.840C>T\", \"c.859G>C\", \"p.Gly287Arg\"]}\nMax 100 variants per request."
+    },
+    {
+      "full_path": "/api/v2/cascade/compare",
+      "method": "GET",
+      "handler": "cascade_compare",
+      "file": "api/routes/cascade.py",
+      "line": 75,
+      "docstring": "Side-by-side comparison: wild-type SMN1 vs SMN2 with the variant.\n\nShows exactly where the cascade diverges between the functional SMN1\ngene and the SMN2 copy carrying the specified variant. Identifie"
+    },
+    {
+      "full_path": "/api/v2/cascade/known",
+      "method": "GET",
+      "handler": "cascade_known",
+      "file": "api/routes/cascade.py",
+      "line": 63,
+      "docstring": "Return pre-computed cascades for well-known SMA variants.\n\nIncludes the critical c.840C>T (THE cause of SMA), known pathogenic\nmissense variants, modifier variants, and any high-impact variants\nidenti"
+    },
+    {
+      "full_path": "/api/v2/cascade/predict",
+      "method": "GET",
+      "handler": "cascade_predict",
+      "file": "api/routes/cascade.py",
+      "line": 26,
+      "docstring": "Predict the full mutation-to-function cascade for a single variant.\n\nTraces the variant through 5 steps:\n1. Splice impact (SpliceAI GPU scores or rule-based)\n2. Protein change (exon skip \u2192 truncation,"
+    },
+    {
+      "full_path": "/api/v2/chat",
+      "method": "POST",
+      "handler": "chat_endpoint",
+      "file": "api/routes/chat.py",
+      "line": 54,
+      "docstring": "Multi-turn conversational research assistant.\n\nSend a message with optional conversation history. The server is stateless \u2014\nconversation context is maintained by the client sending previous exchanges."
+    },
+    {
+      "full_path": "/api/v2/claims",
+      "method": "GET",
+      "handler": "list_claims",
+      "file": "api/routes/evidence.py",
+      "line": 95,
+      "docstring": "List claims with filters, optionally enriched with source paper details."
+    },
+    {
+      "full_path": "/api/v2/claims/count",
+      "method": "GET",
+      "handler": "claims_count",
+      "file": "api/routes/evidence.py",
+      "line": 44,
+      "docstring": "Get claim counts with optional filters \u2014 used for pagination."
+    },
+    {
+      "full_path": "/api/v2/claims/{claim_id}",
+      "method": "GET",
+      "handler": "get_claim",
+      "file": "api/routes/evidence.py",
+      "line": 172,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/claims/{claim_id}/evidence",
+      "method": "GET",
+      "handler": "get_claim_evidence",
+      "file": "api/routes/evidence.py",
+      "line": 180,
+      "docstring": "Get all evidence supporting a specific claim."
+    },
+    {
+      "full_path": "/api/v2/collab/export/claims",
+      "method": "GET",
+      "handler": "export_claims",
+      "file": "api/routes/collaboration.py",
+      "line": 67,
+      "docstring": "Export claims in a structured format for external analysis."
+    },
+    {
+      "full_path": "/api/v2/collab/export/screening-hits",
+      "method": "GET",
+      "handler": "export_screening_hits",
+      "file": "api/routes/collaboration.py",
+      "line": 104,
+      "docstring": "Export all positive virtual screening hits."
+    },
+    {
+      "full_path": "/api/v2/collab/export/summary",
+      "method": "GET",
+      "handler": "export_platform_summary",
+      "file": "api/routes/collaboration.py",
+      "line": 124,
+      "docstring": "Quick summary of what the platform offers \u2014 for new collaborators."
+    },
+    {
+      "full_path": "/api/v2/collab/export/target/{symbol}",
+      "method": "GET",
+      "handler": "export_target_data",
+      "file": "api/routes/collaboration.py",
+      "line": 13,
+      "docstring": "Export all platform data for a target in a researcher-friendly format.\n\nNo authentication required \u2014 all data is from public sources.\nSuitable for supplementary materials, grant applications, or colla"
+    },
+    {
+      "full_path": "/api/v2/combinations/rank",
+      "method": "GET",
+      "handler": "rank_combinations",
+      "file": "api/routes/combinations.py",
+      "line": 12,
+      "docstring": "Rank all possible SMA therapy combinations by composite score."
+    },
+    {
+      "full_path": "/api/v2/combinations/top3",
+      "method": "GET",
+      "handler": "top3_combinations",
+      "file": "api/routes/combinations.py",
+      "line": 29,
+      "docstring": "Get the top 3 recommended therapy combinations for SMA."
+    },
+    {
+      "full_path": "/api/v2/comparative/cross-species-targets",
+      "method": "GET",
+      "handler": "list_cross_species_targets",
+      "file": "api/routes/comparative.py",
+      "line": 91,
+      "docstring": "List all cross-species target mappings."
+    },
+    {
+      "full_path": "/api/v2/comparative/ingest/orthologs",
+      "method": "POST",
+      "handler": "trigger_ortholog_ingestion",
+      "file": "api/routes/comparative.py",
+      "line": 116,
+      "docstring": "Map all human SMA targets to orthologs across model organisms.\n\nQueries NCBI for each target and stores results in cross_species_targets."
+    },
+    {
+      "full_path": "/api/v2/comparative/orthologs",
+      "method": "GET",
+      "handler": "list_all_orthologs",
+      "file": "api/routes/comparative.py",
+      "line": 82,
+      "docstring": "Get all ortholog mappings for the heatmap visualization."
+    },
+    {
+      "full_path": "/api/v2/comparative/orthologs/{symbol}",
+      "method": "GET",
+      "handler": "get_orthologs",
+      "file": "api/routes/comparative.py",
+      "line": 55,
+      "docstring": "Get orthologs for a human gene symbol across model organisms.\n\nChecks the database first, falls back to live NCBI query."
+    },
+    {
+      "full_path": "/api/v2/comparative/species",
+      "method": "GET",
+      "handler": "list_species",
+      "file": "api/routes/comparative.py",
+      "line": 41,
+      "docstring": "List model organisms with target mapping counts."
+    },
+    {
+      "full_path": "/api/v2/compare/targets",
+      "method": "GET",
+      "handler": "compare_targets",
+      "file": "api/routes/target_compare.py",
+      "line": 13,
+      "docstring": "Compare two SMA targets across all dimensions."
+    },
+    {
+      "full_path": "/api/v2/contact",
+      "method": "POST",
+      "handler": "submit_contact",
+      "file": "api/routes/contact.py",
+      "line": 117,
+      "docstring": "Store a contact form submission and notify via Slack."
+    },
+    {
+      "full_path": "/api/v2/convergence",
+      "method": "GET",
+      "handler": "list_convergence_scores",
+      "file": "api/routes/predictions.py",
+      "line": 20,
+      "docstring": "List convergence scores for all scored targets."
+    },
+    {
+      "full_path": "/api/v2/convergence/compute",
+      "method": "POST",
+      "handler": "compute_convergence",
+      "file": "api/routes/convergence.py",
+      "line": 177,
+      "docstring": "Trigger batch convergence score computation for all targets.\n\nRequires admin API key. Upserts into convergence_scores table."
+    },
+    {
+      "full_path": "/api/v2/convergence/compute",
+      "method": "POST",
+      "handler": "compute_convergence",
+      "file": "api/routes/predictions.py",
+      "line": 48,
+      "docstring": "Trigger batch convergence score computation for all targets."
+    },
+    {
+      "full_path": "/api/v2/convergence/predictions",
+      "method": "GET",
+      "handler": "get_convergence_predictions",
+      "file": "api/routes/convergence.py",
+      "line": 112,
+      "docstring": "Get prediction cards enriched with convergence breakdown.\n\nEach prediction includes: convergence score, confidence level,\nevidence breakdown, claim type distribution, and suggested experiments."
+    },
+    {
+      "full_path": "/api/v2/convergence/predictions/{symbol}",
+      "method": "GET",
+      "handler": "get_target_prediction",
+      "file": "api/routes/convergence.py",
+      "line": 153,
+      "docstring": "Get prediction card for a specific target by symbol."
+    },
+    {
+      "full_path": "/api/v2/convergence/scores",
+      "method": "GET",
+      "handler": "get_convergence_scores",
+      "file": "api/routes/convergence.py",
+      "line": 22,
+      "docstring": "Get evidence convergence scores for all SMA targets.\n\nScores based on 5 dimensions: claim volume, lab independence,\nmethod diversity, temporal trend, and replication.\nWeights version v1."
+    },
+    {
+      "full_path": "/api/v2/convergence/scores/{symbol}",
+      "method": "GET",
+      "handler": "get_target_convergence",
+      "file": "api/routes/convergence.py",
+      "line": 78,
+      "docstring": "Get detailed convergence score for a specific target by symbol."
+    },
+    {
+      "full_path": "/api/v2/convergence/{target_id}",
+      "method": "GET",
+      "handler": "get_convergence_score",
+      "file": "api/routes/predictions.py",
+      "line": 36,
+      "docstring": "Get convergence score breakdown for a specific target."
+    },
+    {
+      "full_path": "/api/v2/crispr/guides",
+      "method": "GET",
+      "handler": "get_crispr_guides",
+      "file": "api/routes/crispr.py",
+      "line": 136,
+      "docstring": "Retrieve CRISPR guides from the database.\n\nFor SMN2/SMN1: returns pre-computed guides with therapeutic motif annotations.\nUse POST /crispr/guides to design guides for a custom DNA sequence."
+    },
+    {
+      "full_path": "/api/v2/crispr/guides",
+      "method": "POST",
+      "handler": "post_crispr_guides",
+      "file": "api/routes/crispr.py",
+      "line": 221,
+      "docstring": "Design CRISPR guides for a custom DNA sequence (compute-only, not persisted).\n\nAccepts 23-10000 nt DNA and scans both strands for 20nt protospacer + NGG PAM."
+    },
+    {
+      "full_path": "/api/v2/crispr/motifs",
+      "method": "GET",
+      "handler": "get_smn2_motifs",
+      "file": "api/routes/crispr.py",
+      "line": 291,
+      "docstring": "Return all known SMN2 exon 7 regulatory motifs.\n\nIncludes ISS-N1 (nusinersen target), ESE (Tra2-beta), ESS (hnRNP A1),\nElement2, C6T disease position, and branch point."
+    },
+    {
+      "full_path": "/api/v2/crispr/seed",
+      "method": "POST",
+      "handler": "seed_smn2_guides",
+      "file": "api/routes/crispr.py",
+      "line": 305,
+      "docstring": "(Admin) Re-seed the database with computed SMN2 guides.\n\nClears existing SMN2 guides and strategies, then re-computes from\nthe reference sequence and inserts fresh results."
+    },
+    {
+      "full_path": "/api/v2/crispr/strategies",
+      "method": "GET",
+      "handler": "get_strategies",
+      "file": "api/routes/crispr.py",
+      "line": 238,
+      "docstring": "List all CRISPR therapeutic strategies stored in the database."
+    },
+    {
+      "full_path": "/api/v2/crispr/strategies/{strategy_id}",
+      "method": "GET",
+      "handler": "get_strategy",
+      "file": "api/routes/crispr.py",
+      "line": 261,
+      "docstring": "Return a single therapeutic strategy with its top guides."
+    },
+    {
+      "full_path": "/api/v2/datasets",
+      "method": "GET",
+      "handler": "list_datasets",
+      "file": "api/routes/datasets.py",
+      "line": 110,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/datasets/accession/{accession}",
+      "method": "GET",
+      "handler": "get_dataset_by_accession",
+      "file": "api/routes/datasets.py",
+      "line": 153,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/datasets/rnaseq",
+      "method": "GET",
+      "handler": "list_rnaseq_datasets",
+      "file": "api/routes/datasets.py",
+      "line": 32,
+      "docstring": "List curated RNA-seq datasets relevant to SMA research.\n\nReturns a hand-curated catalog of publicly available RNA-seq datasets\nspanning multiple platforms (Nanopore direct RNA, Illumina short-read,\n10"
+    },
+    {
+      "full_path": "/api/v2/datasets/rnaseq/nanopore",
+      "method": "GET",
+      "handler": "list_nanopore_datasets",
+      "file": "api/routes/datasets.py",
+      "line": 84,
+      "docstring": "List Nanopore direct RNA sequencing datasets for SMA.\n\nReturns entries from the curated catalog that use Oxford Nanopore\ntechnology.  These datasets are especially valuable because direct\nRNA sequenci"
+    },
+    {
+      "full_path": "/api/v2/datasets/{dataset_id}",
+      "method": "GET",
+      "handler": "get_dataset",
+      "file": "api/routes/datasets.py",
+      "line": 145,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/dead-ends/hypothesis/{hypothesis_id}",
+      "method": "GET",
+      "handler": "dead_end_hypothesis_risk",
+      "file": "api/routes/experiment_design.py",
+      "line": 155,
+      "docstring": "Risk assessment for a single hypothesis.\n\nReturns risk_score (0-1), risk_level, and detailed risk_factors\nexplaining why this hypothesis may be heading toward a dead end."
+    },
+    {
+      "full_path": "/api/v2/dead-ends/patterns",
+      "method": "GET",
+      "handler": "dead_end_patterns",
+      "file": "api/routes/experiment_design.py",
+      "line": 120,
+      "docstring": "Known drug failure patterns extracted from drug_outcomes data.\n\nShows which targets and mechanisms are most associated with\ndrug failure \u2014 useful for avoiding known dead ends."
+    },
+    {
+      "full_path": "/api/v2/dead-ends/risks",
+      "method": "GET",
+      "handler": "dead_end_risks",
+      "file": "api/routes/experiment_design.py",
+      "line": 134,
+      "docstring": "Risk assessment for all active hypotheses based on failure patterns.\n\nHypotheses are scored by overlap with known drug failure profiles.\nHigher risk_score = more overlap with historical failures."
+    },
+    {
+      "full_path": "/api/v2/discovery/confirmations",
+      "method": "GET",
+      "handler": "get_confirmations",
+      "file": "api/routes/discovery.py",
+      "line": 99,
+      "docstring": "Find new claims that confirm existing hypotheses.\n\nShows which hypotheses are receiving fresh supporting evidence."
+    },
+    {
+      "full_path": "/api/v2/discovery/novel",
+      "method": "GET",
+      "handler": "get_novel_targets",
+      "file": "api/routes/discovery.py",
+      "line": 115,
+      "docstring": "Find targets with claims but no hypotheses \u2014 potential discoveries.\n\nThese are targets the platform has evidence for but hasn't formalized\ninto testable hypotheses yet. Researchers should review these"
+    },
+    {
+      "full_path": "/api/v2/discovery/run",
+      "method": "POST",
+      "handler": "trigger_discovery",
+      "file": "api/routes/discovery.py",
+      "line": 133,
+      "docstring": "Trigger the full auto-discovery pipeline (admin only).\n\nDetects claim spikes, hypothesis confirmations, and novel targets,\nthen scores and stores breakthrough signals."
+    },
+    {
+      "full_path": "/api/v2/discovery/signals",
+      "method": "GET",
+      "handler": "list_signals",
+      "file": "api/routes/discovery.py",
+      "line": 30,
+      "docstring": "List breakthrough signals detected by the auto-discovery pipeline.\n\nSignals are ranked by composite_score (novelty \u00d7 convergence \u00d7 impact).\nResearchers can filter by type and minimum score threshold."
+    },
+    {
+      "full_path": "/api/v2/discovery/spikes",
+      "method": "GET",
+      "handler": "get_spikes",
+      "file": "api/routes/discovery.py",
+      "line": 81,
+      "docstring": "View claim volume spikes per target in the last N days.\n\nA \"spike\" means a target received significantly more claims than its\nmonthly baseline \u2014 indicates active research interest or new findings."
+    },
+    {
+      "full_path": "/api/v2/dock/local/batch",
+      "method": "POST",
+      "handler": "dock_batch",
+      "file": "api/routes/diffdock_local.py",
+      "line": 41,
+      "docstring": "Dock a batch of compounds against a self-hosted DiffDock instance.\n\nSends compounds in parallel batches of 10 to the GPU instance.\nRequires admin key \u2014 this triggers GPU compute costs."
+    },
+    {
+      "full_path": "/api/v2/dock/local/destroy",
+      "method": "POST",
+      "handler": "destroy",
+      "file": "api/routes/diffdock_local.py",
+      "line": 126,
+      "docstring": "Destroy a Vast.ai DiffDock instance when screening is complete.\n\nAlways destroy instances after use to avoid ongoing GPU charges."
+    },
+    {
+      "full_path": "/api/v2/dock/local/estimate",
+      "method": "GET",
+      "handler": "cost_estimate",
+      "file": "api/routes/diffdock_local.py",
+      "line": 147,
+      "docstring": "Estimate GPU cost and time for a virtual screening campaign.\n\nBased on ~5 compounds/sec throughput on A100 at ~$1.50/hr.\nNo admin key required \u2014 informational endpoint."
+    },
+    {
+      "full_path": "/api/v2/dock/local/health",
+      "method": "GET",
+      "handler": "health_check",
+      "file": "api/routes/diffdock_local.py",
+      "line": 105,
+      "docstring": "Check if a self-hosted DiffDock instance is healthy and ready.\n\nNo admin key required \u2014 useful for monitoring."
+    },
+    {
+      "full_path": "/api/v2/dock/local/launch",
+      "method": "POST",
+      "handler": "launch_instance",
+      "file": "api/routes/diffdock_local.py",
+      "line": 83,
+      "docstring": "Launch a Vast.ai GPU instance with the DiffDock NIM container.\n\nRequires NGC_API_KEY env var and vastai CLI installed.\nReturns the instance ID, SSH URL, and API URL for docking."
+    },
+    {
+      "full_path": "/api/v2/dock/pockets",
+      "method": "GET",
+      "handler": "list_binding_pockets",
+      "file": "api/routes/docking.py",
+      "line": 85,
+      "docstring": "List all available target binding pockets with characteristics."
+    },
+    {
+      "full_path": "/api/v2/dock/score",
+      "method": "GET",
+      "handler": "dock_top_compounds",
+      "file": "api/routes/docking.py",
+      "line": 36,
+      "docstring": "Score top drug-like compounds against a target binding pocket.\n\nPharmacophore-based scoring proxy \u2014 predicts binding affinity from\nmolecular descriptors and pocket characteristics without requiring\nAu"
+    },
+    {
+      "full_path": "/api/v2/dock/score",
+      "method": "POST",
+      "handler": "dock_custom_compound",
+      "file": "api/routes/docking.py",
+      "line": 58,
+      "docstring": "Score a single compound against a binding pocket."
+    },
+    {
+      "full_path": "/api/v2/drug-outcomes",
+      "method": "GET",
+      "handler": "list_drug_outcomes",
+      "file": "api/routes/ingestion.py",
+      "line": 849,
+      "docstring": "List drug outcomes with optional filtering."
+    },
+    {
+      "full_path": "/api/v2/drug-outcomes/summary",
+      "method": "GET",
+      "handler": "drug_outcomes_summary",
+      "file": "api/routes/ingestion.py",
+      "line": 894,
+      "docstring": "Get summary statistics for the Drug Failure & Success Database."
+    },
+    {
+      "full_path": "/api/v2/drugs",
+      "method": "GET",
+      "handler": "list_drugs",
+      "file": "api/routes/drugs.py",
+      "line": 34,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/drugs",
+      "method": "POST",
+      "handler": "create_drug",
+      "file": "api/routes/drugs.py",
+      "line": 189,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/drugs/name/{name}",
+      "method": "GET",
+      "handler": "get_drug_by_name",
+      "file": "api/routes/drugs.py",
+      "line": 137,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/drugs/{drug_id}",
+      "method": "GET",
+      "handler": "get_drug",
+      "file": "api/routes/drugs.py",
+      "line": 102,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/drugs/{drug_id}/trials",
+      "method": "GET",
+      "handler": "get_drug_trials",
+      "file": "api/routes/drugs.py",
+      "line": 145,
+      "docstring": "Get clinical trials related to a specific drug."
+    },
+    {
+      "full_path": "/api/v2/enrichment/dry-run",
+      "method": "POST",
+      "handler": "dry_run_enrichment",
+      "file": "api/routes/enrichment.py",
+      "line": 44,
+      "docstring": "Preview enrichment without modifying data.\n\nReturns the same stats as /run plus sample_matches showing\nwhat would be linked.\nRequires admin key."
+    },
+    {
+      "full_path": "/api/v2/enrichment/run",
+      "method": "POST",
+      "handler": "run_enrichment",
+      "file": "api/routes/enrichment.py",
+      "line": 29,
+      "docstring": "Run claim enrichment \u2014 scan unlinked claims and link to targets/drugs.\n\nScans predicate text for gene/protein/drug mentions using\ncase-insensitive word-boundary pattern matching.\nRequires admin key."
+    },
+    {
+      "full_path": "/api/v2/enrichment/stats",
+      "method": "GET",
+      "handler": "enrichment_stats",
+      "file": "api/routes/enrichment.py",
+      "line": 18,
+      "docstring": "Get current claim-target linking status.\n\nReturns total claims, linked/unlinked counts, link rate,\nand breakdown by subject_type."
+    },
+    {
+      "full_path": "/api/v2/evidence",
+      "method": "GET",
+      "handler": "list_evidence",
+      "file": "api/routes/evidence.py",
+      "line": 24,
+      "docstring": "List evidence records linking claims to sources."
+    },
+    {
+      "full_path": "/api/v2/evidence/gaps",
+      "method": "GET",
+      "handler": "evidence_gaps",
+      "file": "api/routes/export.py",
+      "line": 192,
+      "docstring": "Identify evidence gaps \u2014 where research is thin or missing for a target."
+    },
+    {
+      "full_path": "/api/v2/expand/graph",
+      "method": "POST",
+      "handler": "trigger_graph_expansion",
+      "file": "api/routes/ingestion.py",
+      "line": 920,
+      "docstring": "Auto-expand the knowledge graph from claims, drug outcomes, and conservation data."
+    },
+    {
+      "full_path": "/api/v2/experiment-value/hypotheses",
+      "method": "GET",
+      "handler": "eve_scored_hypotheses",
+      "file": "api/routes/experiment_value.py",
+      "line": 29,
+      "docstring": "Get all hypotheses ranked by Expected Value of Experiment (EVE).\n\nEVE = P(success) * Impact / (Cost + Time)\n\nReturns hypotheses sorted by EVE score descending, with full breakdown\nof success probabili"
+    },
+    {
+      "full_path": "/api/v2/experiment-value/hypothesis/{hypothesis_id}",
+      "method": "GET",
+      "handler": "eve_single_hypothesis",
+      "file": "api/routes/experiment_value.py",
+      "line": 52,
+      "docstring": "Get EVE score for a single hypothesis with full breakdown."
+    },
+    {
+      "full_path": "/api/v2/experiment-value/rankings",
+      "method": "GET",
+      "handler": "ev_target_rankings",
+      "file": "api/routes/experiment_value.py",
+      "line": 66,
+      "docstring": "Rank all targets by Expected Value of experiment.\n\nEV = P(success) * Scientific_Impact / (Cost_K / 10)\n\nAnswers: \"If I have $50K and 3 months, which experiment should I run first?\"\n\nOptionally filter "
+    },
+    {
+      "full_path": "/api/v2/experiment-value/target/{symbol}",
+      "method": "GET",
+      "handler": "ev_single_target",
+      "file": "api/routes/experiment_value.py",
+      "line": 106,
+      "docstring": "Get detailed EV score for a single target with full breakdown.\n\nEV = P(success) * Scientific_Impact / (Cost_K / 10)\n\nIf convergence is not provided, it is looked up from the convergence_scores\ntable i"
+    },
+    {
+      "full_path": "/api/v2/experiment/gaps",
+      "method": "GET",
+      "handler": "evidence_gaps",
+      "file": "api/routes/experiment_design.py",
+      "line": 55,
+      "docstring": "All targets with evidence gaps, sorted by priority.\n\nShows which targets have the biggest gaps in evidence coverage\nand what experiments would be most valuable to fill those gaps."
+    },
+    {
+      "full_path": "/api/v2/experiment/suggest/{target_symbol}",
+      "method": "GET",
+      "handler": "experiment_suggestions",
+      "file": "api/routes/experiment_design.py",
+      "line": 42,
+      "docstring": "Analyze evidence gaps for a target and suggest experiments to fill them.\n\nReturns present evidence types, missing types, and prioritized\nassay recommendations ranked by gap_size * target_importance * "
+    },
+    {
+      "full_path": "/api/v2/experiments/propose/batch",
+      "method": "GET",
+      "handler": "propose_batch",
+      "file": "api/routes/experiment_design.py",
+      "line": 77,
+      "docstring": "Batch-generate experimental proposals for all hypotheses in a tier.\n\nConverts prioritized hypotheses into concrete experimental proposals\nwith assays, model systems, readouts, go/no-go criteria, timel"
+    },
+    {
+      "full_path": "/api/v2/experiments/propose/{hypothesis_id}",
+      "method": "GET",
+      "handler": "propose_for_hypothesis",
+      "file": "api/routes/experiment_design.py",
+      "line": 95,
+      "docstring": "Generate a concrete experimental proposal for a single hypothesis.\n\nAnalyzes the hypothesis type (binding, expression, drug efficacy,\nsplicing) and returns a structured proposal including:\n- Suggested"
+    },
+    {
+      "full_path": "/api/v2/export/target/{symbol}",
+      "method": "GET",
+      "handler": "export_target_evidence",
+      "file": "api/routes/export.py",
+      "line": 77,
+      "docstring": "Export all evidence for a specific target: claims, sources, evidence links.\n\nFormats:\n- json: Full evidence package with claims, sources, and metadata\n- csv: Flat CSV with one row per claim+source pai"
+    },
+    {
+      "full_path": "/api/v2/export/{table_name}",
+      "method": "GET",
+      "handler": "export_table",
+      "file": "api/routes/export.py",
+      "line": 26,
+      "docstring": "Export a table as JSON or CSV for research use.\n\nAvailable tables: targets, drugs, trials, claims, hypotheses,\ngraph_edges, drug_outcomes, cross_species_targets, target_scores."
+    },
+    {
+      "full_path": "/api/v2/extract/claims",
+      "method": "POST",
+      "handler": "trigger_claim_extraction",
+      "file": "api/routes/ingestion.py",
+      "line": 457,
+      "docstring": "Extract structured claims from all unprocessed paper abstracts using LLM."
+    },
+    {
+      "full_path": "/api/v2/extract/drug-outcomes",
+      "method": "POST",
+      "handler": "trigger_drug_outcome_extraction",
+      "file": "api/routes/ingestion.py",
+      "line": 835,
+      "docstring": "Extract structured drug failure/success outcomes from SMA literature.\n\nBuilds the Drug Failure & Success Database \u2014 captures why drugs succeeded or\nfailed, with structured failure reasons (toxicity, e"
+    },
+    {
+      "full_path": "/api/v2/fair/audit",
+      "method": "GET",
+      "handler": "fair_audit",
+      "file": "api/routes/fair.py",
+      "line": 22,
+      "docstring": "Full FAIR compliance audit of the SMA Research Platform.\n\nScores the platform across all 14 FAIR sub-principles (F1-F4, A1-A4,\nI1-I3, R1-R3), returning per-dimension scores, an overall score (0-1),\na "
+    },
+    {
+      "full_path": "/api/v2/fair/data-dictionary",
+      "method": "GET",
+      "handler": "fair_data_dictionary",
+      "file": "api/routes/fair.py",
+      "line": 53,
+      "docstring": "Auto-generated data dictionary for the platform database.\n\nLists all tables, columns, types, constraints, and descriptions.\nIncludes controlled vocabularies and external identifier mappings.\nUses live"
+    },
+    {
+      "full_path": "/api/v2/fair/recommendations",
+      "method": "GET",
+      "handler": "fair_recommendations",
+      "file": "api/routes/fair.py",
+      "line": 33,
+      "docstring": "Actionable recommendations to improve FAIR compliance.\n\nReturns prioritised recommendations with effort estimates, expected\nimpact, and concrete implementation steps."
+    },
+    {
+      "full_path": "/api/v2/federated/data-tiers",
+      "method": "GET",
+      "handler": "data_tiers",
+      "file": "api/routes/federated.py",
+      "line": 40,
+      "docstring": "Get data sharing tier framework (4 tiers with privacy levels)."
+    },
+    {
+      "full_path": "/api/v2/federated/omop",
+      "method": "GET",
+      "handler": "omop_mappings",
+      "file": "api/routes/federated.py",
+      "line": 24,
+      "docstring": "Get OMOP/OHDSI concept mappings for SMA clinical data."
+    },
+    {
+      "full_path": "/api/v2/federated/privacy-budget",
+      "method": "GET",
+      "handler": "privacy_budget",
+      "file": "api/routes/federated.py",
+      "line": 30,
+      "docstring": "Calculate privacy budget for a research scenario."
+    },
+    {
+      "full_path": "/api/v2/federated/protocols",
+      "method": "GET",
+      "handler": "fl_protocols",
+      "file": "api/routes/federated.py",
+      "line": 18,
+      "docstring": "Get federated learning protocol specifications for SMA research."
+    },
+    {
+      "full_path": "/api/v2/funnel/estimate",
+      "method": "POST",
+      "handler": "estimate_single",
+      "file": "api/routes/funnel.py",
+      "line": 87,
+      "docstring": "Estimate drug-likeness properties for a single SMILES (no RDKit)."
+    },
+    {
+      "full_path": "/api/v2/funnel/results",
+      "method": "GET",
+      "handler": "funnel_results",
+      "file": "api/routes/funnel.py",
+      "line": 64,
+      "docstring": "Get results from a completed funnel run."
+    },
+    {
+      "full_path": "/api/v2/funnel/run",
+      "method": "POST",
+      "handler": "start_funnel_run",
+      "file": "api/routes/funnel.py",
+      "line": 24,
+      "docstring": "Start a screening funnel pipeline run.\n\nOrchestrates: Generate -> Filter -> ML Proxy -> DiffDock -> Candidates.\nPure SMILES-based drug-likeness estimation (no RDKit required)."
+    },
+    {
+      "full_path": "/api/v2/funnel/status",
+      "method": "GET",
+      "handler": "funnel_status",
+      "file": "api/routes/funnel.py",
+      "line": 55,
+      "docstring": "Get status of any running funnel job."
+    },
+    {
+      "full_path": "/api/v2/funnel/summary",
+      "method": "GET",
+      "handler": "funnel_summary_endpoint",
+      "file": "api/routes/funnel.py",
+      "line": 78,
+      "docstring": "Get summary of all funnel runs with aggregate statistics."
+    },
+    {
+      "full_path": "/api/v2/gene-versions/edit",
+      "method": "POST",
+      "handler": "create_custom_edit",
+      "file": "api/routes/gene_versioning.py",
+      "line": 39,
+      "docstring": "Simulate and version a custom sequence edit.\n\nCreates a parent\u2192child version pair with diff, like a git commit."
+    },
+    {
+      "full_path": "/api/v2/gene-versions/smn2",
+      "method": "GET",
+      "handler": "get_smn2_version_tree",
+      "file": "api/routes/gene_versioning.py",
+      "line": 28,
+      "docstring": "Get the SMN2 exon 7 version tree \u2014 all known variants as 'commits'.\n\nShows the lineage: SMN1 (healthy) \u2192 SMN2 (C6T disease mutation)\n\u2192 therapeutic edits (base edit correction, ESE enhancement, ESS dis"
+    },
+    {
+      "full_path": "/api/v2/generate/hypotheses",
+      "method": "POST",
+      "handler": "trigger_hypothesis_generation",
+      "file": "api/routes/ingestion.py",
+      "line": 477,
+      "docstring": "Generate hypothesis cards for all targets by cross-referencing claims."
+    },
+    {
+      "full_path": "/api/v2/generate/hypothesis/{target_id}",
+      "method": "POST",
+      "handler": "trigger_single_hypothesis",
+      "file": "api/routes/ingestion.py",
+      "line": 487,
+      "docstring": "Generate a hypothesis card for a single target."
+    },
+    {
+      "full_path": "/api/v2/gpu/jobs",
+      "method": "GET",
+      "handler": "list_gpu_jobs",
+      "file": "api/routes/gpu.py",
+      "line": 167,
+      "docstring": "List GPU jobs with optional status filter."
+    },
+    {
+      "full_path": "/api/v2/gpu/jobs",
+      "method": "POST",
+      "handler": "create_gpu_job",
+      "file": "api/routes/gpu.py",
+      "line": 138,
+      "docstring": "Create a GPU job record."
+    },
+    {
+      "full_path": "/api/v2/gpu/jobs/{job_id}",
+      "method": "GET",
+      "handler": "get_gpu_job",
+      "file": "api/routes/gpu.py",
+      "line": 198,
+      "docstring": "Get a single GPU job by ID."
+    },
+    {
+      "full_path": "/api/v2/gpu/offtarget-summary",
+      "method": "GET",
+      "handler": "offtarget_summary",
+      "file": "api/routes/gpu.py",
+      "line": 263,
+      "docstring": "Return CRISPR off-target statistics grouped by mismatch count.\n\nUsed by the frontend GPU Results section."
+    },
+    {
+      "full_path": "/api/v2/gpu/splice-summary",
+      "method": "GET",
+      "handler": "splice_summary",
+      "file": "api/routes/gpu.py",
+      "line": 214,
+      "docstring": "Return SpliceAI splice-score statistics and top variants by max delta score.\n\nUsed by the frontend GPU Results section."
+    },
+    {
+      "full_path": "/api/v2/graph",
+      "method": "GET",
+      "handler": "get_graph",
+      "file": "api/routes/graph.py",
+      "line": 16,
+      "docstring": "Return knowledge graph as nodes + edges for visualization.\n\nBy default excludes compound_bioactivity edges (191 edges) to keep\nthe graph focused on biological relationships."
+    },
+    {
+      "full_path": "/api/v2/graph/full",
+      "method": "GET",
+      "handler": "get_full_graph",
+      "file": "api/routes/targets.py",
+      "line": 159,
+      "docstring": "Get all nodes and edges for knowledge graph visualization."
+    },
+    {
+      "full_path": "/api/v2/graph/stats",
+      "method": "GET",
+      "handler": "graph_stats",
+      "file": "api/routes/graph.py",
+      "line": 109,
+      "docstring": "Summary statistics for the knowledge graph."
+    },
+    {
+      "full_path": "/api/v2/health",
+      "method": "GET",
+      "handler": "health",
+      "file": "api/app.py",
+      "line": 183,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/hits/assay-cards",
+      "method": "GET",
+      "handler": "get_assay_cards",
+      "file": "api/routes/hit_validation.py",
+      "line": 59,
+      "docstring": "Generate assay-ready validation cards for all positive screening hits.\n\nFor each drug-like hit (pChEMBL >= 5.0, Lipinski pass), returns a\ntarget-specific wet-lab validation plan with:\n- Hypothesis: wh"
+    },
+    {
+      "full_path": "/api/v2/hits/assay-cards/custom",
+      "method": "POST",
+      "handler": "generate_custom_assay_cards",
+      "file": "api/routes/hit_validation.py",
+      "line": 78,
+      "docstring": "Generate assay cards for custom screening hits (not from the database).\n\nAccepts a list of hits with smiles, target, and docking_confidence.\nReturns target-specific wet-lab validation plans."
+    },
+    {
+      "full_path": "/api/v2/hits/milestones",
+      "method": "GET",
+      "handler": "get_milestones",
+      "file": "api/routes/hit_validation.py",
+      "line": 52,
+      "docstring": "Get summary of all screening hit milestones and their validation status."
+    },
+    {
+      "full_path": "/api/v2/hits/milestones/create",
+      "method": "POST",
+      "handler": "create_hit_milestones",
+      "file": "api/routes/hit_validation.py",
+      "line": 44,
+      "docstring": "Create validation milestones for positive screening hits."
+    },
+    {
+      "full_path": "/api/v2/hits/validate",
+      "method": "POST",
+      "handler": "validate_hits",
+      "file": "api/routes/hit_validation.py",
+      "line": 28,
+      "docstring": "Validate screening hits against ChEMBL, PubMed, PubChem, and platform claims."
+    },
+    {
+      "full_path": "/api/v2/hits/validate/single",
+      "method": "GET",
+      "handler": "validate_single_hit",
+      "file": "api/routes/hit_validation.py",
+      "line": 97,
+      "docstring": "Validate a single screening hit."
+    },
+    {
+      "full_path": "/api/v2/hypotheses",
+      "method": "GET",
+      "handler": "list_hypotheses",
+      "file": "api/routes/evidence.py",
+      "line": 215,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/hypotheses",
+      "method": "POST",
+      "handler": "create_hypothesis",
+      "file": "api/routes/hypothesis_gen.py",
+      "line": 53,
+      "docstring": "Create a hypothesis card directly (admin).\n\nUnlike /hypotheses/generate which uses LLM synthesis from claims,\nthis endpoint allows direct insertion of curated hypotheses\n(e.g., from convergence synthe"
+    },
+    {
+      "full_path": "/api/v2/hypotheses/convergence",
+      "method": "GET",
+      "handler": "get_convergence_signals",
+      "file": "api/routes/hypothesis_gen.py",
+      "line": 93,
+      "docstring": "View current convergence signals without generating hypotheses.\n\nReturns claim clusters where multiple independent sources converge on\nthe same molecular target \u2014 candidates for hypothesis generation."
+    },
+    {
+      "full_path": "/api/v2/hypotheses/generate",
+      "method": "POST",
+      "handler": "trigger_generation",
+      "file": "api/routes/hypothesis_gen.py",
+      "line": 130,
+      "docstring": "Trigger hypothesis generation from new evidence convergence.\n\nScans claims from the last *days_back* days, identifies convergence\nsignals, synthesizes hypotheses via Claude Haiku, and stores results\ni"
+    },
+    {
+      "full_path": "/api/v2/hypotheses/prioritized",
+      "method": "GET",
+      "handler": "get_prioritized_hypotheses",
+      "file": "api/routes/scoring.py",
+      "line": 76,
+      "docstring": "Rank all hypotheses by multi-criteria score, assign action tiers.\n\nTier A: Top 5 high-conviction hypotheses ready for Phase 3.\nTier B: Medium-priority, need more evidence or refinement.\nTier C: Low-pr"
+    },
+    {
+      "full_path": "/api/v2/ingest/biorxiv",
+      "method": "POST",
+      "handler": "trigger_biorxiv_ingestion",
+      "file": "api/routes/ingestion.py",
+      "line": 92,
+      "docstring": "Scan bioRxiv + medRxiv for SMA-relevant preprints and store as sources."
+    },
+    {
+      "full_path": "/api/v2/ingest/compounds",
+      "method": "POST",
+      "handler": "trigger_compound_ingestion",
+      "file": "api/routes/ingestion.py",
+      "line": 595,
+      "docstring": "Pull bioactivity data from ChEMBL for all gene targets.\n\nSearches ChEMBL for each gene target in the database, retrieves\nbioactivity records, and stores compound-target edges in graph_edges."
+    },
+    {
+      "full_path": "/api/v2/ingest/embeddings",
+      "method": "POST",
+      "handler": "ingest_embeddings",
+      "file": "api/routes/gpu.py",
+      "line": 355,
+      "docstring": "Update target metadata with ESM-2 embedding information.\n\nStores embedding metadata (model, dim, sequence length) in the targets\ntable metadata column for each matching target symbol."
+    },
+    {
+      "full_path": "/api/v2/ingest/fulltext",
+      "method": "POST",
+      "handler": "trigger_fulltext_fetching",
+      "file": "api/routes/ingestion.py",
+      "line": 814,
+      "docstring": "Fetch full-text papers from PubMed Central OA for sources that only have abstracts.\n\nSources: Europe PMC \u2192 NCBI PMC \u2192 Unpaywall (in order of preference)."
+    },
+    {
+      "full_path": "/api/v2/ingest/network",
+      "method": "POST",
+      "handler": "trigger_network_ingestion",
+      "file": "api/routes/ingestion.py",
+      "line": 497,
+      "docstring": "Pull protein-protein interactions from STRING and pathway data from KEGG.\n\nPopulates graph_edges table for network_centrality scoring."
+    },
+    {
+      "full_path": "/api/v2/ingest/offtargets",
+      "method": "POST",
+      "handler": "ingest_offtargets",
+      "file": "api/routes/gpu.py",
+      "line": 402,
+      "docstring": "Import Cas-OFFinder off-target results into crispr_offtargets table."
+    },
+    {
+      "full_path": "/api/v2/ingest/patents",
+      "method": "POST",
+      "handler": "trigger_patent_ingestion",
+      "file": "api/routes/ingestion.py",
+      "line": 293,
+      "docstring": "Import SMA-related patents into the sources table.\n\nGoogle Patents blocks server IPs (returns 503), so patents should be\nfetched locally and uploaded as JSON.  Two modes:\n\n1. **json_path** (recommende"
+    },
+    {
+      "full_path": "/api/v2/ingest/proteins",
+      "method": "POST",
+      "handler": "trigger_protein_ingestion",
+      "file": "api/routes/ingestion.py",
+      "line": 685,
+      "docstring": "Pull protein annotations from UniProt for all gene targets.\n\nMaps each gene symbol to its UniProt accession, fetches full protein\nannotations (GO terms, pathways, function), and stores shared-pathway\n"
+    },
+    {
+      "full_path": "/api/v2/ingest/pubmed",
+      "method": "POST",
+      "handler": "trigger_pubmed_ingestion",
+      "file": "api/routes/ingestion.py",
+      "line": 39,
+      "docstring": "Pull recent SMA papers from PubMed and store in sources table."
+    },
+    {
+      "full_path": "/api/v2/ingest/spliceai",
+      "method": "POST",
+      "handler": "ingest_spliceai",
+      "file": "api/routes/gpu.py",
+      "line": 303,
+      "docstring": "Import SpliceAI delta scores into splice_scores table.\n\nUses UPSERT on (chrom, pos, ref, alt) to avoid duplicates."
+    },
+    {
+      "full_path": "/api/v2/ingest/structures",
+      "method": "POST",
+      "handler": "trigger_structure_ingestion",
+      "file": "api/routes/ingestion.py",
+      "line": 380,
+      "docstring": "Fetch AlphaFold protein structure predictions for core SMA proteins.\n\nUses the pre-defined SMA_PROTEINS mapping (SMN1, SMN2, PLS3, STMN2,\nNCALD, UBA1, CORO1C) to fetch structure predictions and pLDDT "
+    },
+    {
+      "full_path": "/api/v2/ingest/trial-results",
+      "method": "POST",
+      "handler": "trigger_trial_results_ingestion",
+      "file": "api/routes/ingestion.py",
+      "line": 203,
+      "docstring": "Fetch results for completed SMA trials and store as sources for claim extraction.\n\nCalls ClinicalTrials.gov v2 API for all completed SMA trials that have posted\nresults (outcome measures, adverse even"
+    },
+    {
+      "full_path": "/api/v2/ingest/trials",
+      "method": "POST",
+      "handler": "trigger_trials_ingestion",
+      "file": "api/routes/ingestion.py",
+      "line": 145,
+      "docstring": "Pull all SMA clinical trials from ClinicalTrials.gov."
+    },
+    {
+      "full_path": "/api/v2/lab/assays",
+      "method": "GET",
+      "handler": "assay_library",
+      "file": "api/routes/lab_os.py",
+      "line": 20,
+      "docstring": "Get standardized SMA assay library (8 assays)."
+    },
+    {
+      "full_path": "/api/v2/lab/cloud-labs",
+      "method": "GET",
+      "handler": "cloud_labs",
+      "file": "api/routes/lab_os.py",
+      "line": 26,
+      "docstring": "Get cloud lab integration specs (Emerald, Strateos, Opentrons)."
+    },
+    {
+      "full_path": "/api/v2/lab/design",
+      "method": "GET",
+      "handler": "design_experiment",
+      "file": "api/routes/lab_os.py",
+      "line": 32,
+      "docstring": "Generate experiment design from a hypothesis."
+    },
+    {
+      "full_path": "/api/v2/locus/discordant",
+      "method": "GET",
+      "handler": "discordant_cases",
+      "file": "api/routes/smn_locus.py",
+      "line": 48,
+      "docstring": "Examples of genotype-phenotype discordance in SMA.\n\nReturns clinical scenarios where SMN2 copy number alone fails to\npredict disease severity \u2014 including asymptomatic carriers, discordant\nsiblings, un"
+    },
+    {
+      "full_path": "/api/v2/locus/modifiers",
+      "method": "GET",
+      "handler": "phenotype_modifiers",
+      "file": "api/routes/smn_locus.py",
+      "line": 33,
+      "docstring": "List known phenotype modifiers beyond SMN2 copy number.\n\nCovers SMN2 splicing efficiency, modifier genes (PLS3, NCALD, NAIP),\ngene conversion events, intragenic variants, epigenetics, and\npolygenic ba"
+    },
+    {
+      "full_path": "/api/v2/locus/smn",
+      "method": "GET",
+      "handler": "smn_locus_info",
+      "file": "api/routes/smn_locus.py",
+      "line": 22,
+      "docstring": "Get comprehensive SMN locus information \u2014 why copy number alone doesn't predict phenotype.\n\nReturns locus architecture (SMN1 vs SMN2, the critical C>T difference),\nall known phenotype modifiers with t"
+    },
+    {
+      "full_path": "/api/v2/md/generate/{sim_key}",
+      "method": "GET",
+      "handler": "generate_simulation",
+      "file": "api/routes/md_simulation.py",
+      "line": 30,
+      "docstring": "Generate complete OpenMM MD simulation scripts for an SMA target.\n\nReturns 3 ready-to-run Python scripts:\n1. Setup (structure loading, solvation, minimization, equilibration)\n2. Production (NPT ensemb"
+    },
+    {
+      "full_path": "/api/v2/md/simulations",
+      "method": "GET",
+      "handler": "get_available_simulations",
+      "file": "api/routes/md_simulation.py",
+      "line": 19,
+      "docstring": "List all available SMA molecular dynamics simulation templates.\n\n6 simulation types covering: SMN oligomerization, hnRNP A1-ISS-N1 binding,\nrisdiplam-SMN2 interaction, NCALD calcium dynamics, PLS3 act"
+    },
+    {
+      "full_path": "/api/v2/ml-proxy/predict",
+      "method": "POST",
+      "handler": "predict_ml_proxy",
+      "file": "api/routes/ml_proxy.py",
+      "line": 110,
+      "docstring": "Predict DiffDock confidence for a batch of compounds.\n\n~1000x faster than running DiffDock. Processes thousands of compounds\nin milliseconds where DiffDock would take days. Results are sorted by\npredi"
+    },
+    {
+      "full_path": "/api/v2/ml-proxy/screen-library",
+      "method": "POST",
+      "handler": "screen_library",
+      "file": "api/routes/ml_proxy.py",
+      "line": 155,
+      "docstring": "Screen all compounds in the molecule_screenings DB table using the\ntrained ML proxy. Returns the top-K predicted binders ranked by\npredicted DiffDock confidence.\n\nThis enables screening the full libra"
+    },
+    {
+      "full_path": "/api/v2/ml-proxy/status",
+      "method": "GET",
+      "handler": "ml_proxy_status",
+      "file": "api/routes/ml_proxy.py",
+      "line": 136,
+      "docstring": "Return model statistics, training data info, and accuracy metrics.\n\nIncludes R2, MAE, OOB R2 (RandomForest), feature importances (top 20),\ncross-validation scores, target/source distributions, and sca"
+    },
+    {
+      "full_path": "/api/v2/ml-proxy/train",
+      "method": "POST",
+      "handler": "train_ml_proxy",
+      "file": "api/routes/ml_proxy.py",
+      "line": 77,
+      "docstring": "Train or retrain the v2 proxy model on all available DiffDock results.\n\nUses RDKit Morgan fingerprints (ECFP4, 2048-bit) + target one-hot encoding\nwith a RandomForestRegressor (500 trees). Falls back "
+    },
+    {
+      "full_path": "/api/v2/modality/compare",
+      "method": "GET",
+      "handler": "compare_all",
+      "file": "api/routes/modality_comparison.py",
+      "line": 30,
+      "docstring": "Compare modalities for all SMA targets.\n\nReturns a list of modality comparisons for every target in the platform,\neach ranked by feasibility."
+    },
+    {
+      "full_path": "/api/v2/modality/compare/{symbol}",
+      "method": "GET",
+      "handler": "compare_modalities",
+      "file": "api/routes/modality_comparison.py",
+      "line": 19,
+      "docstring": "Compare therapeutic modalities for an SMA target.\n\nReturns all applicable modalities (small molecule, ASO, CRISPR, gene therapy,\nprotein binder) ranked by feasibility, with pros/cons, development time"
+    },
+    {
+      "full_path": "/api/v2/models/mouse",
+      "method": "GET",
+      "handler": "list_mouse_models",
+      "file": "api/routes/mouse_models.py",
+      "line": 8,
+      "docstring": "List all SMA mouse models with phenotype data."
+    },
+    {
+      "full_path": "/api/v2/models/mouse/compare",
+      "method": "GET",
+      "handler": "compare",
+      "file": "api/routes/mouse_models.py",
+      "line": 21,
+      "docstring": "Compare two SMA mouse models."
+    },
+    {
+      "full_path": "/api/v2/models/mouse/methodology",
+      "method": "GET",
+      "handler": "methodology_problems",
+      "file": "api/routes/mouse_models.py",
+      "line": 15,
+      "docstring": "Motor neuron counting reproducibility problem (0-80% variation)."
+    },
+    {
+      "full_path": "/api/v2/modifier/evidence/{symbol}",
+      "method": "GET",
+      "handler": "modifier_evidence",
+      "file": "api/routes/modifier.py",
+      "line": 97,
+      "docstring": "Get all evidence supporting a specific modifier gene's role in SMA.\n\nReturns published literature references (PMIDs), mechanism details,\nand any related claims from the database."
+    },
+    {
+      "full_path": "/api/v2/modifier/factors",
+      "method": "GET",
+      "handler": "modifier_factors",
+      "file": "api/routes/modifier.py",
+      "line": 78,
+      "docstring": "Return all known SMA modifier genes with evidence and effect details.\n\nLists PLS3, NCALD, NAIP, SERF1, GTF2H2, CORO1C with their mechanisms,\npublished PMIDs, magnitude of effect, and database claim co"
+    },
+    {
+      "full_path": "/api/v2/modifier/predict",
+      "method": "GET",
+      "handler": "modifier_predict",
+      "file": "api/routes/modifier.py",
+      "line": 27,
+      "docstring": "Predict SMA phenotype severity from SMN2 copies and modifier gene status.\n\nExample: `/modifier/predict?smn2_copies=3&pls3=high&ncald=low`\n\nReturns predicted SMA type, severity score (0-1), confidence "
+    },
+    {
+      "full_path": "/api/v2/molecules/browser",
+      "method": "GET",
+      "handler": "list_molecules",
+      "file": "api/routes/molecule_browser.py",
+      "line": 75,
+      "docstring": "Paginated molecule listing with filters and sorting."
+    },
+    {
+      "full_path": "/api/v2/molecules/browser/export",
+      "method": "GET",
+      "handler": "export_molecules",
+      "file": "api/routes/molecule_browser.py",
+      "line": 246,
+      "docstring": "Export molecules as CSV or SDF for researchers/chemists."
+    },
+    {
+      "full_path": "/api/v2/molecules/browser/stats",
+      "method": "GET",
+      "handler": "molecule_stats",
+      "file": "api/routes/molecule_browser.py",
+      "line": 190,
+      "docstring": "Aggregate statistics for the molecule collection."
+    },
+    {
+      "full_path": "/api/v2/molecules/browser/{mol_id}",
+      "method": "GET",
+      "handler": "get_molecule",
+      "file": "api/routes/molecule_browser.py",
+      "line": 355,
+      "docstring": "Get full details for a single molecule."
+    },
+    {
+      "full_path": "/api/v2/multisystem/combinations",
+      "method": "GET",
+      "handler": "combination_therapies",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 331,
+      "docstring": "Get combination therapy strategies for multisystem SMA."
+    },
+    {
+      "full_path": "/api/v2/multisystem/energy",
+      "method": "GET",
+      "handler": "energy_budget",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 337,
+      "docstring": "Get energy budget analysis for SMA motor neurons."
+    },
+    {
+      "full_path": "/api/v2/multisystem/full",
+      "method": "GET",
+      "handler": "multisystem_full",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 343,
+      "docstring": "Full multisystem SMA analysis."
+    },
+    {
+      "full_path": "/api/v2/multisystem/organs",
+      "method": "GET",
+      "handler": "organ_systems",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 325,
+      "docstring": "Get organ systems affected in SMA beyond motor neurons."
+    },
+    {
+      "full_path": "/api/v2/network/interactions",
+      "method": "GET",
+      "handler": "get_interaction_network",
+      "file": "api/routes/interaction_network.py",
+      "line": 13,
+      "docstring": "Build the full drug-target interaction network.\n\nReturns nodes (drugs, targets) and edges (interactions) with evidence counts.\nCombines: graph_edges, ChEMBL bioactivity (molecule_screenings), claims,\n"
+    },
+    {
+      "full_path": "/api/v2/network/interactions/target/{symbol}",
+      "method": "GET",
+      "handler": "get_target_interactions",
+      "file": "api/routes/interaction_network.py",
+      "line": 140,
+      "docstring": "Get all interactions for a specific target."
+    },
+    {
+      "full_path": "/api/v2/news",
+      "method": "GET",
+      "handler": "list_posts",
+      "file": "api/routes/news.py",
+      "line": 236,
+      "docstring": "List published news posts, newest first, with pagination."
+    },
+    {
+      "full_path": "/api/v2/news",
+      "method": "POST",
+      "handler": "create_post",
+      "file": "api/routes/news.py",
+      "line": 388,
+      "docstring": "Create a new news post. Requires x-admin-key header."
+    },
+    {
+      "full_path": "/api/v2/news/admin/comments",
+      "method": "GET",
+      "handler": "list_pending_comments",
+      "file": "api/routes/news.py",
+      "line": 512,
+      "docstring": "List comments for admin moderation. Requires x-admin-key header."
+    },
+    {
+      "full_path": "/api/v2/news/admin/comments/{comment_id}/approve",
+      "method": "POST",
+      "handler": "approve_comment",
+      "file": "api/routes/news.py",
+      "line": 549,
+      "docstring": "Approve a pending comment. Requires x-admin-key header."
+    },
+    {
+      "full_path": "/api/v2/news/admin/comments/{comment_id}/reject",
+      "method": "POST",
+      "handler": "reject_comment",
+      "file": "api/routes/news.py",
+      "line": 562,
+      "docstring": "Delete a spam/rejected comment. Requires x-admin-key header."
+    },
+    {
+      "full_path": "/api/v2/news/feed/rss",
+      "method": "GET",
+      "handler": "rss_feed",
+      "file": "api/routes/news.py",
+      "line": 300,
+      "docstring": "Generate RSS 2.0 XML feed of published news posts."
+    },
+    {
+      "full_path": "/api/v2/news/{slug}",
+      "method": "GET",
+      "handler": "get_post",
+      "file": "api/routes/news.py",
+      "line": 361,
+      "docstring": "Get a single post by slug with approved comments."
+    },
+    {
+      "full_path": "/api/v2/news/{slug}",
+      "method": "PUT",
+      "handler": "update_post",
+      "file": "api/routes/news.py",
+      "line": 408,
+      "docstring": "Update a news post by slug. Requires x-admin-key header."
+    },
+    {
+      "full_path": "/api/v2/news/{slug}/comments",
+      "method": "POST",
+      "handler": "submit_comment",
+      "file": "api/routes/news.py",
+      "line": 441,
+      "docstring": "Submit a comment on a news post. Public endpoint with spam detection."
+    },
+    {
+      "full_path": "/api/v2/nims/alphafold/complexes",
+      "method": "GET",
+      "handler": "check_alphafold_complexes",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 569,
+      "docstring": "Check AlphaFold DB for SMA protein complex predictions (GTC 2026 expansion)."
+    },
+    {
+      "full_path": "/api/v2/nims/alphafold2",
+      "method": "POST",
+      "handler": "predict_structure_af2",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 330,
+      "docstring": "Predict protein structure using AlphaFold2 NIM.\nUses MSA for high-accuracy structure prediction.\nSlower than ESMfold but more accurate for novel proteins."
+    },
+    {
+      "full_path": "/api/v2/nims/alphafold2-multimer",
+      "method": "POST",
+      "handler": "predict_complex_af2",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 359,
+      "docstring": "Predict protein complex structure using AlphaFold2-Multimer NIM.\nSupports 1-6 protein chains."
+    },
+    {
+      "full_path": "/api/v2/nims/binders",
+      "method": "GET",
+      "handler": "list_binders",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 623,
+      "docstring": "List all designed protein binders.\n\nReturns ``{\"binders\": [...]}`` with field names the frontend expects:\ntarget, design, has_structure (derived from pdb_path)."
+    },
+    {
+      "full_path": "/api/v2/nims/design-binder",
+      "method": "POST",
+      "handler": "design_protein_binder",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 418,
+      "docstring": "Design a protein binder for a target using RFdiffusion NIM.\nCreates novel protein backbones that bind to specified hotspot residues.\nUseful for designing therapeutic proteins against ROCK2, MAPK14, LI"
+    },
+    {
+      "full_path": "/api/v2/nims/design-rock2-binder",
+      "method": "POST",
+      "handler": "design_rock2_binder",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 542,
+      "docstring": "End-to-end binder design pipeline for ROCK2:\n1. Download ROCK2 AlphaFold structure\n2. RFdiffusion: design binder backbones\n3. ProteinMPNN: design sequences for backbones"
+    },
+    {
+      "full_path": "/api/v2/nims/design-sequence",
+      "method": "POST",
+      "handler": "design_protein_sequence",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 451,
+      "docstring": "Design amino acid sequences for a protein backbone using ProteinMPNN NIM.\nUse after RFdiffusion to get sequences for designed backbones."
+    },
+    {
+      "full_path": "/api/v2/nims/designed-molecules",
+      "method": "GET",
+      "handler": "list_designed_molecules",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 678,
+      "docstring": "Alias for /molecules \u2014 the frontend uses this path."
+    },
+    {
+      "full_path": "/api/v2/nims/dock",
+      "method": "POST",
+      "handler": "dock_compound",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 120,
+      "docstring": "Dock a compound to a protein target using DiffDock v2.2 NIM.\nDefault target: SMN2 (AlphaFold structure auto-downloaded)."
+    },
+    {
+      "full_path": "/api/v2/nims/dockings",
+      "method": "GET",
+      "handler": "list_dockings",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 686,
+      "docstring": "List extended DiffDock campaign results (legacy endpoint)."
+    },
+    {
+      "full_path": "/api/v2/nims/esm2-embed",
+      "method": "POST",
+      "handler": "esm2_embed_sequences",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 511,
+      "docstring": "Get protein embeddings using ESM-2 650M NIM.\n\nSTATUS: DEGRADED \u2014 NVIDIA returns 500 errors intermittently.\nIncludes automatic retry logic (3 attempts with exponential backoff)."
+    },
+    {
+      "full_path": "/api/v2/nims/esmfold",
+      "method": "POST",
+      "handler": "predict_structure_esmfold",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 392,
+      "docstring": "Fast protein structure prediction using ESMfold NIM.\nNo MSA required \u2014 uses protein language model directly.\nMuch faster than AlphaFold2, good for screening many proteins."
+    },
+    {
+      "full_path": "/api/v2/nims/extended-docking",
+      "method": "GET",
+      "handler": "extended_docking_results",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 697,
+      "docstring": "Extended DiffDock campaign results for the GPU Results section.\n\nReturns ``{\"total\": N, \"unique_drugs\": N, \"unique_targets\": N,\n\"avg_confidence\": float, \"results\": [...]}`` with field names\nmatching t"
+    },
+    {
+      "full_path": "/api/v2/nims/generate-molecules",
+      "method": "POST",
+      "handler": "generate_molecules",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 198,
+      "docstring": "Generate novel molecules based on a scaffold using GenMol v1.0 NIM.\nDefault: 4-AP scaffold decoration for SMN2-targeting analogs."
+    },
+    {
+      "full_path": "/api/v2/nims/health",
+      "method": "GET",
+      "handler": "nim_health",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 103,
+      "docstring": "Check NVIDIA NIM API health and API key status."
+    },
+    {
+      "full_path": "/api/v2/nims/molecules",
+      "method": "GET",
+      "handler": "list_molecules",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 667,
+      "docstring": "List all AI-generated molecules.\n\nReturns ``{\"molecules\": [...]}`` with field names the frontend expects."
+    },
+    {
+      "full_path": "/api/v2/nims/msa-search",
+      "method": "POST",
+      "handler": "run_msa_search",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 482,
+      "docstring": "Run multiple sequence alignment using ColabFold MSA NIM.\nSearches Uniref30, PDB70, colabfold_envdb.\nRequired as input for AlphaFold2 pipeline."
+    },
+    {
+      "full_path": "/api/v2/nims/nim-summary",
+      "method": "GET",
+      "handler": "nim_compute_summary",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 589,
+      "docstring": "Aggregated stats for the GPU Results overview cards.\n\nReturns field names matching the frontend expectations:\n- binders_designed, molecules_generated\n- structures_alphafold, structures_esmfold, struct"
+    },
+    {
+      "full_path": "/api/v2/nims/predict-structure",
+      "method": "POST",
+      "handler": "predict_structure",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 227,
+      "docstring": "Predict biomolecular complex structure using OpenFold3 NIM.\nSupports protein, RNA, and ligand inputs."
+    },
+    {
+      "full_path": "/api/v2/nims/protein-structures",
+      "method": "GET",
+      "handler": "list_protein_structures",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 740,
+      "docstring": "List predicted protein structures for the GPU Results section.\n\nReturns ``{\"structures\": [...]}`` with field names the frontend expects:\ntarget (from target_symbol/symbol), method (from method_label/s"
+    },
+    {
+      "full_path": "/api/v2/nims/redock-4ap",
+      "method": "POST",
+      "handler": "redock_4ap",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 172,
+      "docstring": "Re-dock 4-Aminopyridine against SMN2 using DiffDock v2.2.\nValidates our original finding (+0.100) with the improved model."
+    },
+    {
+      "full_path": "/api/v2/nims/rna-structure",
+      "method": "POST",
+      "handler": "predict_rna_structure",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 287,
+      "docstring": "Predict RNA 3D structure using RNAPro.\n\nNOTE: RNAPro has NO cloud API on build.nvidia.com (returns 404).\nThis endpoint only works when RNAPRO_SELF_URL is configured\n(self-hosted on Vast.ai or similar "
+    },
+    {
+      "full_path": "/api/v2/nims/smn2-rna-structure",
+      "method": "POST",
+      "handler": "predict_smn2_rna",
+      "file": "api/routes/nvidia_nims.py",
+      "line": 261,
+      "docstring": "Predict SMN2 pre-mRNA 3D structure around exon 7 using OpenFold3.\nNovel analysis \u2014 no prior RNA structure prediction for this region."
+    },
+    {
+      "full_path": "/api/v2/nmj/chip-models",
+      "method": "GET",
+      "handler": "chip_models",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 248,
+      "docstring": "Get organ-on-chip models for NMJ validation (PostgreSQL-backed)."
+    },
+    {
+      "full_path": "/api/v2/nmj/ev-cargo",
+      "method": "GET",
+      "handler": "ev_cargo",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 226,
+      "docstring": "Get EV therapeutic cargo options for NMJ delivery (PostgreSQL-backed)."
+    },
+    {
+      "full_path": "/api/v2/nmj/happy-muscle",
+      "method": "GET",
+      "handler": "happy_muscle",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 272,
+      "docstring": "Full analysis of the 'happy muscle \u2192 surviving neuron' hypothesis (DB-backed)."
+    },
+    {
+      "full_path": "/api/v2/nmj/signals",
+      "method": "GET",
+      "handler": "retrograde_signals",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 189,
+      "docstring": "Get retrograde signaling molecules at the NMJ (PostgreSQL-backed)."
+    },
+    {
+      "full_path": "/api/v2/omics/nanopore/catalog",
+      "method": "GET",
+      "handler": "nanopore_catalog",
+      "file": "api/routes/omics.py",
+      "line": 42,
+      "docstring": "Full catalog of publicly available SMA-relevant RNA-seq data.\n\nSearches both NCBI SRA and ENA, deduplicates, and groups results\ninto categories: direct_rna, cdna_rnaseq, motor_neuron_specific,\nsma_pat"
+    },
+    {
+      "full_path": "/api/v2/omics/nanopore/recommendations",
+      "method": "GET",
+      "handler": "nanopore_recommendations",
+      "file": "api/routes/omics.py",
+      "line": 53,
+      "docstring": "Recommend which public datasets to download and analyse next.\n\nPrioritises: SMA patient motor neuron RNA-seq > SMA mouse model >\ngeneral motor neuron > iPSC-MN.  Each recommendation includes a\nrationa"
+    },
+    {
+      "full_path": "/api/v2/omics/nanopore/search",
+      "method": "GET",
+      "handler": "nanopore_search",
+      "file": "api/routes/omics.py",
+      "line": 25,
+      "docstring": "Search NCBI SRA for Nanopore RNA-seq datasets matching the query."
+    },
+    {
+      "full_path": "/api/v2/organoid/models",
+      "method": "GET",
+      "handler": "get_model_systems",
+      "file": "api/routes/organoid_scorecard.py",
+      "line": 73,
+      "docstring": "List available SMA model systems with capabilities and constraints.\n\nUseful for the frontend to display model system metadata without\nrunning the full scorecard."
+    },
+    {
+      "full_path": "/api/v2/organoid/scorecard",
+      "method": "GET",
+      "handler": "get_organoid_scorecard",
+      "file": "api/routes/organoid_scorecard.py",
+      "line": 20,
+      "docstring": "Score testability of all SMA target predictions in organoid/NMJ models.\n\nReturns a ranked list of targets with their best model systems,\ntestability scores, estimated costs, and timelines."
+    },
+    {
+      "full_path": "/api/v2/organoid/scorecard/{symbol}",
+      "method": "GET",
+      "handler": "get_target_testability",
+      "file": "api/routes/organoid_scorecard.py",
+      "line": 44,
+      "docstring": "Score testability for a specific target in available model systems.\n\nReturns recommended models ranked by endpoint overlap, with cost and\ntimeline estimates."
+    },
+    {
+      "full_path": "/api/v2/patents/freedom-to-operate",
+      "method": "GET",
+      "handler": "patent_fto",
+      "file": "api/routes/patent_landscape.py",
+      "line": 50,
+      "docstring": "Freedom-to-operate assessment for a specific compound.\n\nSearches all SMA patents for mentions of the compound (including known synonyms).\nReturns risk level: 'clear' (no patents), 'caution' (related p"
+    },
+    {
+      "full_path": "/api/v2/patents/fto",
+      "method": "GET",
+      "handler": "fto_summary",
+      "file": "api/routes/patent_landscape.py",
+      "line": 101,
+      "docstring": "Freedom-to-operate summary across all SMA target areas.\n\nReturns a risk-sorted overview of patent coverage for key SMA targets\nincluding SMN2 splicing, gene therapy, modifier genes (NCALD, PLS3),\nnove"
+    },
+    {
+      "full_path": "/api/v2/patents/fto/{symbol}",
+      "method": "GET",
+      "handler": "fto_for_target",
+      "file": "api/routes/patent_landscape.py",
+      "line": 122,
+      "docstring": "FTO assessment for a specific target or compound.\n\nReturns patent landscape details for the given target including:\n- Known patent holders and key patent numbers\n- Patent expiry ranges\n- Risk level (h"
+    },
+    {
+      "full_path": "/api/v2/patents/landscape",
+      "method": "GET",
+      "handler": "patent_landscape_overview",
+      "file": "api/routes/patent_landscape.py",
+      "line": 29,
+      "docstring": "Full SMA patent landscape analysis.\n\nReturns temporal filing trends, mechanism clustering (splicing, gene therapy,\nantisense, small molecule, CRISPR, biomarker, screening, delivery),\ntop assignees, an"
+    },
+    {
+      "full_path": "/api/v2/patents/recent",
+      "method": "GET",
+      "handler": "recent_patent_filings",
+      "file": "api/routes/patent_landscape.py",
+      "line": 76,
+      "docstring": "Most recent SMA patent filings.\n\nReturns patents filed within the specified window, with mechanism classification\nand annotations for any that mention our discovery targets (SMN2, PLS3, STMN2,\n4-AP, e"
+    },
+    {
+      "full_path": "/api/v2/pockets",
+      "method": "GET",
+      "handler": "list_pockets",
+      "file": "api/routes/pockets.py",
+      "line": 68,
+      "docstring": "Return pocket predictions for all structures, sorted by top score descending."
+    },
+    {
+      "full_path": "/api/v2/pockets/druggable",
+      "method": "GET",
+      "handler": "list_druggable_pockets",
+      "file": "api/routes/pockets.py",
+      "line": 131,
+      "docstring": "Return only highly druggable proteins (top_score > 50 AND top_probability > 0.8)."
+    },
+    {
+      "full_path": "/api/v2/pockets/stats",
+      "method": "GET",
+      "handler": "pockets_stats",
+      "file": "api/routes/pockets.py",
+      "line": 96,
+      "docstring": "Summary statistics for pocket predictions."
+    },
+    {
+      "full_path": "/api/v2/pockets/{symbol}",
+      "method": "GET",
+      "handler": "get_pockets_for_symbol",
+      "file": "api/routes/pockets.py",
+      "line": 169,
+      "docstring": "Return all pocket predictions for a specific target symbol."
+    },
+    {
+      "full_path": "/api/v2/predictions",
+      "method": "GET",
+      "handler": "list_predictions",
+      "file": "api/routes/predictions.py",
+      "line": 58,
+      "docstring": "List prediction cards with optional filters."
+    },
+    {
+      "full_path": "/api/v2/predictions/generate",
+      "method": "POST",
+      "handler": "generate_predictions",
+      "file": "api/routes/predictions.py",
+      "line": 210,
+      "docstring": "Generate prediction cards from convergence scores >= 0.5."
+    },
+    {
+      "full_path": "/api/v2/predictions/{prediction_id}",
+      "method": "GET",
+      "handler": "get_prediction",
+      "file": "api/routes/predictions.py",
+      "line": 95,
+      "docstring": "Get a single prediction card with full detail."
+    },
+    {
+      "full_path": "/api/v2/predictions/{prediction_id}/export",
+      "method": "GET",
+      "handler": "export_prediction",
+      "file": "api/routes/predictions.py",
+      "line": 107,
+      "docstring": "Export prediction card as Markdown (for grant applications)."
+    },
+    {
+      "full_path": "/api/v2/predictions/{prediction_id}/status",
+      "method": "PATCH",
+      "handler": "update_prediction_status",
+      "file": "api/routes/predictions.py",
+      "line": 218,
+      "docstring": "Update prediction card status."
+    },
+    {
+      "full_path": "/api/v2/preprints",
+      "method": "GET",
+      "handler": "list_preprints",
+      "file": "api/routes/preprints.py",
+      "line": 37,
+      "docstring": "List recent SMA-relevant preprints stored in the database.\n\nResults are ordered by relevance score descending, then by posted_date descending."
+    },
+    {
+      "full_path": "/api/v2/preprints/scan",
+      "method": "POST",
+      "handler": "trigger_preprint_scan",
+      "file": "api/routes/preprints.py",
+      "line": 91,
+      "docstring": "Trigger a fresh scan of bioRxiv and medRxiv for SMA-relevant preprints.\n\nRequires x-admin-key header. Creates the preprints table if it does not exist,\nthen upserts all newly found preprints by DOI."
+    },
+    {
+      "full_path": "/api/v2/prime-editing/feasibility",
+      "method": "GET",
+      "handler": "get_prime_editing_feasibility",
+      "file": "api/routes/prime_edit.py",
+      "line": 16,
+      "docstring": "Assess prime editing feasibility for all SMA-relevant edits.\n\nEvaluates PE2/PE3/PEmax for:\n- SMN2 C6T correction (the root cause fix)\n- ISS-N1 disruption (permanent nusinersen)\n- ESE strengthening (Tr"
+    },
+    {
+      "full_path": "/api/v2/prioritize/compare",
+      "method": "GET",
+      "handler": "compare_target_priorities",
+      "file": "api/routes/prioritization.py",
+      "line": 71,
+      "docstring": "Side-by-side comparison of multiple targets across all 5 dimensions.\n\nReturns each target's scorecard, dimension leaders, and score gaps."
+    },
+    {
+      "full_path": "/api/v2/prioritize/target/{symbol}",
+      "method": "GET",
+      "handler": "get_target_prioritization",
+      "file": "api/routes/prioritization.py",
+      "line": 58,
+      "docstring": "Detailed multi-criteria prioritization for a single target.\n\nReturns composite score, per-dimension scores with detailed breakdowns,\nrank among all targets, and priority tier."
+    },
+    {
+      "full_path": "/api/v2/prioritize/targets",
+      "method": "GET",
+      "handler": "rank_all_targets",
+      "file": "api/routes/prioritization.py",
+      "line": 25,
+      "docstring": "Rank all targets across 5 dimensions: evidence convergence (30%),\nbiological plausibility (20%), interventionability (20%),\nnetwork centrality (15%), and novelty (15%).\n\nReturns targets sorted by comp"
+    },
+    {
+      "full_path": "/api/v2/prioritize/v2/compare",
+      "method": "GET",
+      "handler": "compare_target_priorities_v2",
+      "file": "api/routes/prioritization_v2.py",
+      "line": 92,
+      "docstring": "Side-by-side comparison of multiple targets across all 6 dimensions.\n\nReturns each target's scorecard, dimension leaders, radar chart data,\nand score gaps from the top-ranked target."
+    },
+    {
+      "full_path": "/api/v2/prioritize/v2/target/{symbol}",
+      "method": "GET",
+      "handler": "get_target_profile_v2",
+      "file": "api/routes/prioritization_v2.py",
+      "line": 79,
+      "docstring": "Deep multi-criteria profile for a single target.\n\nReturns composite score, 6-dimension scores with detailed breakdowns,\nrank among all targets, strengths/weaknesses analysis, and radar chart data."
+    },
+    {
+      "full_path": "/api/v2/prioritize/v2/targets",
+      "method": "GET",
+      "handler": "rank_all_targets_v2",
+      "file": "api/routes/prioritization_v2.py",
+      "line": 26,
+      "docstring": "Rank all targets across 6 dimensions: evidence convergence (25%),\ndruggability (20%), structural uniqueness (15%), clinical validation (15%),\nconservation (10%), and novelty (15%).\n\nIntegrates converg"
+    },
+    {
+      "full_path": "/api/v2/proprioception/analysis",
+      "method": "GET",
+      "handler": "proprioceptive_analysis",
+      "file": "api/routes/proprioception.py",
+      "line": 10,
+      "docstring": "Comprehensive proprioceptive pathway analysis in SMA."
+    },
+    {
+      "full_path": "/api/v2/proprioception/h-reflex",
+      "method": "GET",
+      "handler": "h_reflex_info",
+      "file": "api/routes/proprioception.py",
+      "line": 17,
+      "docstring": "H-reflex testing information for SMA proprioception."
+    },
+    {
+      "full_path": "/api/v2/proprioception/segments",
+      "method": "GET",
+      "handler": "segment_map",
+      "file": "api/routes/proprioception.py",
+      "line": 24,
+      "docstring": "Spinal cord segment vulnerability mapping."
+    },
+    {
+      "full_path": "/api/v2/proxy/batch",
+      "method": "POST",
+      "handler": "predict_batch",
+      "file": "api/routes/docking_proxy.py",
+      "line": 134,
+      "docstring": "Predict DiffDock confidence for many compounds at once.\n\nThis is the core fast screening endpoint. Processes thousands of\ncompounds in milliseconds where DiffDock would take days.\nResults are sorted b"
+    },
+    {
+      "full_path": "/api/v2/proxy/generate",
+      "method": "POST",
+      "handler": "generate_smiles",
+      "file": "api/routes/docking_proxy.py",
+      "line": 176,
+      "docstring": "Generate N random drug-like SMILES strings using a character-level\nMarkov chain trained on the screening library.\n\nUses three strategies: scaffold+substituent decoration,\ndual-fragment linking, and pu"
+    },
+    {
+      "full_path": "/api/v2/proxy/info",
+      "method": "GET",
+      "handler": "proxy_info",
+      "file": "api/routes/docking_proxy.py",
+      "line": 158,
+      "docstring": "Return model statistics, training data info, and accuracy metrics.\n\nIncludes R\u00b2, MAE, feature importances, cross-validation scores,\nand training data distribution."
+    },
+    {
+      "full_path": "/api/v2/proxy/predict",
+      "method": "POST",
+      "handler": "predict_single",
+      "file": "api/routes/docking_proxy.py",
+      "line": 111,
+      "docstring": "Predict DiffDock confidence for a single compound-target pair.\n\n~1000x faster than running DiffDock (microseconds vs minutes).\nReturns predicted confidence score, uncertainty estimate, and\nbinding int"
+    },
+    {
+      "full_path": "/api/v2/proxy/train",
+      "method": "POST",
+      "handler": "train_proxy",
+      "file": "api/routes/docking_proxy.py",
+      "line": 86,
+      "docstring": "Train or retrain the proxy model on all available DiffDock results.\n\nLoads results from gpu/results/ (v1, multi-target, NIM batch),\nextracts SMILES features, and trains a GradientBoosting or k-NN mode"
+    },
+    {
+      "full_path": "/api/v2/regen/genes",
+      "method": "GET",
+      "handler": "regeneration_genes",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 167,
+      "docstring": "Get regeneration-associated genes with SMA comparison."
+    },
+    {
+      "full_path": "/api/v2/regen/pathways",
+      "method": "GET",
+      "handler": "pathway_comparisons",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 173,
+      "docstring": "Compare regeneration pathways with SMA state."
+    },
+    {
+      "full_path": "/api/v2/regen/silenced",
+      "method": "GET",
+      "handler": "silenced_programs",
+      "file": "api/routes/advanced_analytics.py",
+      "line": 179,
+      "docstring": "Identify silenced regeneration programs in human SMA."
+    },
+    {
+      "full_path": "/api/v2/relink/claims",
+      "method": "POST",
+      "handler": "trigger_claim_relinking",
+      "file": "api/routes/ingestion.py",
+      "line": 467,
+      "docstring": "Retroactively link existing claims to targets using fuzzy matching."
+    },
+    {
+      "full_path": "/api/v2/report/target/{symbol}",
+      "method": "GET",
+      "handler": "get_target_report",
+      "file": "api/routes/target_report.py",
+      "line": 16,
+      "docstring": "Get comprehensive report card for an SMA target.\n\nReturns everything the platform knows about this target in one view:\nconvergence, claims, screening hits, structure, conservation, hypotheses."
+    },
+    {
+      "full_path": "/api/v2/reproducibility/test",
+      "method": "GET",
+      "handler": "run_reproducibility_tests",
+      "file": "api/routes/reproducibility.py",
+      "line": 13,
+      "docstring": "Run all reproducibility tests on convergence scores and rankings."
+    },
+    {
+      "full_path": "/api/v2/reproducibility/test/claims",
+      "method": "GET",
+      "handler": "test_claims",
+      "file": "api/routes/reproducibility.py",
+      "line": 34,
+      "docstring": "Test claim count consistency between scoring and database."
+    },
+    {
+      "full_path": "/api/v2/reproducibility/test/convergence",
+      "method": "GET",
+      "handler": "test_convergence",
+      "file": "api/routes/reproducibility.py",
+      "line": 20,
+      "docstring": "Test convergence score reproducibility (run twice, compare)."
+    },
+    {
+      "full_path": "/api/v2/reproducibility/test/ranking",
+      "method": "GET",
+      "handler": "test_ranking",
+      "file": "api/routes/reproducibility.py",
+      "line": 27,
+      "docstring": "Test ranking order stability."
+    },
+    {
+      "full_path": "/api/v2/repurpose/candidates",
+      "method": "GET",
+      "handler": "list_repurposing_candidates",
+      "file": "api/routes/cross_disease.py",
+      "line": 12,
+      "docstring": "List cross-disease drug repurposing candidates for SMA."
+    },
+    {
+      "full_path": "/api/v2/repurpose/candidates/disease/{disease}",
+      "method": "GET",
+      "handler": "candidates_by_disease",
+      "file": "api/routes/cross_disease.py",
+      "line": 28,
+      "docstring": "Get repurposing candidates from a specific disease (ALS, DMD, etc.)."
+    },
+    {
+      "full_path": "/api/v2/repurpose/candidates/target/{symbol}",
+      "method": "GET",
+      "handler": "candidates_by_target",
+      "file": "api/routes/cross_disease.py",
+      "line": 20,
+      "docstring": "Get repurposing candidates targeting a specific SMA protein."
+    },
+    {
+      "full_path": "/api/v2/research/directions",
+      "method": "GET",
+      "handler": "list_research_directions",
+      "file": "api/routes/research.py",
+      "line": 286,
+      "docstring": "List all 16 cutting-edge SMA research directions with connected targets."
+    },
+    {
+      "full_path": "/api/v2/research/directions/{direction_id}",
+      "method": "GET",
+      "handler": "get_research_direction",
+      "file": "api/routes/research.py",
+      "line": 316,
+      "docstring": "Deep-dive into a research direction with connected targets, claims, and hypotheses."
+    },
+    {
+      "full_path": "/api/v2/research/links",
+      "method": "GET",
+      "handler": "list_research_links",
+      "file": "api/routes/research.py",
+      "line": 411,
+      "docstring": "List curated research links from the research_links table."
+    },
+    {
+      "full_path": "/api/v2/research/spinal-stimulation",
+      "method": "GET",
+      "handler": "spinal_stimulation",
+      "file": "api/routes/research.py",
+      "line": 404,
+      "docstring": "Spinal cord stimulation for SMA \u2014 Capogrosso/Simon approach."
+    },
+    {
+      "full_path": "/api/v2/review/citation-summary/{target_symbol}",
+      "method": "GET",
+      "handler": "citation_summary",
+      "file": "api/routes/literature_review.py",
+      "line": 32,
+      "docstring": "Generate a citation-grade evidence summary for a target.\n\nReturns publication-ready text with PMID citations (Vancouver style)\nsuitable for paper introductions, review articles, or grant backgrounds.\n"
+    },
+    {
+      "full_path": "/api/v2/review/targets",
+      "method": "GET",
+      "handler": "list_reviewable_targets",
+      "file": "api/routes/literature_review.py",
+      "line": 16,
+      "docstring": "List targets with enough claims (>10) for meaningful literature review.\n\nReturns targets sorted by claim count descending, with metadata\nabout evidence volume and source diversity."
+    },
+    {
+      "full_path": "/api/v2/review/{target_symbol}",
+      "method": "GET",
+      "handler": "get_target_review",
+      "file": "api/routes/literature_review.py",
+      "line": 64,
+      "docstring": "Generate a structured literature review for a target.\n\nUses Claude Sonnet if ANTHROPIC_API_KEY is set (unless force_data_only=true).\nFalls back to data-only aggregation otherwise.\n\nThe review includes"
+    },
+    {
+      "full_path": "/api/v2/review/{target_symbol}/data",
+      "method": "GET",
+      "handler": "get_target_data_review",
+      "file": "api/routes/literature_review.py",
+      "line": 104,
+      "docstring": "Generate a data-only literature review (no LLM).\n\nPure data aggregation: claim counts, top papers, evidence summary\ngrouped by type. Always available regardless of API key."
+    },
+    {
+      "full_path": "/api/v2/rna/benchmark",
+      "method": "POST",
+      "handler": "benchmark",
+      "file": "api/routes/rna_binding.py",
+      "line": 50,
+      "docstring": "Benchmark a compound against known SMN2 modulators."
+    },
+    {
+      "full_path": "/api/v2/rna/modulators",
+      "method": "GET",
+      "handler": "known_modulators",
+      "file": "api/routes/rna_binding.py",
+      "line": 35,
+      "docstring": "Get known RNA-binding SMN2 splicing modulators."
+    },
+    {
+      "full_path": "/api/v2/rna/predict",
+      "method": "POST",
+      "handler": "predict_binding",
+      "file": "api/routes/rna_binding.py",
+      "line": 41,
+      "docstring": "Predict RNA-binding potential of a compound."
+    },
+    {
+      "full_path": "/api/v2/rna/targets",
+      "method": "GET",
+      "handler": "rna_targets",
+      "file": "api/routes/rna_binding.py",
+      "line": 29,
+      "docstring": "Get all RNA target sites in SMN2."
+    },
+    {
+      "full_path": "/api/v2/scores",
+      "method": "GET",
+      "handler": "list_scores",
+      "file": "api/routes/scoring.py",
+      "line": 27,
+      "docstring": "Score and rank all targets by composite prioritization score.\n\nSupports two scoring modes:\n- **discovery** (default): Boosts novel/emerging targets. Good for finding new leads.\n- **clinical**: Weights"
+    },
+    {
+      "full_path": "/api/v2/scores/refresh",
+      "method": "POST",
+      "handler": "refresh_scores",
+      "file": "api/routes/scoring.py",
+      "line": 111,
+      "docstring": "Re-run scoring for all targets (admin only)."
+    },
+    {
+      "full_path": "/api/v2/scores/{target_id}",
+      "method": "GET",
+      "handler": "get_score",
+      "file": "api/routes/scoring.py",
+      "line": 67,
+      "docstring": "Full scorecard for a single target."
+    },
+    {
+      "full_path": "/api/v2/screen/admet",
+      "method": "POST",
+      "handler": "screen_admet",
+      "file": "api/routes/screening.py",
+      "line": 211,
+      "docstring": "Predict ADMET properties for a single SMILES string."
+    },
+    {
+      "full_path": "/api/v2/screen/admet/batch",
+      "method": "GET",
+      "handler": "screen_admet_batch",
+      "file": "api/routes/screening.py",
+      "line": 229,
+      "docstring": "Run ADMET prediction on all ChEMBL compounds."
+    },
+    {
+      "full_path": "/api/v2/screen/ai-candidates",
+      "method": "GET",
+      "handler": "get_ai_candidates",
+      "file": "api/routes/screening.py",
+      "line": 380,
+      "docstring": "AI-designed drug candidates ranked by dual-target docking potential.\n\nJoins designed_molecules with diffdock_extended to return candidates\nthat have positive DiffDock confidence scores, ordered by bes"
+    },
+    {
+      "full_path": "/api/v2/screen/candidates",
+      "method": "GET",
+      "handler": "get_top_candidates",
+      "file": "api/routes/screening.py",
+      "line": 258,
+      "docstring": "Get integrated ranked drug candidates combining screening, ADMET, repurposing, and target scores.\n\nEach candidate has an integrated_score (0-1) computed from:\n- Drug-likeness (QED + Lipinski): 15%\n- B"
+    },
+    {
+      "full_path": "/api/v2/screen/compounds",
+      "method": "POST",
+      "handler": "screen_all_compounds",
+      "file": "api/routes/screening.py",
+      "line": 161,
+      "docstring": "Screen all ChEMBL compounds for drug-likeness, BBB permeability, and CNS MPO.\n\nAnalyzes compounds from graph_edges (ChEMBL bioactivity data) and returns:\n- Lipinski Rule of Five compliance\n- Blood-Bra"
+    },
+    {
+      "full_path": "/api/v2/screen/compounds/results",
+      "method": "GET",
+      "handler": "get_screening_results",
+      "file": "api/routes/screening.py",
+      "line": 95,
+      "docstring": "Return cached screening results from the molecule_screenings table (no auth needed).\n\nNote: estimated_qed, estimated_cns_mpo, estimated_bbb_permeable, and\npains_alert_estimated in the top_10 list are "
+    },
+    {
+      "full_path": "/api/v2/screen/dual-target",
+      "method": "GET",
+      "handler": "dual_target_candidates",
+      "file": "api/routes/dual_target.py",
+      "line": 17,
+      "docstring": "Get dual-target candidates (SMN2 splicing + ion channel)."
+    },
+    {
+      "full_path": "/api/v2/screen/dual-target/channels",
+      "method": "GET",
+      "handler": "ion_channel_map",
+      "file": "api/routes/dual_target.py",
+      "line": 23,
+      "docstring": "Map ion channel targets to available drugs."
+    },
+    {
+      "full_path": "/api/v2/screen/dual-target/synergy",
+      "method": "GET",
+      "handler": "synergy_analysis",
+      "file": "api/routes/dual_target.py",
+      "line": 29,
+      "docstring": "Analyze synergy potential across all dual-target candidates."
+    },
+    {
+      "full_path": "/api/v2/screen/molecules",
+      "method": "GET",
+      "handler": "get_molecule_screening_stats",
+      "file": "api/routes/molecule_screen.py",
+      "line": 60,
+      "docstring": "Return aggregate statistics for the molecule_screenings table."
+    },
+    {
+      "full_path": "/api/v2/screen/molecules/all",
+      "method": "POST",
+      "handler": "screen_molecules_all_targets",
+      "file": "api/routes/molecule_screen.py",
+      "line": 105,
+      "docstring": "Screen every target in the targets table against ChEMBL and PubChem.\n\nRuns as a background task. Check progress via GET /screen/molecules/status."
+    },
+    {
+      "full_path": "/api/v2/screen/molecules/status",
+      "method": "GET",
+      "handler": "get_screening_status",
+      "file": "api/routes/molecule_screen.py",
+      "line": 74,
+      "docstring": "Get background screening task status."
+    },
+    {
+      "full_path": "/api/v2/screen/molecules/target",
+      "method": "POST",
+      "handler": "screen_molecules_for_target",
+      "file": "api/routes/molecule_screen.py",
+      "line": 80,
+      "docstring": "Screen ChEMBL and PubChem for bioactive compounds against *symbol*.\n\nRuns as a background task to avoid Nginx timeout. Check status via\nGET /screen/molecules/status."
+    },
+    {
+      "full_path": "/api/v2/screen/pipeline-stats",
+      "method": "GET",
+      "handler": "get_pipeline_stats",
+      "file": "api/routes/screening.py",
+      "line": 23,
+      "docstring": "Return the drug screening funnel statistics for the homepage visualization.\n\nEach stage represents a filtering step in the computational pipeline:\nChEMBL compounds -> drug-likeness -> AI-designed -> d"
+    },
+    {
+      "full_path": "/api/v2/screen/repurposing",
+      "method": "GET",
+      "handler": "get_repurposing_candidates",
+      "file": "api/routes/screening.py",
+      "line": 244,
+      "docstring": "Get ranked drug repurposing candidates for SMA."
+    },
+    {
+      "full_path": "/api/v2/screen/smiles",
+      "method": "POST",
+      "handler": "screen_smiles",
+      "file": "api/routes/screening.py",
+      "line": 188,
+      "docstring": "Screen a single SMILES string for drug-likeness properties.\n\nNo authentication required \u2014 useful for quick lookups."
+    },
+    {
+      "full_path": "/api/v2/screen/top1000",
+      "method": "GET",
+      "handler": "get_top_1000_candidates",
+      "file": "api/routes/screening.py",
+      "line": 284,
+      "docstring": "Curated Top 1000 SMA Drug Candidates from ChEMBL/PubChem molecule screening.\n\nRanked by composite score = 0.5 * normalized_pchembl + 0.3 * target_relevance + 0.2 * drug_likeness.\nFaster than /screen/c"
+    },
+    {
+      "full_path": "/api/v2/screening/virtual",
+      "method": "POST",
+      "handler": "run_virtual_screening",
+      "file": "api/routes/virtual_screening.py",
+      "line": 25,
+      "docstring": "Run end-to-end generative virtual screening (GTC 2026 Blueprint pattern).\n\nPipeline: GenMol (generate) -> RDKit (filter) -> DiffDock (dock) -> Rank.\nRequires NVIDIA_API_KEY for GenMol and DiffDock NIM"
+    },
+    {
+      "full_path": "/api/v2/search",
+      "method": "GET",
+      "handler": "search_endpoint",
+      "file": "api/routes/search.py",
+      "line": 95,
+      "docstring": "Search across claims and sources using semantic, keyword, or hybrid mode.\n\n- **semantic**: Pure vector similarity (sentence-transformers + FAISS)\n- **keyword**: SQL ILIKE pattern matching\n- **hybrid**"
+    },
+    {
+      "full_path": "/api/v2/search/reindex",
+      "method": "POST",
+      "handler": "reindex",
+      "file": "api/routes/search.py",
+      "line": 153,
+      "docstring": "Rebuild the full FAISS search index from all claims and sources.\n\nRequires X-Admin-Key header. Runs as a background task \u2014 returns\nimmediately. Check GET /search/stats for completion status."
+    },
+    {
+      "full_path": "/api/v2/search/stats",
+      "method": "GET",
+      "handler": "search_stats",
+      "file": "api/routes/search.py",
+      "line": 173,
+      "docstring": "Return search index statistics \u2014 no authentication required."
+    },
+    {
+      "full_path": "/api/v2/source-quality/distribution",
+      "method": "GET",
+      "handler": "get_quality_distribution",
+      "file": "api/routes/source_quality.py",
+      "line": 49,
+      "docstring": "Aggregate quality distribution across all sources.\n\nReturns per-dimension averages, tier breakdown (A/B/C), histogram,\nand top-5 highest-scoring sources."
+    },
+    {
+      "full_path": "/api/v2/source-quality/scores",
+      "method": "GET",
+      "handler": "list_source_quality_scores",
+      "file": "api/routes/source_quality.py",
+      "line": 27,
+      "docstring": "Score and rank all sources by composite quality score.\n\nEach source is scored across 5 dimensions (0-1 each):\n- journal_quality: top SMA journals = 1.0, known = 0.5, unknown = 0.3\n- study_type: RCT = "
+    },
+    {
+      "full_path": "/api/v2/source-quality/weights",
+      "method": "GET",
+      "handler": "source_quality_weights",
+      "file": "api/routes/source_quality.py",
+      "line": 63,
+      "docstring": "Compute quality weights for all sources based on journal tier, recency, and type.\n\nUses a simplified 3-factor model (vs. the full 5-dimension scoring above):\n- Journal tier: Nature/Science/Cell = 1.0,"
+    },
+    {
+      "full_path": "/api/v2/source-quality/weights/{source_id}",
+      "method": "GET",
+      "handler": "source_quality_weight_single",
+      "file": "api/routes/source_quality.py",
+      "line": 81,
+      "docstring": "Compute quality weight for a single source by ID."
+    },
+    {
+      "full_path": "/api/v2/sources",
+      "method": "GET",
+      "handler": "list_sources",
+      "file": "api/routes/evidence.py",
+      "line": 194,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/spatial/drugs",
+      "method": "GET",
+      "handler": "list_drug_penetration",
+      "file": "api/routes/spatial_omics.py",
+      "line": 61,
+      "docstring": "List all drug penetration profiles, optionally filtered by route."
+    },
+    {
+      "full_path": "/api/v2/spatial/expression",
+      "method": "GET",
+      "handler": "spatial_expression",
+      "file": "api/routes/spatial_omics.py",
+      "line": 28,
+      "docstring": "Get target \u00d7 zone expression matrix (zone metadata from DB)."
+    },
+    {
+      "full_path": "/api/v2/spatial/penetration",
+      "method": "GET",
+      "handler": "drug_penetration",
+      "file": "api/routes/spatial_omics.py",
+      "line": 22,
+      "docstring": "Analyze drug penetration across spinal cord zones (DB-backed)."
+    },
+    {
+      "full_path": "/api/v2/spatial/penetration/predict",
+      "method": "POST",
+      "handler": "predict_drug_penetration",
+      "file": "api/routes/spatial_omics.py",
+      "line": 86,
+      "docstring": "Predict penetration for a novel compound using the pharmacokinetic model.\nSet persist=true to save results to spatial_drug_penetration table."
+    },
+    {
+      "full_path": "/api/v2/spatial/silent-zones",
+      "method": "GET",
+      "handler": "silent_zones",
+      "file": "api/routes/spatial_omics.py",
+      "line": 34,
+      "docstring": "Identify therapeutic silent zones (DB-backed)."
+    },
+    {
+      "full_path": "/api/v2/spatial/zones",
+      "method": "GET",
+      "handler": "list_zones",
+      "file": "api/routes/spatial_omics.py",
+      "line": 40,
+      "docstring": "List all spatial zones with full metadata from DB."
+    },
+    {
+      "full_path": "/api/v2/spatial/zones/{zone_key}",
+      "method": "GET",
+      "handler": "get_zone",
+      "file": "api/routes/spatial_omics.py",
+      "line": 49,
+      "docstring": "Get a single spatial zone by key."
+    },
+    {
+      "full_path": "/api/v2/splice/batch",
+      "method": "POST",
+      "handler": "batch_predict",
+      "file": "api/routes/splice_predictor.py",
+      "line": 75,
+      "docstring": "Predict effects for multiple variants in one call.\n\nBody: {\"variants\": [\"c.6T>C\", \"p.K42R\", \"exon7:25G>C\"]}"
+    },
+    {
+      "full_path": "/api/v2/splice/benchmark",
+      "method": "GET",
+      "handler": "list_benchmark",
+      "file": "api/routes/splice.py",
+      "line": 91,
+      "docstring": "Full benchmark with pagination and filtering.\n\nReturns scored splice variants from the database.\nUse POST /splice/benchmark/generate first to populate."
+    },
+    {
+      "full_path": "/api/v2/splice/benchmark/export",
+      "method": "GET",
+      "handler": "export_benchmark_data",
+      "file": "api/routes/splice.py",
+      "line": 311,
+      "docstring": "Export the full benchmark as CSV or JSON.\n\nComputed from the scoring engine (does not require DB population)."
+    },
+    {
+      "full_path": "/api/v2/splice/benchmark/generate",
+      "method": "POST",
+      "handler": "generate_benchmark",
+      "file": "api/routes/splice.py",
+      "line": 337,
+      "docstring": "Generate the full splice benchmark and store in the database (admin only).\n\nComputes all ~762 SNVs, scores them, and inserts into splice_variants.\nReplaces any existing data."
+    },
+    {
+      "full_path": "/api/v2/splice/benchmark/position/{pos}",
+      "method": "GET",
+      "handler": "variants_at_position",
+      "file": "api/routes/splice.py",
+      "line": 182,
+      "docstring": "All 3 SNVs at a specific exon-relative position.\n\nPosition coordinates:\n  - Negative: intron 6 (e.g. -1 = last base of intron 6)\n  - 1-55: exon 7\n  - Positive >55 not used; intron 7 uses +1 to +100\n\nN"
+    },
+    {
+      "full_path": "/api/v2/splice/benchmark/reference",
+      "method": "GET",
+      "handler": "benchmark_reference",
+      "file": "api/routes/splice.py",
+      "line": 176,
+      "docstring": "Return the SMN2 exon 7 reference sequence, flanking regions, and annotations."
+    },
+    {
+      "full_path": "/api/v2/splice/benchmark/region/{region}",
+      "method": "GET",
+      "handler": "variants_by_region",
+      "file": "api/routes/splice.py",
+      "line": 213,
+      "docstring": "Variants in a named region.\n\nSupported regions:\n  - exon7: all 54 exonic positions\n  - intron6: 100 bp upstream flank\n  - intron7: 100 bp downstream flank\n  - iss_n1: ISS-N1 element (intron 7, +10 to "
+    },
+    {
+      "full_path": "/api/v2/splice/benchmark/stats",
+      "method": "GET",
+      "handler": "benchmark_stats",
+      "file": "api/routes/splice.py",
+      "line": 156,
+      "docstring": "Summary statistics for the splice benchmark.\n\nReturns counts, score distributions, and therapeutic hotspot info.\nCan be computed from the scoring engine without requiring DB population."
+    },
+    {
+      "full_path": "/api/v2/splice/benchmark/therapeutic",
+      "method": "GET",
+      "handler": "therapeutic_variants",
+      "file": "api/routes/splice.py",
+      "line": 276,
+      "docstring": "Variants in therapeutically relevant regions.\n\nReturns variants from:\n  - ISS-N1 (nusinersen/Spinraza binding site, intron 7 +10 to +24)\n  - Position 6 of exon 7 (disease-defining variant)\n  - ESE reg"
+    },
+    {
+      "full_path": "/api/v2/splice/cross-species",
+      "method": "GET",
+      "handler": "cross_species_splicing",
+      "file": "api/routes/splicing_map.py",
+      "line": 17,
+      "docstring": "Get the full cross-species splicing map (axolotl vs human)."
+    },
+    {
+      "full_path": "/api/v2/splice/cross-species/actionable",
+      "method": "GET",
+      "handler": "actionable_splice_targets",
+      "file": "api/routes/splicing_map.py",
+      "line": 23,
+      "docstring": "Get splice events with highest reactivation feasibility."
+    },
+    {
+      "full_path": "/api/v2/splice/cross-species/compare",
+      "method": "GET",
+      "handler": "compare_regen_vs_sma",
+      "file": "api/routes/splicing_map.py",
+      "line": 29,
+      "docstring": "Compare regeneration vs degeneration splicing patterns."
+    },
+    {
+      "full_path": "/api/v2/splice/elements",
+      "method": "GET",
+      "handler": "splice_elements",
+      "file": "api/routes/splice_predictor.py",
+      "line": 53,
+      "docstring": "Return key regulatory elements around SMN2 exon 7.\n\nThese are the targets for ASO therapy (nusinersen targets ISS-N1)\nand small molecule therapy (risdiplam enhances SF2/ASF binding)."
+    },
+    {
+      "full_path": "/api/v2/splice/known-variants",
+      "method": "GET",
+      "handler": "known_variants",
+      "file": "api/routes/splice_predictor.py",
+      "line": 46,
+      "docstring": "Return curated list of known SMN2 variants with clinical annotations."
+    },
+    {
+      "full_path": "/api/v2/splice/offtarget/iss-n1",
+      "method": "GET",
+      "handler": "predict_iss_n1",
+      "file": "api/routes/splice_offtarget.py",
+      "line": 32,
+      "docstring": "Predict off-targets for ISS-N1-targeting ASOs (nusinersen class).\n\nScans for transcriptome-wide sequence similarity to the ISS-N1\nbinding site in SMN2 intron 7. Returns genes with partial matches\nand "
+    },
+    {
+      "full_path": "/api/v2/splice/offtarget/{aso_name}",
+      "method": "GET",
+      "handler": "predict_aso_offtargets",
+      "file": "api/routes/splice_offtarget.py",
+      "line": 43,
+      "docstring": "Predict off-target splicing effects for an ASO therapeutic.\n\nAvailable ASOs: nusinersen, risdiplam.\n\nReturns known off-target genes, sequence similarity scores,\nrisk assessments, and clinical safety s"
+    },
+    {
+      "full_path": "/api/v2/splice/predict",
+      "method": "GET",
+      "handler": "predict_variant",
+      "file": "api/routes/splice_predictor.py",
+      "line": 28,
+      "docstring": "Predict the effect of an SMN2 sequence variant on splicing and protein function.\n\nCombines rule-based splice site analysis with ESM-2 protein language model\npredictions (via HuggingFace Inference API)"
+    },
+    {
+      "full_path": "/api/v2/splice/safety",
+      "method": "GET",
+      "handler": "aso_safety_profiles",
+      "file": "api/routes/splice_offtarget.py",
+      "line": 21,
+      "docstring": "Get safety profiles for all known SMA ASO therapeutics.\n\nReturns a summary of off-target risks and clinical safety data\nfor nusinersen (Spinraza) and risdiplam (Evrysdi)."
+    },
+    {
+      "full_path": "/api/v2/stats",
+      "method": "GET",
+      "handler": "get_stats",
+      "file": "api/routes/stats.py",
+      "line": 11,
+      "docstring": "Overview counts for all major tables."
+    },
+    {
+      "full_path": "/api/v2/stats/freshness",
+      "method": "GET",
+      "handler": "get_freshness",
+      "file": "api/routes/stats.py",
+      "line": 30,
+      "docstring": "Last ingestion timestamps and data freshness."
+    },
+    {
+      "full_path": "/api/v2/stats/pipeline",
+      "method": "GET",
+      "handler": "get_pipeline_status",
+      "file": "api/routes/stats.py",
+      "line": 51,
+      "docstring": "Latest pipeline run results and ingestion log entries."
+    },
+    {
+      "full_path": "/api/v2/structures",
+      "method": "GET",
+      "handler": "list_structures",
+      "file": "api/routes/structures.py",
+      "line": 26,
+      "docstring": "Return predicted structures \u2014 one best row per target symbol."
+    },
+    {
+      "full_path": "/api/v2/structures/stats",
+      "method": "GET",
+      "handler": "structures_stats",
+      "file": "api/routes/structures.py",
+      "line": 115,
+      "docstring": "Summary counts for the structures section."
+    },
+    {
+      "full_path": "/api/v2/synergy/drug/{drug_name}",
+      "method": "GET",
+      "handler": "synergy_for_drug",
+      "file": "api/routes/synergy.py",
+      "line": 38,
+      "docstring": "Synergy predictions for a specific drug across all targets."
+    },
+    {
+      "full_path": "/api/v2/synergy/predictions",
+      "method": "GET",
+      "handler": "synergy_predictions",
+      "file": "api/routes/synergy.py",
+      "line": 17,
+      "docstring": "Top synergistic drug-target pairs ranked by composite evidence score.\n\nComposite = 0.3*docking + 0.3*literature + 0.2*pathway + 0.2*claim"
+    },
+    {
+      "full_path": "/api/v2/synergy/target/{target_symbol}",
+      "method": "GET",
+      "handler": "synergy_for_target",
+      "file": "api/routes/synergy.py",
+      "line": 58,
+      "docstring": "Synergy predictions for a specific target across all drugs."
+    },
+    {
+      "full_path": "/api/v2/synthesis/bridges",
+      "method": "GET",
+      "handler": "get_bridges",
+      "file": "api/routes/synthesis.py",
+      "line": 64,
+      "docstring": "Get transitive bridges: A\u2192B\u2192C chains across different papers."
+    },
+    {
+      "full_path": "/api/v2/synthesis/cards",
+      "method": "GET",
+      "handler": "get_cards",
+      "file": "api/routes/synthesis.py",
+      "line": 19,
+      "docstring": "Get cross-paper synthesis cards with optional filtering."
+    },
+    {
+      "full_path": "/api/v2/synthesis/contradictions",
+      "method": "GET",
+      "handler": "get_contradictions",
+      "file": "api/routes/synthesis.py",
+      "line": 118,
+      "docstring": "Find claims about the same target that may contradict each other.\n\nGroups claims by target + claim_type, then detects opposing signals\n(positive vs negative effect keywords) from different sources.\nHi"
+    },
+    {
+      "full_path": "/api/v2/synthesis/cooccurrences",
+      "method": "GET",
+      "handler": "get_cooccurrences",
+      "file": "api/routes/synthesis.py",
+      "line": 39,
+      "docstring": "Get top target co-occurrence pairs (targets mentioned in same paper)."
+    },
+    {
+      "full_path": "/api/v2/synthesis/run",
+      "method": "POST",
+      "handler": "run_synthesis",
+      "file": "api/routes/synthesis.py",
+      "line": 143,
+      "docstring": "Run the full cross-paper synthesis pipeline (admin).\nFinds co-occurrences, transitive bridges, shared mechanisms,\nand optionally uses Claude to generate synthesis cards."
+    },
+    {
+      "full_path": "/api/v2/synthesis/shared-mechanisms",
+      "method": "GET",
+      "handler": "get_shared_mechanisms",
+      "file": "api/routes/synthesis.py",
+      "line": 86,
+      "docstring": "Get mechanisms shared across different targets."
+    },
+    {
+      "full_path": "/api/v2/synthesis/stats",
+      "method": "GET",
+      "handler": "synthesis_stats",
+      "file": "api/routes/synthesis.py",
+      "line": 32,
+      "docstring": "Get synthesis card statistics."
+    },
+    {
+      "full_path": "/api/v2/synthesis/surprise",
+      "method": "GET",
+      "handler": "get_surprise_scores",
+      "file": "api/routes/synthesis.py",
+      "line": 131,
+      "docstring": "Rank target connections by how NON-OBVIOUS they are.\n\nLow paper overlap + high claim diversity + independent sources + recent\n= high surprise score. Pure math, no LLM calls."
+    },
+    {
+      "full_path": "/api/v2/synthesis/temporal",
+      "method": "GET",
+      "handler": "get_temporal_reinforcements",
+      "file": "api/routes/synthesis.py",
+      "line": 106,
+      "docstring": "Find when new evidence retroactively strengthens old findings.\n\nFor each target, splits claims into old/new by median publication date,\nthen identifies claim_types where new papers reinforce earlier d"
+    },
+    {
+      "full_path": "/api/v2/targets",
+      "method": "GET",
+      "handler": "list_targets",
+      "file": "api/routes/targets.py",
+      "line": 31,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/targets",
+      "method": "POST",
+      "handler": "create_target",
+      "file": "api/routes/targets.py",
+      "line": 198,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/targets/symbol/{symbol}",
+      "method": "GET",
+      "handler": "get_target_by_symbol",
+      "file": "api/routes/targets.py",
+      "line": 58,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/targets/{target_id}",
+      "method": "GET",
+      "handler": "get_target",
+      "file": "api/routes/targets.py",
+      "line": 50,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/targets/{target_id}/deep-dive",
+      "method": "GET",
+      "handler": "get_target_deep_dive",
+      "file": "api/routes/targets.py",
+      "line": 66,
+      "docstring": "Get comprehensive view of a target: claims, hypotheses, drugs, trials, network edges."
+    },
+    {
+      "full_path": "/api/v2/timeline/claims",
+      "method": "GET",
+      "handler": "claims_timeline",
+      "file": "api/routes/timeline.py",
+      "line": 13,
+      "docstring": "Get claim creation timeline grouped by year."
+    },
+    {
+      "full_path": "/api/v2/timeline/growth",
+      "method": "GET",
+      "handler": "platform_growth",
+      "file": "api/routes/timeline.py",
+      "line": 112,
+      "docstring": "Get platform-wide evidence growth metrics."
+    },
+    {
+      "full_path": "/api/v2/timeline/target/{symbol}",
+      "method": "GET",
+      "handler": "target_timeline",
+      "file": "api/routes/timeline.py",
+      "line": 54,
+      "docstring": "Get evidence timeline for a specific target."
+    },
+    {
+      "full_path": "/api/v2/translate/grants",
+      "method": "GET",
+      "handler": "grant_templates",
+      "file": "api/routes/translation.py",
+      "line": 26,
+      "docstring": "Get grant application templates for SMA research."
+    },
+    {
+      "full_path": "/api/v2/translate/grants/export/{symbol}",
+      "method": "GET",
+      "handler": "export_grant_section",
+      "file": "api/routes/translation.py",
+      "line": 49,
+      "docstring": "Generate grant-ready text for a target.\n\nFetches convergence score, top claims, screening hits, experiment\nsuggestions, and assay recommendations, then composes structured\nprose sections suitable for "
+    },
+    {
+      "full_path": "/api/v2/translate/grants/formats",
+      "method": "GET",
+      "handler": "grant_formats",
+      "file": "api/routes/translation.py",
+      "line": 32,
+      "docstring": "List supported grant export formats and their requirements."
+    },
+    {
+      "full_path": "/api/v2/translate/regulatory",
+      "method": "GET",
+      "handler": "regulatory_pathways",
+      "file": "api/routes/translation.py",
+      "line": 20,
+      "docstring": "Get regulatory pathway map for SMA therapeutics (FDA/EMA)."
+    },
+    {
+      "full_path": "/api/v2/translate/validate",
+      "method": "GET",
+      "handler": "validate",
+      "file": "api/routes/translation.py",
+      "line": 77,
+      "docstring": "Run a hypothesis through the validation pipeline gate check."
+    },
+    {
+      "full_path": "/api/v2/translate/validation",
+      "method": "GET",
+      "handler": "validation_pipeline",
+      "file": "api/routes/translation.py",
+      "line": 71,
+      "docstring": "Get 5-level hypothesis validation pipeline."
+    },
+    {
+      "full_path": "/api/v2/trials",
+      "method": "GET",
+      "handler": "list_trials",
+      "file": "api/routes/trials.py",
+      "line": 17,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/trials/nct/{nct_id}",
+      "method": "GET",
+      "handler": "get_trial_by_nct",
+      "file": "api/routes/trials.py",
+      "line": 55,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/trials/{trial_id}",
+      "method": "GET",
+      "handler": "get_trial",
+      "file": "api/routes/trials.py",
+      "line": 47,
+      "docstring": ""
+    },
+    {
+      "full_path": "/api/v2/twin/compartments",
+      "method": "GET",
+      "handler": "compartments",
+      "file": "api/routes/digital_twin.py",
+      "line": 28,
+      "docstring": "Get motor neuron compartment model."
+    },
+    {
+      "full_path": "/api/v2/twin/drugs",
+      "method": "GET",
+      "handler": "available_drugs",
+      "file": "api/routes/digital_twin.py",
+      "line": 40,
+      "docstring": "Get drugs available for digital twin simulation."
+    },
+    {
+      "full_path": "/api/v2/twin/gpu-validated",
+      "method": "GET",
+      "handler": "gpu_validated",
+      "file": "api/routes/digital_twin.py",
+      "line": 74,
+      "docstring": "Get drugs with GPU computational validation (DiffDock, SpliceAI, Boltz-2, ESM-2).\n\nShows which drugs in the digital twin have been validated by our\nGPU compute pipeline (Phase G1-G3)."
+    },
+    {
+      "full_path": "/api/v2/twin/optimize",
+      "method": "GET",
+      "handler": "optimize",
+      "file": "api/routes/digital_twin.py",
+      "line": 52,
+      "docstring": "Find optimal drug combinations via exhaustive simulation."
+    },
+    {
+      "full_path": "/api/v2/twin/pathways",
+      "method": "GET",
+      "handler": "pathways",
+      "file": "api/routes/digital_twin.py",
+      "line": 34,
+      "docstring": "Get signaling pathway model."
+    },
+    {
+      "full_path": "/api/v2/twin/personal/analysis",
+      "method": "GET",
+      "handler": "personal_analysis",
+      "file": "api/routes/personal_twin.py",
+      "line": 136,
+      "docstring": "Run the full personalized Digital Twin analysis.\n\nRequires x-admin-key header. Integrates phenotype prediction, drug\nsimulation, synergy scoring, trial filtering, biomarker recommendations,\nBayesian e"
+    },
+    {
+      "full_path": "/api/v2/twin/personal/optimize",
+      "method": "GET",
+      "handler": "personal_optimize",
+      "file": "api/routes/personal_twin.py",
+      "line": 181,
+      "docstring": "Suggest therapy optimizations for this patient.\n\nRequires x-admin-key header. Analyzes current therapies for modality\ngaps, simulates additions, ranks by marginal improvement, and provides\nbiomarker m"
+    },
+    {
+      "full_path": "/api/v2/twin/personal/profile",
+      "method": "GET",
+      "handler": "read_profile",
+      "file": "api/routes/personal_twin.py",
+      "line": 116,
+      "docstring": "Retrieve a patient profile by name.\n\nRequires x-admin-key header. Returns the full profile including all\nclinical data, therapies, biomarkers, and genetic modifiers."
+    },
+    {
+      "full_path": "/api/v2/twin/personal/profile",
+      "method": "POST",
+      "handler": "upsert_profile",
+      "file": "api/routes/personal_twin.py",
+      "line": 94,
+      "docstring": "Create or update a patient profile.\n\nRequires x-admin-key header. If a profile with the given name exists,\nit will be updated; otherwise a new one is created."
+    },
+    {
+      "full_path": "/api/v2/twin/personal/trials",
+      "method": "GET",
+      "handler": "personal_trials",
+      "file": "api/routes/personal_twin.py",
+      "line": 158,
+      "docstring": "Filter clinical trials relevant to this patient.\n\nRequires x-admin-key header. Filters from all trials by SMA type,\nage, current therapies, trial status and phase. Results are scored\nand ranked by rel"
+    },
+    {
+      "full_path": "/api/v2/twin/simulate",
+      "method": "POST",
+      "handler": "simulate",
+      "file": "api/routes/digital_twin.py",
+      "line": 46,
+      "docstring": "Simulate a drug combination on the motor neuron digital twin."
+    },
+    {
+      "full_path": "/api/v2/twin/temporal",
+      "method": "POST",
+      "handler": "temporal_simulation",
+      "file": "api/routes/digital_twin.py",
+      "line": 64,
+      "docstring": "Simulate motor neuron health trajectory over months of treatment.\n\nShows progressive recovery (or decline) including drug onset delays,\nplateau effects, and compensatory mechanisms."
+    },
+    {
+      "full_path": "/api/v2/uncertainty/all",
+      "method": "GET",
+      "handler": "get_all_uncertainties",
+      "file": "api/routes/uncertainty.py",
+      "line": 45,
+      "docstring": "Bootstrap uncertainty for all targets with >10 claims.\n\nReturns a list sorted by CI width (descending) \u2014 targets with the\nwidest confidence intervals (most uncertain) appear first."
+    },
+    {
+      "full_path": "/api/v2/uncertainty/intervals",
+      "method": "GET",
+      "handler": "get_uncertainty_intervals",
+      "file": "api/routes/uncertainty.py",
+      "line": 70,
+      "docstring": "Compute 95% confidence intervals for all target convergence scores.\n\nUses the full 5-dimension convergence engine formula (volume,\nlab_independence, method_diversity, temporal_trend, replication)\nwith"
+    },
+    {
+      "full_path": "/api/v2/uncertainty/intervals/{symbol}",
+      "method": "GET",
+      "handler": "get_target_uncertainty_interval",
+      "file": "api/routes/uncertainty.py",
+      "line": 95,
+      "docstring": "Compute uncertainty interval for a specific target.\n\nReturns the convergence score with 95% CI, e.g.\n\"63% (95% CI: 58-68%)\" instead of just \"63%\"."
+    },
+    {
+      "full_path": "/api/v2/uncertainty/summary",
+      "method": "GET",
+      "handler": "get_uncertainty_summary",
+      "file": "api/routes/uncertainty.py",
+      "line": 60,
+      "docstring": "Overall platform uncertainty report.\n\nShows what fraction of targets have narrow CIs (<0.1) vs wide (>0.3),\nplus the top-5 most and least uncertain targets."
+    },
+    {
+      "full_path": "/api/v2/uncertainty/target/{symbol}",
+      "method": "GET",
+      "handler": "get_target_uncertainty",
+      "file": "api/routes/uncertainty.py",
+      "line": 23,
+      "docstring": "Bootstrap confidence intervals for a single target's convergence score.\n\nResamples claims with replacement N times and computes a simplified\nconvergence score for each resample. Returns mean, std, 95%"
+    },
+    {
+      "full_path": "/api/v2/write/compare",
+      "method": "GET",
+      "handler": "write_comparison",
+      "file": "api/routes/evidence_writer.py",
+      "line": 108,
+      "docstring": "Generate a comparative evidence summary across multiple gene targets.\n\nGathers evidence for each target independently, then synthesises a\nsingle comparative document highlighting relative evidence str"
+    },
+    {
+      "full_path": "/api/v2/write/summary",
+      "method": "GET",
+      "handler": "write_summary",
+      "file": "api/routes/evidence_writer.py",
+      "line": 31,
+      "docstring": "Generate a structured evidence summary for a gene target or research topic.\n\nGathers evidence from the SMA database (claims, trials, drug outcomes, hypotheses)\nand synthesises a grounded document in t"
+    },
+    {
+      "full_path": "/health",
+      "method": "GET",
+      "handler": "health",
+      "file": "api/app.py",
+      "line": 183,
+      "docstring": ""
+    },
+    {
+      "full_path": "/links",
+      "method": "GET",
+      "handler": "links_page",
+      "file": "api/app.py",
+      "line": 204,
+      "docstring": "Serve index.html for /links \u2014 SPA handles the section routing."
+    },
+    {
+      "full_path": "/llms.txt",
+      "method": "GET",
+      "handler": "llms_txt",
+      "file": "api/app.py",
+      "line": 212,
+      "docstring": ""
+    },
+    {
+      "full_path": "/robots.txt",
+      "method": "GET",
+      "handler": "robots_txt",
+      "file": "api/app.py",
+      "line": 190,
+      "docstring": ""
+    },
+    {
+      "full_path": "/sitemap.xml",
+      "method": "GET",
+      "handler": "sitemap_xml",
+      "file": "api/app.py",
+      "line": 197,
+      "docstring": ""
+    },
+    {
+      "full_path": "/{section}",
+      "method": "GET",
+      "handler": "serve_section",
+      "file": "api/app.py",
+      "line": 239,
+      "docstring": ""
+    },
+    {
+      "full_path": "/{section}/{rest:path}",
+      "method": "GET",
+      "handler": "serve_section_deep",
+      "file": "api/app.py",
+      "line": 248,
+      "docstring": "Serve index.html for deep-linked SPA routes like /news/{slug}.\n\nHandles multi-segment paths under known SPA sections so that\nURLs shared via RSS, social media, etc. resolve correctly\ninstead of return"
+    }
+  ]
+}

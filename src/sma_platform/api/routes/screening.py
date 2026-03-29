@@ -19,6 +19,78 @@ class SmilesInput(BaseModel):
     smiles: str
 
 
+@router.get("/screen/pipeline-stats")
+async def get_pipeline_stats():
+    """Return the drug screening funnel statistics for the homepage visualization.
+
+    Each stage represents a filtering step in the computational pipeline:
+    ChEMBL compounds -> drug-likeness -> AI-designed -> docked -> binders
+    -> dual-target -> selective leads -> BBB-permeable leads.
+
+    Gracefully returns 0 for any table that does not yet exist.
+    """
+
+    async def _safe_count(sql: str) -> int:
+        """Run a count query, returning 0 if the table doesn't exist."""
+        try:
+            return (await fetchval(sql)) or 0
+        except Exception:
+            return 0
+
+    chembl_total = await _safe_count(
+        "SELECT count(*) FROM molecule_screenings"
+    )
+    drug_like = await _safe_count(
+        "SELECT count(*) FROM molecule_screenings WHERE drug_likeness_pass = TRUE"
+    )
+    designed_molecules = await _safe_count(
+        "SELECT count(*) FROM designed_molecules"
+    )
+    docked = await _safe_count(
+        "SELECT count(*) FROM diffdock_extended"
+    )
+    positive_binders = await _safe_count(
+        "SELECT count(*) FROM diffdock_extended WHERE best_confidence > 0"
+    )
+    dual_target = await _safe_count("""
+        SELECT count(*) FROM (
+            SELECT drug_name FROM diffdock_extended
+            WHERE best_confidence > 0
+            GROUP BY drug_name
+            HAVING count(DISTINCT target_symbol) >= 2
+        ) sub
+    """)
+    selective_leads = await _safe_count("""
+        SELECT count(*) FROM (
+            SELECT drug_name FROM diffdock_extended
+            WHERE best_confidence > 0.5
+            GROUP BY drug_name
+            HAVING count(DISTINCT target_symbol) >= 2
+        ) sub
+    """)
+    bbb_permeable = await _safe_count("""
+        SELECT count(*) FROM designed_molecules dm
+        WHERE dm.bbb_permeable = TRUE
+          AND dm.smiles IN (
+              SELECT de.smiles FROM diffdock_extended de
+              WHERE de.best_confidence > 0.5
+              GROUP BY de.smiles
+              HAVING count(DISTINCT de.target_symbol) >= 2
+          )
+    """)
+
+    return {
+        "chembl_total": chembl_total,
+        "drug_like": drug_like,
+        "designed_molecules": designed_molecules,
+        "docked": docked,
+        "positive_binders": positive_binders,
+        "dual_target": dual_target,
+        "selective_leads": selective_leads,
+        "bbb_permeable": bbb_permeable,
+    }
+
+
 @router.get("/screen/compounds/results")
 async def get_screening_results():
     """Return cached screening results from the molecule_screenings table (no auth needed).
@@ -299,6 +371,93 @@ async def get_top_1000_candidates(
         "limit": limit,
         "min_pchembl": min_pchembl,
         "target_filter": target,
+        "by_target": by_target,
+        "candidates": candidates,
+    }
+
+
+@router.get("/screen/ai-candidates")
+async def get_ai_candidates(
+    limit: int = Query(default=50, ge=1, le=200),
+):
+    """AI-designed drug candidates ranked by dual-target docking potential.
+
+    Joins designed_molecules with diffdock_extended to return candidates
+    that have positive DiffDock confidence scores, ordered by best_confidence.
+    """
+    rows = await fetch(
+        """SELECT dm.smiles, dm.target_symbol, dm.qed, dm.mw AS dm_mw, dm.logp,
+                  dm.tpsa, dm.hbd, dm.hba,
+                  dm.bbb_permeable, dm.method, dm.score, dm.svg_2d,
+                  de.best_confidence AS diffdock_confidence,
+                  de.avg_confidence, de.num_poses,
+                  de.drug_name
+           FROM designed_molecules dm
+           INNER JOIN diffdock_extended de
+                ON dm.smiles = de.smiles AND dm.target_symbol = de.target_symbol
+           WHERE de.best_confidence > 0
+           ORDER BY de.best_confidence DESC
+           LIMIT $1""",
+        limit,
+    )
+
+    # Collect all unique SMILES to fetch docking results per target
+    all_smiles = list({dict(r).get("smiles", "") for r in rows if dict(r).get("smiles")})
+    docking_by_smiles: dict[str, list[dict]] = {}
+    if all_smiles:
+        dock_rows = await fetch(
+            """SELECT smiles, target_symbol, best_confidence, avg_confidence
+               FROM diffdock_extended
+               WHERE smiles = ANY($1) AND best_confidence > 0
+               ORDER BY smiles, best_confidence DESC""",
+            all_smiles,
+        )
+        for dr in dock_rows:
+            dd = dict(dr)
+            s = dd.get("smiles", "")
+            if s not in docking_by_smiles:
+                docking_by_smiles[s] = []
+            docking_by_smiles[s].append({
+                "target": dd.get("target_symbol", ""),
+                "confidence": round(float(dd["best_confidence"]), 3) if dd.get("best_confidence") else None,
+                "avg_confidence": round(float(dd["avg_confidence"]), 3) if dd.get("avg_confidence") else None,
+            })
+
+    candidates = []
+    for i, r in enumerate(rows):
+        d = dict(r)
+        name = d.get("drug_name") or d.get("smiles", "")[:40]
+        full_smiles = d.get("smiles") or ""
+        candidates.append({
+            "rank": i + 1,
+            "compound": name,
+            "target": d.get("target_symbol", ""),
+            "diffdock_confidence": round(float(d["diffdock_confidence"]), 3) if d.get("diffdock_confidence") else None,
+            "avg_confidence": round(float(d["avg_confidence"]), 3) if d.get("avg_confidence") else None,
+            "num_poses": d.get("num_poses"),
+            "qed": round(float(d["qed"]), 3) if d.get("qed") else None,
+            "mw": round(float(d["dm_mw"]), 1) if d.get("dm_mw") else None,
+            "logp": round(float(d["logp"]), 2) if d.get("logp") else None,
+            "tpsa": round(float(d["tpsa"]), 1) if d.get("tpsa") else None,
+            "hbd": d.get("hbd"),
+            "hba": d.get("hba"),
+            "bbb_permeable": bool(d.get("bbb_permeable")),
+            "method": d.get("method", ""),
+            "score": round(float(d["score"]), 3) if d.get("score") else None,
+            "smiles": full_smiles[:100],
+            "full_smiles": full_smiles,
+            "svg_2d": d.get("svg_2d") or "",
+            "docking_results": docking_by_smiles.get(full_smiles, []),
+        })
+
+    # Summarize by target
+    by_target: dict[str, int] = {}
+    for c in candidates:
+        t = c["target"]
+        by_target[t] = by_target.get(t, 0) + 1
+
+    return {
+        "total": len(candidates),
         "by_target": by_target,
         "candidates": candidates,
     }

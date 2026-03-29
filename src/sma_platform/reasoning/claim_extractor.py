@@ -47,6 +47,12 @@ SMA_KEYWORDS = {
     "nusinersen", "spinraza", "risdiplam", "evrysdi",
     "onasemnogene", "zolgensma", "branaplam",
     "amyotrophy", "muscular atrophy",
+    # Actin pathway targets (ROCK-LIMK2-CFL2 therapeutic axis)
+    "cofilin", "limk", "lim kinase", "rock inhibitor", "rho kinase",
+    "actin rod", "actin dynamics", "profilin", "pak1", "pak4",
+    "fasudil", "ripasudil", "actin cytoskeleton",
+    # Proprioceptive circuit
+    "proprioceptive", "proprioception",
 }
 
 def _abstract_is_sma_relevant(abstract: str, title: str = "") -> bool:

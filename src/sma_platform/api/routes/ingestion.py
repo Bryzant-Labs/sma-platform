@@ -458,13 +458,13 @@ async def trigger_structure_ingestion():
     await execute(
         """INSERT INTO ingestion_log (source_type, query, items_found, items_new, items_updated, errors, duration_secs)
            VALUES ($1, $2, $3, $4, $5, $6, $7)""",
-        "alphafold", "sma_structures", len(alphafold.SMA_PROTEINS), updated_count, 0,
+        "alphafold", "sma_structures", len(alphafold._get_proteins()), updated_count, 0,
         errors[:10] if errors else None, duration,
     )
 
     return {
         "source": "alphafold",
-        "proteins_queried": len(alphafold.SMA_PROTEINS),
+        "proteins_queried": len(alphafold._get_proteins()),
         "structures_found": len(structures),
         "targets_updated": updated_count,
         "errors": len(errors),

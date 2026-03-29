@@ -38,6 +38,8 @@ TABLES = [
     ("drug_outcomes", "SELECT id, compound_name, target, mechanism, outcome, failure_reason, failure_detail, trial_phase, model_system, key_finding, confidence, source_id, created_at FROM drug_outcomes ORDER BY compound_name"),
     ("molecule_screenings", "SELECT id, target_symbol, chembl_id, pubchem_cid, compound_name, smiles, pchembl_value, activity_type, molecular_weight, alogp, source, drug_likeness_pass, metadata, screened_by, created_at FROM molecule_screenings ORDER BY pchembl_value DESC NULLS LAST"),
     ("splice_variants", "SELECT id, position, region, ref_base, alt_base, variant_id, splice_site_proximity, motif_disruption, conservation, therapeutic_relevance, composite_score, annotation, metadata FROM splice_variants ORDER BY composite_score DESC"),
+    ("designed_molecules", "SELECT id, target_symbol, smiles, scaffold_smiles, score, qed, mw, logp, hbd, hba, bbb_permeable, cns_mpo, diffdock_confidence, method, created_at, tpsa, lipinski_pass, diffdock_target, generation_batch FROM designed_molecules ORDER BY score DESC NULLS LAST"),
+    ("diffdock_extended", "SELECT id, drug_name, target_symbol, smiles, mw, formula, num_poses, best_confidence, avg_confidence, campaign, status, created_at FROM diffdock_extended ORDER BY best_confidence DESC NULLS LAST"),
 ]
 
 DATASET_CARD = """---
@@ -53,6 +55,9 @@ tags:
 - biomedical
 - clinical-trials
 - gene-targets
+- ai-drug-design
+- molecular-docking
+- diffdock
 size_categories:
 - 10K<n<100K
 task_categories:
@@ -68,11 +73,22 @@ An open-source, evidence-first dataset for Spinal Muscular Atrophy (SMA) drug re
 ## Description
 
 This dataset contains structured evidence extracted from PubMed papers, clinical trials
-from ClinicalTrials.gov, and computationally generated hypotheses linking gene targets
-to potential therapeutic interventions for SMA.
+from ClinicalTrials.gov, computationally generated hypotheses, AI-designed molecules,
+and DiffDock molecular docking results — all linking gene targets to potential
+therapeutic interventions for SMA.
 
 **Built by a researcher who has SMA**, this dataset aims to accelerate drug discovery
 by making the evidence landscape machine-readable and openly accessible.
+
+### What's New (March 2026 Sprint)
+
+- **Quality-gated claims**: 15,874 claims with recalibrated confidence scores (up from ~14K)
+- **9,023 sources**: Expanded PubMed coverage including actin pathway and ROCK-LIMK literature
+- **1,535 hypotheses**: Including convergence analysis of ROCK-LIMK2-CFL2 therapeutic axis
+- **1,122 AI-designed molecules**: Generated via MolMIM/GenMol with BBB permeability, CNS-MPO, and Lipinski scoring
+- **501 DiffDock dockings**: Molecular docking confidence scores across stereoisomer and selectivity panels
+- **21,229 molecule screenings**: ChEMBL/PubChem bioactive compounds for LIMK2, ROCK2, and other targets
+- **68 targets**: Including new actin-cytoskeleton pathway targets (ROCK1/2, LIMK1/2, CFL1/2, PFN1/2)
 
 ## Dataset Structure
 
@@ -89,6 +105,8 @@ by making the evidence landscape machine-readable and openly accessible.
 | `drug_outcomes` | Structured drug success/failure database | {outcomes_count} |
 | `molecule_screenings` | ChEMBL/PubChem bioactive compounds screened | {mol_screen_count} |
 | `splice_variants` | SMN2 splice variant benchmark (SNVs scored) | {splice_count} |
+| `designed_molecules` | AI-designed molecules (MolMIM/GenMol) with ADMET | {designed_mol_count} |
+| `diffdock_extended` | DiffDock v2 molecular docking results | {diffdock_count} |
 
 ## Key Features
 
@@ -97,6 +115,9 @@ by making the evidence landscape machine-readable and openly accessible.
 - **Scored**: Claims and hypotheses have computed confidence scores
 - **Typed claims**: gene_expression, drug_efficacy, splicing_event, biomarker, etc.
 - **Knowledge graph**: Protein-protein interactions (STRING), pathway co-membership (KEGG), compound bioactivity (ChEMBL)
+- **AI drug design**: De novo molecules with BBB permeability, QED, CNS-MPO, and Lipinski properties
+- **Molecular docking**: DiffDock v2 docking confidence scores for drug-target pairs
+- **ROCK-LIMK2-CFL2 convergence**: Cross-species validated therapeutic axis data (SMA + ALS)
 
 ## Core SMA Targets
 
@@ -108,6 +129,9 @@ by making the evidence landscape machine-readable and openly accessible.
 | PLS3 | Actin-bundling, natural severity modifier |
 | NCALD | Calcium sensor, knockdown rescues SMA |
 | UBA1 | Ubiquitin homeostasis, dysregulated in SMA |
+| ROCK1/2 | Rho kinase, actin regulation, upstream of LIMK |
+| LIMK1/2 | LIM kinase, phosphorylates cofilin, actin dynamics |
+| CFL1/2 | Cofilin, actin depolymerization, dysregulated in SMA |
 
 ## Approved Therapies
 
@@ -126,8 +150,12 @@ ds = load_dataset("SMAResearch/sma-evidence-graph")
 claims = ds["claims"]
 high_confidence = claims.filter(lambda x: x["confidence"] and x["confidence"] > 0.7)
 
-# Access hypotheses
-hypotheses = ds["hypotheses"]
+# Access AI-designed molecules
+molecules = ds["designed_molecules"]
+bbb_permeable = molecules.filter(lambda x: x["bbb_permeable"] == True)
+
+# Access DiffDock docking results
+docking = ds["diffdock_extended"]
 
 # Access knowledge graph
 edges = ds["graph_edges"]
@@ -149,8 +177,8 @@ If you use this dataset, please cite:
 
 ## Updates
 
-This dataset is updated daily via an automated pipeline that pulls new PubMed papers,
-clinical trials, and re-extracts claims from new abstracts.
+This dataset is updated regularly via an automated pipeline that pulls new PubMed papers,
+clinical trials, re-extracts claims, and runs computational drug design campaigns.
 
 Last updated: {last_updated}
 
@@ -232,6 +260,8 @@ def write_dataset_card(counts: dict[str, int]) -> Path:
         outcomes_count=counts.get("drug_outcomes", 0),
         mol_screen_count=counts.get("molecule_screenings", 0),
         splice_count=counts.get("splice_variants", 0),
+        designed_mol_count=counts.get("designed_molecules", 0),
+        diffdock_count=counts.get("diffdock_extended", 0),
         last_updated=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
     )
     readme_path = EXPORT_DIR / "README.md"
